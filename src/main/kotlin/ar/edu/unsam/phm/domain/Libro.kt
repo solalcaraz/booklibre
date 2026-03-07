@@ -1,6 +1,6 @@
 package ar.edu.unsam.phm.domain
 
-import org.springframework.hateoas.mediatype.alps.Descriptor
+import ar.edu.unsam.phm.repository.EntidadConId
 import java.util.Date
 
 class Libro(
@@ -22,4 +22,28 @@ class Libro(
         //5 * dias reservados
         // tipo.plusBiblioKarma(this, usuario)
     }
+}
+
+enum class Genero {
+    DRAMA,
+    CIENCIA_FICCION,
+    ROMANCE,
+    AUTOAYUDA,
+    DISENO,
+    LITERATURA_CLASICA
+}
+
+enum class Idioma {
+    ESPANOL,
+    INGLES,
+    FRANCES,
+    PORTUGUES
+}
+
+enum class Estado {
+    EXCELENTE,
+    MUY_BUENO,
+    BUENO,
+    MALO,
+    REGULAR
 }
