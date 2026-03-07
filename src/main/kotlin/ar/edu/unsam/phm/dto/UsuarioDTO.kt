@@ -10,3 +10,9 @@ class UsuarioLogeadoDTO(
     val email: String,
     val nombreCompleto: String
 )
+
+class UsuarioRegister(
+    val nombreCompleto: String,
+    val email: String,
+    val password: String
+)
