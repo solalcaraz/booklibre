@@ -17,7 +17,7 @@ class RecetaControllerTest(@Autowired val mockMvc: MockMvc) {
     @Test
     fun `puedo mockear una llamada al endpoint via get y me responde correctamente`() {
         mockMvc
-            .perform(MockMvcRequestBuilders.get("/ejemplo/"))
+            .perform(MockMvcRequestBuilders.get("/hola"))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.content().string("hola"))
     }
