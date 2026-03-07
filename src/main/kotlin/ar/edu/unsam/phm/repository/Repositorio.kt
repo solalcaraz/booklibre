@@ -1,0 +1,75 @@
+package ar.edu.unsam.phm.repository
+
+import ar.edu.unsam.phm.domain.Usuario
+import ar.edu.unsam.phm.exceptions.NotFoundException
+
+// Se implementa el patron strategy para determinar el metodo de busqueda según el tipo de repositorio
+interface SearchStrategy<T> {
+    fun matches(obj: T, value: String): Boolean
+}
+
+// Si alguna de las condiciones se cumple, devuelve true, que es recibido por el filter y devuelve el array con las coincidencias
+class UsuarioSearchStrategy : SearchStrategy<Usuario> {
+    override fun matches(obj: Usuario, value: String): Boolean {
+        return obj.nombreCompleto.contains(value, ignoreCase = true) ||
+                obj.email.contains(value, ignoreCase = true)
+    }
+}
+
+interface EntidadConId {
+    var id: Int?
+}
+
+open class Repositorio<T : EntidadConId>(
+    private val searchStrategy: SearchStrategy<T>,
+) { // le exijo a T tener id para poder manipular T.id
+    private val objetos = mutableMapOf<Int, T>()
+    private var proximoId = 1
+
+    fun create(obj: T) {
+        if (obj.id != null) {
+            throw IllegalArgumentException("No se puede crear un objeto que ya tiene ID.")
+        }
+
+        obj.id = proximoId++
+        objetos[obj.id!!] = obj
+    }
+
+    fun update(obj: T) {
+        validarConId(obj)
+        val id = obj.id!!
+
+        if (!objetos.containsKey(id)) {
+            throw NotFoundException("No se encontró el objeto con ID $id.")
+        }
+
+        objetos[id] = obj
+    }
+
+    fun delete(obj: T) {
+        validarConId(obj)
+        val id = obj.id!!
+
+        if (objetos.remove(id) == null) {
+            throw NotFoundException("No se encontró el objeto con ID $id.")
+        }
+    }
+
+    fun getById(id: Int): T {
+        return objetos[id] ?: throw NotFoundException("No se encontró el objeto con ID $id.")
+    }
+
+    fun getAll(): List<T> = objetos.values.toList()
+
+    fun existeConId(id: Int): Boolean = objetos.containsKey(id)
+
+    private fun validarConId(obj: T) {
+        if (obj.id == null) {
+            throw IllegalArgumentException("El objeto no tiene ID asignado.")
+        }
+    }
+
+    fun search(value: String): List<T> {
+        return objetos.values.filter { searchStrategy.matches(it, value) }
+    }
+}

@@ -1,4 +1,9 @@
 package ar.edu.unsam.phm.domain
 
-class Libro {
+import ar.edu.unsam.phm.repository.EntidadConId
+
+class Libro(
+    override var id: Int?
+) : EntidadConId {
+
 }
