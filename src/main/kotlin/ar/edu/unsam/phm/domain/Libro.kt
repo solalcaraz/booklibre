@@ -1,6 +1,7 @@
 package ar.edu.unsam.phm.domain
 
 import ar.edu.unsam.phm.repository.EntidadConId
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.util.Date
 
 class Libro(
@@ -18,6 +19,12 @@ class Libro(
     var estado: Estado,
     val dueno: Usuario
 ) : EntidadConId {
+    var imagenNombre: String = "libro-nuevo.jpg"
+
+    // Metodo para obtener la URL completa de la imagen, se provee desde el back
+    @JsonIgnore
+    fun getImagenUrl(): String = "images/$imagenNombre"
+
     fun calcularBiblioKarmas(diasTotal: Int, usuario: Usuario): Int {
         return 5 * diasTotal + tipo.plusBiblioKarma(this, usuario)
     }
