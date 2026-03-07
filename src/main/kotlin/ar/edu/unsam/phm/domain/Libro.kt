@@ -4,13 +4,13 @@ import ar.edu.unsam.phm.repository.EntidadConId
 import java.util.Date
 
 class Libro(
-    override var id: Int?,
+    override var id: Int? = null,
     val titulo: String,
     val tipo: TipoDeLibro,
     val descripcion: String,
     val genero: Genero,
     val autor: String,
-    val cantPaginas: String,
+    val cantPaginas: Int,
     val ISBN13: String,
     val idioma: Idioma,
     val editorial: String,
