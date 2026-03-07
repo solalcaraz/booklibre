@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69efba49-111b-44f0-82f5-a8580d624123" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/LibroDTO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/TipoDeLibroDTO.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Estado.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Genero.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Idioma.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Libro.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Libro.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/LibroDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/LibroDTO.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
