@@ -4,7 +4,7 @@ import org.springframework.hateoas.mediatype.alps.Descriptor
 import java.util.Date
 
 class Libro(
-    //agregar id
+    override var id: Int?,
     val titulo: String,
     val tipo: TipoDeLibro,
     val descripcion: String,
@@ -17,7 +17,7 @@ class Libro(
     val fechaPublicacion: Date,
     val estado: Estado,
     val dueno: Usuario
-) { // : EntidadConId
+) : EntidadConId {
     fun calcularBiblioKarmas(usuario: Usuario) {
         //5 * dias reservados
         // tipo.plusBiblioKarma(this, usuario)
