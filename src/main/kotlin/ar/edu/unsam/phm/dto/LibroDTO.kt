@@ -9,6 +9,7 @@ import ar.edu.unsam.phm.domain.Idioma
 import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.domain.TipoDeLibro
 import ar.edu.unsam.phm.exceptions.BusinessException
+import ar.edu.unsam.phm.exceptions.LibroException
 
 enum class TipoDeLibroDTO {
     COMUN,
@@ -36,7 +37,7 @@ fun Libro.toDTO(): LibroHomeDTO {
         is Comun -> TipoDeLibroDTO.COMUN
         is Dedicatoria -> TipoDeLibroDTO.DEDICATORIA
         is Coleccionable -> TipoDeLibroDTO.COLECCIONABLE
-        else -> throw BusinessException("El tipo '${this.tipo}' es desconocido")
+        else -> throw LibroException.tipoInvalido(this)
     }
     return LibroHomeDTO(
         id = this.id!!,
