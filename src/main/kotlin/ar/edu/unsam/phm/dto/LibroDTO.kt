@@ -25,8 +25,10 @@ data class LibroHomeDTO(
     var ISBN13: String,
     var idioma: Idioma,
     var estado: Estado,
-    val dueno: String
-    // calificacion y foto
+    var dueno: String,
+    var calificacionPromedio: Double,
+    //var biblioKarmasTotal: Int
+    // foto
 )
 
 fun Libro.toDTO(): LibroHomeDTO {
@@ -45,6 +47,8 @@ fun Libro.toDTO(): LibroHomeDTO {
         ISBN13 = this.ISBN13,
         idioma = this.idioma,
         estado = this.estado,
-        dueno = this.dueno.nombreCompleto
+        dueno = this.dueno.nombreCompleto,
+        calificacionPromedio = this.calcularCalificacionPromedio()
+        //biblioKarmasTotal = this.calcularBiblioKarmas()
     )
 }

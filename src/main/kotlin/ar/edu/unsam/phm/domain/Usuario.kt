@@ -34,6 +34,7 @@ class Usuario(
     var descripcion: String = ""
     var ciudad: String? = null
     val celular: Int? = null
+    var bibliokarmas: Int = 0
 
     fun validarPassword(passwordIngresada: String): Boolean {
         return this.password == passwordIngresada

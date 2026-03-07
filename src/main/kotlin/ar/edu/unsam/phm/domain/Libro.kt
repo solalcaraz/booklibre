@@ -5,22 +5,26 @@ import java.util.Date
 
 class Libro(
     override var id: Int? = null,
-    val titulo: String,
+    var titulo: String,
     val tipo: TipoDeLibro,
-    val descripcion: String,
-    val genero: Genero,
-    val autor: String,
+    var descripcion: String,
+    var genero: Genero,
+    var autor: String,
     val cantPaginas: Int,
     val ISBN13: String,
-    val idioma: Idioma,
-    val editorial: String,
+    var idioma: Idioma,
+    var editorial: String,
     val fechaPublicacion: Date,
-    val estado: Estado,
+    var estado: Estado,
     val dueno: Usuario
 ) : EntidadConId {
-    fun calcularBiblioKarmas(usuario: Usuario) {
-        //5 * dias reservados
-        // tipo.plusBiblioKarma(this, usuario)
+    fun calcularBiblioKarmas(diasTotal: Int, usuario: Usuario): Int {
+        return 5 * diasTotal + tipo.plusBiblioKarma(this, usuario)
+    }
+
+    fun calcularCalificacionPromedio(): Double {
+        // TODO: definir como queda la reserva{puntaje, comentario}
+        return 0.0
     }
 }
 
