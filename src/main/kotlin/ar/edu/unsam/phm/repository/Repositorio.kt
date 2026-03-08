@@ -1,5 +1,6 @@
 package ar.edu.unsam.phm.repository
 
+import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.exceptions.NotFoundException
 
@@ -16,6 +17,14 @@ class UsuarioSearchStrategy : SearchStrategy<Usuario> {
     }
 }
 
+class ReservaSearchStrategy : SearchStrategy<Reserva> {
+    override fun matches(obj: Reserva, value: String): Boolean {
+        return obj.libro.titulo.contains(value, ignoreCase = true) ||
+                obj.usuario.nombreCompleto.contains(value, ignoreCase = true) ||
+                obj.libro.isbn13.contains(value, ignoreCase = true)
+    }
+}
+
 interface EntidadConId {
     var id: Int?
 }
@@ -23,7 +32,7 @@ interface EntidadConId {
 open class Repositorio<T : EntidadConId>(
     private val searchStrategy: SearchStrategy<T>,
 ) { // le exijo a T tener id para poder manipular T.id
-    private val objetos = mutableMapOf<Int, T>()
+    val objetos = mutableMapOf<Int, T>()
     private var proximoId = 1
 
     fun create(obj: T) {
