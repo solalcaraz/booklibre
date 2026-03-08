@@ -12,7 +12,7 @@ class Libro(
     var genero: Genero,
     var autor: String,
     val cantPaginas: Int,
-    val ISBN13: String,
+    val isbn13: String,
     var idioma: Idioma,
     var editorial: String,
     val fechaPublicacion: Date,

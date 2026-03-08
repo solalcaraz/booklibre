@@ -1,13 +1,11 @@
 package ar.edu.unsam.phm.loaders
 
 import ar.edu.unsam.phm.domain.Coleccionable
-import ar.edu.unsam.phm.domain.Comun
 import ar.edu.unsam.phm.domain.Dedicatoria
 import ar.edu.unsam.phm.domain.Estado
 import ar.edu.unsam.phm.domain.Genero
 import ar.edu.unsam.phm.domain.Idioma
 import ar.edu.unsam.phm.domain.Libro
-import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.repository.LibroRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.boot.CommandLineRunner
@@ -26,7 +24,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             genero = Genero.ROMANCE,
             autor = "Jane Austen",
             cantPaginas = 300,
-            ISBN13 = "9780141439518",
+            isbn13 = "9780141439518",
             idioma = Idioma.INGLES,
             editorial = "Penguin",
             fechaPublicacion = Date(),
@@ -41,7 +39,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             genero = Genero.LITERATURA_CLASICA,
             autor = "Julio Cortázar",
             cantPaginas = 736,
-            ISBN13 = "9788437604947",
+            isbn13 = "9788437604947",
             idioma = Idioma.ESPANOL,
             editorial = "Cátedra",
             fechaPublicacion = Date(),

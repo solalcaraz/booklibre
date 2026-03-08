@@ -7,8 +7,6 @@ import ar.edu.unsam.phm.domain.Estado
 import ar.edu.unsam.phm.domain.Genero
 import ar.edu.unsam.phm.domain.Idioma
 import ar.edu.unsam.phm.domain.Libro
-import ar.edu.unsam.phm.domain.TipoDeLibro
-import ar.edu.unsam.phm.exceptions.BusinessException
 import ar.edu.unsam.phm.exceptions.LibroException
 
 enum class TipoDeLibroDTO {
@@ -45,7 +43,7 @@ fun Libro.toDTO(): LibroHomeDTO {
         genero = this.genero,
         autor = this.autor,
         tipo = tipoDTO,
-        ISBN13 = this.ISBN13,
+        ISBN13 = this.isbn13,
         idioma = this.idioma,
         estado = this.estado,
         dueno = this.dueno.nombreCompleto,
