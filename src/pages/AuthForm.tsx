@@ -1,38 +1,37 @@
-import type { ChangeEvent, FormEvent } from 'react'
+import type { ChangeEvent, SubmitEvent } from 'react'
 import { useMemo, useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router'
-
-type AuthMode = 'login' | 'register'
-
-type AuthFormData = {
-  fullName: string
-  email: string
-  password: string
-  confirmPassword: string
-  rememberMe: boolean
-}
+import { FormInput } from '../components/FormInput'
+import { type AuthErrors, type AuthFormData, Auth } from '../classes/Auth'
+import { useOnInit } from '../utils/hooks'
+import { authService } from '../services/AuthService'
 
 const initialFormData: AuthFormData = {
   fullName: '',
   email: '',
   password: '',
-  confirmPassword: '',
-  rememberMe: false
+  confirmPassword: ''
 }
 
 export const AuthForm = () => {
-  const { mode } = useParams<{ mode: string }>()
   const [formData, setFormData] = useState<AuthFormData>(initialFormData)
+  const [formErrors, setFormErrors] = useState<AuthErrors>({})
   const navigate = useNavigate()
+  const { mode } = useParams()
 
   const isValidMode = mode === 'login' || mode === 'register'
+  const isLogin = mode === 'login'
 
-  if (!isValidMode) {
-    navigate("/auth/login")
-  }
-
-  const authMode = mode as AuthMode
-  const isLogin = authMode === 'login'
+  useOnInit(() => {
+    /* Si estoy logeado me manda al home */
+    if (authService.estaAutenticado()) {
+      navigate('/home')
+    }
+    /* Si quiero entrar a una subruta invalida de auth me redirecciona al login */
+    if (!isValidMode) {
+      navigate('/auth/login')
+    }
+  })
 
   const content = useMemo(() => {
     if (isLogin) {
@@ -58,37 +57,65 @@ export const AuthForm = () => {
     }
   }, [isLogin])
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = event.target
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
 
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: value
+    }))
+
+    /* Limpio errores onChange y despues valido onSubmit */
+    setFormErrors((prev) => ({
+      ...prev,
+      [name]: undefined
     }))
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SubmitEvent) => {
     event.preventDefault()
 
-    if (isLogin) {
-      console.log('Login data:', {
-        email: formData.email,
-        password: formData.password,
-        rememberMe: formData.rememberMe
-      })
-      return
-    }
+    const auth = new Auth(
+      formData.email,
+      formData.password,
+      formData.confirmPassword,
+      formData.fullName
+    )
 
-    console.log('Register data:', {
-      fullName: formData.fullName,
-      email: formData.email,
-      password: formData.password,
-      confirmPassword: formData.confirmPassword
-    })
+    const validationErrors = mode === 'login' ? auth.validateLogin() : auth.validateRegister()
+
+    setFormErrors(validationErrors)
+
+    if (Auth.hasErrors(validationErrors)) return
+
+    try {
+      if (isLogin) {
+        const loginData = auth.toLoginData()
+        const user = await authService.login(loginData)
+
+        if (user.id) {
+          window.localStorage.setItem('user', JSON.stringify(user))
+        }
+
+        navigate('/home')
+        return
+      }
+
+      const registerData = auth.toRegisterData()
+      const user = await authService.register(registerData)
+
+      if (user.id) {
+        window.localStorage.setItem('user', JSON.stringify(user))
+      }
+
+      navigate('/home')
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-[#f8f7f4] px-4 py-10">
+    <section className="flex min-h-screen flex-col items-center justify-center bg-[#f8f7f4] px-4 py-10">
       <section className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
         <header className="flex flex-col items-center bg-[#f3f9ff] px-8 py-8 text-center">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white text-2xl shadow-sm">
@@ -103,42 +130,46 @@ export const AuthForm = () => {
         <div className="px-6 py-8 sm:px-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             {!isLogin && (
-              <FormField
+              <FormInput
                 label="Nombre completo"
                 type="text"
                 name="fullName"
                 placeholder="Ej. Juan Pérez"
                 value={formData.fullName}
-                onChange={handleInputChange}
+                onChange={handleChange}
+                error={formErrors.fullName}
               />
             )}
 
-            <FormField
+            <FormInput
               label="Correo electrónico"
               type="email"
               name="email"
               placeholder="tu@ejemplo.com"
               value={formData.email}
-              onChange={handleInputChange}
+              onChange={handleChange}
+              error={formErrors.email}
             />
 
-            <FormField
+            <FormInput
               label="Contraseña"
               type="password"
               name="password"
               placeholder="••••••••"
               value={formData.password}
-              onChange={handleInputChange}
+              onChange={handleChange}
+              error={formErrors.password}
             />
 
             {!isLogin && (
-              <FormField
+              <FormInput
                 label="Confirmar contraseña"
                 type="password"
                 name="confirmPassword"
                 placeholder="••••••••"
                 value={formData.confirmPassword}
-                onChange={handleInputChange}
+                onChange={handleChange}
+                error={formErrors.confirmPassword}
               />
             )}
 
@@ -147,8 +178,8 @@ export const AuthForm = () => {
                 <input
                   type="checkbox"
                   name="rememberMe"
-                  checked={formData.rememberMe}
-                  onChange={handleInputChange}
+                  /* checked={formData.rememberMe} */
+                  onChange={handleChange}
                   className="h-4 w-4 rounded border-slate-300 text-emerald-400 focus:ring-emerald-300"
                 />
                 Recordarme
@@ -157,7 +188,7 @@ export const AuthForm = () => {
 
             <button
               type="submit"
-              className="w-full rounded-lg bg-[#7bedac] px-4 py-3 text-sm font-bold text-slate-800 transition hover:brightness-95"
+              className="w-full rounded-lg bg-[#7bedac] px-4 py-3 text-sm font-bold text-slate-800 transition hover:brightness-95 cursor-pointer"
             >
               {content.buttonText}
             </button>
@@ -175,35 +206,6 @@ export const AuthForm = () => {
       <footer className="mt-10 text-center text-xs text-slate-400">
         © 2026 PastelReads. Todos los derechos reservados.
       </footer>
-    </main>
-  )
-}
-
-type FormFieldProps = {
-  label: string
-  type: string
-  name: keyof AuthFormData
-  placeholder: string
-  value: string
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void
-}
-
-function FormField({ label, type, name, placeholder, value, onChange }: FormFieldProps) {
-  return (
-    <div>
-      <label htmlFor={name} className="mb-2 block text-sm font-semibold text-slate-600">
-        {label}
-      </label>
-
-      <input
-        id={name}
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-sky-300 focus:bg-white"
-      />
-    </div>
+    </section>
   )
 }
