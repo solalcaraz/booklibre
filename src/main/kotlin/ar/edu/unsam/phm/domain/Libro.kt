@@ -2,7 +2,7 @@ package ar.edu.unsam.phm.domain
 
 import ar.edu.unsam.phm.repository.EntidadConId
 import com.fasterxml.jackson.annotation.JsonIgnore
-import java.util.Date
+import java.time.LocalDate
 
 class Libro(
     override var id: Int? = null,
@@ -15,7 +15,7 @@ class Libro(
     val isbn13: String,
     var idioma: Idioma,
     var editorial: String,
-    val fechaPublicacion: Date,
+    val fechaPublicacion: LocalDate,
     var estado: Estado,
     val dueno: Usuario
 ) : EntidadConId {

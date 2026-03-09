@@ -10,4 +10,6 @@ class LibroService(
     val libroRepositorio: LibroRepositorio
 ) {
     fun getAll(): List<Libro> = libroRepositorio.getAll()
+
+    fun getById(id: Int): Libro = libroRepositorio.getById(id)
 }

@@ -3,9 +3,11 @@ package ar.edu.unsam.phm.loaders
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.boot.CommandLineRunner
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
 @Component
+@Order(1)
 class UsuarioLoader(private val usuarioRepositorio: UsuarioRepositorio): CommandLineRunner {
     override fun run(vararg args: String?) {
         val usuario = Usuario(nombreCompleto = "Diego Maradona",

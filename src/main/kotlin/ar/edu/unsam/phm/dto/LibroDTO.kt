@@ -51,3 +51,41 @@ fun Libro.toDTO(): LibroHomeDTO {
         //biblioKarmasTotal = this.calcularBiblioKarmas()
     )
 }
+data class LibroDetalleDTO(
+    val id: Int?,
+    val titulo: String,
+    val tipo: TipoDeLibroDTO,
+    val genero: Genero,
+    val autor: String,
+    val idioma: Idioma,
+    val estado: Estado,
+    val editorial: String,
+    val fechaPublicacion: String,
+    val paginas: Int,
+    val isbn13: String,
+    val descripcion: String
+)
+
+fun Libro.toDetalleDTO(): LibroDetalleDTO {
+    val tipoDTO = when (this.tipo) {
+        is Comun -> TipoDeLibroDTO.COMUN
+        is Dedicatoria -> TipoDeLibroDTO.DEDICATORIA
+        is Coleccionable -> TipoDeLibroDTO.COLECCIONABLE
+        else -> throw LibroException.tipoInvalido(this)
+    }
+
+    return LibroDetalleDTO(
+        id = this.id,
+        titulo = this.titulo,
+        tipo = tipoDTO,
+        genero = this.genero,
+        autor = this.autor,
+        idioma = this.idioma,
+        estado = this.estado,
+        editorial = this.editorial,
+        fechaPublicacion = this.fechaPublicacion.toString(),
+        paginas = this.cantPaginas,
+        isbn13 = this.isbn13,
+        descripcion = this.descripcion
+    )
+}

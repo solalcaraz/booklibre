@@ -9,10 +9,12 @@ import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.repository.LibroRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.boot.CommandLineRunner
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
-import java.util.Date
+import java.time.LocalDate
 
 @Component
+@Order(2)
 class LibroLoader(private val libroRepositorio: LibroRepositorio, private val usuarioRepositorio: UsuarioRepositorio) : CommandLineRunner {
     override fun run(vararg args: String?) {
         val usuario = usuarioRepositorio.getById(1)
@@ -27,7 +29,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             isbn13 = "9780141439518",
             idioma = Idioma.INGLES,
             editorial = "Penguin",
-            fechaPublicacion = Date(),
+            fechaPublicacion = LocalDate.of(1800, 1, 1),
             estado = Estado.MUY_BUENO,
             dueno = usuario
         )
@@ -42,7 +44,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             isbn13 = "9788437604947",
             idioma = Idioma.ESPANOL,
             editorial = "Cátedra",
-            fechaPublicacion = Date(),
+            fechaPublicacion = LocalDate.of(1960, 1, 1),
             estado = Estado.BUENO,
             dueno = usuario
         )
