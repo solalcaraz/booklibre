@@ -20,7 +20,7 @@ type AuthResponse = {
 }
 
 class AuthService {
-  async login(loginData: LoginData): Promise<AuthResponse>{
+  async login(loginData: LoginData): Promise<AuthResponse> {
     const response = await axios.post<AuthResponse>(API_URL + '/auth/login', loginData)
 
     return response.data
@@ -30,6 +30,15 @@ class AuthService {
     const response = await axios.post<AuthResponse>(API_URL + '/auth/register', registerData)
 
     return response.data
+  }
+
+  estaAutenticado(): boolean {
+    const user = window.localStorage.getItem('user')
+    return user !== null && user !== ''
+  }
+
+  cerrarSesion(){
+    window.localStorage.removeItem('user')
   }
 }
 
