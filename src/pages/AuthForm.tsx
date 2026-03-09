@@ -4,6 +4,7 @@ import { Link, useParams, useNavigate } from 'react-router'
 import { FormInput } from '../components/FormInput'
 import { type AuthErrors, type AuthFormData, Auth } from '../classes/Auth'
 import { useOnInit } from '../utils/hooks'
+import { authService } from '../services/AuthService'
 
 const initialFormData: AuthFormData = {
   fullName: '',
@@ -22,6 +23,10 @@ export const AuthForm = () => {
   const isLogin = mode === 'login'
 
   useOnInit(() => {
+    /* Si estoy logeado me manda al home */
+    if (authService.estaAutenticado()) {
+      navigate('/home')
+    }
     /* Si quiero entrar a una subruta invalida de auth me redirecciona al login */
     if (!isValidMode) {
       navigate('/auth/login')
@@ -67,7 +72,7 @@ export const AuthForm = () => {
     }))
   }
 
-  const handleSubmit = (event: SubmitEvent) => {
+  const handleSubmit = async (event: SubmitEvent) => {
     event.preventDefault()
 
     const auth = new Auth(
@@ -83,22 +88,30 @@ export const AuthForm = () => {
 
     if (Auth.hasErrors(validationErrors)) return
 
-    console.log('Formulario válido')
+    try {
+      if (isLogin) {
+        const loginData = auth.toLoginData()
+        const user = await authService.login(loginData)
 
-    if (isLogin) {
-      console.log('Login data:', {
-        email: formData.email,
-        password: formData.password
-      })
-      return
+        if (user.id) {
+          window.localStorage.setItem('user', JSON.stringify(user))
+        }
+
+        navigate('/home')
+        return
+      }
+
+      const registerData = auth.toRegisterData()
+      const user = await authService.register(registerData)
+
+      if (user.id) {
+        window.localStorage.setItem('user', JSON.stringify(user))
+      }
+
+      navigate('/home')
+    } catch (error) {
+      console.log(error)
     }
-
-    console.log('Register data:', {
-      fullName: formData.fullName,
-      email: formData.email,
-      password: formData.password,
-      confirmPassword: formData.confirmPassword
-    })
   }
 
   return (
