@@ -1,3 +1,5 @@
+import type { LoginData, RegisterData } from "../services/AuthService"
+
 export type AuthFormData = {
   fullName: string
   email: string
@@ -75,6 +77,21 @@ export class Auth {
 
     if (this.password !== this.confirmPassword) {
       errors.confirmPassword = 'Las contraseñas no coinciden'
+    }
+  }
+
+  toLoginData(): LoginData {
+    return {
+      email: this.email,
+      password: this.password
+    }
+  }
+
+  toRegisterData(): RegisterData {
+    return {
+      email: this.email,
+      password: this.password,
+      nombreCompleto: this.fullName!
     }
   }
 
