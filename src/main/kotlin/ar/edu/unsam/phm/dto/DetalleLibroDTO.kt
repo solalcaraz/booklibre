@@ -1,12 +1,13 @@
 package ar.edu.unsam.phm.dto
 
-import java.time.LocalDate
+import ar.edu.unsam.phm.domain.Libro
+import java.util.Date
+
 //LocalDate es moderno y solo trabaja con la fecha.
 //Date incluye hora, lo cual no usamos.
 
-//Estoy teniendo en cuenta que la reseña va a estar en el libro
 data class DetalleLibroDTO(
-    val id: Int,
+    val id: Int?,
     val titulo: String,
     val tipo: String,
     val descripcion: String,
@@ -16,15 +17,34 @@ data class DetalleLibroDTO(
     val isbn13: String,
     var idioma: String,
     val editorial: String,
-    val fechaPublicacion: LocalDate,
+    val fechaPublicacion: Date,
     val urlImagen: String,
-    val puntaje: Double,
-    val ultimasResenias: List<ReseniaDTO>,
-    val rangosFechasOcupadas: List<RangoFechaDTO>,
+    val calificacionPromedio: Double,
+    //val ultimasResenias: List<ReseniaDTO>,
+    //val rangosFechasOcupadas: List<RangoFechaDTO>,
     val estado: String,
-    val plusBiblioKarms: Int
-) {
-}
+    //val plusBiblioKarms: Int
+)
+//TODO: Pulir esto para el front.
+fun Libro.toDetalleDTO() = DetalleLibroDTO(
+    id = this.id,
+    titulo = this.titulo,
+    tipo = this.tipo::class.simpleName?.uppercase()   // "COMUN", "COLECCIONABLE", "DEDICATORIA"
+        ?: throw IllegalArgumentException("Tipo desconocido"),
+    descripcion = this.descripcion,
+    genero = this.genero.name,
+    autor = this.autor,
+    cantPaginas = this.cantPaginas,
+    isbn13 = this.isbn13,
+    idioma = this.idioma.name,
+    editorial = this.editorial,
+    fechaPublicacion = this.fechaPublicacion,
+    urlImagen = this.getImagenUrl(),
+    calificacionPromedio = this.calcularCalificacionPromedio(),
+    estado = this.estado.name
+)
+
+/*
 data class ReseniaDTO(
     val id: Int,
     val nombreUsuario: String,
@@ -37,4 +57,4 @@ data class RangoFechaDTO(
     val fechaDesde: LocalDate,
     val fechaHasta: LocalDate
 ){}
-
+*/
