@@ -17,4 +17,11 @@ class LibroController(val libroService: LibroService) {
     @GetMapping("/libro/{id}")
     fun obtenerLibro(@PathVariable id: Int): LibroDetalleDTO = libroService.getById(id).toDetalleDTO()
 
+    @PostMapping("/libro/nuevo")
+    fun crearLibro(@RequestBody libroDTO : LibroDetalleDTO, @RequestParam usuarioId: Int) = libroService.create(libroDTO, usuarioId)
+
+    @PutMapping("/libro/{id}")
+    fun actualizarLibro(@PathVariable id: Int, @RequestBody libroDTO: LibroDetalleDTO) =
+        libroService.update(id, libroDTO)
+
 }

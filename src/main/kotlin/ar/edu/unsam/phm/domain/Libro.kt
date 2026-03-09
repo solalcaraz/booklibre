@@ -7,15 +7,15 @@ import java.time.LocalDate
 class Libro(
     override var id: Int? = null,
     var titulo: String,
-    val tipo: TipoDeLibro,
+    var tipo: TipoDeLibro,
     var descripcion: String,
     var genero: Genero,
     var autor: String,
-    val cantPaginas: Int,
-    val isbn13: String,
+    var cantPaginas: Int,
+    var isbn13: String,
     var idioma: Idioma,
     var editorial: String,
-    val fechaPublicacion: LocalDate,
+    var fechaPublicacion: LocalDate,
     var estado: Estado,
     val dueno: Usuario
 ) : EntidadConId {

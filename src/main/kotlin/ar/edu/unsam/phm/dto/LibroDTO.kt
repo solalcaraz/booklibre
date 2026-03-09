@@ -1,13 +1,8 @@
 package ar.edu.unsam.phm.dto
 
-import ar.edu.unsam.phm.domain.Coleccionable
-import ar.edu.unsam.phm.domain.Comun
-import ar.edu.unsam.phm.domain.Dedicatoria
-import ar.edu.unsam.phm.domain.Estado
-import ar.edu.unsam.phm.domain.Genero
-import ar.edu.unsam.phm.domain.Idioma
-import ar.edu.unsam.phm.domain.Libro
+import ar.edu.unsam.phm.domain.*
 import ar.edu.unsam.phm.exceptions.LibroException
+import java.time.LocalDate
 
 enum class TipoDeLibroDTO {
     COMUN,
@@ -87,5 +82,29 @@ fun Libro.toDetalleDTO(): LibroDetalleDTO {
         paginas = this.cantPaginas,
         isbn13 = this.isbn13,
         descripcion = this.descripcion
+    )
+}
+
+fun LibroDetalleDTO.toEntity(usuarioDueno: Usuario): Libro {
+    val tipoDominio = when (this.tipo) {
+        TipoDeLibroDTO.COMUN -> Comun
+        TipoDeLibroDTO.DEDICATORIA -> Dedicatoria
+        TipoDeLibroDTO.COLECCIONABLE -> Coleccionable
+    }
+
+    return Libro(
+        id = this.id,
+        titulo = this.titulo,
+        tipo = tipoDominio,
+        descripcion = this.descripcion,
+        genero = this.genero,
+        autor = this.autor,
+        cantPaginas = this.paginas,
+        isbn13 = this.isbn13,
+        idioma = this.idioma,
+        editorial = this.editorial,
+        fechaPublicacion = LocalDate.parse(this.fechaPublicacion),
+        estado = this.estado,
+        dueno = usuarioDueno
     )
 }
