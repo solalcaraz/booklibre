@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
+import { bookService } from "../services/BookService";
 import { BaseInput } from "../components/BaseInput";
 import { Book, type BookFormData, type BookErrors } from "../classes/Book";
-import { BOOK_TYPES, BOOK_GENRES, BOOK_LANGUAGES, BOOK_STATUS } from "../constants/bookConstants";
+import { GENRE_OPTIONS, LANGUAGE_OPTIONS, STATUS_OPTIONS, TYPE_OPTIONS } from "../constants/bookConstants";
 import { useOnInit } from "../utils/hooks";
 
 const initialFormData: BookFormData = {
@@ -17,8 +18,32 @@ export default function BookForm() {
     const [formData, setFormData] = useState<BookFormData>(initialFormData);
     const [errors, setErrors] = useState<BookErrors>({});
 
+    const loadBook = async () => {
+    if (!id) return;
+    try {
+        const data = await bookService.getById(id);
+
+        setFormData({
+            title: data.titulo,
+            type: data.tipo,
+            genre: data.genero,
+            author: data.autor,
+            language: data.idioma,
+            status: data.estado,
+            editorial: data.editorial,
+            publication_date: data.fechaPublicacion,
+            isbn13: data.isbn13,
+            description: data.descripcion,
+
+            pages: data.paginas ? data.paginas.toString() : "0",
+        });
+    } catch (error) {
+        console.error("Error al cargar el detalle del libro", error);
+    }
+};
+
     useOnInit(() => {
-        if (id) console.log("Cargar libro:", id);
+        loadBook();
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -56,13 +81,13 @@ export default function BookForm() {
                         <BaseInput label="Título" type="text" name="title" value={formData.title} onChange={handleChange} error={errors.title} />
                     </div>
 
-                    <BaseInput label="Tipo" type="select" name="type" value={formData.type} onChange={handleChange} options={BOOK_TYPES} error={errors.type} />
-                    <BaseInput label="Género" type="select" name="genre" value={formData.genre} onChange={handleChange} options={BOOK_GENRES} error={errors.genre} />
+                    <BaseInput label="Tipo" type="select" name="type" value={formData.type} onChange={handleChange} options={TYPE_OPTIONS} error={errors.type} />
+                    <BaseInput label="Género" type="select" name="genre" value={formData.genre} onChange={handleChange} options={GENRE_OPTIONS} error={errors.genre} />
 
                     <BaseInput label="Autor" type="text" name="author" value={formData.author} onChange={handleChange} error={errors.author} />
-                    <BaseInput label="Idioma" type="select" name="language" value={formData.language} onChange={handleChange} options={BOOK_LANGUAGES} error={errors.language} />
+                    <BaseInput label="Idioma" type="select" name="language" value={formData.language} onChange={handleChange} options={LANGUAGE_OPTIONS} error={errors.language} />
 
-                    <BaseInput label="Estado" type="select" name="status" value={formData.status} onChange={handleChange} options={BOOK_STATUS} error={errors.status} />
+                    <BaseInput label="Estado" type="select" name="status" value={formData.status} onChange={handleChange} options={STATUS_OPTIONS} error={errors.status} />
                     <BaseInput label="Editorial" type="text" name="editorial" value={formData.editorial} onChange={handleChange} error={errors.editorial} />
 
                     <BaseInput label="Fecha Publicación" type="date" name="publication_date" value={formData.publication_date} onChange={handleChange} />

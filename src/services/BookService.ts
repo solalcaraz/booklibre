@@ -1,15 +1,16 @@
-/* import axios from "axios"; */
-
-/* const API_URL = 'http://localhost:9000' */
-
 import { Book } from "../classes/Book";
+import axios from "axios";
+import type { BookDetailResponse } from "../responses/BookResponse";
+const API_URL = 'http://localhost:9000';
 
 class BookService {
-    async getAll() {
-    // Lógica para traer todos los libros
-    }
-    async getById(id: string) {
-    // Lógica para traer un libro específico para editar
+    // async getAll() {
+    //     const response = await axios.get<BookResponse>(API_URL + '/libros')
+    //     return response.data
+    // }
+    async getById(id: string): Promise<BookDetailResponse> {
+        const response = await axios.get<BookDetailResponse>(API_URL + '/libro/' + id)
+        return response.data
     }
     async save(book: Book) {
     // Lógica para POST (crear) o PUT (editar)

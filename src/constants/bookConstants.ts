@@ -1,4 +1,6 @@
-export const BOOK_TYPES = ['Común', 'Con Dedicatoria', 'Coleccionable'];
-export const BOOK_GENRES = ['Drama', 'Ciencia ficción', 'Romance', 'Autoayuda', 'Diseño', 'literatura clásica'];
-export const BOOK_LANGUAGES = ['Español', 'Inglés', 'Francés', 'Portugués'];
-export const BOOK_STATUS = ['Excelente', 'Muy bueno', 'Bueno', 'Malo', 'Regular'];
+import { Genero, Idioma, Estado, TipoDeLibro } from "../responses/BookResponse";
+
+export const GENRE_OPTIONS = Object.values(Genero); 
+export const LANGUAGE_OPTIONS = Object.values(Idioma);
+export const STATUS_OPTIONS = Object.values(Estado);
+export const TYPE_OPTIONS = Object.values(TipoDeLibro);
