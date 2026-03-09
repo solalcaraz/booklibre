@@ -1,6 +1,8 @@
 package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.Libro
+import ar.edu.unsam.phm.domain.Usuario
+import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.repository.LibroRepositorio
 import ar.edu.unsam.phm.repository.Repositorio
 import ar.edu.unsam.phm.repository.ReservaRepositorio
@@ -10,13 +12,12 @@ import java.time.LocalDate
 @Service
 class LibroService(
     val libroRepositorio: LibroRepositorio,
-    val reservaRepository: ReservaRepositorio
+    val reservaRepositorio: ReservaRepositorio
 ) {
     fun getAll(): List<Libro> = libroRepositorio.getAll()
 
     /* Un primer approach a algunos de los filtros que tiene el home */
     /* Sol sentite libre de borrar todo o dejarlo y agregar los filtros que faltan como genero, isbn y tal*/
-
     fun buscarLibrosDisponibles(
         titulo: String? = null,
         genero: String? = null,
@@ -24,7 +25,7 @@ class LibroService(
         hasta: LocalDate? = null
     ): List<Libro> {
         val librosDisponibles = libroRepositorio.getAll().filter { libro ->
-            val reservasDelLibro = reservaRepository.buscarPorLibro(libro)
+            val reservasDelLibro = reservaRepositorio.buscarPorLibro(libro)
 
             if (desde != null && hasta != null) {
                 reservasDelLibro.none { it.seSuperponeCon(desde, hasta) }
@@ -36,6 +37,24 @@ class LibroService(
         return librosDisponibles.filter { libro ->
             (titulo == null || libro.titulo.contains(titulo, ignoreCase = true)) &&
                     (genero == null || libro.genero.toString().contains(genero, ignoreCase = true))
+        }
+    }
+
+    fun misLibros(usuario: Usuario): List<MiLibroDTO> {
+        return libroRepositorio.librosDe(usuario).map { libro ->
+            val estadoReserva = if (reservaRepositorio.libroEstaPrestado(libro)) {
+                "PRESTADO"
+            } else {
+                "DISPONIBLE"
+            }
+
+            MiLibroDTO(
+                titulo = libro.titulo,
+                autor = libro.autor,
+                estadoReserva = estadoReserva,
+                genero = libro.genero.toString(),
+                agregadoEl = LocalDate.now(),
+            )
         }
     }
 }

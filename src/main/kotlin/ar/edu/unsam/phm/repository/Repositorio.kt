@@ -1,28 +1,9 @@
 package ar.edu.unsam.phm.repository
-
-import ar.edu.unsam.phm.domain.Reserva
-import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.exceptions.NotFoundException
 
 // Se implementa el patron strategy para determinar el metodo de busqueda según el tipo de repositorio
 interface SearchStrategy<T> {
     fun matches(obj: T, value: String): Boolean
-}
-
-// Si alguna de las condiciones se cumple, devuelve true, que es recibido por el filter y devuelve el array con las coincidencias
-class UsuarioSearchStrategy : SearchStrategy<Usuario> {
-    override fun matches(obj: Usuario, value: String): Boolean {
-        return obj.nombreCompleto.contains(value, ignoreCase = true) ||
-                obj.email.contains(value, ignoreCase = true)
-    }
-}
-
-class ReservaSearchStrategy : SearchStrategy<Reserva> {
-    override fun matches(obj: Reserva, value: String): Boolean {
-        return obj.libro.titulo.contains(value, ignoreCase = true) ||
-                obj.usuario.nombreCompleto.contains(value, ignoreCase = true) ||
-                obj.libro.isbn13.contains(value, ignoreCase = true)
-    }
 }
 
 interface EntidadConId {

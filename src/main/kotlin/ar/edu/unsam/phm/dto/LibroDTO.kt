@@ -8,6 +8,7 @@ import ar.edu.unsam.phm.domain.Genero
 import ar.edu.unsam.phm.domain.Idioma
 import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.exceptions.LibroException
+import java.time.LocalDate
 
 enum class TipoDeLibroDTO {
     COMUN,
@@ -51,3 +52,11 @@ fun Libro.toDTO(): LibroHomeDTO {
         //biblioKarmasTotal = this.calcularBiblioKarmas()
     )
 }
+
+data class MiLibroDTO(
+    val titulo: String,
+    val autor: String,
+    val estadoReserva: String,
+    val genero: String,
+    val agregadoEl: LocalDate,
+)
