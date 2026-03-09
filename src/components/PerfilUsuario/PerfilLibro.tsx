@@ -1,11 +1,11 @@
-type LibroEstado = 'Disponible' | 'Prestado'
+type LibroEstado = 'DISPONIBLE' | 'PRESTADO'
 
 export type LibroUsuario = {
   id: number
   titulo: string
   autor: string
   genero: string
-  estado: LibroEstado
+  estadoReserva: LibroEstado
   agregadoEl: string
   portada: string
 }
@@ -15,14 +15,14 @@ type LibroProps = {
 }
 
 export const PerfilLibro = ({ libro }: LibroProps) => {
-  const isAvailable = libro.estado === 'Disponible'
+  const isAvailable = libro.estadoReserva == 'DISPONIBLE'
 
   return (
     <tr className="border-b border-slate-200 last:border-b-0">
       <td className="px-5 py-4">
         <div className="flex items-center gap-4">
           <div
-            className={`flex h-16 w-12 shrink-0 items-center justify-center rounded-md text-white shadow-sm ${libro.portada}`}
+            className={`flex h-16 w-12 shrink-0 items-center justify-center rounded-md text-white shadow-sm bg-gray-300`}
           >
             📘
           </div>
