@@ -14,7 +14,13 @@ class UsuarioLoader(private val usuarioRepositorio: UsuarioRepositorio): Command
             nombreCompleto = "Diego Maradona",
             email = "diego@maradona.com",
             password =  "admin"
-        )
+        ).apply {
+            descripcion = "Lector Ávido & Coleccionista"
+            ciudad = "Gonzalez Catán, BA"
+            telefono = "+54 (11) 123-4567"
+            bibliokarmas = 2345
+        }
+
         val usuario2 = Usuario(
             nombreCompleto = "Lionel Messi",
             email = "lionel@messi.com",
