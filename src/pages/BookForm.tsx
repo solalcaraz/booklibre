@@ -52,7 +52,7 @@ export default function BookForm() {
         setErrors(prev => ({ ...prev, [name]: undefined }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const bookInstance = new Book(
             id || null, formData.title, formData.type, formData.genre, formData.author,
@@ -65,8 +65,16 @@ export default function BookForm() {
 
         if (Book.hasErrors(validationErrors)) return;
 
-        console.log("Guardando:", bookInstance);
-        navigate("/libros");
+        try {
+            if (id) {
+                await bookService.update(id, formData);
+            } else {
+                await bookService.save(formData);
+            }
+            navigate("/mis-libros");
+        } catch (error) {
+            console.error("Error al persistir el libro:", error);
+        }
     };
 
     return (
