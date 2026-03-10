@@ -1,6 +1,28 @@
 import { Genero, Idioma, Estado, TipoDeLibro } from "../responses/BookResponse";
 
-export const GENRE_OPTIONS = Object.values(Genero); 
-export const LANGUAGE_OPTIONS = Object.values(Idioma);
-export const STATUS_OPTIONS = Object.values(Estado);
-export const TYPE_OPTIONS = Object.values(TipoDeLibro);
+export const TYPE_OPTIONS: Record<TipoDeLibro, string> = {
+    [TipoDeLibro.COMUN]: "Común",
+    [TipoDeLibro.DEDICATORIA]: "Dedicatoria",
+    [TipoDeLibro.COLECCIONABLE]: "Coleccionable"
+};
+export const GENRE_OPTIONS: Record<Genero, string> = {
+    [Genero.DRAMA]: "Drama",
+    [Genero.CIENCIA_FICCION]: "Ciencia ficción",
+    [Genero.ROMANCE]: "Romance",
+    [Genero.AUTOAYUDA]: "Autoayuda",
+    [Genero.DISENO]: "Diseño",
+    [Genero.LITERATURA_CLASICA]: "Literatura clásica"
+};
+export const LANGUAGE_OPTIONS: Record<Idioma, string> = {
+    [Idioma.ESPANOL]: "Español",
+    [Idioma.INGLES]: "Inglés",
+    [Idioma.FRANCES]: "Francés",
+    [Idioma.PORTUGUES]: "Portugués"
+};
+export const STATUS_OPTIONS: Record<Estado, string> = {
+    [Estado.EXCELENTE]: "Excelente",
+    [Estado.MUY_BUENO]: "Muy bueno",
+    [Estado.BUENO]: "Bueno",
+    [Estado.MALO]: "Malo",
+    [Estado.REGULAR]: "Regular"
+};

@@ -1,5 +1,10 @@
 import type { ChangeEvent } from 'react'
 
+type Option = {
+    value: string;
+    label: string;
+}
+
 type BaseInputProps = {
     label: string
     type: 'text' | 'password' | 'email' | 'number' | 'date' | 'select' | 'textarea'
@@ -8,7 +13,7 @@ type BaseInputProps = {
     value: string | number
     onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
     error?: string
-    options?: string[] // Solo para cuando type === 'select'
+    options?: string[] | Option[];
 }
 
 export const BaseInput = ({
@@ -24,7 +29,13 @@ export const BaseInput = ({
             {type === 'select' ? (
                 <select id={name} name={name} value={value} onChange={onChange} className={baseClass}>
                     <option value="">Seleccionar...</option>
-                    {options?.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                    {/* {options?.map(opt => <option key={opt} value={opt}>{opt}</option>)} */}
+                    {options?.map(opt => {
+                        // Si es un objeto usamos sus propiedades (type Option), si es string lo usamos para ambos
+                        const val = typeof opt === 'string' ? opt : opt.value;
+                        const lab = typeof opt === 'string' ? opt : opt.label;
+                        return <option key={val} value={val}>{lab}</option>;
+                    })}
                 </select>
             ) : type === 'textarea' ? (
                 <textarea id={name} name={name} value={value} onChange={onChange} placeholder={placeholder} rows={3} className={baseClass} />

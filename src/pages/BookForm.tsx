@@ -12,6 +12,11 @@ const initialFormData: BookFormData = {
     isbn13: "", description: ""
 };
 
+const genreOptions = Object.entries(GENRE_OPTIONS).map(([value, label]) => ({ value, label }));
+const typeOptions = Object.entries(TYPE_OPTIONS).map(([value, label]) => ({ value, label }));
+const languageOptions = Object.entries(LANGUAGE_OPTIONS).map(([value, label]) => ({ value, label }));
+const statusOptions = Object.entries(STATUS_OPTIONS).map(([value, label]) => ({ value, label }));
+
 export default function BookForm() {
     const navigate = useNavigate();
     const { id } = useParams();
@@ -89,13 +94,13 @@ export default function BookForm() {
                         <BaseInput label="Título" type="text" name="title" value={formData.title} onChange={handleChange} error={errors.title} />
                     </div>
 
-                    <BaseInput label="Tipo" type="select" name="type" value={formData.type} onChange={handleChange} options={TYPE_OPTIONS} error={errors.type} />
-                    <BaseInput label="Género" type="select" name="genre" value={formData.genre} onChange={handleChange} options={GENRE_OPTIONS} error={errors.genre} />
+                    <BaseInput label="Tipo" type="select" name="type" value={formData.type} onChange={handleChange} options={typeOptions} error={errors.type} />
+                    <BaseInput label="Género" type="select" name="genre" value={formData.genre} onChange={handleChange} options={genreOptions} error={errors.genre} />
 
                     <BaseInput label="Autor" type="text" name="author" value={formData.author} onChange={handleChange} error={errors.author} />
-                    <BaseInput label="Idioma" type="select" name="language" value={formData.language} onChange={handleChange} options={LANGUAGE_OPTIONS} error={errors.language} />
+                    <BaseInput label="Idioma" type="select" name="language" value={formData.language} onChange={handleChange} options={languageOptions} error={errors.language} />
 
-                    <BaseInput label="Estado" type="select" name="status" value={formData.status} onChange={handleChange} options={STATUS_OPTIONS} error={errors.status} />
+                    <BaseInput label="Estado" type="select" name="status" value={formData.status} onChange={handleChange} options={statusOptions} error={errors.status} />
                     <BaseInput label="Editorial" type="text" name="editorial" value={formData.editorial} onChange={handleChange} error={errors.editorial} />
 
                     <BaseInput label="Fecha Publicación" type="date" name="publication_date" value={formData.publication_date} onChange={handleChange} />

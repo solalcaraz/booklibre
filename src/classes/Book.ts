@@ -30,19 +30,20 @@ export class Book {
         public description: string
     ) {}
 
-    // Validaciones para el formulario?
     validate() {
         const errors: BookErrors = {}
-        if (!this.title.trim()) errors.title = 'El título es requerido'
-        if (!this.type.trim()) errors.type = 'El tipo es requerido'
-        if (!this.genre.trim()) errors.genre = 'El género es requerido'
-        if (!this.author.trim()) errors.author = 'El autor es requerido'
-        if (!this.language.trim()) errors.language = 'El título es requerido'
-        if (!this.status.trim()) errors.status = 'El título es requerido'
-        if (!this.editorial.trim()) errors.editorial = 'El título es requerido'
-        if (this.pages && isNaN(Number(this.pages))) errors.pages = 'La cantidad de páginas debe ser un número'
-        if (!this.isbn13.trim()) errors.isbn13 = 'El ISBN es requerido'
-        if (!this.description.trim()) errors.description = 'Una descripción es requerida'
+        const requiredFields: (keyof BookFormData)[] = [
+            'title', 'type', 'genre', 'author', 'language', 
+            'status', 'editorial', 'isbn13', 'description'
+        ];
+        requiredFields.forEach(field => {
+            if (!this[field as keyof this]?.toString().trim()) {
+                errors[field] = `El campo ${field} es requerido`;
+            }
+        });
+        if (this.pages && isNaN(Number(this.pages))) {
+            errors.pages = 'La cantidad de páginas debe ser un número';
+        }
         return errors
     }
 
