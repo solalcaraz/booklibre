@@ -1,6 +1,7 @@
 package ar.edu.unsam.phm.dto
 
 import ar.edu.unsam.phm.domain.Libro
+import ar.edu.unsam.phm.domain.Usuario
 import java.util.Date
 
 //LocalDate es moderno y solo trabaja con la fecha.
@@ -23,12 +24,13 @@ data class DetalleLibroDTO(
     //val ultimasResenias: List<ReseniaDTO>,
     //val rangosFechasOcupadas: List<RangoFechaDTO>,
     val estado: String,
-    //val plusBiblioKarms: Int
+    val biblioKarmasBase: Int
 )
-//TODO: Pulir esto para el front.
-fun Libro.toDetalleDTO() = DetalleLibroDTO(
+
+fun Libro.toDetalleDTO(biblioKarmasBase: Int) = DetalleLibroDTO(
     id = this.id,
     titulo = this.titulo,
+    //Ver que onda esto, es reflexion para evitar usar when.
     tipo = this.tipo::class.simpleName?.uppercase()   // "COMUN", "COLECCIONABLE", "DEDICATORIA"
         ?: throw IllegalArgumentException("Tipo desconocido"),
     descripcion = this.descripcion,
@@ -41,7 +43,8 @@ fun Libro.toDetalleDTO() = DetalleLibroDTO(
     fechaPublicacion = this.fechaPublicacion,
     urlImagen = this.getImagenUrl(),
     calificacionPromedio = this.calcularCalificacionPromedio(),
-    estado = this.estado.name
+    estado = this.estado.name,
+    biblioKarmasBase = biblioKarmasBase
 )
 
 /*

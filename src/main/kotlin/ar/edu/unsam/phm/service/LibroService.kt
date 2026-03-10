@@ -2,17 +2,23 @@ package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.domain.Usuario
+import ar.edu.unsam.phm.dto.DetalleLibroDTO
 import ar.edu.unsam.phm.dto.MiLibroDTO
+import ar.edu.unsam.phm.dto.toDetalleDTO
 import ar.edu.unsam.phm.repository.LibroRepositorio
 import ar.edu.unsam.phm.repository.Repositorio
 import ar.edu.unsam.phm.repository.ReservaRepositorio
+import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.util.Date
+import kotlin.Int
 
 @Service
 class LibroService(
     val libroRepositorio: LibroRepositorio,
-    val reservaRepositorio: ReservaRepositorio
+    val reservaRepositorio: ReservaRepositorio,
+    val usuarioRepository: UsuarioRepositorio
 ) {
     fun getAll(): List<Libro> = libroRepositorio.getAll()
 
@@ -57,5 +63,11 @@ class LibroService(
             )
         }
     }
-    fun getById(id: Int): Libro = libroRepositorio.getById(id)
+    fun getDetalle(libroId: Int, usuarioLogueadoId: Int): DetalleLibroDTO{
+        //TODO: Ver de enviar todas las fechas que el libro está reservado (usar repoReservas) -> UI
+        val libro = libroRepositorio.getById(libroId)
+        val usuario = usuarioRepository.getById(usuarioLogueadoId)
+        val bibliokarmasBase = libro.calcularBiblioKarmas(0, usuario)
+        return libro.toDetalleDTO(bibliokarmasBase)
+    }
 }
