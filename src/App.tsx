@@ -10,11 +10,13 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/auth/:mode" element={<AuthForm />} />
+
         <Route element={<AuthLayout />}>
           <Route path="/" element={<Navigate to="/auth/login" />} />
-          <Route path="/home" element={<Home />}/>
           <Route />
           <Route element={<MainLayout />}>
+            <Route path="/home" element={<Home />}/>
             <Route path="/prestamos" element={<Prestamos />} />
           </Route>
         </Route>

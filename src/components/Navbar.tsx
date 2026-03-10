@@ -2,30 +2,54 @@ import logoImg from '../assets/icons/logo.png'
 import bibliokarmaIcon from '../assets/icons/bibliokarma.png'
 import defaultUser from '../assets/images/user.png'
 import { useState } from 'react';
+import { NavLink } from 'react-router';
+
+interface NavItemProps {
+  to: string
+  label: string
+}
+export const NavItem = ({ to, label }: NavItemProps) => {
+  return (
+    <li className="list-none">
+      <NavLink to={to} className="flex flex-col items-center justify-center mr-6">
+        {({ isActive }) => (
+          <span className={isActive ? "text-blue-500" : "text-gray-600"}>
+            {label}
+          </span>
+        )}
+      </NavLink>
+    </li>
+  )
+}
 
 export default function Navbar() {
   const [bibliokarma, setBibliokarma] = useState<number>(0)
-  
+
+  const items: NavItemProps[] = [
+    { to: '/home', label: 'Inicio' },
+    { to: `/prestamos`, label: 'Mis Préstamos' },
+    { to: '/', label: 'Perfil' }
+  ]
+
   return (
-    <nav className="w-full border-b bg-white">
-      <div className="max-w-7xl mx-auto px-6">
+    <nav className="w-full bg-white">
+      <div className="mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-500 rounded-full">
-                <img src={logoImg} alt="BookLibre" />
+            <div className="flex items-center mr-6">
+              <img src={logoImg} alt="" style={{ height: "2rem", width: "3rem" }} />
+              <span className="text-3xl font-extrabold tracking-tight text-slate-800">BookLibre</span>
             </div>
-          </div>
 
-          <div className="flex gap-10 text-gray-600 font-medium">
-            <a className="hover:text-blue-500 cursor-pointer">
-              Inicio
-            </a>
-            <a className="text-blue-500">
-              Mis Préstamos
-            </a>
-            <a className="hover:text-blue-500 cursor-pointer">
-              Perfil
-            </a>
+            <div className="flex text-gray-600 font-medium">
+              {items.map(item => (
+                <NavItem
+                  key={item.to}
+                  to={item.to}
+                  label={item.label}
+                />
+              ))}
+            </div>
           </div>
 
           <div className="flex items-center gap-6">
