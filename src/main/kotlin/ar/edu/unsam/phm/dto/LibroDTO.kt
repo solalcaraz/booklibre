@@ -54,9 +54,11 @@ fun Libro.toDTO(): LibroHomeDTO {
 }
 
 data class MiLibroDTO(
+    val id: Int?,
     val titulo: String,
     val autor: String,
     val estadoReserva: String,
     val genero: String,
     val agregadoEl: LocalDate,
+    val portada: String
 )

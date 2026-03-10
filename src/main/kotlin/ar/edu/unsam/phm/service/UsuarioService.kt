@@ -16,6 +16,10 @@ class UsuarioService(private val usuarioRepositorio: UsuarioRepositorio) {
         return usuarioRepositorio.getById(usuario.id)
     }
 
+    fun getUsuarioById(id: String): Usuario {
+        return usuarioRepositorio.getById(id.toInt())
+    }
+
     fun login(usuario: UsuarioDTO): Usuario {
         /* Busco el primer usuario que matchee con el email y si no devuelvo null y por
         lo tanto NotFoundException */

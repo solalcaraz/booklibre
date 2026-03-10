@@ -5,16 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69efba49-111b-44f0-82f5-a8580d624123" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/loaders/ReservaLoader.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/AuthController.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/LibroController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/LibroController.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/UsuarioController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/UsuarioController.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Libro.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Libro.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Usuario.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Usuario.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/LibroDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/LibroDTO.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/loaders/LibroLoader.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/loaders/LibroLoader.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/UsuarioDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/UsuarioDTO.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/helpers/UsuarioAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/helpers/UsuarioAdapter.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/loaders/UsuarioLoader.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/loaders/UsuarioLoader.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/LibroRepositorio.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/LibroRepositorio.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/Repositorio.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/Repositorio.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/ReservaRepositorio.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/ReservaRepositorio.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/UsuarioRepositorio.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/UsuarioRepositorio.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/LibroService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/LibroService.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/UsuarioService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/UsuarioService.kt" afterDir="false" />
     </list>
@@ -85,34 +85,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.Build backend-2026-grupo8.executor": "Run",
-    "Gradle.RecetaControllerTest.executor": "Run",
-    "Gradle.Tests in 'backend-2026-grupo8.test'.executor": "Run",
-    "Gradle.backend-2026-grupo8 [:ar.edu.phm.MainKt.main()].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "706",
-    "RequestMappingsPanelWidth1": "706",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "Spring Boot.BookLibre.executor": "Run",
-    "Spring Boot.Main.executor": "Run",
-    "Spring Boot.ProyectoApplication.executor": "Run",
-    "git-widget-placeholder": "reservasFeat",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Thomas/Desktop/Facultad/PHM/backend-2026-grupo8",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "run.configurations.included.in.services": "true",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Build backend-2026-grupo8.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.RecetaControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Tests in 'backend-2026-grupo8.test'.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.backend-2026-grupo8 [:ar.edu.phm.MainKt.main()].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.BookLibre.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.ProyectoApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;reservasFeat&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Thomas/Desktop/Facultad/PHM/backend-2026-grupo8&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Thomas\Desktop\Facultad\PHM\backend-2026-grupo8" />
@@ -134,6 +134,17 @@
         <option value="QuarkusRunConfigurationType" />
         <option value="SpringBootApplicationConfigurationType" />
       </set>
+    </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="SpringBootApplicationConfigurationType">
+          <value>
+            <map>
+              <entry key="BookLibre" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
     </option>
   </component>
   <component name="RunManager" selected="Spring Boot.BookLibre">
@@ -237,7 +248,8 @@
       <workItem from="1772821748943" duration="385000" />
       <workItem from="1772826288354" duration="142000" />
       <workItem from="1772828512441" duration="1686000" />
-      <workItem from="1773000256045" duration="9860000" />
+      <workItem from="1773000256045" duration="13001000" />
+      <workItem from="1773072872892" duration="5322000" />
     </task>
     <servers />
   </component>
