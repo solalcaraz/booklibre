@@ -5,6 +5,7 @@ import { Prestamos } from './pages/Prestamos'
 import { MainLayout } from './layout/MainLayout'
 import { AuthLayout } from './layout/AuthLayout'
 import { Home } from './pages/Home'
+import { PerfilUsuario } from './pages/PerfilUsuario'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route element={<MainLayout />}>
             <Route path="/home" element={<Home />}/>
             <Route path="/prestamos" element={<Prestamos />} />
+            <Route path="/profile" element={<PerfilUsuario />} />
           </Route>
         </Route>
       </Routes>
