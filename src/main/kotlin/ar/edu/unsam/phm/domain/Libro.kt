@@ -35,13 +35,13 @@ class Libro(
     }
 }
 
-enum class Genero {
-    DRAMA,
-    CIENCIA_FICCION,
-    ROMANCE,
-    AUTOAYUDA,
-    DISENO,
-    LITERATURA_CLASICA
+enum class Genero(val label: String) {
+    DRAMA("Drama"),
+    CIENCIA_FICCION("Ciencia Ficción"),
+    ROMANCE("Romance"),
+    AUTOAYUDA("Autoayuda"),
+    DISENO("Diseño"),
+    LITERATURA_CLASICA("Literatura Clásica"),
 }
 
 enum class Idioma {

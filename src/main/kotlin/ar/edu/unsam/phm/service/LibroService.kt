@@ -4,7 +4,6 @@ import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.repository.LibroRepositorio
-import ar.edu.unsam.phm.repository.Repositorio
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -49,11 +48,13 @@ class LibroService(
             }
 
             MiLibroDTO(
+                id = libro.id,
                 titulo = libro.titulo,
                 autor = libro.autor,
+                genero = libro.genero.label,
                 estadoReserva = estadoReserva,
-                genero = libro.genero.toString(),
                 agregadoEl = LocalDate.now(),
+                portada = libro.getImagenUrl()
             )
         }
     }
