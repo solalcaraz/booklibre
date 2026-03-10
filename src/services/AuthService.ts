@@ -15,7 +15,6 @@ export type RegisterData = {
 
 type AuthResponse = {
   id: number,
-  email: string,
   nombreCompleto: string
 }
 
