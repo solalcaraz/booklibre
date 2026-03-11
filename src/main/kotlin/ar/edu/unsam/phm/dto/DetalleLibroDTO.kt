@@ -25,11 +25,10 @@ data class DetalleLibroDTO(
     //val ultimasResenias: List<ReseniaDTO>,
     //val rangosFechasOcupadas: List<RangoFechaDTO>,
     val estado: String,
-    val biblioKarmasBase: Int,
     val resenias: List<Resenia>
 )
 
-fun Libro.toDetalleDTO(biblioKarmasBase: Int, resenias: List<Resenia>) = DetalleLibroDTO(
+fun Libro.toDetalleDTO(resenias: List<Resenia>) = DetalleLibroDTO(
     id = this.id,
     titulo = this.titulo,
     //Ver que onda esto, es reflexion para evitar usar when.
@@ -46,6 +45,5 @@ fun Libro.toDetalleDTO(biblioKarmasBase: Int, resenias: List<Resenia>) = Detalle
     urlImagen = this.getImagenUrl(),
     calificacionPromedio = this.calcularCalificacionPromedio(),
     estado = this.estado.name,
-    biblioKarmasBase = biblioKarmasBase,
     resenias = resenias
 )

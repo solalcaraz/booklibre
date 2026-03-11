@@ -63,14 +63,12 @@ class LibroService(
             )
         }
     }
-    fun getDetalle(libroId: Int, usuarioLogueadoId: Int): DetalleLibroDTO{
+    fun getDetalle(libroId: Int): DetalleLibroDTO{
         //TODO: Ver de enviar todas las fechas que el libro está reservado (usar repoReservas) -> UI
         val libro = libroRepositorio.getById(libroId)
-        val usuario = usuarioRepository.getById(usuarioLogueadoId)
-        val bibliokarmasBase = libro.calcularBiblioKarmas(0, usuario)
         //TODO: Por el momento todos, falta agregar orden por fecha y solo tomar 2.
         val resenias = reservaRepositorio.buscarPorLibro(libro).mapNotNull { reserva -> reserva.resenia}
 
-        return libro.toDetalleDTO(bibliokarmasBase, resenias)
+        return libro.toDetalleDTO( resenias)
     }
 }

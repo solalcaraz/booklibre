@@ -25,7 +25,7 @@ class LibroController(val libroService: LibroService, val usuarioService: Usuari
         return libroService.misLibros(usuario)
     }
     @GetMapping("/libros/detalle/{id}")
-    fun getDetalleLibro(@PathVariable id: String, @RequestParam userId: String): DetalleLibroDTO {
-        return libroService.getDetalle(id.toInt(), userId.toInt())
+    fun getDetalleLibro(@PathVariable id: String): DetalleLibroDTO {
+        return libroService.getDetalle(id.toInt())
     }
 }
