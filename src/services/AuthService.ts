@@ -14,7 +14,9 @@ export type RegisterData = {
 
 type AuthResponse = {
   id: number,
-  nombreCompleto: string
+  nombreCompleto: string,
+  imagen: string,
+  bibliokarmas: number
 }
 
 class AuthService {

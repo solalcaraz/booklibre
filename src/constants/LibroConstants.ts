@@ -1,4 +1,4 @@
-import { Genero, Idioma, Estado, TipoDeLibro } from "../responses/LibroResponse";
+import { Genero, Idioma, Estado, TipoDeLibro } from "../models/LibroResponseModel";
 
 export const TIPO_OPTIONS: Record<TipoDeLibro, string> = {
     [TipoDeLibro.COMUN]: "Común",

@@ -15,9 +15,10 @@ export type LibroUsuario = {
 
 type LibroProps = {
   libro: LibroUsuario
+  onDelete: (id: number) => Promise<void>
 }
 
-export const PerfilLibro = ({ libro }: LibroProps) => {
+export const PerfilLibro = ({ libro, onDelete }: LibroProps) => {
   const isAvailable = libro.estadoReserva == 'DISPONIBLE'
 
   return (
@@ -61,7 +62,11 @@ export const PerfilLibro = ({ libro }: LibroProps) => {
           <button className="transition hover:text-slate-800 cursor-pointer" title="Editar">
             <PencilSimpleIcon size={22} />
           </button>
-          <button className="transition hover:text-red-500 cursor-pointer" title="Eliminar">
+          <button
+            className="transition hover:text-red-500 cursor-pointer"
+            title="Eliminar"
+            onClick={() => onDelete(libro.id)}
+          >
             <TrashIcon size={22} />
           </button>
         </div>
