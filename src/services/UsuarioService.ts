@@ -1,7 +1,6 @@
 import axios from 'axios'
 import type { LibroUsuario } from '../components/PerfilUsuario/PerfilLibro'
-
-const API_URL = 'http://localhost:9000'
+import { API_URL } from '../env'
 
 export type UsuarioResponse = {
   nombreCompleto: string
