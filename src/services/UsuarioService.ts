@@ -12,6 +12,9 @@ export type UsuarioResponse = {
   ciudad: string
   bibliokarmas: number
   tipoUsuario: string
+  imagen: string
+  librosLeidos: number
+  librosPrestados: number
 }
 
 class UsuarioService {

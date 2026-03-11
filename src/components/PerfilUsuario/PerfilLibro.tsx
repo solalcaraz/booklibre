@@ -1,3 +1,6 @@
+import { PencilSimpleIcon, TrashIcon, BookIcon } from '@phosphor-icons/react'
+import { formatDate } from '../../utils/formateDate'
+
 type LibroEstado = 'DISPONIBLE' | 'PRESTADO'
 
 export type LibroUsuario = {
@@ -22,9 +25,13 @@ export const PerfilLibro = ({ libro }: LibroProps) => {
       <td className="px-5 py-4">
         <div className="flex items-center gap-4">
           <div
-            className={`flex h-16 w-12 shrink-0 items-center justify-center rounded-md text-white shadow-sm bg-gray-300`}
+            className={`flex h-16 w-12 shrink-0 items-center justify-center rounded-md text-white ${!libro.portada && 'shadow-sm bg-gray-300'}`}
           >
-            📘
+            {libro.portada ? (
+              <img src={libro.portada} alt="" className="h-16 w-12 rounded-md" />
+            ) : (
+              <BookIcon size={26} />
+            )}
           </div>
 
           <div>
@@ -45,15 +52,17 @@ export const PerfilLibro = ({ libro }: LibroProps) => {
         </span>
       </td>
 
-      <td className="px-5 py-4 text-sm font-medium text-slate-500">{libro.agregadoEl}</td>
+      <td className="px-5 py-4 text-sm font-medium text-slate-500">
+        {formatDate(libro.agregadoEl)}
+      </td>
 
       <td className="px-5 py-4">
         <div className="flex items-center justify-center gap-3 text-lg text-slate-500">
           <button className="transition hover:text-slate-800 cursor-pointer" title="Editar">
-            ✏️
+            <PencilSimpleIcon size={22} />
           </button>
           <button className="transition hover:text-red-500 cursor-pointer" title="Eliminar">
-            🗑️
+            <TrashIcon size={22} />
           </button>
         </div>
       </td>
