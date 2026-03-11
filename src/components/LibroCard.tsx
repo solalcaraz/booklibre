@@ -1,4 +1,5 @@
 import type { LibroHomeJSON } from "../classes/Libro"
+import { formatEnum } from "../utils/formateEnumLibros"
 
 interface LibroCardProps {
   libro: LibroHomeJSON
@@ -22,8 +23,8 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
 
         {/* género + rating */}
         <div className="flex justify-between items-center text-xs">
-          <span className="bg-sky-100 text-sky-600 px-2 py-1 rounded-full font-medium">
-            {libro.genero}
+          <span className={`${generoEstilos[libro.genero]} text-sky-600 px-2 py-1 rounded-full font-medium`}>
+            {formatEnum(libro.genero)}
           </span>
 
           <span className="text-amber-500 font-medium">
@@ -71,8 +72,8 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
         {/* estado */}
         <div className="text-xs">
           <p className="text-slate-400 mb-1">Estado</p>
-          <span className="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full font-medium">
-            {libro.estado}
+          <span className={`px-2 py-1 rounded-full text-xs ${estadoEstilos[libro.estado]}`}>
+            {formatEnum(libro.estado)}
           </span>
         </div>
 
@@ -87,4 +88,21 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
       </div>
     </article>
   )
+}
+
+const generoEstilos: Record<string, string> = {
+  CIENCIA_FICCION: "bg-purple-100 text-violet-700",
+  ROMANCE: "bg-rose-100 text-stone-500",
+  DRAMA: "bg-red-100 text-red-700",
+  AUTOAYUDA: "bg-blue-100 text-blue-700",
+  DISENO: "bg-orange-100 text-orange-700",
+  LITERATURA_CLASICA: "bg-yellow-100 text-yellow-700"
+}
+
+const estadoEstilos: Record<string, string> = {
+  EXCELENTE: "bg-green-100 text-green-700",
+  MUY_BUENO: "bg-emerald-100 text-emerald-700",
+  BUENO: "bg-blue-100 text-blue-700",
+  REGULAR: "bg-yellow-100 text-yellow-700",
+  MALO: "bg-red-100 text-red-700"
 }
