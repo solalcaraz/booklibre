@@ -3,30 +3,34 @@ import { useOnInit } from '../utils/hooks'
 import type { DetalleLibro } from '../types/DetalleLibro'
 import { useState } from 'react'
 import { libroService } from '../services/LibroService'
-
-//TODO: Terminar de de pulir el backend y definir el dominio para traer lo que falta
-//TODO: Pulir el los estilos. Terminar de entender bien taildwind. 
-//TODO: Manejo de error. Hablar con el team. 
+import { Spinner } from '../components/Spinner'
 
 export const DetalleLibroPage = () => {
   const { id } = useParams<{ id: string }>()
 
   const [libro, setLibro] = useState<DetalleLibro | null>(null)
   const [error, setError] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
 
-  useOnInit(() => {
-    if (!id) return
-    const fetchDetalleLibro = async () => {
-      try {
-        const data = await libroService.getDetalleLibroByID(id)
-        setLibro(data)
-      } catch (err) {
-        console.log('error', err)
+  const getDetalleLibro = async () => {
+    try {
+      if (!id) {
         setError(true)
+        return
       }
+      const libro = await libroService.getDetalleLibroByID(id)
+      setLibro(libro)
+    } catch (error) {
+      setError(true)
+      console.log(error)
+    } finally {
+      setLoading(false)
     }
-    fetchDetalleLibro()
-  })
+  }
+
+  useOnInit(getDetalleLibro)
+
+  if (loading) return <Spinner />
 
   if (error) {
     return <div>Hubo un error al cargar el libro con id {id}</div>
@@ -56,7 +60,32 @@ export const DetalleLibroPage = () => {
 
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <h3 className="font-bold text-lg mb-4">📅 Tu Reserva</h3>
-            <p className="text-sm text-gray-500">Formulario en construcción...</p>
+            <fieldset className="mb-6">
+              <legend className="text-sm font-medium text-gray-600">
+                RANGO DE FECHAS PARA RESERVAR
+              </legend>
+
+              <div className="flex gap-3 mt-2">
+                <div className="flex flex-col w-1/2">
+                  <label className="text-xs text-gray-500">Desde</label>
+                  <input
+                    type="date"
+                    placeholder="mm/dd/yy"
+                    className="border rounded-md px-2 py-1 text-sm"
+                  />
+                </div>
+
+                <div className="flex flex-col w-1/2">
+                  <label className="text-xs text-gray-500">Hasta</label>
+                  <input
+                    type="date"
+                    placeholder="mm/dd/yy"
+                    className="border rounded-md px-2 py-1 text-sm"
+                  />
+                </div>
+              </div>
+            </fieldset>
+            <button className='btn'>Confirmar</button>
           </div>
         </aside>
 
@@ -77,16 +106,23 @@ export const DetalleLibroPage = () => {
             <p>ISBN-13: {libro.isbn13}</p>
             <p>Páginas: {libro.cantPaginas}</p>
             <p>Editorial: {libro.editorial}</p>
-            <p>
-              Publicado: {libro.fechaPublicacion.getDay()} {libro.fechaPublicacion.getMonth()}{' '}
-              {libro.fechaPublicacion.getFullYear()}
-            </p>
+            <p>Publicado:</p>
             <p>editorial: {libro.editorial}</p>
             <p>idioma: {libro.idioma}</p>
             <p>estado: {libro.estado}</p>
-            <p>Ranking: {libro.calificacionPromedio} FALTA TRAER DEL BACKEND</p>
             <p>editorial: {libro.editorial}</p>
-            <p>Bibliokarma: FALTA TRAER DEL BACKEND</p>
+          </section>
+
+          <section className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h3 className="font-bold text-lg mb-4 border-b pb-2">Reseñas</h3>
+            {/* mmm algo nada mal...*/}
+            {libro.resenias.map((resenia) => (
+              <article key={resenia.comentario}>
+                <p>{resenia.nombreUsuario}</p>
+                <p>{resenia.comentario}</p>
+                <p>{resenia.puntuacion}</p>
+              </article>
+            ))}
           </section>
         </main>
       </div>
