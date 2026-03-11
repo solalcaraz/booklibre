@@ -26,7 +26,7 @@ export const Home = () => {
   if (loading) return <Spinner /> 
 
   return (
-    <main className="min-h-screen flex gap-8">
+    <main className="min-h-screen px-12 flex gap-8">
       
       {/* Filtrado para busqueda */}
       <aside className="w-fit rounded-2xl bg-white p-6 shadow-[0_10px_30px_rgba(15,23,42,0.08)] h-fit">
@@ -199,6 +199,12 @@ export const Home = () => {
             <LibroCard key={libro.id} libro={libro} />
           ))}
         </section>
+        {/* <DataGrid<LibroHomeJSON, LibroFilter>
+          fetchFunction={libroService.getAll}
+          renderItem={(libro) => (
+            <LibroCard libro={libro} />
+          )}
+        /> */}
       </div>
     </main>
   )
