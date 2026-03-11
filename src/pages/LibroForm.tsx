@@ -85,15 +85,12 @@ export default function LibroForm() {
 
     return (
         <section className="flex min-h-screen flex-col items-center justify-center bg-[#f8f7f4] px-4 py-10">
-            {/* Expandimos el max-w para que entren las dos columnas cómodamente */}
             <div className="w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-lg">
                 <header className="bg-[#f3f9ff] px-8 py-6 text-center">
                     <h1 className="text-2xl font-bold text-slate-800">{id ? "Editar Libro" : "Nuevo Libro"}</h1>
                 </header>
 
-                {/* Grid principal para separar Portada de Datos */}
                 <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-                    
                     {/* COLUMNA IZQUIERDA: Portada e Input de Enlace */}
                     <div className="flex flex-col gap-4">
                         <label className="block text-sm font-semibold text-slate-600">Portada</label>
@@ -120,13 +117,12 @@ export default function LibroForm() {
                         />
                     </div>
 
-                    {/* COLUMNA DERECHA: Datos del Libro (ocupa 2 columnas) */}
+                    {/* COLUMNA DERECHA: Datos del Libro */}
                     <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div className="md:col-span-2">
                             <BaseInput label="Título" type="text" name="titulo" value={formData.titulo} onChange={handleChange} error={errors.titulo} />
                         </div>
 
-                        {/* Corregí el name="type" por name="tipo" para que coincida con tu LibroFormData */}
                         <BaseInput label="Tipo" type="select" name="tipo" value={formData.tipo} onChange={handleChange} options={tipoOptions} error={errors.tipo} />
                         <BaseInput label="Género" type="select" name="genero" value={formData.genero} onChange={handleChange} options={generoOptions} error={errors.genero} />
 
