@@ -28,7 +28,7 @@ export default function Navbar() {
   const items: NavItemProps[] = [
     { to: '/home', label: 'Inicio' },
     { to: `/prestamos`, label: 'Mis Préstamos' },
-    { to: '/', label: 'Perfil' }
+    { to: '/profile', label: 'Perfil' }
   ]
 
   return (

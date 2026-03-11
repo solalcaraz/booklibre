@@ -17,7 +17,6 @@ export const ReservasTab = ({ tab }: Props) => {
     <>
       <form className="mt-6">
         <div className="relative">
-
           <input
             type="search"
             placeholder="Buscar por título, autor..."
@@ -28,6 +27,7 @@ export const ReservasTab = ({ tab }: Props) => {
 
       <DataGrid<ReservaResponseModel, ReservaRequestModel>
         fetchFunction={fetchFunciton}
+        //Todo: hacer toda la logica del filtro y la fetchFunction cuando cambio el tab
         // filter={{inputSearch: input}}
         renderItem={(reserva) => ( <ReservasCard reserva={reserva} />)}
       />

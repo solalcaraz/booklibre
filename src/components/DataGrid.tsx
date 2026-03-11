@@ -1,4 +1,3 @@
-// components/ui/PaginatedFetch.jsx
 import { useEffect, useState } from 'react';
 import type { PaginationResponseModel } from '../models/PaginationResponseModel';
 import type { PaginationRequestModel } from '../models/PaginationRequestModel';
@@ -8,21 +7,21 @@ type FetchFunction<TData, TFilter> = (
 ) => Promise<PaginationResponseModel<TData>>
 
 interface DataGridProps<TData, TFilter> {
-  fetchFunction: FetchFunction<TData, TFilter>
+  fetchFunction: FetchFunction<TData, TFilter>  // metodo del servicio que llama al endpoint que trae la data
   filter?: TFilter
-  renderItem: (item: TData) => React.ReactNode
+  renderItem: (item: TData) => React.ReactNode  //componente (fila/card) que quiero renderizar dentro de la grid, la grid itera sola
 }
 
 export const DEFAULT_PAGE_SIZE: number = 2
 
 export default function DataGrid<TData, TFilter>({ fetchFunction, filter, renderItem }: DataGridProps<TData, TFilter>) {
-
   const [data, setData] = useState<TData[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
 
   async function load() {
+    //Todo: poner algun spinner lindo
     setLoading(true);
 
     const req = {
@@ -49,8 +48,7 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
 
   return (
     <div>
-
-      {/* CONTENT */}
+      {/* ------ CONTENIDO ------*/}
       {loading ? (
         <div className="text-center py-10">Loading...</div>
       ) : (
@@ -63,9 +61,8 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
         </div>
       )}
 
-      {/* PAGINATION */}
+      {/* ----- PAGINATION ----- */}
       <div className="flex justify-center gap-2 mt-10">
-
         <button
           onClick={() => setPage(p => p - 1)}
           disabled={page === 0}
@@ -99,9 +96,7 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
         >
           ›
         </button>
-
       </div>
-
     </div>
   );
 }

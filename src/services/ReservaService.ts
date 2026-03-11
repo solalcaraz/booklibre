@@ -5,7 +5,7 @@ import type { ReservaRequestModel, ReservaResponseModel } from '../models/Reserv
 import type { PaginationRequestModel } from '../models/PaginationRequestModel';
 
 class ReservaService {
-  //Todo: send params and filter
+  //Todo: send filter
   async misReservas(request: PaginationRequestModel<ReservaRequestModel>): Promise<PaginationResponseModel<ReservaResponseModel>> {
     const response = await axios.post<PaginationResponseModel<ReservaResponseModel>>(API_URL + '/reserva/misReservas', request)
     return response.data
