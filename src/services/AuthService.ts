@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const API_URL = 'http://localhost:9000'
+import { API_URL } from "../env";
 
 export type LoginData = {
   email: string,
@@ -15,7 +14,6 @@ export type RegisterData = {
 
 type AuthResponse = {
   id: number,
-  email: string,
   nombreCompleto: string
 }
 
