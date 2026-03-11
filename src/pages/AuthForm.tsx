@@ -1,6 +1,7 @@
 import type { ChangeEvent, SubmitEvent } from 'react'
 import { useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router'
+import { HandWavingIcon, UserPlusIcon  } from '@phosphor-icons/react'
 import { FormInput } from '../components/FormInput'
 import { type AuthErrors, type AuthFormData, Auth } from '../classes/Auth'
 import { useOnInit } from '../utils/hooks'
@@ -41,7 +42,7 @@ export const AuthForm = () => {
         footerText: '¿Aún no tienes una cuenta?',
         footerLinkText: 'Regístrate gratis',
         footerLinkTo: '/auth/register',
-        icon: '📘'
+        icon: <HandWavingIcon color="#61b6ff" />
       }
     : {
         title: 'Crear una cuenta',
@@ -50,7 +51,7 @@ export const AuthForm = () => {
         footerText: '¿Ya tienes una cuenta?',
         footerLinkText: 'Inicia sesión',
         footerLinkTo: '/auth/login',
-        icon: '👤'
+        icon: <UserPlusIcon color="#61b6ff" />
       }
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {

@@ -1,3 +1,5 @@
+import { UserIcon } from "@phosphor-icons/react"
+
 type InfoItemProps = {
   label: string
   value: string
@@ -22,8 +24,8 @@ export const PerfilInfoCard = ({ email, telefono, tipoPerfil }: InfoCardProps) =
   return (
     <section className="rounded-2xl border border-slate-200 bg-[#eef5fb] p-5 shadow-sm">
       <div className="mb-5 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-lg shadow-sm">
-          👤
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#d1eaff] text-lg shadow-sm">
+          <UserIcon size={22} />
         </div>
         <h2 className="text-2xl font-bold text-slate-800">Mis Datos</h2>
       </div>
