@@ -8,7 +8,6 @@ export const TAB_PRESTADOS_POR_MI: string = 'prestados-por-mi'
 export const Prestamos = () => {
   const [activeTab, setActiveTab] = useState(TAB_PRESTADOS_A_MI)
 
-
   const prestamosTabs: Tab[] = [
     { id: TAB_PRESTADOS_A_MI, label: 'Prestados a mí' },
     { id: TAB_PRESTADOS_POR_MI, label: 'Prestados por mí' }
@@ -16,7 +15,6 @@ export const Prestamos = () => {
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab)
-
   }
 
   return (
@@ -29,7 +27,7 @@ export const Prestamos = () => {
       <Tabs tabs={prestamosTabs} active={activeTab} onChange={handleTabChange} />
 
       <div className="flex flex-col gap-6 px-4 my-7">
-        <ReservasTab />
+        <ReservasTab tab={activeTab} />
       </div>
     </>
   )
