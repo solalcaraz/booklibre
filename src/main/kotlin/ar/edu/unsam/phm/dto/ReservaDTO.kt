@@ -9,3 +9,7 @@ data class ReservaDTO(
     val fechaDesde: LocalDate,
     val fechaHasta: LocalDate
 )
+
+data class ReservaRequestDTO(
+    val inputSearch: String
+)

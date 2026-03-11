@@ -63,6 +63,7 @@ data class MiLibroDTO(
     val portada: String
 )
 
+// libro dentro de prestamos
 data class LibroResumen(
     val titulo: String,
     val autor: String,
