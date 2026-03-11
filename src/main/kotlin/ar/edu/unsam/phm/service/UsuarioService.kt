@@ -2,7 +2,7 @@ package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.UsuarioDTO
-import ar.edu.unsam.phm.dto.UsuarioLogeadoDTO
+import ar.edu.unsam.phm.dto.UsuarioPatch
 import ar.edu.unsam.phm.dto.UsuarioRegister
 import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
@@ -12,10 +12,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class UsuarioService(private val usuarioRepositorio: UsuarioRepositorio) {
-    fun getUsuario(usuario: UsuarioLogeadoDTO): Usuario {
-        return usuarioRepositorio.getById(usuario.id)
-    }
-
     fun getUsuarioById(id: String): Usuario {
         return usuarioRepositorio.getById(id.toInt())
     }
@@ -48,5 +44,19 @@ class UsuarioService(private val usuarioRepositorio: UsuarioRepositorio) {
         /*nuevoUsuario no tiene ID asignado, solo despues de create se le asigna,
         por eso lo busco de nuevo*/
         return usuarioRepositorio.search(nuevoUsuario.email).first()
+    }
+
+    fun updateUsuario(userPatch: UsuarioPatch, id: String) {
+        val usuario = usuarioRepositorio.getById(id.toInt())
+
+        usuario.email = userPatch.email
+        usuario.ciudad = userPatch.ciudad
+        usuario.telefono = userPatch.telefono
+        usuario.nombreCompleto = userPatch.nombreCompleto
+        usuario.descripcion = userPatch.descripcion
+        usuario.imagen = userPatch.imagen
+        /* TODO: cambiar tipo de usuario */
+
+        return usuarioRepositorio.update(usuario)
     }
 }
