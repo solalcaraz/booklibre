@@ -1,5 +1,6 @@
 package ar.edu.unsam.phm.domain
 
+import ar.edu.unsam.phm.env.Enviroment
 import ar.edu.unsam.phm.repository.EntidadConId
 import com.fasterxml.jackson.annotation.JsonIgnore
 import java.util.Date
@@ -19,7 +20,8 @@ class Libro(
     var estado: Estado,
     val dueno: Usuario
 ) : EntidadConId {
-    var imagenNombre: String = "libro-nuevo.jpg"
+    var imagenNombre: String = Enviroment.API_URL + "/imagenes/libro-nuevo.jpg"
+    var portada: String = ""
 
     // Metodo para obtener la URL completa de la imagen, se provee desde el back
     @JsonIgnore
@@ -35,13 +37,13 @@ class Libro(
     }
 }
 
-enum class Genero {
-    DRAMA,
-    CIENCIA_FICCION,
-    ROMANCE,
-    AUTOAYUDA,
-    DISENO,
-    LITERATURA_CLASICA
+enum class Genero(val label: String) {
+    DRAMA("Drama"),
+    CIENCIA_FICCION("Ciencia Ficción"),
+    ROMANCE("Romance"),
+    AUTOAYUDA("Autoayuda"),
+    DISENO("Diseño"),
+    LITERATURA_CLASICA("Literatura Clásica"),
 }
 
 enum class Idioma {

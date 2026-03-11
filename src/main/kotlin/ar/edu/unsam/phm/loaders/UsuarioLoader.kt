@@ -1,6 +1,7 @@
 package ar.edu.unsam.phm.loaders
 
 import ar.edu.unsam.phm.domain.Usuario
+import ar.edu.unsam.phm.env.Enviroment
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
@@ -14,7 +15,16 @@ class UsuarioLoader(private val usuarioRepositorio: UsuarioRepositorio): Command
             nombreCompleto = "Diego Maradona",
             email = "diego@maradona.com",
             password =  "admin"
-        )
+        ).apply {
+            descripcion = "La Mano de Dios"
+            ciudad = "Lanús, BA"
+            telefono = "+54 (11) 123-4567"
+            bibliokarmas = 1986
+            imagen = Enviroment.API_URL + "/imagenes/diego.jpg"
+            librosLeidos = 45
+            librosPrestados = 12
+        }
+
         val usuario2 = Usuario(
             nombreCompleto = "Lionel Messi",
             email = "lionel@messi.com",

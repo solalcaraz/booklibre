@@ -10,7 +10,7 @@ import ar.edu.unsam.phm.repository.ReservaRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import kotlin.Int
+import java.util.Date
 
 @Service
 class LibroService(
@@ -53,11 +53,13 @@ class LibroService(
             }
 
             MiLibroDTO(
+                id = libro.id,
                 titulo = libro.titulo,
                 autor = libro.autor,
+                genero = libro.genero.label,
                 estadoReserva = estadoReserva,
-                genero = libro.genero.toString(),
-                agregadoEl = LocalDate.now(),
+                agregadoEl = libro.fechaPublicacion,
+                portada = libro.portada
             )
         }
     }
