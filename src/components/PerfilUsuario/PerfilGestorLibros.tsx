@@ -10,9 +10,10 @@ import { PerfilTab } from './PerfilTab'
 
 type GestorLibrosProps = {
   libros: LibroUsuario[]
+  onDelete: (id: number) => Promise<void>
 }
 
-export const PerfilGestorLibros = ({ libros }: GestorLibrosProps) => {
+export const PerfilGestorLibros = ({ libros, onDelete }: GestorLibrosProps) => {
   return (
     <section className="space-y-4">
       <div className="flex flex-col justify-between md:flex-row md:items-center">
@@ -58,7 +59,7 @@ export const PerfilGestorLibros = ({ libros }: GestorLibrosProps) => {
 
             <tbody>
               {libros.map((libro) => (
-                <PerfilLibro key={libro.id} libro={libro} />
+                <PerfilLibro key={libro.id} libro={libro} onDelete={onDelete} />
               ))}
             </tbody>
           </table>
