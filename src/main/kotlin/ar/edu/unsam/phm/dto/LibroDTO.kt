@@ -16,7 +16,7 @@ data class LibroHomeDTO(
     var genero: Genero,
     var autor: String,
     var tipo: TipoDeLibroDTO,
-    var ISBN13: String,
+    var isbn13: String,
     var idioma: Idioma,
     var estado: Estado,
     var dueno: String,
@@ -38,7 +38,7 @@ fun Libro.toDTO(): LibroHomeDTO {
         genero = this.genero,
         autor = this.autor,
         tipo = tipoDTO,
-        ISBN13 = this.isbn13,
+        isbn13 = this.isbn13,
         idioma = this.idioma,
         estado = this.estado,
         dueno = this.dueno.nombreCompleto,
@@ -46,6 +46,7 @@ fun Libro.toDTO(): LibroHomeDTO {
         //biblioKarmasTotal = this.calcularBiblioKarmas()
     )
 }
+
 data class LibroDetalleDTO(
     val id: Int?,
     val titulo: String,
@@ -108,3 +109,21 @@ fun LibroDetalleDTO.toEntity(usuarioDueno: Usuario): Libro {
         dueno = usuarioDueno
     )
 }
+
+data class MiLibroDTO(
+    val id: Int?,
+    val titulo: String,
+    val autor: String,
+    val estadoReserva: String,
+    val genero: String,
+    val agregadoEl: LocalDate,
+    val portada: String
+)
+
+// libro dentro de prestamos
+data class LibroResumen(
+    val titulo: String,
+    val autor: String,
+    val puntuacion: Number,
+    val imgUrl: String,
+)

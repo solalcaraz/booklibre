@@ -2,6 +2,7 @@ package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.UsuarioDTO
+import ar.edu.unsam.phm.dto.UsuarioLogeadoDTO
 import ar.edu.unsam.phm.dto.UsuarioRegister
 import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
@@ -11,6 +12,14 @@ import org.springframework.stereotype.Service
 
 @Service
 class UsuarioService(private val usuarioRepositorio: UsuarioRepositorio) {
+    fun getUsuario(usuario: UsuarioLogeadoDTO): Usuario {
+        return usuarioRepositorio.getById(usuario.id)
+    }
+
+    fun getUsuarioById(id: String): Usuario {
+        return usuarioRepositorio.getById(id.toInt())
+    }
+
     fun login(usuario: UsuarioDTO): Usuario {
         /* Busco el primer usuario que matchee con el email y si no devuelvo null y por
         lo tanto NotFoundException */
