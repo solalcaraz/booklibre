@@ -19,6 +19,7 @@ class ReservaLoader(
 ): CommandLineRunner {
     override fun run(vararg args: String?) {
         val usuario = usuarioRepositorio.getById(2)
+        val usuario2 = usuarioRepositorio.getById(1)
         val libro1 = libroRepositorio.getById(1)
         val libro3 = libroRepositorio.getById(3)
         val libro4 = libroRepositorio.getById(4)
@@ -69,6 +70,15 @@ class ReservaLoader(
             fechaDesde = LocalDate.of(2026, 1, 7),
             fechaHasta = LocalDate.of(2026, 1, 14),
         )
+        reserva7.agregarReseña(4, "Libro buenardo")
+        val reserva8 = Reserva(
+            libro = libro7,
+            usuario = usuario2,
+            fechaDesde = LocalDate.of(2026, 1, 15),
+            fechaHasta = LocalDate.of(2026, 1, 16),
+        )
+        reserva8.agregarReseña(3, "Lo lei y no lo entendi")
+
         reservaRepositorio.create(reserva1)
         reservaRepositorio.create(reserva2)
         reservaRepositorio.create(reserva3)
@@ -76,6 +86,7 @@ class ReservaLoader(
         reservaRepositorio.create(reserva5)
         reservaRepositorio.create(reserva6)
         reservaRepositorio.create(reserva7)
+        reservaRepositorio.create(reserva8)
 
         println("Reservas cargadas en memoria")
     }

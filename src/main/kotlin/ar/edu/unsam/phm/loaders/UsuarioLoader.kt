@@ -30,9 +30,15 @@ class UsuarioLoader(private val usuarioRepositorio: UsuarioRepositorio): Command
             email = "lionel@messi.com",
             password =  "admin"
         )
+        val usuario3 = Usuario(
+            nombreCompleto = "Ye west",
+            email = "yewest@bully.com",
+            password =  "admin"
+        )
 
         usuarioRepositorio.create(usuario)
         usuarioRepositorio.create(usuario2)
+        usuarioRepositorio.create(usuario3)
 
         println("Usuarios cargados en memoria")
     }
