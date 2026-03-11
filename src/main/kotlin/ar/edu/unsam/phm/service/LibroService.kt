@@ -101,4 +101,7 @@ class LibroService(
             )
         }
     }
+    fun borrarLibro(id: String) {
+        libroRepositorio.deleteById(id)
+    }
 }

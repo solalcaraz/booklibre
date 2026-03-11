@@ -27,8 +27,8 @@ class LectorPublicador : TipoUsuario {
 class Usuario(
     override var id: Int? = null, /* el id es nullable porque lo asigna el repo */
     /* estos 3 campos son necesarios para el sign-up por eso al constructor */
-    val nombreCompleto: String,
-    val email: String,
+    var nombreCompleto: String,
+    var email: String,
     private var password: String,
     val anoUnido: Int = LocalDate.now().year,
 ) : EntidadConId {

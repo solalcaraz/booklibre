@@ -13,7 +13,9 @@ class UsuarioRegister(
 
 class UsuarioLogeadoDTO(
     val id: Int,
-    val nombreCompleto: String
+    val nombreCompleto: String,
+    val imagen: String,
+    val bibliokarmas: Int
 )
 
 class UsuarioCompletoDTO(
@@ -28,4 +30,14 @@ class UsuarioCompletoDTO(
     val imagen: String,
     val librosLeidos: Int,
     val librosPrestados: Int
+)
+
+class UsuarioPatch(
+    val nombreCompleto: String,
+    val descripcion: String,
+    val email: String,
+    val telefono: String,
+    val ciudad: String,
+    val imagen: String,
+    val tipoUsuario: String
 )
