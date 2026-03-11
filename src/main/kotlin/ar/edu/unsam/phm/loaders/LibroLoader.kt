@@ -7,6 +7,7 @@ import ar.edu.unsam.phm.domain.Estado
 import ar.edu.unsam.phm.domain.Genero
 import ar.edu.unsam.phm.domain.Idioma
 import ar.edu.unsam.phm.domain.Libro
+import ar.edu.unsam.phm.env.Enviroment
 import ar.edu.unsam.phm.repository.LibroRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.boot.CommandLineRunner
@@ -33,7 +34,9 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             fechaPublicacion = Date(),
             estado = Estado.MUY_BUENO,
             dueno = usuario
-        )
+        ).apply {
+            portada = Enviroment.API_URL + "/imagenes/orgullo.webp"
+        }
 
         val libro2 = Libro(
             titulo = "Rayuela",
@@ -48,7 +51,9 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             fechaPublicacion = Date(),
             estado = Estado.BUENO,
             dueno = usuario
-        )
+        ).apply {
+            portada = Enviroment.API_URL + "/imagenes/Rayuela.jpg"
+        }
 
         val libro3 = Libro(
             titulo = "1984",
@@ -63,24 +68,11 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             fechaPublicacion = Date(),
             estado = Estado.MUY_BUENO,
             dueno = usuario
-        )
+        ).apply {
+            portada = Enviroment.API_URL + "/imagenes/1984.webp"
+        }
 
         val libro4 = Libro(
-            titulo = "El Gran Gatsby",
-            tipo = Dedicatoria,
-            descripcion = "Retrato de la alta sociedad estadounidense en los años 20",
-            genero = Genero.LITERATURA_CLASICA,
-            autor = "F. Scott Fitzgerald",
-            cantPaginas = 180,
-            isbn13 = "9780743273565",
-            idioma = Idioma.INGLES,
-            editorial = "Scribner",
-            fechaPublicacion = Date(),
-            estado = Estado.BUENO,
-            dueno = usuario
-        )
-
-        val libro5 = Libro(
             titulo = "Dune",
             tipo = Coleccionable,
             descripcion = "Épica de ciencia ficción sobre política, religión y ecología",
@@ -93,9 +85,11 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             fechaPublicacion = Date(),
             estado = Estado.EXCELENTE,
             dueno = usuario
-        )
+        ).apply {
+            portada = Enviroment.API_URL + "/imagenes/dune.jpg"
+        }
 
-        val libro6 = Libro(
+        val libro5 = Libro(
             titulo = "Cien Años de Soledad",
             tipo = Dedicatoria,
             descripcion = "Obra maestra del realismo mágico latinoamericano",
@@ -108,9 +102,11 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             fechaPublicacion = Date(),
             estado = Estado.MUY_BUENO,
             dueno = usuario
-        )
+        ).apply {
+            portada = Enviroment.API_URL + "/imagenes/100anos.webp"
+        }
 
-        val libro7 = Libro(
+        val libro6 = Libro(
             titulo = "Hábitos Atómicos",
             tipo = Comun,
             descripcion = "Guía práctica para construir buenos hábitos y eliminar los malos",
@@ -123,9 +119,11 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             fechaPublicacion = Date(),
             estado = Estado.BUENO,
             dueno = usuario
-        )
+        ).apply {
+            portada = Enviroment.API_URL + "/imagenes/habitos.webp"
+        }
 
-        val libro8 = Libro(
+        val libro7 = Libro(
             titulo = "El Nombre del Viento",
             tipo = Coleccionable,
             descripcion = "Primera parte de la Crónica del Asesino de Reyes",
@@ -138,7 +136,27 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             fechaPublicacion = Date(),
             estado = Estado.EXCELENTE,
             dueno = usuario
-        )
+        ).apply {
+            portada = Enviroment.API_URL + "/imagenes/viento.webp"
+        }
+
+        val libro8 = Libro(
+            titulo = "El Gran Gatsby",
+            tipo = Dedicatoria,
+            descripcion = "Retrato de la alta sociedad estadounidense en los años 20",
+            genero = Genero.LITERATURA_CLASICA,
+            autor = "F. Scott Fitzgerald",
+            cantPaginas = 180,
+            isbn13 = "9780743273565",
+            idioma = Idioma.INGLES,
+            editorial = "Scribner",
+            fechaPublicacion = Date(),
+            estado = Estado.BUENO,
+            dueno = usuario
+        ). apply {
+            /*portada = Enviroment.API_URL + "/imagenes/gatsby.jpg"*/
+        }
+
         libroRepositorio.create(libro1)
         libroRepositorio.create(libro2)
         libroRepositorio.create(libro3)

@@ -9,6 +9,7 @@ import ar.edu.unsam.phm.domain.Idioma
 import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.exceptions.LibroException
 import java.time.LocalDate
+import java.util.Date
 
 enum class TipoDeLibroDTO {
     COMUN,
@@ -59,6 +60,6 @@ data class MiLibroDTO(
     val autor: String,
     val estadoReserva: String,
     val genero: String,
-    val agregadoEl: LocalDate,
+    val agregadoEl: Date,
     val portada: String
 )
