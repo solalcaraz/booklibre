@@ -8,7 +8,11 @@ class Reserva(
     val libro: Libro,
     val usuario: Usuario,
     val fechaDesde: LocalDate,
-    val fechaHasta: LocalDate
+    val fechaHasta: LocalDate,
+
+    //Una reseña no existe sin reserva, un usuario puede comentar sobre un libro que reservo.
+    var resenia: Resenia? = null, //Después de devolver el libro.
+
 ) : EntidadConId {
     init {
         require(!fechaHasta.isBefore(fechaDesde)) {
@@ -22,6 +26,12 @@ class Reserva(
 
     fun seSuperponeCon(desde: LocalDate, hasta: LocalDate): Boolean {
         return !(hasta.isBefore(fechaDesde) || desde.isAfter(fechaHasta))
+    }
+    //Métodos para trabajar con reseña
+    fun agregarReseña(puntaje: Int, comentario: String) {
+       require( puntaje in 0..5){ "El puntaje debe estar entre 0 y 5"}
+       require( comentario.isNotBlank()){"El comentario no puede estar vacio"}
+       resenia = Resenia(usuario.nombreCompleto,puntaje, comentario = comentario)
     }
 
 }

@@ -1,6 +1,7 @@
 package ar.edu.unsam.phm.dto
 
 import ar.edu.unsam.phm.domain.Libro
+import ar.edu.unsam.phm.domain.Resenia
 import ar.edu.unsam.phm.domain.Usuario
 import java.util.Date
 
@@ -24,10 +25,11 @@ data class DetalleLibroDTO(
     //val ultimasResenias: List<ReseniaDTO>,
     //val rangosFechasOcupadas: List<RangoFechaDTO>,
     val estado: String,
-    val biblioKarmasBase: Int
+    val biblioKarmasBase: Int,
+    val resenias: List<Resenia>
 )
 
-fun Libro.toDetalleDTO(biblioKarmasBase: Int) = DetalleLibroDTO(
+fun Libro.toDetalleDTO(biblioKarmasBase: Int, resenias: List<Resenia>) = DetalleLibroDTO(
     id = this.id,
     titulo = this.titulo,
     //Ver que onda esto, es reflexion para evitar usar when.
@@ -44,20 +46,6 @@ fun Libro.toDetalleDTO(biblioKarmasBase: Int) = DetalleLibroDTO(
     urlImagen = this.getImagenUrl(),
     calificacionPromedio = this.calcularCalificacionPromedio(),
     estado = this.estado.name,
-    biblioKarmasBase = biblioKarmasBase
+    biblioKarmasBase = biblioKarmasBase,
+    resenias = resenias
 )
-
-/*
-data class ReseniaDTO(
-    val id: Int,
-    val nombreUsuario: String,
-    val puntaje: Double,
-    val comentario: String,
-){
-}
-
-data class RangoFechaDTO(
-    val fechaDesde: LocalDate,
-    val fechaHasta: LocalDate
-){}
-*/

@@ -6,12 +6,10 @@ import ar.edu.unsam.phm.dto.DetalleLibroDTO
 import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.dto.toDetalleDTO
 import ar.edu.unsam.phm.repository.LibroRepositorio
-import ar.edu.unsam.phm.repository.Repositorio
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import java.util.Date
 import kotlin.Int
 
 @Service
@@ -68,6 +66,9 @@ class LibroService(
         val libro = libroRepositorio.getById(libroId)
         val usuario = usuarioRepository.getById(usuarioLogueadoId)
         val bibliokarmasBase = libro.calcularBiblioKarmas(0, usuario)
-        return libro.toDetalleDTO(bibliokarmasBase)
+        //TODO: Por el momento todos, falta agregar orden por fecha y solo tomar 2.
+        val resenias = reservaRepositorio.buscarPorLibro(libro).mapNotNull { libro -> libro.resenia}
+
+        return libro.toDetalleDTO(bibliokarmasBase, resenias)
     }
 }
