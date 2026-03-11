@@ -3,29 +3,28 @@ package ar.edu.unsam.phm.domain
 import ar.edu.unsam.phm.env.Enviroment
 import ar.edu.unsam.phm.repository.EntidadConId
 import com.fasterxml.jackson.annotation.JsonIgnore
-import java.util.Date
+import java.time.LocalDate
 
 class Libro(
     override var id: Int? = null,
     var titulo: String,
-    val tipo: TipoDeLibro,
+    var tipo: TipoDeLibro,
     var descripcion: String,
     var genero: Genero,
     var autor: String,
-    val cantPaginas: Int,
-    val isbn13: String,
+    var cantPaginas: Int,
+    var isbn13: String,
     var idioma: Idioma,
     var editorial: String,
-    val fechaPublicacion: Date,
+    var fechaPublicacion: LocalDate,
     var estado: Estado,
     val dueno: Usuario
 ) : EntidadConId {
-    var imagenNombre: String = Enviroment.API_URL + "/imagenes/libro-nuevo.jpg"
-    var portada: String = ""
+    var portada: String = Enviroment.API_URL + "/imagenes/libro-nuevo.jpg"
 
     // Metodo para obtener la URL completa de la imagen, se provee desde el back
     @JsonIgnore
-    fun getImagenUrl(): String = "images/$imagenNombre"
+    fun getPortadaUrl(): String = "imagenes/$portada"
 
     fun calcularBiblioKarmas(diasTotal: Int, usuario: Usuario): Int {
         return 5 * diasTotal + tipo.plusBiblioKarma(this, usuario)
