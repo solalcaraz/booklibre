@@ -65,7 +65,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             isbn13 = "9780451524935",
             idioma = Idioma.INGLES,
             editorial = "Signet Classics",
-            fechaPublicacion = Date(),
+            fechaPublicacion = LocalDate.of(1900, 1, 1),
             estado = Estado.MUY_BUENO,
             dueno = usuario
         ).apply {
@@ -82,7 +82,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             isbn13 = "9780441172719",
             idioma = Idioma.INGLES,
             editorial = "Ace",
-            fechaPublicacion = Date(),
+            fechaPublicacion = LocalDate.of(1900, 1, 1),
             estado = Estado.EXCELENTE,
             dueno = usuario
         ).apply {
@@ -99,7 +99,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             isbn13 = "9780307474728",
             idioma = Idioma.ESPANOL,
             editorial = "Sudamericana",
-            fechaPublicacion = Date(),
+            fechaPublicacion = LocalDate.of(1900, 1, 1),
             estado = Estado.MUY_BUENO,
             dueno = usuario
         ).apply {
@@ -116,7 +116,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             isbn13 = "9780735211292",
             idioma = Idioma.INGLES,
             editorial = "Avery",
-            fechaPublicacion = Date(),
+            fechaPublicacion = LocalDate.of(1900, 1, 1),
             estado = Estado.BUENO,
             dueno = usuario
         ).apply {
@@ -133,7 +133,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             isbn13 = "9780756404741",
             idioma = Idioma.INGLES,
             editorial = "DAW Books",
-            fechaPublicacion = Date(),
+            fechaPublicacion = LocalDate.of(1900, 1, 1),
             estado = Estado.EXCELENTE,
             dueno = usuario
         ).apply {
@@ -150,7 +150,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             isbn13 = "9780743273565",
             idioma = Idioma.INGLES,
             editorial = "Scribner",
-            fechaPublicacion = Date(),
+            fechaPublicacion = LocalDate.of(1900, 1, 1),
             estado = Estado.BUENO,
             dueno = usuario
         ). apply {
