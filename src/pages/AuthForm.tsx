@@ -1,6 +1,7 @@
 import type { ChangeEvent, SubmitEvent } from 'react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router'
+import { HandWavingIcon, UserPlusIcon  } from '@phosphor-icons/react'
 import { FormInput } from '../components/FormInput'
 import { type AuthErrors, type AuthFormData, Auth } from '../classes/Auth'
 import { useOnInit } from '../utils/hooks'
@@ -33,29 +34,25 @@ export const AuthForm = () => {
     }
   })
 
-  const content = useMemo(() => {
-    if (isLogin) {
-      return {
+  const content = isLogin
+    ? {
         title: 'BookLibre',
         subtitle: 'Por favor ingresa tus datos para continuar leyendo.',
         buttonText: 'Ingresar',
         footerText: '¿Aún no tienes una cuenta?',
         footerLinkText: 'Regístrate gratis',
         footerLinkTo: '/auth/register',
-        icon: '📘'
+        icon: <HandWavingIcon color="#61b6ff" />
       }
-    }
-
-    return {
-      title: 'Crear una cuenta',
-      subtitle: 'Únete a nuestra comunidad y empieza a leer.',
-      buttonText: 'Crear cuenta',
-      footerText: '¿Ya tienes una cuenta?',
-      footerLinkText: 'Inicia sesión',
-      footerLinkTo: '/auth/login',
-      icon: '👤'
-    }
-  }, [isLogin])
+    : {
+        title: 'Crear una cuenta',
+        subtitle: 'Únete a nuestra comunidad y empieza a leer.',
+        buttonText: 'Crear cuenta',
+        footerText: '¿Ya tienes una cuenta?',
+        footerLinkText: 'Inicia sesión',
+        footerLinkTo: '/auth/login',
+        icon: <UserPlusIcon color="#61b6ff" />
+      }
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
@@ -82,7 +79,7 @@ export const AuthForm = () => {
       formData.fullName
     )
 
-    const validationErrors = mode === 'login' ? auth.validateLogin() : auth.validateRegister()
+    const validationErrors = isLogin ? auth.validateLogin() : auth.validateRegister()
 
     setFormErrors(validationErrors)
 
@@ -121,9 +118,7 @@ export const AuthForm = () => {
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white text-2xl shadow-sm">
             <span>{content.icon}</span>
           </div>
-
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-800">{content.title}</h1>
-
           <p className="mt-2 text-sm text-slate-500">{content.subtitle}</p>
         </header>
 
