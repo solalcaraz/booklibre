@@ -6,6 +6,7 @@ import { MainLayout } from './layout/MainLayout'
 import { AuthLayout } from './layout/AuthLayout'
 import { Home } from './pages/Home'
 import { PerfilUsuario } from './pages/PerfilUsuario'
+import BookForm from './pages/BookForm'
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
             <Route path="/home" element={<Home />}/>
             <Route path="/prestamos" element={<Prestamos />} />
             <Route path="/profile" element={<PerfilUsuario />} />
+            <Route path="/libros/nuevo" element={<BookForm />} />
+            <Route path="/libros/editar/:id" element={<BookForm />} />
           </Route>
         </Route>
       </Routes>
