@@ -10,6 +10,7 @@ export type LibroFormData = {
     paginas: string;
     isbn13: string;
     descripcion: string;
+    portada: string;
 }
 
 export type LibroErrors = Partial<Record<keyof LibroFormData, string>>
@@ -27,7 +28,8 @@ export class Libro {
         public fecha_publicacion: string,
         public paginas: string,
         public isbn13: string,
-        public descripcion: string
+        public descripcion: string,
+        public portada: string
     ) {}
 
     validate() {

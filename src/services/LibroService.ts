@@ -34,7 +34,8 @@ class LibroService {
             fechaPublicacion: libroData.fecha_publicacion,
             paginas: Number(libroData.paginas),
             isbn13: libroData.isbn13,
-            descripcion: libroData.descripcion
+            descripcion: libroData.descripcion,
+            portada: libroData.portada
         };
     }
 }

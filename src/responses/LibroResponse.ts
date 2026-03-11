@@ -40,4 +40,5 @@ export interface LibroDetalleResponse {
     paginas: number
     isbn13: string
     descripcion: string
+    portada: string
 }
