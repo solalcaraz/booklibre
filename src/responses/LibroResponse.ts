@@ -27,7 +27,7 @@ export enum Estado {
     REGULAR = 'REGULAR'
 }
 
-export interface BookDetailResponse {
+export interface LibroDetalleResponse {
     id: number
     titulo: string
     tipo: TipoDeLibro
@@ -40,4 +40,5 @@ export interface BookDetailResponse {
     paginas: number
     isbn13: string
     descripcion: string
+    portada: string
 }
