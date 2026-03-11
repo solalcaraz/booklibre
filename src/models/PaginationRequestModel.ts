@@ -1,4 +1,5 @@
-export interface PaginationRequestModel {
+export interface PaginationRequestModel<tData> {
   pageSize: number;
   pageNumber: number;
+  filter?: tData;
 }

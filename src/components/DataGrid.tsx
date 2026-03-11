@@ -1,41 +1,51 @@
 // components/ui/PaginatedFetch.jsx
-import { useEffect, useState } from "react";
-import type { PaginationResponseModel } from "../models/PaginationResponseModel";
+import { useEffect, useState } from 'react';
+import type { PaginationResponseModel } from '../models/PaginationResponseModel';
+import type { PaginationRequestModel } from '../models/PaginationRequestModel';
 
-type FetchFunction<T> = (
-  params: Record<string, any>
-) => Promise<PaginationResponseModel<T>>
+type FetchFunction<TData, TFilter> = (
+  request: PaginationRequestModel<TFilter>
+) => Promise<PaginationResponseModel<TData>>
 
-interface DataGridProps<T> {
-  fetchFunction: FetchFunction<T>
-  query: Record<string, any>
-  children: (data: T[]) => React.ReactNode
+interface DataGridProps<TData, TFilter> {
+  fetchFunction: FetchFunction<TData, TFilter>
+  filter?: TFilter
+  renderItem: (item: TData) => React.ReactNode
 }
 
-export default function DataGrid<T>({ fetchFunction, query, children }: DataGridProps<T>) {
+export const DEFAULT_PAGE_SIZE: number = 2
 
-  const [data, setData] = useState<T[]>([]);
-  const [page, setPage] = useState(1);
+export default function DataGrid<TData, TFilter>({ fetchFunction, filter, renderItem }: DataGridProps<TData, TFilter>) {
+
+  const [data, setData] = useState<TData[]>([]);
+  const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
 
   async function load() {
     setLoading(true);
 
-    const res = await fetchFunction({
-      page,
-      ...query,
-    });
+    const req = {
+      pageSize: DEFAULT_PAGE_SIZE,
+      pageNumber: page,
+      ...(filter ? { filter } : {})
+    }
 
-    setData(res.data);
+    const res = await fetchFunction(req);
+
+    setData(res.items);
     setTotalPages(res.totalPages);
 
     setLoading(false);
   }
 
   useEffect(() => {
+    setPage(0)
+  }, [JSON.stringify(filter)])
+
+  useEffect(() => {
     load();
-  }, [page, JSON.stringify(query)]);
+  }, [page, filter]);
 
   return (
     <div>
@@ -44,7 +54,13 @@ export default function DataGrid<T>({ fetchFunction, query, children }: DataGrid
       {loading ? (
         <div className="text-center py-10">Loading...</div>
       ) : (
-        children(data)
+        <div className="grid grid-cols-3 gap-6">
+          {data?.map((item, i) => (
+            <div key={i}>
+              {renderItem(item)}
+            </div>
+          ))}
+        </div>
       )}
 
       {/* PAGINATION */}
@@ -52,8 +68,8 @@ export default function DataGrid<T>({ fetchFunction, query, children }: DataGrid
 
         <button
           onClick={() => setPage(p => p - 1)}
-          disabled={page === 1}
-          className="px-3 py-1 border rounded"
+          disabled={page === 0}
+          className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
         >
           ‹
         </button>
@@ -65,11 +81,11 @@ export default function DataGrid<T>({ fetchFunction, query, children }: DataGrid
           return (
             <button
               key={p}
-              onClick={() => setPage(p)}
+              onClick={() => setPage(p-1)}
               className={`px-3 py-1 rounded
-                ${p === page
+                ${p === page+1
                   ? "bg-blue-500 text-white"
-                  : "border"}`}
+                  : "border border-gray-300"}`}
             >
               {p}
             </button>
@@ -78,8 +94,8 @@ export default function DataGrid<T>({ fetchFunction, query, children }: DataGrid
 
         <button
           onClick={() => setPage(p => p + 1)}
-          disabled={page === totalPages}
-          className="px-3 py-1 border rounded"
+          disabled={page === totalPages-1}
+          className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
         >
           ›
         </button>

@@ -1,5 +1,7 @@
 export interface PaginationResponseModel <tData> {
-  data: tData[];
+  items: tData[];
+  page: number;
+  size: number;
   totalItems: number;
   totalPages: number;
 }
