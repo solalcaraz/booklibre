@@ -1,13 +1,16 @@
 import axios from "axios";
-import type { LibroFormData } from "../classes/Libro";
+import {type LibroFormData, type LibroHomeJSON } from "../classes/Libro";
 import type { LibroDetalleResponse } from "../responses/LibroResponse";
-const API_URL = 'http://localhost:9000';
+import { API_URL } from "../env";
+import { getAxiosData } from "./common";
+
 
 class LibroService {
-    // async getAll() {
-    //     const response = await axios.get<LibroResponse>(API_URL + '/libros')
-    //     return response.data
-    // }
+    async getAll() {
+        const queryLibros = () => axios.get<LibroHomeJSON[]>(`${API_URL}/libros`)
+        return await getAxiosData(queryLibros)
+    }
+    
     async getById(id: string): Promise<LibroDetalleResponse> {
         const response = await axios.get<LibroDetalleResponse>(API_URL + '/libro/' + id)
         return response.data
