@@ -5,6 +5,8 @@ import { useState } from 'react'
 import { libroService } from '../services/LibroService'
 import { Spinner } from '../components/Spinner'
 
+//TODO: Componentizar. 
+
 export const DetalleLibroPage = () => {
   const { id } = useParams<{ id: string }>()
 
@@ -55,7 +57,7 @@ export const DetalleLibroPage = () => {
         <aside className="lg:col-span-4 flex flex-col gap-6">
           <div className="bg-black rounded-xl h-96 shadow-md border-8 border-black flex items-center justify-center">
             {/* Placeholder temporal hasta que mapeemos la imagen de tu JSON */}
-            <img className='text-white font-bold' src={libro.urlImagen} alt="" />
+            <img className="text-white font-bold" src={libro.urlImagen} alt="" />
           </div>
 
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
@@ -85,7 +87,7 @@ export const DetalleLibroPage = () => {
                 </div>
               </div>
             </fieldset>
-            <button className='btn'>Confirmar</button>
+            <button className="btn">Confirmar</button>
           </div>
         </aside>
 
@@ -106,8 +108,7 @@ export const DetalleLibroPage = () => {
             <p>ISBN-13: {libro.isbn13}</p>
             <p>Páginas: {libro.cantPaginas}</p>
             <p>Editorial: {libro.editorial}</p>
-            <p>Publicado:</p>
-            <p>editorial: {libro.editorial}</p>
+            <p>Publicado: {libro.fechaPublicacion}</p>
             <p>idioma: {libro.idioma}</p>
             <p>estado: {libro.estado}</p>
             <p>editorial: {libro.editorial}</p>

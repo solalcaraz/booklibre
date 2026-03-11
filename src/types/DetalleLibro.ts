@@ -9,7 +9,7 @@ export interface DetalleLibro {
   isbn13:               string;
   idioma:               string;
   editorial:            string;
-  fechaPublicacion:     Date;
+  fechaPublicacion:     string;
   urlImagen:            string;
   calificacionPromedio: number;
   estado:               string;
