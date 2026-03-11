@@ -67,7 +67,7 @@ class LibroService(
         val usuario = usuarioRepository.getById(usuarioLogueadoId)
         val bibliokarmasBase = libro.calcularBiblioKarmas(0, usuario)
         //TODO: Por el momento todos, falta agregar orden por fecha y solo tomar 2.
-        val resenias = reservaRepositorio.buscarPorLibro(libro).mapNotNull { libro -> libro.resenia}
+        val resenias = reservaRepositorio.buscarPorLibro(libro).mapNotNull { reserva -> reserva.resenia}
 
         return libro.toDetalleDTO(bibliokarmasBase, resenias)
     }

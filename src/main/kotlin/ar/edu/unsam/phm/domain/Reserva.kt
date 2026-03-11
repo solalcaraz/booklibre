@@ -33,5 +33,4 @@ class Reserva(
        require( comentario.isNotBlank()){"El comentario no puede estar vacio"}
        resenia = Resenia(usuario.nombreCompleto,puntaje, comentario = comentario)
     }
-
 }
