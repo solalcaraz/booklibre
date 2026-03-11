@@ -1,10 +1,9 @@
 import type { ChangeEvent } from 'react'
-import type { AuthFormData } from '../classes/Auth'
 
 type FormFieldProps = {
   label: string
   type: string
-  name: keyof AuthFormData
+  name: string
   placeholder: string
   value: string
   onChange: (event: ChangeEvent<HTMLInputElement>) => void
