@@ -7,6 +7,7 @@ import ar.edu.unsam.phm.repository.LibroRepositorio
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.util.Date
 
 @Service
 class LibroService(
@@ -53,8 +54,8 @@ class LibroService(
                 autor = libro.autor,
                 genero = libro.genero.label,
                 estadoReserva = estadoReserva,
-                agregadoEl = LocalDate.now(),
-                portada = libro.getImagenUrl()
+                agregadoEl = libro.fechaPublicacion,
+                portada = libro.portada
             )
         }
     }

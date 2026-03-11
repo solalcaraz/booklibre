@@ -32,7 +32,7 @@ class ReservaLoader(
             libro = libro3,
             usuario = usuario,
             fechaDesde = LocalDate.of(2026, 3, 3),
-            fechaHasta = LocalDate.of(2026, 3, 10),
+            fechaHasta = LocalDate.of(2026, 3, 12),
         )
 
         reservaRepositorio.create(reserva1)

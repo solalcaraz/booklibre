@@ -1,7 +1,5 @@
 package ar.edu.unsam.phm.dto
 
-import ar.edu.unsam.phm.domain.TipoUsuario
-
 class UsuarioDTO(
     val email: String,
     val password: String
@@ -27,4 +25,7 @@ class UsuarioCompletoDTO(
     val ciudad: String,
     val bibliokarmas: Int,
     val tipoUsuario: String,
+    val imagen: String,
+    val librosLeidos: Int,
+    val librosPrestados: Int
 )
