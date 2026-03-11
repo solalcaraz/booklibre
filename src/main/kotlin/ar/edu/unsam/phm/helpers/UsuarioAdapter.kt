@@ -13,7 +13,7 @@ interface UsuarioAdapter {
 @Service
 class UsuarioMapper: UsuarioAdapter {
     override fun toDto(usuario: Usuario): UsuarioLogeadoDTO {
-        return UsuarioLogeadoDTO( usuario.id!!, usuario.nombreCompleto)
+        return UsuarioLogeadoDTO( usuario.id!!, usuario.nombreCompleto, usuario.imagen, usuario.bibliokarmas)
     }
 
     override fun toFullDto(usuario: Usuario): UsuarioCompletoDTO {

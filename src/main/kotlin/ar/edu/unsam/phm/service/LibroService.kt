@@ -8,14 +8,14 @@ import ar.edu.unsam.phm.dto.LibroDetalleDTO
 import ar.edu.unsam.phm.dto.TipoDeLibroDTO
 import ar.edu.unsam.phm.dto.toEntity
 import ar.edu.unsam.phm.repository.LibroRepositorio
+import ar.edu.unsam.phm.repository.UsuarioRepositorio
+import org.springframework.stereotype.Service
+import java.time.LocalDate
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.DetalleLibroDTO
 import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.dto.toDetalleDTO
 import ar.edu.unsam.phm.repository.ReservaRepositorio
-import ar.edu.unsam.phm.repository.UsuarioRepositorio
-import org.springframework.stereotype.Service
-import java.time.LocalDate
 
 @Service
 class LibroService(
@@ -102,6 +102,9 @@ class LibroService(
                 portada = libro.portada
             )
         }
+    }
+    fun borrarLibro(id: String) {
+        libroRepositorio.deleteById(id)
     }
     fun getDetalle(libroId: Int): DetalleLibroDTO{
         //TODO: Ver de enviar todas las fechas que el libro está reservado (usar repoReservas) -> UI
