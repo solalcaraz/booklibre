@@ -2,8 +2,8 @@ package ar.edu.unsam.phm.dto
 
 import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.domain.Resenia
-import ar.edu.unsam.phm.domain.Usuario
-import java.util.Date
+import java.time.LocalDate
+
 
 //LocalDate es moderno y solo trabaja con la fecha.
 //Date incluye hora, lo cual no usamos.
@@ -19,7 +19,7 @@ data class DetalleLibroDTO(
     val isbn13: String,
     var idioma: String,
     val editorial: String,
-    val fechaPublicacion: Date,
+    val fechaPublicacion: LocalDate,
     val urlImagen: String,
     val calificacionPromedio: Double,
     //val ultimasResenias: List<ReseniaDTO>,
@@ -42,7 +42,7 @@ fun Libro.toDetalleDTO(resenias: List<Resenia>) = DetalleLibroDTO(
     idioma = this.idioma.name,
     editorial = this.editorial,
     fechaPublicacion = this.fechaPublicacion,
-    urlImagen = this.getImagenUrl(),
+    urlImagen = this.portada,
     calificacionPromedio = this.calcularCalificacionPromedio(),
     estado = this.estado.name,
     resenias = resenias
