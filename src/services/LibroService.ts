@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { LibroFormData } from "../classes/Libro";
-import type { LibroDetalleResponse } from "../responses/LibroResponse";
+import type { LibroDetalleResponse } from "../models/LibroResponseModel";
 const API_URL = 'http://localhost:9000';
 
 class LibroService {
