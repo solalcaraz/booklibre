@@ -59,7 +59,8 @@ data class LibroDetalleDTO(
     val fechaPublicacion: String,
     val paginas: Int,
     val isbn13: String,
-    val descripcion: String
+    val descripcion: String,
+    val portada: String
 )
 
 fun Libro.toDetalleDTO(): LibroDetalleDTO {
@@ -82,7 +83,8 @@ fun Libro.toDetalleDTO(): LibroDetalleDTO {
         fechaPublicacion = this.fechaPublicacion.toString(),
         paginas = this.cantPaginas,
         isbn13 = this.isbn13,
-        descripcion = this.descripcion
+        descripcion = this.descripcion,
+        portada = this.portada
     )
 }
 
@@ -93,7 +95,7 @@ fun LibroDetalleDTO.toEntity(usuarioDueno: Usuario): Libro {
         TipoDeLibroDTO.COLECCIONABLE -> Coleccionable
     }
 
-    return Libro(
+    val nuevoLibro = Libro(
         id = this.id,
         titulo = this.titulo,
         tipo = tipoDominio,
@@ -108,6 +110,9 @@ fun LibroDetalleDTO.toEntity(usuarioDueno: Usuario): Libro {
         estado = this.estado,
         dueno = usuarioDueno
     )
+    nuevoLibro.portada = this.portada
+
+    return nuevoLibro
 }
 
 data class MiLibroDTO(

@@ -51,6 +51,7 @@ class LibroService(
             cantPaginas = libro.paginas
             isbn13 = libro.isbn13
             fechaPublicacion = LocalDate.parse(libro.fechaPublicacion)
+            portada = libro.portada
             tipo = nuevoTipo
         }
 

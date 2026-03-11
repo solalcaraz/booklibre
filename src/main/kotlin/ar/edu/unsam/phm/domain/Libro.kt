@@ -20,12 +20,11 @@ class Libro(
     var estado: Estado,
     val dueno: Usuario
 ) : EntidadConId {
-    var imagenNombre: String = Enviroment.API_URL + "/imagenes/libro-nuevo.jpg"
-    var portada: String = ""
+    var portada: String = Enviroment.API_URL + "/imagenes/libro-nuevo.jpg"
 
     // Metodo para obtener la URL completa de la imagen, se provee desde el back
     @JsonIgnore
-    fun getImagenUrl(): String = "images/$imagenNombre"
+    fun getPortadaUrl(): String = "imagenes/$portada"
 
     fun calcularBiblioKarmas(diasTotal: Int, usuario: Usuario): Int {
         return 5 * diasTotal + tipo.plusBiblioKarma(this, usuario)
