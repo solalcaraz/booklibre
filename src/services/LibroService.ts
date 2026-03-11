@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { LibroFormData } from "../classes/Libro";
 import type { LibroDetalleResponse } from "../models/LibroResponseModel";
+import { DetalleLibro } from '../types/DetalleLibro'
 const API_URL = 'http://localhost:9000';
 
 class LibroService {
@@ -8,6 +9,15 @@ class LibroService {
     //     const response = await axios.get<LibroResponse>(API_URL + '/libros')
     //     return response.data
     // }
+
+    // REVISAR CUÁL TOMAMOS, ESTA (luis)
+    async getDetalleLibroByID(id: string): Promise<DetalleLibro> {
+        const url = `${API_URL}/libros/detalle/${id}`
+        const response = await axios.get(url)
+        return DetalleLibro.fromJSON(response.data)
+    }
+
+    // O ESTA (ille)
     async getById(id: string): Promise<LibroDetalleResponse> {
         const response = await axios.get<LibroDetalleResponse>(API_URL + '/libro/' + id)
         return response.data

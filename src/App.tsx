@@ -7,6 +7,7 @@ import { AuthLayout } from './layout/AuthLayout'
 import { Home } from './pages/Home'
 import LibroForm from './pages/LibroForm'
 import { PerfilUsuario } from './pages/PerfilUsuario'
+import { DetalleLibroPage } from './pages/DetalleLibroPage'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path="/profile" element={<PerfilUsuario />} />
             <Route path="/libro/nuevo" element={<LibroForm />} />
             <Route path="/libros/editar/:id" element={<LibroForm />} />
+            <Route path='/libros/detalle/:id' element={<DetalleLibroPage/>} />
           </Route>
         </Route>
       </Routes>
