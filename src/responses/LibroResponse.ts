@@ -27,7 +27,7 @@ export enum Estado {
     REGULAR = 'REGULAR'
 }
 
-export interface BookDetailResponse {
+export interface LibroDetalleResponse {
     id: number
     titulo: string
     tipo: TipoDeLibro
