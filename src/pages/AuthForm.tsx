@@ -1,7 +1,7 @@
 import type { ChangeEvent, SubmitEvent } from 'react'
 import { useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router'
-import { HandWavingIcon, UserPlusIcon  } from '@phosphor-icons/react'
+import { HandWavingIcon, UserPlusIcon } from '@phosphor-icons/react'
 import { FormInput } from '../components/FormInput'
 import { type AuthErrors, type AuthFormData, Auth } from '../classes/Auth'
 import { useOnInit } from '../utils/hooks'

@@ -1,6 +1,6 @@
 type FilterChipProps = {
   label: string
-  active?: boolean
+  active: boolean
   onClick: () => void
 }
 

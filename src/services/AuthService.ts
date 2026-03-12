@@ -34,11 +34,18 @@ class AuthService {
 
   estaAutenticado(): boolean {
     const user = window.localStorage.getItem('user')
+
     return user !== null && user !== ''
   }
 
   cerrarSesion(){
     window.localStorage.removeItem('user')
+  }
+
+  userDeStorage(){
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+
+    return user
   }
 }
 

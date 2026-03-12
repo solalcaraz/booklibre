@@ -5,3 +5,10 @@ export interface PaginationResponseModel <tData> {
   totalItems: number;
   totalPages: number;
 }
+
+export type PaginationState = {
+  page: number
+  totalPages: number
+  size: number
+  totalItems: number
+}

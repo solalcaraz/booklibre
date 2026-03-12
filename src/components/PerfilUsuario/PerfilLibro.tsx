@@ -1,18 +1,7 @@
-import { PencilSimpleIcon, TrashIcon, BookIcon } from '@phosphor-icons/react'
-import { formatDate } from '../../utils/formateDate'
 import { Link } from 'react-router'
-
-type LibroEstado = 'DISPONIBLE' | 'PRESTADO'
-
-export type LibroUsuario = {
-  id: number
-  titulo: string
-  autor: string
-  genero: string
-  estadoReserva: LibroEstado
-  agregadoEl: string
-  portada: string
-}
+import { PencilSimpleIcon, TrashIcon, BookIcon } from '@phosphor-icons/react'
+import type { LibroUsuario } from '../../services/UsuarioService'
+import { formatDate } from '../../utils/formateDate'
 
 type LibroProps = {
   libro: LibroUsuario
