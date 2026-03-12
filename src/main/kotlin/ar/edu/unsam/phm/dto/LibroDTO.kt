@@ -22,7 +22,7 @@ data class LibroHomeDTO(
     var dueno: String,
     var calificacionPromedio: Double,
     //var biblioKarmasTotal: Int
-    // foto
+    var portada: String
 )
 
 fun Libro.toDTO(): LibroHomeDTO {
@@ -42,8 +42,9 @@ fun Libro.toDTO(): LibroHomeDTO {
         idioma = this.idioma,
         estado = this.estado,
         dueno = this.dueno.nombreCompleto,
-        calificacionPromedio = this.calcularCalificacionPromedio()
+        calificacionPromedio = this.calcularCalificacionPromedio(),
         //biblioKarmasTotal = this.calcularBiblioKarmas()
+        portada = this.portada
     )
 }
 
