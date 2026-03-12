@@ -4,8 +4,10 @@ import ar.edu.unsam.phm.dto.DetalleLibroDTO
 import ar.edu.unsam.phm.dto.LibroDetalleDTO
 import ar.edu.unsam.phm.dto.LibroHomeDTO
 import ar.edu.unsam.phm.dto.MiLibroDTO
+import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.dto.toDTO
 import ar.edu.unsam.phm.dto.toDetalleDTO
+import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.service.LibroService
 import org.springframework.web.bind.annotation.*
 import ar.edu.unsam.phm.service.UsuarioService
@@ -28,9 +30,15 @@ class LibroController(val libroService: LibroService, val usuarioService: Usuari
         libroService.update(id, libroDTO)
 
     @GetMapping("/misLibros/{userId}")
-    fun listarMisLibros(@PathVariable userId: String): List<MiLibroDTO> {
+    fun listarMisLibros(
+        @PathVariable userId: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "3") size: Int,
+        @RequestParam(defaultValue = "Todos") filter: String
+    ): PaginationResponseDTO<MiLibroDTO> {
         val usuario = usuarioService.getUsuarioById(userId)
-        return libroService.misLibros(usuario)
+        val libros = libroService.misLibros(usuario, filter)
+        return paginate(libros, page, size)
     }
 
     @DeleteMapping("/misLibros/{bookId}")

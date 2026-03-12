@@ -84,8 +84,8 @@ class LibroService(
         }
     }
 
-    fun misLibros(usuario: Usuario): List<MiLibroDTO> {
-        return libroRepositorio.librosDe(usuario).map { libro ->
+    fun misLibros(usuario: Usuario, filter: String): List<MiLibroDTO> {
+        val librosDto = libroRepositorio.librosDe(usuario).map { libro ->
             val estadoReserva = if (reservaRepositorio.libroEstaPrestado(libro)) {
                 "PRESTADO"
             } else {
@@ -101,6 +101,12 @@ class LibroService(
                 agregadoEl = libro.fechaPublicacion,
                 portada = libro.portada
             )
+        }
+
+        return when (filter) {
+            "Disponibles" -> librosDto.filter { it.estadoReserva == "DISPONIBLE" }
+            "Prestados" -> librosDto.filter { it.estadoReserva == "PRESTADO" }
+            else -> librosDto
         }
     }
     fun borrarLibro(id: String) {
