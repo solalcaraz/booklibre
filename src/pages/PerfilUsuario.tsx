@@ -1,23 +1,28 @@
 import { useEffect, useState } from 'react'
-import type { LibroUsuario } from '../components/PerfilUsuario/PerfilLibro'
-import type { EditProfileData } from '../components/PerfilUsuario/PerfilEditModal'
-import { usuarioService, type BookFilter, type UsuarioResponse } from '../services/UsuarioService'
+import { useNavigate } from 'react-router'
+import {
+  usuarioService,
+  type FiltroLibros,
+  type UsuarioResponse,
+  type LibroUsuario,
+  type EditProfileData
+} from '../services/UsuarioService'
+import type { PaginationState } from '../models/PaginationResponseModel'
+import { type ErrorCustom, type ErrorResponse, getMensajeError } from '../utils/errorHandler'
 import { PerfilHeader } from '../components/PerfilUsuario/PerfilHeader'
 import { PerfilInfoCard } from '../components/PerfilUsuario/PerfilInfoCard'
 import { PerfilStats } from '../components/PerfilUsuario/PerfilStats'
-import { PerfilGestorLibros, type Pagination } from '../components/PerfilUsuario/PerfilGestorLibros'
+import { PerfilGestorLibros } from '../components/PerfilUsuario/PerfilGestorLibros'
 import { Spinner } from '../components/Spinner'
 import { ErrorCard } from '../components/ErrorCard'
-import { getMensajeError, type ErrorCustom, type ErrorResponse } from '../utils/errorHandler'
-import { useNavigate } from 'react-router'
 
 export const PerfilUsuario = () => {
   const [usuario, setUsuario] = useState<UsuarioResponse>()
   const [libros, setLibros] = useState<LibroUsuario[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<ErrorCustom | null>(null)
-  const [filter, setFilter] = useState<BookFilter>('Todos')
-  const [pagination, setPagination] = useState<Pagination>({
+  const [filter, setFilter] = useState<FiltroLibros>('Todos')
+  const [pagination, setPagination] = useState<PaginationState>({
     page: 0,
     totalPages: 0,
     size: 0,
@@ -75,8 +80,8 @@ export const PerfilUsuario = () => {
     }
   }
 
-  const handleFilterChange = (newFilter: BookFilter) => {
-    /* cuando cambia el filtro, reinicia a página 0 */
+  const handleFilterChange = (newFilter: FiltroLibros) => {
+    /* cuando cambia el filtro, reinicia a pagina 0 */
     setFilter(newFilter)
     setPagination((prev) => ({
       ...prev,

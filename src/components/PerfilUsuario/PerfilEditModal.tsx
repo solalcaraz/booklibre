@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import type { UsuarioResponse } from '../../services/UsuarioService'
-import { FormInput } from '../FormInput'
 import { XIcon } from '@phosphor-icons/react'
+import type { UsuarioResponse, EditProfileData } from '../../services/UsuarioService'
+import { FormInput } from '../FormInput'
 import { Spinner } from '../Spinner'
 
 type EditProfileModalProps = {
@@ -11,17 +11,12 @@ type EditProfileModalProps = {
   onUpdate: (data: EditProfileData) => Promise<void>
 }
 
-export type EditProfileData = {
-  nombreCompleto: string
-  descripcion: string
-  email: string
-  telefono: string
-  ciudad: string
-  imagen: string
-  tipoUsuario: string
-}
-
-function EditProfileModal({ isOpen, initialData, onClose, onUpdate }: EditProfileModalProps) {
+export const EditProfileModal = ({
+  isOpen,
+  initialData,
+  onClose,
+  onUpdate
+}: EditProfileModalProps) => {
   /* uso el hook useMemo para evitar re-render infinito */
   const initialEditFormData = useMemo(() => {
     return {
@@ -36,7 +31,7 @@ function EditProfileModal({ isOpen, initialData, onClose, onUpdate }: EditProfil
   }, [initialData])
 
   /* Mapeo los datos iniciales del usuario en un estado reactivo */
-  const [editFormData, setEditFormData] = useState(initialEditFormData)
+  const [editFormData, setEditFormData] = useState<EditProfileData>(initialEditFormData)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -150,6 +145,7 @@ function EditProfileModal({ isOpen, initialData, onClose, onUpdate }: EditProfil
                   placeholder="Ej. González Catán, BA"
                 />
 
+                {/* Esto va a ser un select entiendo */}
                 <FormInput
                   label="Tipo de Usuario"
                   value={editFormData.tipoUsuario}
@@ -184,5 +180,3 @@ function EditProfileModal({ isOpen, initialData, onClose, onUpdate }: EditProfil
     </div>
   )
 }
-
-export default EditProfileModal

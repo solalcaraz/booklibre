@@ -1,30 +1,23 @@
+import { useEffect, type Dispatch, type SetStateAction } from 'react'
+import { Link } from 'react-router'
 import {
   ArrowsDownUpIcon,
   PlusCircleIcon,
   CaretLeftIcon,
   CaretRightIcon
 } from '@phosphor-icons/react'
-import type { LibroUsuario } from './PerfilLibro'
+import type { LibroUsuario, FiltroLibros } from '../../services/UsuarioService'
+import type { PaginationState } from '../../models/PaginationResponseModel'
 import { PerfilLibro } from './PerfilLibro'
 import { PerfilTab } from './PerfilTab'
-import { Link } from 'react-router'
-import { useEffect, type Dispatch, type SetStateAction } from 'react'
-import type { BookFilter } from '../../services/UsuarioService'
-
-export type Pagination = {
-  page: number
-  totalPages: number
-  size: number
-  totalItems: number
-}
 
 type GestorLibrosProps = {
   libros: LibroUsuario[]
-  pagination: Pagination
-  setPagination: Dispatch<SetStateAction<Pagination>>
+  pagination: PaginationState
+  setPagination: Dispatch<SetStateAction<PaginationState>>
   onDelete: (id: number) => Promise<void>
   filter: string
-  handleFilter: (newFilter: BookFilter) => void
+  handleFilter: (newFilter: FiltroLibros) => void
 }
 
 export const PerfilGestorLibros = ({

@@ -1,7 +1,7 @@
-import { GearIcon, ChartLineIcon, MapPinIcon, CalendarDotsIcon } from '@phosphor-icons/react'
-import EditProfileModal, { type EditProfileData } from './PerfilEditModal'
 import { useState } from 'react'
-import type { UsuarioResponse } from '../../services/UsuarioService'
+import { GearIcon, ChartLineIcon, MapPinIcon, CalendarDotsIcon } from '@phosphor-icons/react'
+import type { UsuarioResponse, EditProfileData } from '../../services/UsuarioService'
+import { EditProfileModal } from './PerfilEditModal'
 
 type PerfilHeaderProps = {
   usuario: UsuarioResponse
