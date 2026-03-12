@@ -109,9 +109,11 @@ class LibroService(
             else -> librosDto
         }
     }
+
     fun borrarLibro(id: String) {
         libroRepositorio.deleteById(id)
     }
+
     fun getDetalle(libroId: Int): DetalleLibroDTO{
         //TODO: Ver de enviar todas las fechas que el libro está reservado (usar repoReservas) -> UI
         val libro = libroRepositorio.getById(libroId)

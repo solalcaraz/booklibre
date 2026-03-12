@@ -24,7 +24,7 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
         return buscarPorLibro(libro).find { it.estaActiva() }
     }
 
-    /* Devuelve true si el libro esta prestado actualmente*/
+    /* Devuelve true si el libro está prestado actualmente*/
     fun libroEstaPrestado(libro: Libro): Boolean {
         return reservaActivaDeLibro(libro) != null
     }

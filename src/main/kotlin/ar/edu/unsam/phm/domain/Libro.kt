@@ -1,6 +1,6 @@
 package ar.edu.unsam.phm.domain
 
-import ar.edu.unsam.phm.env.Enviroment
+import ar.edu.unsam.phm.env.Environment
 import ar.edu.unsam.phm.repository.EntidadConId
 import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.LocalDate
@@ -20,7 +20,7 @@ class Libro(
     var estado: Estado,
     val dueno: Usuario
 ) : EntidadConId {
-    var portada: String = Enviroment.API_URL + "/imagenes/libro-nuevo.jpg"
+    var portada: String = Environment.API_URL + "/imagenes/libro-nuevo.jpg"
 
     // Metodo para obtener la URL completa de la imagen, se provee desde el back
     @JsonIgnore

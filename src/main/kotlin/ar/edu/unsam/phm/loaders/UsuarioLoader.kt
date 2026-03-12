@@ -1,7 +1,7 @@
 package ar.edu.unsam.phm.loaders
 
 import ar.edu.unsam.phm.domain.Usuario
-import ar.edu.unsam.phm.env.Enviroment
+import ar.edu.unsam.phm.env.Environment
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
@@ -20,7 +20,7 @@ class UsuarioLoader(private val usuarioRepositorio: UsuarioRepositorio): Command
             ciudad = "Lanús, BA"
             telefono = "+54 (11) 123-4567"
             bibliokarmas = 1986
-            imagen = Enviroment.API_URL + "/imagenes/diego.jpg"
+            imagen = Environment.API_URL + "/imagenes/diego.jpg"
             librosLeidos = 45
             librosPrestados = 12
         }
