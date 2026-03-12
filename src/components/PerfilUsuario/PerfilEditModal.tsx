@@ -72,112 +72,114 @@ function EditProfileModal({ isOpen, initialData, onClose, onUpdate }: EditProfil
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4">
-      <div className="w-full max-w-xl rounded-2xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.18)]">
-        {loading ? (
-          <Spinner />
-        ) : (
-          <>
-            {' '}
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-              <div>
-                <h2 className="text-xl font-extrabold text-slate-800">Editar perfil</h2>
-                <p className="mt-1 text-sm text-slate-500">Modificá tus datos personales.</p>
-              </div>
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/30 px-4 py-6">
+      <div className="flex min-h-full items-center justify-center">
+        <div className="max-h-[90vh] w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.18)]">
+          {loading ? (
+            <Spinner />
+          ) : (
+            <div className="flex max-h-[90vh] flex-col">
+              <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 shrink-0">
+                <div>
+                  <h2 className="text-xl font-extrabold text-slate-800">Editar perfil</h2>
+                  <p className="mt-1 text-sm text-slate-500">Modificá tus datos personales.</p>
+                </div>
 
-              <button
-                type="button"
-                onClick={onClose}
-                className="rounded-full px-2 py-2 text-black transition hover:bg-slate-100 cursor-pointer"
-                aria-label="Cerrar modal"
-              >
-                <XIcon size={22} />
-              </button>
-            </div>
-            <form onSubmit={handleSubmit} className="space-y-5 px-6 py-6">
-              <FormInput
-                label="Nombre completo"
-                value={editFormData.nombreCompleto}
-                type="text"
-                name="nombreCompleto"
-                onChange={handleChange}
-                placeholder="Ej. Diego Maradona"
-              />
-
-              <FormInput
-                label="Descripción"
-                value={editFormData.descripcion}
-                type="text"
-                name="descripcion"
-                onChange={handleChange}
-                placeholder="Ej. Lector Ávido & Coleccionista"
-              />
-
-              <FormInput
-                label="Imagen"
-                value={editFormData.imagen}
-                type="text"
-                name="imagen"
-                onChange={handleChange}
-                placeholder="https://imagen.com/imagen.jpg"
-              />
-
-              <FormInput
-                label="Email"
-                type="email"
-                name="email"
-                value={editFormData.email}
-                onChange={handleChange}
-                placeholder="tu@email.com"
-              />
-
-              <FormInput
-                label="Teléfono"
-                value={editFormData.telefono}
-                name="telefono"
-                type="text"
-                onChange={handleChange}
-                placeholder="+54 (11) 123-4567"
-              />
-
-              <FormInput
-                label="Ciudad"
-                value={editFormData.ciudad}
-                onChange={handleChange}
-                name="ciudad"
-                type="text"
-                placeholder="Ej. González Catán, BA"
-              />
-
-              <FormInput
-                label="Tipo de Usuario"
-                value={editFormData.tipoUsuario}
-                type="text"
-                name="tipoUsuario"
-                onChange={handleChange}
-                placeholder="Lector / Publicador"
-              />
-
-              <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 cursor-pointer"
+                  className="cursor-pointer rounded-full px-2 py-2 text-black transition hover:bg-slate-100"
+                  aria-label="Cerrar modal"
                 >
-                  Cancelar
-                </button>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer"
-                >
-                  {loading ? 'Guardando...' : 'Guardar cambios'}
+                  <XIcon size={22} />
                 </button>
               </div>
-            </form>
-          </>
-        )}
+
+              <form onSubmit={handleSubmit} className="space-y-5 overflow-y-auto px-6 py-6">
+                <FormInput
+                  label="Nombre completo"
+                  value={editFormData.nombreCompleto}
+                  type="text"
+                  name="nombreCompleto"
+                  onChange={handleChange}
+                  placeholder="Ej. Diego Maradona"
+                />
+
+                <FormInput
+                  label="Descripción"
+                  value={editFormData.descripcion}
+                  type="text"
+                  name="descripcion"
+                  onChange={handleChange}
+                  placeholder="Ej. Lector Ávido & Coleccionista"
+                />
+
+                <FormInput
+                  label="Imagen"
+                  value={editFormData.imagen}
+                  type="text"
+                  name="imagen"
+                  onChange={handleChange}
+                  placeholder="https://imagen.com/imagen.jpg"
+                />
+
+                <FormInput
+                  label="Email"
+                  type="email"
+                  name="email"
+                  value={editFormData.email}
+                  onChange={handleChange}
+                  placeholder="tu@email.com"
+                />
+
+                <FormInput
+                  label="Teléfono"
+                  value={editFormData.telefono}
+                  name="telefono"
+                  type="text"
+                  onChange={handleChange}
+                  placeholder="+54 (11) 123-4567"
+                />
+
+                <FormInput
+                  label="Ciudad"
+                  value={editFormData.ciudad}
+                  onChange={handleChange}
+                  name="ciudad"
+                  type="text"
+                  placeholder="Ej. González Catán, BA"
+                />
+
+                <FormInput
+                  label="Tipo de Usuario"
+                  value={editFormData.tipoUsuario}
+                  type="text"
+                  name="tipoUsuario"
+                  onChange={handleChange}
+                  placeholder="Lector / Publicador"
+                />
+
+                <div className="flex justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="cursor-pointer rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+                  >
+                    Cancelar
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="cursor-pointer rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    {loading ? 'Guardando...' : 'Guardar cambios'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
