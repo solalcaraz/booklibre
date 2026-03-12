@@ -1,7 +1,7 @@
 package ar.edu.unsam.phm.repository
 import ar.edu.unsam.phm.exceptions.NotFoundException
 
-// Se implementa el patron strategy para determinar el metodo de busqueda según el tipo de repositorio
+// Se implementa el patron strategy para determinar el método de búsqueda según el tipo de repositorio
 interface SearchStrategy<T> {
     fun matches(obj: T, value: String): Boolean
 }

@@ -1,6 +1,6 @@
 package ar.edu.unsam.phm.domain
 
-import ar.edu.unsam.phm.env.Enviroment
+import ar.edu.unsam.phm.env.Environment
 import ar.edu.unsam.phm.repository.EntidadConId
 import java.time.LocalDate
 
@@ -37,7 +37,7 @@ class Usuario(
     var ciudad: String = ""
     var telefono: String = ""
     var bibliokarmas: Int = 0
-    var imagen: String = Enviroment.API_URL + "/imagenes/default_user.png"
+    var imagen: String = Environment.API_URL + "/imagenes/default_user.png"
     var librosLeidos: Int = 0
     var librosPrestados: Int = 0
 

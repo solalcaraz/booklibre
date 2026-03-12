@@ -15,6 +15,7 @@ import ar.edu.unsam.phm.service.UsuarioService
 @RestController
 @CrossOrigin("*")
 class LibroController(val libroService: LibroService, val usuarioService: UsuarioService) {
+
     @GetMapping("/libros")
     fun listarLibros(): Set<LibroHomeDTO> =
         libroService.getAll().map { it.toDTO() }.toMutableSet()
@@ -31,13 +32,14 @@ class LibroController(val libroService: LibroService, val usuarioService: Usuari
 
     @GetMapping("/misLibros/{userId}")
     fun listarMisLibros(
-        @PathVariable userId: String,
+        @PathVariable userId: String, // Esto después va a ser un token por headers
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "3") size: Int,
         @RequestParam(defaultValue = "Todos") filter: String
     ): PaginationResponseDTO<MiLibroDTO> {
         val usuario = usuarioService.getUsuarioById(userId)
         val libros = libroService.misLibros(usuario, filter)
+
         return paginate(libros, page, size)
     }
 
@@ -45,6 +47,7 @@ class LibroController(val libroService: LibroService, val usuarioService: Usuari
     fun removeLibro(@PathVariable bookId: String){
         return libroService.borrarLibro(bookId)
     }
+
     @GetMapping("/libros/detalle/{id}")
     fun getDetalleLibro(@PathVariable id: String): DetalleLibroDTO {
         return libroService.getDetalle(id.toInt())

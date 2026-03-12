@@ -7,7 +7,7 @@ import ar.edu.unsam.phm.domain.Estado
 import ar.edu.unsam.phm.domain.Genero
 import ar.edu.unsam.phm.domain.Idioma
 import ar.edu.unsam.phm.domain.Libro
-import ar.edu.unsam.phm.env.Enviroment
+import ar.edu.unsam.phm.env.Environment
 import ar.edu.unsam.phm.repository.LibroRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.boot.CommandLineRunner
@@ -35,7 +35,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             estado = Estado.MUY_BUENO,
             dueno = usuario
         ).apply {
-            portada = Enviroment.API_URL + "/imagenes/orgullo.webp"
+            portada = Environment.API_URL + "/imagenes/orgullo.webp"
         }
 
         val libro2 = Libro(
@@ -52,7 +52,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             estado = Estado.BUENO,
             dueno = usuario
         ).apply {
-            portada = Enviroment.API_URL + "/imagenes/Rayuela.jpg"
+            portada = Environment.API_URL + "/imagenes/Rayuela.jpg"
         }
 
         val libro3 = Libro(
@@ -69,7 +69,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             estado = Estado.MUY_BUENO,
             dueno = usuario
         ).apply {
-            portada = Enviroment.API_URL + "/imagenes/1984.webp"
+            portada = Environment.API_URL + "/imagenes/1984.webp"
         }
 
         val libro4 = Libro(
@@ -86,7 +86,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             estado = Estado.EXCELENTE,
             dueno = usuario
         ).apply {
-            portada = Enviroment.API_URL + "/imagenes/dune.jpg"
+            portada = Environment.API_URL + "/imagenes/dune.jpg"
         }
 
         val libro5 = Libro(
@@ -103,7 +103,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             estado = Estado.MUY_BUENO,
             dueno = usuario
         ).apply {
-            portada = Enviroment.API_URL + "/imagenes/100anos.webp"
+            portada = Environment.API_URL + "/imagenes/100anos.webp"
         }
 
         val libro6 = Libro(
@@ -120,7 +120,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             estado = Estado.BUENO,
             dueno = usuario
         ).apply {
-            portada = Enviroment.API_URL + "/imagenes/habitos.webp"
+            portada = Environment.API_URL + "/imagenes/habitos.webp"
         }
 
         val libro7 = Libro(
@@ -137,7 +137,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             estado = Estado.EXCELENTE,
             dueno = usuario
         ).apply {
-            portada = Enviroment.API_URL + "/imagenes/viento.webp"
+            portada = Environment.API_URL + "/imagenes/viento.webp"
         }
 
         val libro8 = Libro(
@@ -154,7 +154,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             estado = Estado.BUENO,
             dueno = usuario
         ). apply {
-            /*portada = Enviroment.API_URL + "/imagenes/gatsby.jpg"*/
+            /*portada = Environment.API_URL + "/imagenes/gatsby.jpg"*/
         }
 
         libroRepositorio.create(libro1)

@@ -1,7 +1,7 @@
 package ar.edu.unsam.phm.controller
 
-import ar.edu.unsam.phm.dto.UsuarioCompletoDTO
-import ar.edu.unsam.phm.dto.UsuarioPatch
+import ar.edu.unsam.phm.dto.PerfilUsuarioDTO
+import ar.edu.unsam.phm.dto.UsuarioPatchRequest
 import ar.edu.unsam.phm.helpers.UsuarioMapper
 import ar.edu.unsam.phm.service.UsuarioService
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -17,14 +17,13 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/usuario")
 class UsuarioController(val usuarioService: UsuarioService, val usuarioMapper: UsuarioMapper) {
     @GetMapping("/{id}")
-    fun getUsuario(@PathVariable id: String): UsuarioCompletoDTO {
+    fun getUsuario(@PathVariable id: String): PerfilUsuarioDTO {
         val user = usuarioService.getUsuarioById(id)
-
         return usuarioMapper.toFullDto(user)
     }
 
     @PatchMapping("/{id}")
-    fun updateUsuario(@PathVariable id: String, @RequestBody userPatch: UsuarioPatch) {
+    fun updateUsuario(@PathVariable id: String, @RequestBody userPatch: UsuarioPatchRequest) {
         return usuarioService.updateUsuario(userPatch, id)
     }
 }

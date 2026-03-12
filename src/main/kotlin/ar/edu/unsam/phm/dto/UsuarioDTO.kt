@@ -1,24 +1,24 @@
 package ar.edu.unsam.phm.dto
 
-class UsuarioDTO(
+class LoginRequest(
     val email: String,
     val password: String
 )
 
-class UsuarioRegister(
+class RegisterRequest(
     val nombreCompleto: String,
     val email: String,
     val password: String
 )
 
-class UsuarioLogeadoDTO(
+class LoginResponseDTO(
     val id: Int,
     val nombreCompleto: String,
     val imagen: String,
     val bibliokarmas: Int
 )
 
-class UsuarioCompletoDTO(
+class PerfilUsuarioDTO(
     val nombreCompleto: String,
     val email: String,
     val descripcion: String,
@@ -32,7 +32,7 @@ class UsuarioCompletoDTO(
     val librosPrestados: Int
 )
 
-class UsuarioPatch(
+class UsuarioPatchRequest(
     val nombreCompleto: String,
     val descripcion: String,
     val email: String,
