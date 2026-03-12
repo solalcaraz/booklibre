@@ -11,6 +11,11 @@ type PerfilHeaderProps = {
 export const PerfilHeader = ({ usuario, onUpdate }: PerfilHeaderProps) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
+  const handleCloseModal = () => {
+    setIsEditModalOpen(false)
+    document.body.style.overflow = 'auto'
+  }
+
   return (
     <section className="flex flex-col justify-between gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:flex-row md:items-center">
       <div className="flex items-start gap-4">
@@ -49,7 +54,7 @@ export const PerfilHeader = ({ usuario, onUpdate }: PerfilHeaderProps) => {
       <EditProfileModal
         isOpen={isEditModalOpen}
         initialData={usuario}
-        onClose={() => setIsEditModalOpen(false)}
+        onClose={handleCloseModal}
         onUpdate={onUpdate}
       />
     </section>

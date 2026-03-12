@@ -42,6 +42,7 @@ function EditProfileModal({ isOpen, initialData, onClose, onUpdate }: EditProfil
   useEffect(() => {
     if (isOpen) {
       setEditFormData(initialEditFormData)
+      document.body.style.overflow = 'hidden'
     }
   }, [isOpen, initialEditFormData])
 

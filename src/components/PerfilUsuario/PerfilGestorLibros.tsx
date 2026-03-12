@@ -8,7 +8,7 @@ import type { LibroUsuario } from './PerfilLibro'
 import { PerfilLibro } from './PerfilLibro'
 import { PerfilTab } from './PerfilTab'
 import { Link } from 'react-router'
-import type { Dispatch, SetStateAction } from 'react'
+import { useEffect, type Dispatch, type SetStateAction } from 'react'
 import type { BookFilter } from '../../services/UsuarioService'
 
 export type Pagination = {
@@ -51,6 +51,14 @@ export const PerfilGestorLibros = ({
       page: Math.min(prev.page + 1, prev.totalPages - 1)
     }))
   }
+
+  useEffect(() => {
+    if (start > end) {
+      handlePreviousPage()
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [end, start])
 
   return (
     <section className="space-y-4">
