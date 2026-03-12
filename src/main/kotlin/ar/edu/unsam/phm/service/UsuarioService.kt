@@ -4,6 +4,7 @@ import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.UsuarioDTO
 import ar.edu.unsam.phm.dto.UsuarioPatch
 import ar.edu.unsam.phm.dto.UsuarioRegister
+import ar.edu.unsam.phm.env.Enviroment
 import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.exceptions.UnauthorizedException
@@ -54,7 +55,8 @@ class UsuarioService(private val usuarioRepositorio: UsuarioRepositorio) {
         usuario.telefono = userPatch.telefono
         usuario.nombreCompleto = userPatch.nombreCompleto
         usuario.descripcion = userPatch.descripcion
-        usuario.imagen = userPatch.imagen
+        if(userPatch.imagen == "") usuario.imagen = Enviroment.API_URL + "/imagenes/default_user.png"
+        else usuario.imagen = userPatch.imagen
         /* TODO: cambiar tipo de usuario */
 
         return usuarioRepositorio.update(usuario)
