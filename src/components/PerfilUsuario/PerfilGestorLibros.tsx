@@ -7,13 +7,51 @@ import {
 import type { LibroUsuario } from './PerfilLibro'
 import { PerfilLibro } from './PerfilLibro'
 import { PerfilTab } from './PerfilTab'
+import { Link } from 'react-router'
+import type { Dispatch, SetStateAction } from 'react'
+import type { BookFilter } from '../../services/UsuarioService'
+
+export type Pagination = {
+  page: number
+  totalPages: number
+  size: number
+  totalItems: number
+}
 
 type GestorLibrosProps = {
   libros: LibroUsuario[]
+  pagination: Pagination
+  setPagination: Dispatch<SetStateAction<Pagination>>
   onDelete: (id: number) => Promise<void>
+  filter: string
+  handleFilter: (newFilter: BookFilter) => void
 }
 
-export const PerfilGestorLibros = ({ libros, onDelete }: GestorLibrosProps) => {
+export const PerfilGestorLibros = ({
+  libros,
+  onDelete,
+  setPagination,
+  pagination,
+  filter,
+  handleFilter
+}: GestorLibrosProps) => {
+  const start = pagination.totalItems === 0 ? 0 : pagination.page * pagination.size + 1
+  const end = Math.min((pagination.page + 1) * pagination.size, pagination.totalItems)
+
+  const handlePreviousPage = () => {
+    setPagination((prev) => ({
+      ...prev,
+      page: Math.max(prev.page - 1, 0)
+    }))
+  }
+
+  const handleNextPage = () => {
+    setPagination((prev) => ({
+      ...prev,
+      page: Math.min(prev.page + 1, prev.totalPages - 1)
+    }))
+  }
+
   return (
     <section className="space-y-4">
       <div className="flex flex-col justify-between md:flex-row md:items-center">
@@ -21,19 +59,34 @@ export const PerfilGestorLibros = ({ libros, onDelete }: GestorLibrosProps) => {
           Gestión de Mis Libros
         </h2>
 
-        <button className="inline-flex items-center justify-center gap-2 rounded-xl bg-pink-100 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-pink-200 cursor-pointer">
+        <Link
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-pink-100 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-pink-200 cursor-pointer"
+          to="/libro/nuevo"
+        >
           <span>
             <PlusCircleIcon size={20} />
           </span>
           Agregar Nuevo Libro
-        </button>
+        </Link>
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="flex flex-wrap gap-2 border-b border-slate-200 px-4 py-4">
-          <PerfilTab label="Todos" active />
-          <PerfilTab label="Disponibles" />
-          <PerfilTab label="Prestados" />
+          <PerfilTab
+            label="Todos"
+            active={filter === 'Todos'}
+            onClick={() => handleFilter('Todos')}
+          />
+          <PerfilTab
+            label="Disponibles"
+            active={filter === 'Disponibles'}
+            onClick={() => handleFilter('Disponibles')}
+          />
+          <PerfilTab
+            label="Prestados"
+            active={filter === 'Prestados'}
+            onClick={() => handleFilter('Prestados')}
+          />
         </div>
 
         <div className="overflow-x-auto">
@@ -66,13 +119,21 @@ export const PerfilGestorLibros = ({ libros, onDelete }: GestorLibrosProps) => {
         </div>
 
         <div className="flex items-center justify-between border-t border-slate-200 px-5 py-4 text-sm text-slate-500">
-          <p>Mostrando 1-3 de 12 libros</p>
+          <p>
+            Mostrando {start}-{end} de {pagination.totalItems} libros
+          </p>
 
           <div className="flex items-center gap-3 text-lg">
-            <button className="text-slate-400 transition hover:text-slate-700 cursor-pointer">
+            <button
+              className="text-slate-400 transition hover:text-slate-700 cursor-pointer"
+              onClick={handlePreviousPage}
+            >
               <CaretLeftIcon />
             </button>
-            <button className="text-slate-400 transition hover:text-slate-700 cursor-pointer">
+            <button
+              className="text-slate-400 transition hover:text-slate-700 cursor-pointer"
+              onClick={handleNextPage}
+            >
               <CaretRightIcon />
             </button>
           </div>

@@ -1,5 +1,6 @@
 import { PencilSimpleIcon, TrashIcon, BookIcon } from '@phosphor-icons/react'
 import { formatDate } from '../../utils/formateDate'
+import { Link } from 'react-router'
 
 type LibroEstado = 'DISPONIBLE' | 'PRESTADO'
 
@@ -59,9 +60,13 @@ export const PerfilLibro = ({ libro, onDelete }: LibroProps) => {
 
       <td className="px-5 py-4">
         <div className="flex items-center justify-center gap-3 text-lg text-slate-500">
-          <button className="transition hover:text-slate-800 cursor-pointer" title="Editar">
+          <Link
+            className="transition hover:text-slate-800 cursor-pointer"
+            title="Editar"
+            to={`/libros/editar/${libro.id}`}
+          >
             <PencilSimpleIcon size={22} />
-          </button>
+          </Link>
           <button
             className="transition hover:text-red-500 cursor-pointer"
             title="Eliminar"
