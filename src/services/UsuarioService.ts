@@ -2,6 +2,9 @@ import axios from 'axios'
 import type { LibroUsuario } from '../components/PerfilUsuario/PerfilLibro'
 import { API_URL } from '../env'
 import type { EditProfileData } from '../components/PerfilUsuario/PerfilEditModal'
+import type { PaginationResponseModel } from '../models/PaginationResponseModel'
+
+export type BookFilter = 'Todos' | 'Disponibles' | 'Prestados'
 
 export type UsuarioResponse = {
   nombreCompleto: string
@@ -25,9 +28,14 @@ class UsuarioService {
     return response.data
   }
 
-  async getLibros(): Promise<LibroUsuario[]> {
+  async getLibros(
+    page = 0,
+    filter: BookFilter = 'Todos'
+  ): Promise<PaginationResponseModel<LibroUsuario>> {
     const user = JSON.parse(localStorage.getItem('user') || '{}')
-    const response = await axios.get<LibroUsuario[]>(API_URL + `/misLibros/${user.id}`)
+    const response = await axios.get<PaginationResponseModel<LibroUsuario>>(
+      API_URL + `/misLibros/${user.id}?page=${page}&size=3&filter=${filter}`
+    )
 
     return response.data
   }
