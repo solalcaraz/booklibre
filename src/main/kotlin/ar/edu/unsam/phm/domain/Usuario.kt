@@ -8,7 +8,7 @@ import java.time.LocalDate
 Capaz me equivoco y el tipo es fijo y tenemos que usar Herencia simple
 Vemos XD, aún no tiene comportamiento dice el enunciado */
 
-interface TipoUsuario {
+/*interface TipoUsuario {
     fun nombre(): String
 }
 
@@ -22,6 +22,12 @@ class Publicador : TipoUsuario {
 
 class LectorPublicador : TipoUsuario {
     override fun nombre() = "Lector / Publicador"
+}*/
+
+enum class TipoUsuario(val label: String) {
+    LECTOR("Lector"),
+    PUBLICADOR("Publicador"),
+    LECTOR_PUBLICADOR("Lector / Publicador"),
 }
 
 class Usuario(
@@ -32,7 +38,7 @@ class Usuario(
     private var password: String,
     val anoUnido: Int = LocalDate.now().year,
 ) : EntidadConId {
-    var tipoUsuario: TipoUsuario = LectorPublicador()
+    var tipoUsuario: TipoUsuario = TipoUsuario.LECTOR_PUBLICADOR
     var descripcion: String = ""
     var ciudad: String = ""
     var telefono: String = ""
@@ -43,5 +49,10 @@ class Usuario(
 
     fun validarPassword(passwordIngresada: String): Boolean {
         return this.password == passwordIngresada
+    }
+
+    fun cambiarTipo(label: String){
+        tipoUsuario = TipoUsuario.entries.find { it.label == label }
+            ?: throw IllegalArgumentException("Tipo de usuario inválido: $label")
     }
 }

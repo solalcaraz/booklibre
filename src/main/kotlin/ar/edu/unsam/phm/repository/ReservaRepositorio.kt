@@ -2,6 +2,7 @@ package ar.edu.unsam.phm.repository
 
 import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.domain.Reserva
+import ar.edu.unsam.phm.domain.Usuario
 import org.springframework.stereotype.Component
 
 class ReservaSearchStrategy : SearchStrategy<Reserva> {
@@ -27,5 +28,18 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
     /* Devuelve true si el libro está prestado actualmente*/
     fun libroEstaPrestado(libro: Libro): Boolean {
         return reservaActivaDeLibro(libro) != null
+    }
+
+    /* Los libros leídos de un usuario son todas sus reservas que ya finalizaron */
+    fun librosLeidosDe(usuario: Usuario): Int {
+        return objetos.values
+            .filter { it.usuario.id == usuario.id }
+            .count { it.estaFinalizada() }
+    }
+
+    /* Los libros prestados de un usuario son todas las reservas de cuyo libro es dueño */
+    fun librosPrestadosDe(usuario: Usuario): Int {
+        return objetos.values
+            .count { it.libro.dueno.id == usuario.id }
     }
 }

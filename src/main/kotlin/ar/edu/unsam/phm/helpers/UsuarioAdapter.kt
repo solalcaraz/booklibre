@@ -29,7 +29,7 @@ class UsuarioMapper: UsuarioAdapter {
             anoUnido = usuario.anoUnido,
             ciudad = usuario.ciudad,
             bibliokarmas = usuario.bibliokarmas,
-            tipoUsuario = usuario.tipoUsuario.nombre(),
+            tipoUsuario = usuario.tipoUsuario.label,
             imagen = usuario.imagen,
             librosLeidos = usuario.librosLeidos,
             librosPrestados = usuario.librosPrestados
