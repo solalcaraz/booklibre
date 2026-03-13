@@ -15,8 +15,9 @@ class Reserva(
 
 ) : EntidadConId {
     init {
-        require(!fechaHasta.isBefore(fechaDesde)) {
-            "La fecha hasta no puede ser anterior a la fecha desde"
+        require(!fechaHasta.isBefore(fechaDesde)
+                && usuario.id != libro.dueno.id) { // no puedo reservar mis propios libros ...
+            "La fecha hasta no puede ser anterior a la fecha desde, ni puedo reservar mis propios libros"
         }
     }
 
@@ -27,6 +28,11 @@ class Reserva(
     fun seSuperponeCon(desde: LocalDate, hasta: LocalDate): Boolean {
         return !(hasta.isBefore(fechaDesde) || desde.isAfter(fechaHasta))
     }
+
+    fun estaFinalizada(): Boolean {
+        return LocalDate.now().isAfter(this.fechaHasta)
+    }
+
     //Métodos para trabajar con reseña
     fun agregarReseña(puntaje: Int, comentario: String) {
        require( puntaje in 0..5){ "El puntaje debe estar entre 0 y 5"}

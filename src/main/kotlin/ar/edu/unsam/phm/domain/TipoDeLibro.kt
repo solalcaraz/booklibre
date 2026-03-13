@@ -15,7 +15,7 @@ object Comun: TipoDeLibro {
 
 object Dedicatoria: TipoDeLibro {
     override fun plusBiblioKarma(libro: Libro, usuario: Usuario): Int {
-        //return 200 + 10 * libro.cantReservas.size
+        //return 200 + 10 * cantidad de reservas del libro
         return 1
     }
 }

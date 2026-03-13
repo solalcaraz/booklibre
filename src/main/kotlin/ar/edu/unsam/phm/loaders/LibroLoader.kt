@@ -20,6 +20,7 @@ import java.time.LocalDate
 class LibroLoader(private val libroRepositorio: LibroRepositorio, private val usuarioRepositorio: UsuarioRepositorio) : CommandLineRunner {
     override fun run(vararg args: String?) {
         val usuario = usuarioRepositorio.getById(1)
+        val usuario2 = usuarioRepositorio.getById(2)
 
         val libro1 = Libro(
             titulo = "Orgullo y Prejuicio",
@@ -50,7 +51,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             editorial = "Cátedra",
             fechaPublicacion = LocalDate.of(1960, 1, 1),
             estado = Estado.BUENO,
-            dueno = usuario
+            dueno = usuario2
         ).apply {
             portada = Environment.API_URL + "/imagenes/Rayuela.jpg"
         }

@@ -7,6 +7,7 @@ import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.dto.toDTO
 import ar.edu.unsam.phm.dto.toDetalleDTO
+import ar.edu.unsam.phm.helpers.ordenarLibros
 import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.service.LibroService
 import org.springframework.web.bind.annotation.*
@@ -35,12 +36,14 @@ class LibroController(val libroService: LibroService, val usuarioService: Usuari
         @PathVariable userId: String, // Esto después va a ser un token por headers
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "3") size: Int,
-        @RequestParam(defaultValue = "Todos") filter: String
+        @RequestParam(defaultValue = "Todos") filter: String,
+        @RequestParam(required = false) sort: String?
     ): PaginationResponseDTO<MiLibroDTO> {
         val usuario = usuarioService.getUsuarioById(userId)
         val libros = libroService.misLibros(usuario, filter)
+        val librosOrdenados = ordenarLibros(libros, sort)
 
-        return paginate(libros, page, size)
+        return paginate(librosOrdenados, page, size)
     }
 
     @DeleteMapping("/misLibros/{bookId}")
