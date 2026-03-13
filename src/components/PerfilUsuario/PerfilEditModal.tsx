@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { XIcon } from '@phosphor-icons/react'
 import type { UsuarioResponse, EditProfileData } from '../../services/UsuarioService'
+import { TipoUsuarioSelect } from './TipoUsuarioSelect'
 import { FormInput } from '../FormInput'
 import { Spinner } from '../Spinner'
 
@@ -41,7 +42,7 @@ export const EditProfileModal = ({
     }
   }, [isOpen, initialEditFormData])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
 
     setEditFormData((prev) => ({
@@ -145,15 +146,7 @@ export const EditProfileModal = ({
                   placeholder="Ej. González Catán, BA"
                 />
 
-                {/* Esto va a ser un select entiendo */}
-                <FormInput
-                  label="Tipo de Usuario"
-                  value={editFormData.tipoUsuario}
-                  type="text"
-                  name="tipoUsuario"
-                  onChange={handleChange}
-                  placeholder="Lector / Publicador"
-                />
+                <TipoUsuarioSelect tipoUsuario={editFormData.tipoUsuario} onChange={handleChange} />
 
                 <div className="flex justify-end gap-3 pt-2">
                   <button

@@ -41,6 +41,11 @@ export type EditProfileData = {
   tipoUsuario: string
 }
 
+export type LibroSort = {
+  field: string
+  direction: string
+}
+
 class UsuarioService {
   async getUsuario(): Promise<UsuarioResponse> {
     const user = authService.userDeStorage()
@@ -51,11 +56,13 @@ class UsuarioService {
 
   async getLibros(
     page = 0,
-    filter: FiltroLibros = 'Todos'
+    filter: FiltroLibros = 'Todos',
+    sort?: LibroSort
   ): Promise<PaginationResponseModel<LibroUsuario>> {
     const user = authService.userDeStorage()
     const response = await axios.get<PaginationResponseModel<LibroUsuario>>(
-      API_URL + `/misLibros/${user.id}?page=${page}&size=3&filter=${filter}`
+      API_URL +
+        `/misLibros/${user.id}?page=${page}&size=3&filter=${filter}${sort ? `&sort=${sort.field},${sort.direction}` : ''}`
     )
 
     return response.data
