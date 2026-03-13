@@ -5,7 +5,8 @@ import {
   type FiltroLibros,
   type UsuarioResponse,
   type LibroUsuario,
-  type EditProfileData
+  type EditProfileData,
+  type LibroSort
 } from '../services/UsuarioService'
 import type { PaginationState } from '../models/PaginationResponseModel'
 import { type ErrorCustom, type ErrorResponse, getMensajeError } from '../utils/errorHandler'
@@ -28,11 +29,12 @@ export const PerfilUsuario = () => {
     size: 0,
     totalItems: 0
   })
+  const [sort, setSort] = useState<LibroSort>({ field: '', direction: 'asc' })
   const navigate = useNavigate()
 
   const getLibros = async () => {
     try {
-      const libros = await usuarioService.getLibros(pagination.page, filter)
+      const libros = await usuarioService.getLibros(pagination.page, filter, sort)
       setLibros(libros.items)
       setPagination({
         page: libros.page,
@@ -89,11 +91,27 @@ export const PerfilUsuario = () => {
     }))
   }
 
+  const handleSortChange = (field: string) => {
+    setSort((prev) => {
+      if (prev.field === field) {
+        return {
+          field,
+          direction: prev.direction === 'asc' ? 'desc' : 'asc'
+        }
+      }
+
+      return {
+        field,
+        direction: 'asc'
+      }
+    })
+  }
+
   useEffect(() => {
     getUsuario()
     getLibros()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.page, filter])
+  }, [pagination.page, filter, sort])
 
   if (loading) return <Spinner />
 
@@ -131,6 +149,7 @@ export const PerfilUsuario = () => {
             setPagination={setPagination}
             handleFilter={handleFilterChange}
             filter={filter}
+            handleSort={handleSortChange}
           />
         </section>
       </div>

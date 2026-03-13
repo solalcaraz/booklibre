@@ -18,6 +18,7 @@ type GestorLibrosProps = {
   onDelete: (id: number) => Promise<void>
   filter: string
   handleFilter: (newFilter: FiltroLibros) => void
+  handleSort: (field: string) => void
 }
 
 export const PerfilGestorLibros = ({
@@ -26,7 +27,8 @@ export const PerfilGestorLibros = ({
   setPagination,
   pagination,
   filter,
-  handleFilter
+  handleFilter,
+  handleSort
 }: GestorLibrosProps) => {
   const start = pagination.totalItems === 0 ? 0 : pagination.page * pagination.size + 1
   const end = Math.min((pagination.page + 1) * pagination.size, pagination.totalItems)
@@ -96,13 +98,19 @@ export const PerfilGestorLibros = ({
               <tr className="border-b border-slate-200 text-sm uppercase tracking-wider text-slate-500">
                 <th className="px-5 py-4 font-bold">Título y Autor</th>
                 <th className="px-5 py-4 font-bold ">
-                  <button className="flex items-center gap-1 cursor-pointer font-bold transition hover:text-slate-800">
+                  <button
+                    className="flex items-center gap-1 cursor-pointer font-bold transition hover:text-slate-800"
+                    onClick={() => handleSort('disponible')}
+                  >
                     <ArrowsDownUpIcon size={18} />
                     DISPONIBLE
                   </button>
                 </th>
                 <th className="px-5 py-4 font-bold ">
-                  <button className="flex items-center gap-1 cursor-pointer font-bold transition hover:text-slate-800">
+                  <button
+                    className="flex items-center gap-1 cursor-pointer font-bold transition hover:text-slate-800"
+                    onClick={() => handleSort('agregado')}
+                  >
                     <ArrowsDownUpIcon size={18} />
                     AGREGADO
                   </button>
