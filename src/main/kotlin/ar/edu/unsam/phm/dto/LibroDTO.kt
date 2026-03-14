@@ -10,44 +10,6 @@ enum class TipoDeLibroDTO {
     COLECCIONABLE
 }
 
-data class LibroHomeDTO(
-    var id: Int?,
-    var titulo: String,
-    var genero: Genero,
-    var autor: String,
-    var tipo: TipoDeLibroDTO,
-    var isbn13: String,
-    var idioma: Idioma,
-    var estado: Estado,
-    var dueno: String,
-    var calificacionPromedio: Double,
-    //var biblioKarmasTotal: Int
-    var portada: String
-)
-
-fun Libro.toDTO(): LibroHomeDTO {
-    val tipoDTO = when (this.tipo) {
-        is Comun -> TipoDeLibroDTO.COMUN
-        is Dedicatoria -> TipoDeLibroDTO.DEDICATORIA
-        is Coleccionable -> TipoDeLibroDTO.COLECCIONABLE
-        else -> throw LibroException.tipoInvalido(this)
-    }
-    return LibroHomeDTO(
-        id = this.id!!,
-        titulo = this.titulo,
-        genero = this.genero,
-        autor = this.autor,
-        tipo = tipoDTO,
-        isbn13 = this.isbn13,
-        idioma = this.idioma,
-        estado = this.estado,
-        dueno = this.dueno.nombreCompleto,
-        calificacionPromedio = this.calcularCalificacionPromedio(),
-        //biblioKarmasTotal = this.calcularBiblioKarmas()
-        portada = this.portada
-    )
-}
-
 data class LibroDetalleDTO(
     val id: Int?,
     val titulo: String,
