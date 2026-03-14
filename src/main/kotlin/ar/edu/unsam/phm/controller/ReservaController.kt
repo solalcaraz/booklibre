@@ -1,7 +1,6 @@
 package ar.edu.unsam.phm.controller
 
-import ar.edu.unsam.phm.domain.FiltrosLibro
-import ar.edu.unsam.phm.domain.Usuario
+import ar.edu.unsam.phm.helpers.FiltrosLibro
 import ar.edu.unsam.phm.dto.PaginationReqDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.dto.ReservaDTO
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController

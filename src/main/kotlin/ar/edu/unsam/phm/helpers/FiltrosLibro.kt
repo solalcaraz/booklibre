@@ -1,5 +1,7 @@
-package ar.edu.unsam.phm.domain
+package ar.edu.unsam.phm.helpers
 
+import ar.edu.unsam.phm.domain.Genero
+import ar.edu.unsam.phm.domain.Libro
 import java.time.LocalDate
 
 class FiltrosLibro (

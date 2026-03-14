@@ -1,16 +1,14 @@
 package ar.edu.unsam.phm.service
 
-import ar.edu.unsam.phm.domain.FiltrosLibro
-import ar.edu.unsam.phm.domain.Ordenamiento
+import ar.edu.unsam.phm.helpers.FiltrosLibro
+import ar.edu.unsam.phm.helpers.Ordenamiento
 import ar.edu.unsam.phm.domain.Reserva
-import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.repository.LibroRepositorio
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.stereotype.Service
-import java.time.LocalDate
 
 @Service
 class ReservaService (
