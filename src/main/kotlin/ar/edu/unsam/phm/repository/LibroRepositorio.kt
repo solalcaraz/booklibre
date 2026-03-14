@@ -6,7 +6,8 @@ import org.springframework.stereotype.Component
 
 class LibroSearchStrategy : SearchStrategy<Libro> {
     override fun matches(obj: Libro, value: String): Boolean {
-        return obj.titulo.contains(value, ignoreCase = true)
+        return obj.titulo.contains(value, ignoreCase = true) ||
+                obj.autor.contains(value, ignoreCase = true)
     }
 }
 

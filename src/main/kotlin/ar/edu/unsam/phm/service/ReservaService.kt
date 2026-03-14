@@ -36,21 +36,23 @@ class ReservaService (
             .groupingBy { it.libro.id }
             .eachCount()
 
-        // verifica disponibilidad real con el repo de Reservas, aplica filtros y ordena
-        val librosDisponibles = libroRepositorio.getAll()
-            .filter { it.dueno.id != usuario.id }
-            .filter { reservaRepositorio.libroEstaDisponibleEntre(it, filtros.fechaDesde, filtros.fechaHasta) }
-            .filter { filtros.aplicarA(it) }
-            .let { libros ->
-                when (filtros.orden) {
-                    Ordenamiento.RELEVANCIA -> libros
-                    Ordenamiento.TITULO_ASC -> libros.sortedBy { it.titulo.lowercase() }
-                    Ordenamiento.TITULO_DESC -> libros.sortedByDescending { it.titulo.lowercase() }
-                    Ordenamiento.FECHA_ASC -> libros.sortedBy { it.fechaPublicacion }
-                    Ordenamiento.FECHA_DESC -> libros.sortedByDescending { it.fechaPublicacion }
-                    Ordenamiento.POPULARIDAD -> libros.sortedByDescending { reservasPorLibro[it.id] ?: 0 } // si no fue reservado le dejo un 0 para garantizar que se traiga igualmente y no quede null
-                }
-            }
+        // verifica disponibilidad real con el repo de Reservas, aplica busqueda por teclado, filtros y ordena
+        val librosDisponibles =
+            (if (filtros.busqueda.isNullOrBlank()) libroRepositorio.getAll() else libroRepositorio.search(filtros.busqueda))
+                    .filter { it.dueno.id != usuario.id }
+                    .filter { reservaRepositorio.libroEstaDisponibleEntre(it, filtros.fechaDesde, filtros.fechaHasta) }
+                    .filter { filtros.aplicarA(it) }
+                    .let { libros ->
+                        when (filtros.orden) {
+                            Ordenamiento.RELEVANCIA -> libros
+                            Ordenamiento.TITULO_ASC -> libros.sortedBy { it.titulo.lowercase() }
+                            Ordenamiento.TITULO_DESC -> libros.sortedByDescending { it.titulo.lowercase() }
+                            Ordenamiento.FECHA_ASC -> libros.sortedBy { it.fechaPublicacion }
+                            Ordenamiento.FECHA_DESC -> libros.sortedByDescending { it.fechaPublicacion }
+                            Ordenamiento.POPULARIDAD -> libros.sortedByDescending { reservasPorLibro[it.id] ?: 0 } // si no fue reservado le dejo un 0 para garantizar que se traiga igualmente y no quede null
+                        }
+                    }
+
         val preReservasDisponibles = librosDisponibles.map { libro ->
                 Reserva(
                     libro = libro,

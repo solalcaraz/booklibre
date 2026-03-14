@@ -10,8 +10,19 @@ class FiltrosLibro (
     val fechaHasta: LocalDate = LocalDate.now(),
     val isbn: String? = null,
     val usuarioPrestador: String? = null,
-    val orden: Ordenamiento = Ordenamiento.RELEVANCIA
+    val orden: Ordenamiento = Ordenamiento.RELEVANCIA,
+    val busqueda: String? = null
 ) {
+    // no puede ver libros anterior a hoy
+    init {
+        require(fechaDesde >= LocalDate.now()) { "La fecha de inicio no puede ser en el pasado" }
+        require(!fechaHasta.isBefore(fechaDesde)) { "La fecha de fin no puede ser anterior a la de inicio" }
+        require(fechaHasta >= fechaDesde) { "La fecha de fin no puede ser anterior a la de inicio" }
+        require(cantPaginasMin == null || cantPaginasMax == null || cantPaginasMin <= cantPaginasMax) {
+            "El rango de páginas es inválido"
+        }
+    }
+
     fun aplicarA(libro: Libro): Boolean =
             cumpleGenero(libro) &&
             cumpleCantPaginas(libro) &&
