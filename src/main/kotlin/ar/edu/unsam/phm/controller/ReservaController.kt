@@ -1,12 +1,17 @@
 package ar.edu.unsam.phm.controller
 
+import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.PaginationReqDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.dto.ReservaDTO
+import ar.edu.unsam.phm.dto.ReservaLibroHomeDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
+import ar.edu.unsam.phm.dto.toReservaLibroHomeDTO
 import ar.edu.unsam.phm.helpers.ReservaMapper
 import ar.edu.unsam.phm.service.ReservaService
 import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -51,4 +56,9 @@ class ReservaController (private val reservaService: ReservaService, private val
         )
     }
 
+    @GetMapping("/libros/{userId}")
+    fun listarLibros(@PathVariable userId: String): Set<ReservaLibroHomeDTO> {
+        val ( libros, cantReservas ) = reservaService.getLibrosDisponibles(userId.toInt())
+        return libros.zip(cantReservas).map { ( libro, cantidad ) -> libro.toReservaLibroHomeDTO(cantidad) }.toMutableSet()
+    }
 }
