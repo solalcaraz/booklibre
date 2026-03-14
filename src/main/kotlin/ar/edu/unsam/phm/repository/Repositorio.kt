@@ -62,4 +62,9 @@ open class Repositorio<T : EntidadConId>(
     fun search(value: String): List<T> {
         return objetos.values.filter { searchStrategy.matches(it, value) }
     }
+
+    fun clearInit(){
+        objetos.clear()
+        proximoId = 0
+    }
 }
