@@ -1,6 +1,7 @@
 package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.Reserva
+import ar.edu.unsam.phm.domain.ReservaSimulada
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.helpers.paginate
@@ -47,4 +48,32 @@ class ReservaService (
 
         return Pair(reservas, cantidadReservas)
     }
+
+    //Creo un dataClass para obtener toda la info necesaria para el DTO.
+        fun getDetalleReserva(libroId: Int, userId:Int, fechaDesde: LocalDate, fechaHasta: LocalDate): ReservaSimulada {
+            val libro = libroRepositorio.getById(libroId)
+            val usuario = usuarioRepositorio.getById(userId)
+
+            //Reserva simulada con fechas del front
+            val reserva = Reserva(
+                libro= libro,
+                lector = usuario,
+                fechaDesde = fechaDesde,
+                fechaHasta = fechaHasta,
+            )
+            val cantidadReservas = reservaRepositorio.buscarPorLibro(libro).size
+            val biblioKarmas = reserva.calcularBiblioKarmas(cantidadReservas)
+            val promedio = reservaRepositorio.getPuntacionPromedio(libro)
+            val ultimasReservas = reservaRepositorio.getUltimasReservas(libro)
+            val reservasOcupadas = reservaRepositorio.getReservasOcupadas(libro)
+
+            return ReservaSimulada(
+                reserva = reserva,
+                cantidadReservasHistoricas = cantidadReservas,
+                promedio = promedio,
+                ultimasReservas = ultimasReservas,
+                reservasOcupadas = reservasOcupadas,
+                bibliokarmas = biblioKarmas
+            )
+        }
 }
