@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/reserva")
+//@RequestMapping("/reserva")
 
 class ReservaController (private val reservaService: ReservaService, private val reservaMapper: ReservaMapper) {
 
@@ -32,5 +32,12 @@ class ReservaController (private val reservaService: ReservaService, private val
             totalItems = page.totalItems,
             totalPages = page.totalPages
         )
+    }
+
+    @GetMapping("/librosDisponibles/{userId}")
+    fun listarLibros(@PathVariable userId: String, @ModelAttribute filtros: FiltrosLibro): PaginationResponseDTO<ReservaLibroHomeDTO> {
+        val ( libros, cantReservas ) = reservaService.getLibrosDisponibles(userId.toInt(), filtros)
+        val dtos = libros.zip(cantReservas).map { ( libro, cantidad ) -> libro.toReservaLibroHomeDTO(cantidad) }.toList()
+        return paginate(dtos, filtros.numeroPagina, filtros.tamanoPaginado)
     }
 }

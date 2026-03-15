@@ -26,10 +26,6 @@ class Libro(
     @JsonIgnore
     fun getPortadaUrl(): String = "imagenes/$portada"
 
-    fun calcularBiblioKarmas(diasTotal: Int, usuario: Usuario): Int {
-        return 5 * diasTotal + tipo.plusBiblioKarma(this, usuario)
-    }
-
     fun calcularCalificacionPromedio(): Double {
         // TODO: definir como queda la reserva{puntaje, comentario}
         return 0.0
