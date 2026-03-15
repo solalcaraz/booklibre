@@ -13,7 +13,9 @@ class FiltrosLibro (
     val isbn: String? = null,
     val usuarioPrestador: String? = null,
     val orden: Ordenamiento = Ordenamiento.RELEVANCIA,
-    val busqueda: String? = null
+    val busqueda: String? = null,
+    val numeroPagina: Int = 0,
+    val tamanoPaginado: Int = 6
 ) {
     // no puede ver libros anterior a hoy
     init {

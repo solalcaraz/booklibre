@@ -8,6 +8,7 @@ import ar.edu.unsam.phm.dto.ReservaLibroHomeDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
 import ar.edu.unsam.phm.dto.toReservaLibroHomeDTO
 import ar.edu.unsam.phm.helpers.ReservaMapper
+import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.service.ReservaService
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
@@ -57,8 +58,9 @@ class ReservaController (private val reservaService: ReservaService, private val
     }
 
     @GetMapping("/librosDisponibles/{userId}")
-    fun listarLibros(@PathVariable userId: String, @ModelAttribute filtros: FiltrosLibro): Set<ReservaLibroHomeDTO> {
+    fun listarLibros(@PathVariable userId: String, @ModelAttribute filtros: FiltrosLibro): PaginationResponseDTO<ReservaLibroHomeDTO> {
         val ( libros, cantReservas ) = reservaService.getLibrosDisponibles(userId.toInt(), filtros)
-        return libros.zip(cantReservas).map { ( libro, cantidad ) -> libro.toReservaLibroHomeDTO(cantidad) }.toMutableSet()
+        val dtos = libros.zip(cantReservas).map { ( libro, cantidad ) -> libro.toReservaLibroHomeDTO(cantidad) }.toList()
+        return paginate(dtos, filtros.numeroPagina, filtros.tamanoPaginado)
     }
 }

@@ -35,6 +35,7 @@ class ReservaControllerTest {
     lateinit var usuario: Usuario
     lateinit var usuario2: Usuario
     lateinit var libroDeUsuario2: Libro
+    lateinit var libro2DeUsuario2: Libro
     lateinit var libroPropio: Libro
 
     @BeforeEach
@@ -86,8 +87,24 @@ class ReservaControllerTest {
             dueno = usuario2
         )
 
+        libro2DeUsuario2 = Libro(
+            titulo = "1984",
+            tipo = Comun,
+            descripcion = "Distopía",
+            genero = Genero.CIENCIA_FICCION,
+            autor = "George Orwell",
+            cantPaginas = 328,
+            isbn13 = "9780451524935",
+            idioma = Idioma.INGLES,
+            editorial = "Signet",
+            fechaPublicacion = LocalDate.of(1949, 1, 1),
+            estado = Estado.MUY_BUENO,
+            dueno = usuario2
+        )
+
         libroRepositorio.create(libroPropio)
         libroRepositorio.create(libroDeUsuario2)
+        libroRepositorio.create(libro2DeUsuario2)
     }
 
     // region GET /librosDisponibles/{userId}
@@ -98,17 +115,17 @@ class ReservaControllerTest {
             .perform(MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}"))
             .andExpect(status().isOk)
             .andExpect(content().contentType("application/json"))
-            .andExpect(jsonPath("$.length()").value(1))
-            .andExpect(jsonPath("$.[0].titulo").value("Rayuela"))
+            .andExpect(jsonPath("$.items.length()").value(2))
+            .andExpect(jsonPath("$.items.[0].titulo").value("Rayuela"))
     }
 
     @Test
     fun `no se muestran los libros propios del usuario`() {
         mockMvc
-            .perform(MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}"))
+            .perform(MockMvcRequestBuilders.get("/librosDisponibles/${usuario2.id}"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.length()").value(1))
-            .andExpect(jsonPath("$.[0].titulo").value("Rayuela"))
+            .andExpect(jsonPath("$.items.length()").value(1))
+            .andExpect(jsonPath("$.items.[0].titulo").value("Libro Propio"))
     }
 
     @Test
@@ -129,7 +146,8 @@ class ReservaControllerTest {
                     .param("fechaHasta", LocalDate.now().plusDays(7).toString())
             )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.length()").value(0))
+            .andExpect(jsonPath("$.items.length()").value(1))
+            .andExpect(jsonPath("$.items.[0].titulo").value("1984"))
     }
 
     @Test
@@ -140,8 +158,8 @@ class ReservaControllerTest {
                     .param("busqueda", "Rayuela")
             )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.length()").value(1))
-            .andExpect(jsonPath("$.[0].titulo").value("Rayuela"))
+            .andExpect(jsonPath("$.items.length()").value(1))
+            .andExpect(jsonPath("$.items[0].titulo").value("Rayuela"))
     }
 
     @Test
@@ -152,8 +170,8 @@ class ReservaControllerTest {
                     .param("busqueda", "Cortázar")
             )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.length()").value(1))
-            .andExpect(jsonPath("$.[0].autor").value("Julio Cortázar"))
+            .andExpect(jsonPath("$.items.length()").value(1))
+            .andExpect(jsonPath("$.items.[0].autor").value("Julio Cortázar"))
     }
 
     @Test
@@ -164,7 +182,7 @@ class ReservaControllerTest {
                     .param("busqueda", "Tolkien")
             )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.length()").value(0))
+            .andExpect(jsonPath("$.items.length()").value(0))
     }
 
     @Test
@@ -172,6 +190,51 @@ class ReservaControllerTest {
         mockMvc
             .perform(MockMvcRequestBuilders.get("/librosDisponibles/9999"))
             .andExpect(status().isNotFound)
+    }
+
+// PAGINADO
+    @Test
+    fun `la primera pagina devuelve el tamanio correcto`() {
+        // agregue otro libro para usuario2 , muestra dos libros
+        // pagino para un solo libro asi me aparece uno en cada pagina
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                    .param("numeroPagina", "0")
+                    .param("tamanoPaginado", "1")
+            )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.items.length()").value(1))
+            .andExpect(jsonPath("$.totalItems").value(2))
+            .andExpect(jsonPath("$.totalPages").value(2))
+            .andExpect(jsonPath("$.page").value(0))
+    }
+
+    @Test
+    fun `la segunda pagina devuelve el resto`() {
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                    .param("numeroPagina", "1")
+                    .param("tamanoPaginado", "1")
+            )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.items.length()").value(1))
+            .andExpect(jsonPath("$.totalItems").value(2))
+            .andExpect(jsonPath("$.page").value(1))
+    }
+
+    @Test
+    fun `una pagina fuera de rango devuelve items vacio`() {
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                    .param("numeroPagina", "99")
+                    .param("tamanoPaginado", "10")
+            )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.items.length()").value(0))
+            .andExpect(jsonPath("$.totalItems").value(2))
     }
 
     // endregion
