@@ -18,12 +18,11 @@ import org.springframework.web.bind.annotation.RestController
 
 class ReservaController (private val reservaService: ReservaService, private val reservaMapper: ReservaMapper) {
 
-    //Todo: filtrar por inputSearch
-    @PostMapping("/misReservas")
-    fun prestadosAmi(
-        @RequestBody request: PaginationReqDTO<ReservaRequestDTO>
+    @PostMapping("/obtenerReservas")
+    fun obtenerReservas(
+        @RequestBody payload: PaginationReqDTO<ReservaRequestDTO>
     ): PaginationResponseDTO<ReservaDTO> {
-        val page = reservaService.getMisReservas(request.pageNumber, request.pageSize)
+        val page = reservaService.getMisReservas(payload)
         val reservasDto = page.items.map { reservaMapper.toDto(it) }
 
         return PaginationResponseDTO(
@@ -34,21 +33,4 @@ class ReservaController (private val reservaService: ReservaService, private val
             totalPages = page.totalPages
         )
     }
-
-    @PostMapping("/prestados")
-    fun prestadosPorMi(
-        @RequestBody request: PaginationReqDTO<ReservaRequestDTO>
-    ): PaginationResponseDTO<ReservaDTO> {
-        val page = reservaService.getPrestados(request.pageNumber, request.pageSize)
-        val reservasDto = page.items.map { reservaMapper.toDto(it) }
-
-        return PaginationResponseDTO(
-            items = reservasDto,
-            page = page.page,
-            size = page.size,
-            totalItems = page.totalItems,
-            totalPages = page.totalPages
-        )
-    }
-
 }

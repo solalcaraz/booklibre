@@ -11,5 +11,7 @@ data class ReservaDTO(
 )
 
 data class ReservaRequestDTO(
-    val inputSearch: String
+    val inputSearch: String,
+    val busquedaPor: String,
+    val usuarioId: String,
 )
