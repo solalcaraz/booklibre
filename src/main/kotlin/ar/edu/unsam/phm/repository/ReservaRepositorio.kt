@@ -4,6 +4,7 @@ import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.domain.Usuario
 import org.springframework.stereotype.Component
+import java.time.LocalDate
 
 class ReservaSearchStrategy : SearchStrategy<Reserva> {
     override fun matches(obj: Reserva, value: String): Boolean {
@@ -42,4 +43,8 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
         return objetos.values
             .count { it.libro.dueno.id == usuario.id }
     }
-}
+
+    // Los libros disponibles en un rango de fechas
+    fun libroEstaDisponibleEntre(libro: Libro, desde: LocalDate, hasta: LocalDate): Boolean =
+        buscarPorLibro(libro).none { it.seSuperponeCon(desde, hasta)
+}}
