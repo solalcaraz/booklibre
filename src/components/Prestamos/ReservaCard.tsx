@@ -9,7 +9,7 @@ export const ReservasCard = ({ reserva }: Props) => {
   return (
     <div className="bg-white rounded-2xl shadow-sm overflow-hidden w-full max-w-xs">
 
-      <div className="relative bg-gradient-to-br from-teal-900 to-teal-700 p-6 flex justify-center">
+      <div className="relative from-teal-900 to-teal-700 p-6 flex justify-center">
         <img
           src={reserva.libroResumen.imgUrl}
           alt={reserva.libroResumen.titulo}

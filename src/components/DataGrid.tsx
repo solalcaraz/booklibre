@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
-import type { PaginationResponseModel } from '../models/PaginationResponseModel';
-import type { PaginationRequestModel } from '../models/PaginationRequestModel';
+import { useEffect, useRef, useState } from 'react';
+import type { PagReqModel, PagResModel } from '../models/PaginationModel';
 
 type FetchFunction<TData, TFilter> = (
-  request: PaginationRequestModel<TFilter>
-) => Promise<PaginationResponseModel<TData>>
+  request: PagReqModel<TFilter>
+) => Promise<PagResModel<TData>>
 
 interface DataGridProps<TData, TFilter> {
   fetchFunction: FetchFunction<TData, TFilter>  // metodo del servicio que llama al endpoint que trae la data
@@ -20,31 +19,39 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  async function load() {
-    //Todo: poner algun spinner lindo
-    setLoading(true);
+  const prevFilterRef = useRef(filter)
 
-    const req = {
-      pageSize: DEFAULT_PAGE_SIZE,
-      pageNumber: page,
-      ...(filter ? { filter } : {})
+  useEffect(() => {
+    const filterChanged = prevFilterRef.current !== filter
+    // Si cambia el filtro → ir a página 0
+    const pageToLoad = filterChanged ? 0 : page
+
+    prevFilterRef.current = filter
+
+    async function load() {
+      setLoading(true)
+
+      const req = {
+        pageSize: DEFAULT_PAGE_SIZE,
+        pageNumber: pageToLoad,
+        ...(filter ? { filter } : {})
+      }
+
+      const res = await fetchFunction(req)
+
+      setData(res.items)
+      setTotalPages(res.totalPages)
+      setLoading(false)
+
+      // Si cambió filtro y no estábamos en 0 → sincronizar page
+      if (filterChanged && page !== 0) {
+        setPage(0)
+      }
     }
 
-    const res = await fetchFunction(req);
+    load()
 
-    setData(res.items);
-    setTotalPages(res.totalPages);
-
-    setLoading(false);
-  }
-
-  useEffect(() => {
-    setPage(0)
-  }, [JSON.stringify(filter)])
-
-  useEffect(() => {
-    load();
-  }, [page, filter]);
+  }, [page, filter])
 
   return (
     <div>
