@@ -1,10 +1,10 @@
 package ar.edu.unsam.phm.repository
 
 import ar.edu.unsam.phm.domain.Libro
-import ar.edu.unsam.phm.domain.Resenia
 import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.domain.Usuario
 import org.springframework.stereotype.Component
+import java.time.LocalDate
 
 class ReservaSearchStrategy : SearchStrategy<Reserva> {
     override fun matches(obj: Reserva, value: String): Boolean {
@@ -44,11 +44,17 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
             .count { it.libro.dueno.id == usuario.id }
     }
 
+    // Los libros disponibles en un rango de fechas
+    fun libroEstaDisponibleEntre(libro: Libro, desde: LocalDate, hasta: LocalDate): Boolean =
+        buscarPorLibro(libro).none { it.seSuperponeCon(desde, hasta)
+        }
+
     fun getPuntacionPromedio(libro:Libro): Double{
         val resenias = buscarPorLibro(libro).mapNotNull { it.resenia }
         if( resenias.isEmpty()) return 0.0
         return resenias.sumOf { it.puntuacion } / resenias.size.toDouble()
     }
+
     fun getUltimasReservas(libro:Libro): List<Reserva>{
         return buscarPorLibro(libro)
             .filter { it.estaFinalizada() }
@@ -56,6 +62,7 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
             .sortedByDescending { it.resenia!!.fechaCreacion }
             .take(2)
     }
+
     fun getReservasOcupadas(libro:Libro): List<Reserva>{
         return buscarPorLibro(libro)
             .filter { !it.estaFinalizada() }
