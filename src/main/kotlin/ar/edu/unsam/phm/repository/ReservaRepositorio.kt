@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 class ReservaSearchStrategy : SearchStrategy<Reserva> {
     override fun matches(obj: Reserva, value: String): Boolean {
         return obj.libro.titulo.contains(value, ignoreCase = true) ||
-                obj.usuario.nombreCompleto.contains(value, ignoreCase = true) ||
+                obj.lector.nombreCompleto.contains(value, ignoreCase = true) ||
                 obj.libro.isbn13.contains(value, ignoreCase = true)
     }
 }
@@ -33,7 +33,7 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
     /* Los libros leídos de un usuario son todas sus reservas que ya finalizaron */
     fun librosLeidosDe(usuario: Usuario): Int {
         return objetos.values
-            .filter { it.usuario.id == usuario.id }
+            .filter { it.lector.id == usuario.id }
             .count { it.estaFinalizada() }
     }
 
