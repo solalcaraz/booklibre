@@ -39,7 +39,8 @@ export class Libro {
 
         const requiredFields: (keyof LibroFormData)[] = [
             'titulo', 'tipo', 'genero', 'autor', 'idioma', 
-            'estado', 'editorial', 'isbn13', 'descripcion'
+            'estado', 'editorial', 'isbn13', 'descripcion',
+            'fecha_publicacion'
         ];
         requiredFields.forEach(field => {
             if (!this[field as keyof this]?.toString().trim()) {

@@ -164,7 +164,7 @@ export default function LibroForm() {
                         <BaseInput label="Estado" type="select" name="estado" value={formData.estado} onChange={handleChange} options={estadoOptions} error={errors.estado} />
                         <BaseInput label="Editorial" type="text" name="editorial" value={formData.editorial} onChange={handleChange} error={errors.editorial} />
 
-                        <BaseInput label="Fecha Publicación" type="date" name="fecha_publicacion" value={formData.fecha_publicacion} onChange={handleChange} />
+                        <BaseInput label="Fecha Publicación" type="date" name="fecha_publicacion" value={formData.fecha_publicacion} onChange={handleChange} error={errors.fecha_publicacion} />
                         <BaseInput label="Páginas" type="number" name="paginas" value={formData.paginas} onChange={handleChange} error={errors.paginas} />
 
                         <div className="md:col-span-2">

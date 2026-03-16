@@ -30,13 +30,14 @@ class LibroService {
   }
 
   async update(id: string, libroData: LibroFormData): Promise<void> {
-    await axios.put(`${API_URL}/libro/${id}`, this.mapToDTO(libroData))
+    await axios.put(`${API_URL}/libro/${id}`, this.mapToDTO(libroData, id))
   }
 
-  private mapToDTO(libroData: LibroFormData) {
+  private mapToDTO(libroData: LibroFormData, id: string | number | null = null) {
     const user = authService.userDeStorage();
 
     return {
+      id: id ? Number(id) : null,
       titulo: libroData.titulo,
       tipo: libroData.tipo,
       genero: libroData.genero,
