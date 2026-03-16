@@ -3,8 +3,9 @@ import { useNavigate, useParams } from "react-router";
 import { libroService } from "../services/LibroService";
 import { BaseInput } from "../components/BaseInput";
 import { Libro, type LibroFormData, type LibroErrors } from "../classes/Libro";
-import { GENERO_OPTIONS, TIPO_OPTIONS, IDIOMA_OPTIONS, ESTADO_OPTIONS } from "../constants/LibroConstants";
+import { GENERO_OPTIONS, TIPO_OPTIONS, IDIOMA_OPTIONS, ESTADO_OPTIONS } from "../utils/formateEnumLibros";
 import { useOnInit } from "../utils/hooks";
+import { authService } from "../services/AuthService";
 
 const initialFormData: LibroFormData = {
     titulo: "", tipo: "", genero: "", autor: "", idioma: "",
@@ -23,10 +24,20 @@ export default function LibroForm() {
     const [formData, setFormData] = useState<LibroFormData>(initialFormData);
     const [errors, setErrors] = useState<LibroErrors>({});
 
+    //Para el manejo de errores de acceso (editar un libro que no es tuyo/no existe)
+    const [accessError, setAccessError] = useState<string | null>(null);
+
     const loadLibro = async () => {
     if (!id) return;
     try {
         const data = await libroService.getById(id);
+        const user = authService.userDeStorage();
+
+        //Validamos al dueño
+        if (data.idDueno !== user.id) {
+            setAccessError("No tienes permisos para editar este libro.");
+            return;
+        }
 
         setFormData({
             titulo: data.titulo,
@@ -44,7 +55,11 @@ export default function LibroForm() {
             paginas: data.paginas ? data.paginas.toString() : "0",
         });
     } catch (error) {
-        console.error("Error al cargar el detalle del libro", error);
+        if (error.response?.status === 404) {
+            setAccessError("El libro solicitado no existe.");
+        } else {
+            setAccessError("Ocurrió un error al cargar el libro.");
+        }
     }
 };
 
@@ -63,7 +78,7 @@ export default function LibroForm() {
         const LibroInstance = new Libro(
             id || null, formData.titulo, formData.tipo, formData.genero, formData.autor,
             formData.idioma, formData.estado, formData.editorial,
-            formData.fecha_publicacion, formData.paginas, formData.isbn13, formData.descripcion, formData.portada
+            formData.fecha_publicacion, formData.paginas, formData.isbn13, formData.descripcion, formData.portada, 0, ""
         );
 
         const validationErrors = LibroInstance.validate();
@@ -74,14 +89,31 @@ export default function LibroForm() {
         try {
             if (id) {
                 await libroService.update(id, formData);
+                navigate(0); //Refresh forzado
+                // navigate(`/libros/editar/${id}`) //Para usar con toasts
             } else {
-                await libroService.save(formData);
+                await libroService.create(formData);
+                navigate('/profile');
             }
-            navigate("/mis-libros");
         } catch (error) {
             console.error("Error al persistir el libro:", error);
         }
     };
+
+    if (accessError) {
+        return (
+            <div className="flex min-h-screen flex-col items-center justify-center bg-[#f8f7f4]">
+                <h2 className="text-2xl font-bold text-red-600 mb-4">¡Ups! Algo salió mal</h2>
+                <p className="text-slate-600 mb-6">{accessError}</p>
+                <button 
+                    onClick={() => navigate('/profile')} 
+                    className="rounded-lg bg-sky-500 px-6 py-2 font-bold text-white hover:bg-sky-600"
+                >
+                    Volver a mi perfil
+                </button>
+            </div>
+        );
+    }
 
     return (
         <section className="flex min-h-screen flex-col items-center justify-center bg-[#f8f7f4] px-4 py-10">

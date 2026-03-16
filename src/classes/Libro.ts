@@ -47,8 +47,11 @@ export class Libro {
             }
         });
 
-        if (this.paginas && isNaN(Number(this.paginas))) {
+        const numPaginas = Number(this.paginas);
+        if (!this.paginas || isNaN(numPaginas)) {
             errors.paginas = 'La cantidad de páginas debe ser un número';
+        } else if (numPaginas <= 0) {
+            errors.paginas = 'La cantidad de páginas debe ser mayor a 0';
         }
         
         return errors
