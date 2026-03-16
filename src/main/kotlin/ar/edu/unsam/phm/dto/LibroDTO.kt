@@ -23,7 +23,8 @@ data class LibroDetalleDTO(
     val paginas: Int,
     val isbn13: String,
     val descripcion: String,
-    val portada: String
+    val portada: String,
+    val idDueno: Int
 )
 
 fun Libro.toDetalleDTO(): LibroDetalleDTO {
@@ -47,7 +48,8 @@ fun Libro.toDetalleDTO(): LibroDetalleDTO {
         paginas = this.cantPaginas,
         isbn13 = this.isbn13,
         descripcion = this.descripcion,
-        portada = this.portada
+        portada = this.portada,
+        idDueno = this.dueno.id!!
     )
 }
 

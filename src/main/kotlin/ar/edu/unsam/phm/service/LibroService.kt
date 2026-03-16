@@ -27,8 +27,8 @@ class LibroService(
 
     fun getById(id: Int): Libro = libroRepositorio.getById(id)
 
-    fun create(libro: LibroDetalleDTO, usuarioId: Int) {
-        val duenio = usuarioRepositorio.getById(usuarioId)
+    fun create(libro: LibroDetalleDTO) {
+        val duenio = usuarioRepositorio.getById(libro.idDueno)
         val nuevoLibro = libro.toEntity(duenio)
         libroRepositorio.create(nuevoLibro)
     }
