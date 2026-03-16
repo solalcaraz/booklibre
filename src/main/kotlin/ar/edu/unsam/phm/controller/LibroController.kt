@@ -5,6 +5,7 @@ import ar.edu.unsam.phm.dto.LibroDetalleDTO
 import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.dto.toDetalleDTO
+import ar.edu.unsam.phm.helpers.LibroAdapter
 import ar.edu.unsam.phm.helpers.ordenarLibros
 import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.service.LibroService
@@ -15,10 +16,13 @@ import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @CrossOrigin("*")
-class LibroController(val libroService: LibroService, val usuarioService: UsuarioService) {
+class LibroController(val libroService: LibroService,
+                      val usuarioService: UsuarioService,
+                      val libroAdapter: LibroAdapter
+) {
 
     @GetMapping("/libro/{id}")
-    fun obtenerLibro(@PathVariable id: Int): LibroDetalleDTO = libroService.getById(id).toDetalleDTO()
+    fun obtenerLibro(@PathVariable id: Int): LibroDetalleDTO = libroAdapter.toDetalleDto(libroService.getById(id))
 
     @PostMapping("/libro/nuevo")
     fun crearLibro(@RequestBody libroDTO : LibroDetalleDTO) = libroService.create(libroDTO)

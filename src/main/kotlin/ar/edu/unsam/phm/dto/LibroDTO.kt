@@ -27,59 +27,6 @@ data class LibroDetalleDTO(
     val idDueno: Int
 )
 
-fun Libro.toDetalleDTO(): LibroDetalleDTO {
-    val tipoDTO = when (this.tipo) {
-        is Comun -> TipoDeLibroDTO.COMUN
-        is Dedicatoria -> TipoDeLibroDTO.DEDICATORIA
-        is Coleccionable -> TipoDeLibroDTO.COLECCIONABLE
-        else -> throw LibroException.tipoInvalido(this)
-    }
-
-    return LibroDetalleDTO(
-        id = this.id,
-        titulo = this.titulo,
-        tipo = tipoDTO,
-        genero = this.genero,
-        autor = this.autor,
-        idioma = this.idioma,
-        estado = this.estado,
-        editorial = this.editorial,
-        fechaPublicacion = this.fechaPublicacion.toString(),
-        paginas = this.cantPaginas,
-        isbn13 = this.isbn13,
-        descripcion = this.descripcion,
-        portada = this.portada,
-        idDueno = this.dueno.id!!
-    )
-}
-
-fun LibroDetalleDTO.toEntity(usuarioDueno: Usuario): Libro {
-    val tipoDominio = when (this.tipo) {
-        TipoDeLibroDTO.COMUN -> Comun
-        TipoDeLibroDTO.DEDICATORIA -> Dedicatoria
-        TipoDeLibroDTO.COLECCIONABLE -> Coleccionable
-    }
-
-    val nuevoLibro = Libro(
-        id = this.id,
-        titulo = this.titulo,
-        tipo = tipoDominio,
-        descripcion = this.descripcion,
-        genero = this.genero,
-        autor = this.autor,
-        cantPaginas = this.paginas,
-        isbn13 = this.isbn13,
-        idioma = this.idioma,
-        editorial = this.editorial,
-        fechaPublicacion = LocalDate.parse(this.fechaPublicacion),
-        estado = this.estado,
-        dueno = usuarioDueno
-    )
-    nuevoLibro.portada = this.portada
-
-    return nuevoLibro
-}
-
 data class MiLibroDTO(
     val id: Int?,
     val titulo: String,
