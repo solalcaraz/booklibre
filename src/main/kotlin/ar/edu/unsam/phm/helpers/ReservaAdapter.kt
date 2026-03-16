@@ -13,6 +13,7 @@ interface ReservaAdapter {
 class ReservaMapper: ReservaAdapter {
     override fun toDto(reserva: Reserva): ReservaDTO {
         val libroResumen = LibroResumen(reserva.libro.titulo, reserva.libro.autor, 4.5, reserva.libro.portada)
-        return ReservaDTO(  libroResumen, reserva.lector.nombreCompleto, 240, reserva.fechaDesde, reserva.fechaHasta)
+        return ReservaDTO( reserva.id, libroResumen, reserva.lector.nombreCompleto,
+            240, reserva.fechaDesde, reserva.fechaHasta, reserva.calcularEstado(), reserva.puedeCalificar(), reserva.resenia?.puntuacion)
     }
 }
