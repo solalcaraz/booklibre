@@ -1,11 +1,13 @@
 package ar.edu.unsam.phm.controller
 
+import ar.edu.unsam.phm.dto.DetalleReservaDTO
 import ar.edu.unsam.phm.helpers.FiltrosLibro
 import ar.edu.unsam.phm.dto.PaginationReqDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.dto.ReservaDTO
 import ar.edu.unsam.phm.dto.ReservaLibroHomeDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
+import ar.edu.unsam.phm.dto.toDetalleReservaDTO
 import ar.edu.unsam.phm.dto.toReservaLibroHomeDTO
 import ar.edu.unsam.phm.helpers.ReservaMapper
 import ar.edu.unsam.phm.helpers.paginate
@@ -16,7 +18,10 @@ import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDate
 
 @RestController
 @CrossOrigin("*")
@@ -63,4 +68,21 @@ class ReservaController (private val reservaService: ReservaService, private val
         val dtos = libros.zip(cantReservas).map { ( libro, cantidad ) -> libro.toReservaLibroHomeDTO(cantidad) }.toList()
         return paginate(dtos, filtros.numeroPagina, filtros.tamanoPaginado)
     }
+    @GetMapping("/detalles/{libroId}")
+    fun getDetalles(
+        @PathVariable libroId:String,
+        @RequestHeader("userId") userId: String,
+        @RequestParam fechaDesde: String,
+        @RequestParam fechaHasta: String
+    ): DetalleReservaDTO {
+        val detalleReserva = reservaService.getDetalleReserva(
+            libroId.toInt(),
+            userId.toInt(),
+            LocalDate.parse(fechaDesde),
+            LocalDate.parse( fechaHasta)
+        )
+        return detalleReserva.toDetalleReservaDTO()
+    }
 }
+
+
