@@ -78,9 +78,9 @@ class ReservaLoader(
         reserva7.agregarReseña(4, "Libro buenardo")
         val reserva8 = Reserva(
             libro = libro2,
-            lector = usuario,
+            lector = usuario2,
             fechaDesde = LocalDate.of(2026, 1, 15),
-            fechaHasta = LocalDate.of(2026, 1, 16),
+            fechaHasta = LocalDate.of(2026, 1, 20),
         )
         reserva8.agregarReseña(3, "Lo lei y no lo entendi")
 
