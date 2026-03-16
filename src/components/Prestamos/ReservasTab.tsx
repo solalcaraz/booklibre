@@ -58,7 +58,7 @@ export const ReservasTab = ({ tab }: Props) => {
       <DataGrid<ReservaResponseModel, ReservaRequestModel>
         fetchFunction={reservaService.buscarReservas}
         filter={filtro}
-        renderItem={(reserva) => ( <ReservasCard reserva={reserva} />)}
+        renderItem={(reserva) => ( <ReservasCard reserva={reserva} tab={tab} reload={filtrar} />)}
       />
     </>
   )

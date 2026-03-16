@@ -1,9 +1,7 @@
 import { useState } from "react"
 import { Tabs, type Tab } from "../components/Tabs"
 import { ReservasTab } from "../components/Prestamos/ReservasTab"
-
-export const TAB_PRESTADOS_A_MI: string = 'prestados-a-mi'
-export const TAB_PRESTADOS_POR_MI: string = 'prestados-por-mi'
+import { TAB_PRESTADOS_A_MI, TAB_PRESTADOS_POR_MI } from "../constants/ReservasConstants"
 
 export const Prestamos = () => {
   const [activeTab, setActiveTab] = useState(TAB_PRESTADOS_A_MI)
