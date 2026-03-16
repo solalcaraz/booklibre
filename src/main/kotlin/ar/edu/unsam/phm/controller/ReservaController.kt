@@ -1,5 +1,7 @@
 package ar.edu.unsam.phm.controller
 
+import ar.edu.unsam.phm.domain.Reserva
+import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.DetalleReservaDTO
 import ar.edu.unsam.phm.helpers.FiltrosLibro
 import ar.edu.unsam.phm.dto.PaginationReqDTO
@@ -83,6 +85,11 @@ class ReservaController (private val reservaService: ReservaService, private val
         )
         return detalleReserva.toDetalleReservaDTO()
     }
+  @PostMapping("/crearReserva")
+  fun crearReserva( @RequestHeader("userId") userId: String,
+    @RequestBody reserva: CrearReservaDTO){
+     reservaService.crearReserva(userId.toInt(), reserva)
+  }
 }
 
 

@@ -4,6 +4,7 @@ import ar.edu.unsam.phm.helpers.FiltrosLibro
 import ar.edu.unsam.phm.helpers.Ordenamiento
 import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.domain.ReservaSimulada
+import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.repository.LibroRepositorio
@@ -92,5 +93,26 @@ class ReservaService (
             reservasOcupadas = reservasOcupadas,
             bibliokarmas = biblioKarmas
         )
+    }
+    fun crearReserva(userID: Int, reserva: CrearReservaDTO){
+
+      val libro = libroRepositorio.getById(reserva.libroId)
+      val usuario = usuarioRepositorio.getById(userID)
+
+      val nuevaReserva = Reserva(
+        libro = libro,
+        lector = usuario,
+        fechaDesde = reserva.fechaDesde,
+        fechaHasta = reserva.fechaHasta,
+      )
+
+      val reservasActivas = reservaRepositorio.buscarPorLibro(libro).filter { !it.estaFinalizada() }
+      val seSuperpone = reservasActivas.any{ it.seSuperponeCon(reserva.fechaDesde, reserva.fechaHasta) }
+
+      if( seSuperpone){
+        throw IllegalStateException("El libro ya se encuentra reservado en esas fechas.")
+      }
+
+      reservaRepositorio.create(nuevaReserva)
     }
 }
