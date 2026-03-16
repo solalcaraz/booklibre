@@ -1,9 +1,10 @@
-import { useState } from "react"
-import { LibroCard } from "../components/LibroCard"
-import { type LibroHomeJSON } from "../classes/Libro"
-import { libroService } from "../services/LibroService"
-import { useOnInit } from "../utils/hooks"
-import { Spinner } from "../components/Spinner"
+import { useState } from 'react'
+import { LibroCard } from '../components/LibroCard'
+import { type LibroHomeJSON } from '../classes/Libro'
+import { libroService } from '../services/LibroService'
+import { useOnInit } from '../utils/hooks'
+import { Spinner } from '../components/Spinner'
+import { Link } from 'react-router-dom'
 
 export const Home = () => {
   const [libros, setLibros] = useState<LibroHomeJSON[]>([])
@@ -23,47 +24,44 @@ export const Home = () => {
 
   useOnInit(traerLibros)
 
-  if (loading) return <Spinner /> 
+  if (loading) return <Spinner />
 
   return (
     <main className="min-h-screen px-12 flex gap-8">
-      
       {/* Filtrado para busqueda */}
       <aside className="w-fit rounded-2xl bg-white p-6 shadow-[0_10px_30px_rgba(15,23,42,0.08)] h-fit">
         <form className="space-y-6">
           <fieldset>
-            <legend className="text-sm font-semibold text-slate-700">
-              GÉNERO
-            </legend>
+            <legend className="text-sm font-semibold text-slate-700">GÉNERO</legend>
 
             <div className="mt-3 space-y-2 text-sm text-slate-600">
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="accent-emerald-400"/>
+                <input type="checkbox" className="accent-emerald-400" />
                 Ciencia ficción
               </label>
 
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="accent-emerald-400"/>
+                <input type="checkbox" className="accent-emerald-400" />
                 Drama
               </label>
 
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="accent-emerald-400"/>
+                <input type="checkbox" className="accent-emerald-400" />
                 Autoayuda
               </label>
 
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="accent-emerald-400"/>
+                <input type="checkbox" className="accent-emerald-400" />
                 Romance
               </label>
 
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="accent-emerald-400"/>
+                <input type="checkbox" className="accent-emerald-400" />
                 Diseño
               </label>
 
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="accent-emerald-400"/>
+                <input type="checkbox" className="accent-emerald-400" />
                 Literatura clásica
               </label>
             </div>
@@ -72,11 +70,9 @@ export const Home = () => {
           <hr className="border-slate-200" />
 
           <fieldset>
-            <legend className="text-sm font-semibold text-slate-700">
-              Rango de páginas
-            </legend>
+            <legend className="text-sm font-semibold text-slate-700">Rango de páginas</legend>
 
-            <input type="range" className="w-full mt-3 accent-sky-500"/>
+            <input type="range" className="w-full mt-3 accent-sky-500" />
 
             <div className="flex justify-between text-xs text-slate-400 mt-1">
               <span>150</span>
@@ -84,7 +80,7 @@ export const Home = () => {
             </div>
           </fieldset>
 
-          <hr className="border-slate-200"/>
+          <hr className="border-slate-200" />
 
           <fieldset>
             <legend className="text-sm font-semibold text-slate-700">
@@ -110,12 +106,10 @@ export const Home = () => {
             </div>
           </fieldset>
 
-          <hr className="border-slate-200"/>
+          <hr className="border-slate-200" />
 
           <fieldset>
-            <legend className="text-sm font-semibold text-slate-700">
-              Detalles
-            </legend>
+            <legend className="text-sm font-semibold text-slate-700">Detalles</legend>
 
             <div className="flex flex-col gap-2 mt-3">
               <label className="text-xs text-slate-400">ISBN</label>
@@ -135,8 +129,8 @@ export const Home = () => {
               />
             </div>
           </fieldset>
-          
-          <button 
+
+          <button
             type="submit"
             className="w-full rounded-lg bg-sky-400 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-500 transition cursor-pointer"
           >
@@ -149,9 +143,7 @@ export const Home = () => {
         {/* Barra de busqueda */}
         <section className="rounded-2xl bg-white p-8 shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
           <header>
-            <h1 className="text-3xl font-extrabold text-slate-800">
-              Encuentra tu próxima lectura
-            </h1>
+            <h1 className="text-3xl font-extrabold text-slate-800">Encuentra tu próxima lectura</h1>
 
             <p className="text-slate-500 mt-2">
               Explora miles de libros disponibles para préstamo en nuestra comunidad.
@@ -178,9 +170,7 @@ export const Home = () => {
 
         {/* Header resultados */}
         <section className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-800">
-            Libros Populares
-          </h2>
+          <h2 className="text-lg font-semibold text-slate-800">Libros Populares</h2>
 
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <span>Ordenar por:</span>
@@ -195,7 +185,7 @@ export const Home = () => {
 
         {/* Lista del resultado de libros */}
         <section className="grid grid-cols-3 gap-6">
-          {libros.map(libro => (
+          {libros.map((libro) => (
             <LibroCard key={libro.id} libro={libro} />
           ))}
         </section>
@@ -203,8 +193,18 @@ export const Home = () => {
           fetchFunction={libroService.getAll}
           renderItem={(libro) => (
             <LibroCard libro={libro} />
-          )}
-        /> */}
+            )}
+            /> */}
+        {/* TEMPORAL PARA MI VISTA */}
+        <div className="fixed bottom-4 right-4 z-50 p-4 bg-red-100 border-2 border-red-500 rounded-lg shadow-lg">
+          <p className="text-xs font-bold text-red-700 mb-2">Test Zone</p>
+          <Link
+            to="/detalles/7?fechaDesde=2026-03-16&fechaHasta=2026-03-20"
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 font-bold"
+          >
+            Probar Detalle (Libro 7) con usuario lionel messi
+          </Link>
+        </div>
       </div>
     </main>
   )
