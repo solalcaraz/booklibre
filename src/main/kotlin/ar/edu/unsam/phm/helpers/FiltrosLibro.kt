@@ -12,7 +12,7 @@ class FiltrosLibro (
     val fechaHasta: LocalDate = LocalDate.now(),
     val isbn: String? = null,
     val usuarioPrestador: String? = null,
-    val orden: Ordenamiento = Ordenamiento.RELEVANCIA,
+    val orden: Ordenamiento = Ordenamiento.POPULARIDAD,
     val busqueda: String? = null,
     val numeroPagina: Int = 0,
     val tamanoPaginado: Int = 6
@@ -50,10 +50,9 @@ class FiltrosLibro (
 }
 
 enum class Ordenamiento {
-    RELEVANCIA,
+    POPULARIDAD, // del mas reservado al menos
     TITULO_ASC,
     TITULO_DESC,
-    FECHA_ASC,
-    FECHA_DESC,
-    POPULARIDAD // del mas reservado al menos
+    AUTOR_ASC,
+    DUENO_ASC
 }

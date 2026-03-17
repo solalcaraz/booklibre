@@ -42,12 +42,11 @@ class ReservaService (
                     .filter { filtros.aplicarA(it) }
                     .let { libros ->
                         when (filtros.orden) {
-                            Ordenamiento.RELEVANCIA -> libros
+                            Ordenamiento.POPULARIDAD -> libros.sortedByDescending { reservasPorLibro[it.id] ?: 0 } // si no fue reservado le dejo un 0 para garantizar que se traiga igualmente y no quede null
                             Ordenamiento.TITULO_ASC -> libros.sortedBy { it.titulo.lowercase() }
                             Ordenamiento.TITULO_DESC -> libros.sortedByDescending { it.titulo.lowercase() }
-                            Ordenamiento.FECHA_ASC -> libros.sortedBy { it.fechaPublicacion }
-                            Ordenamiento.FECHA_DESC -> libros.sortedByDescending { it.fechaPublicacion }
-                            Ordenamiento.POPULARIDAD -> libros.sortedByDescending { reservasPorLibro[it.id] ?: 0 } // si no fue reservado le dejo un 0 para garantizar que se traiga igualmente y no quede null
+                            Ordenamiento.AUTOR_ASC -> libros.sortedBy { it.autor }
+                            Ordenamiento.DUENO_ASC -> libros.sortedBy { it.dueno.nombreCompleto.lowercase() }
                         }
                     }
 
