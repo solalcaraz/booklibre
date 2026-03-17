@@ -24,7 +24,7 @@ export class Reserva {
   //Manejo de fechas
   private crearFechaNormalizada(fechaString: string): Date {
     const [anio, mes, dia] = fechaString.split('-').map(Number)
-    return new Date(anio, mes, dia)
+    return new Date(anio, mes - 1, dia)
   }
 
   private crearFechaBackend(fecha: Date): string {
@@ -59,7 +59,7 @@ export class Reserva {
   }
 
   setDesde(fechaDesde: string): void {
-    this.fechaHasta = this.crearFechaNormalizada(fechaDesde)
+    this.fechaDesde = this.crearFechaNormalizada(fechaDesde)
   }
   setHasta(fechaHasta: string): void {
     this.fechaHasta = this.crearFechaNormalizada(fechaHasta)
