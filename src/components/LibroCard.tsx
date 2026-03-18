@@ -1,8 +1,8 @@
-import type { LibroHomeJSON } from "../classes/Libro"
+import type { ReservaLibroHomeJSON } from "../types/ReservaLibroHome"
 import { formatEnum } from "../utils/formateEnumLibros"
 
 interface LibroCardProps {
-  libro: LibroHomeJSON
+  libro: ReservaLibroHomeJSON
 }
 
 export const LibroCard = ( {libro}: LibroCardProps) => {
@@ -64,7 +64,7 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
 
           <div>
             <p className="text-slate-400">Bibliokarma</p>
-            <p>+340</p>
+            <p>+{libro.biblioKarmasTotal}</p>
           </div>
 
         </div>
