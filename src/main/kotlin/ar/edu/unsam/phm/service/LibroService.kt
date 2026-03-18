@@ -14,6 +14,7 @@ import java.time.LocalDate
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.dto.toDetalleDTO
+import ar.edu.unsam.phm.helpers.LibroAdapter
 import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 
@@ -21,43 +22,24 @@ import ar.edu.unsam.phm.repository.ReservaRepositorio
 class LibroService(
     val libroRepositorio: LibroRepositorio,
     val reservaRepositorio: ReservaRepositorio,
-    val usuarioRepositorio: UsuarioRepositorio
+    val usuarioRepositorio: UsuarioRepositorio,
+    val libroMapper: LibroAdapter
 ) {
     fun getAll(): List<Libro> = libroRepositorio.getAll()
 
     fun getById(id: Int): Libro = libroRepositorio.getById(id)
 
-    fun create(libro: LibroDetalleDTO, usuarioId: Int) {
-        val duenio = usuarioRepositorio.getById(usuarioId)
-        val nuevoLibro = libro.toEntity(duenio)
+    fun create(libroDto: LibroDetalleDTO) {
+        val duenio = usuarioRepositorio.getById(libroDto.idDueno)
+//        val nuevoLibro = libro.toEntity(duenio)
+        val nuevoLibro = libroMapper.fromDto(libroDto, duenio)
         libroRepositorio.create(nuevoLibro)
     }
 
-    fun update(id: Int, libro: LibroDetalleDTO) {
+    fun update(id: Int, libroDto: LibroDetalleDTO) {
         val libroExistente = libroRepositorio.getById(id)
-
-        val nuevoTipo = when (libro.tipo) {
-            TipoDeLibroDTO.COMUN -> Comun
-            TipoDeLibroDTO.DEDICATORIA -> Dedicatoria
-            TipoDeLibroDTO.COLECCIONABLE -> Coleccionable
-        }
-
-        libroExistente.apply {
-            titulo = libro.titulo
-            autor = libro.autor
-            genero = libro.genero
-            idioma = libro.idioma
-            estado = libro.estado
-            editorial = libro.editorial
-            descripcion = libro.descripcion
-            cantPaginas = libro.paginas
-            isbn13 = libro.isbn13
-            fechaPublicacion = LocalDate.parse(libro.fechaPublicacion)
-            portada = libro.portada
-            tipo = nuevoTipo
-        }
-
-        libroRepositorio.update(libroExistente)
+        val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.dueno)
+        libroRepositorio.update(libroActualizado)
     }
 
     /* Un primer approach a algunos de los filtros que tiene el home */
