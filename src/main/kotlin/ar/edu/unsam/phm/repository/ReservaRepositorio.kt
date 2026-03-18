@@ -59,7 +59,7 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
         return buscarPorLibro(libro)
             .filter { it.estaFinalizada() }
             .filter { it.resenia != null }
-            .sortedByDescending { it.resenia!!.fechaCreacion }
+            .sortedByDescending { it.fechaHasta }
             .take(2)
     }
 

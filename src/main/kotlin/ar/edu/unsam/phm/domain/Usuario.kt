@@ -55,4 +55,7 @@ class Usuario(
         tipoUsuario = TipoUsuario.entries.find { it.label == label }
             ?: throw IllegalArgumentException("Tipo de usuario inválido: $label")
     }
+    fun aumentarBiblioKarmas(bibliokarmas: Int){
+        this.bibliokarmas += bibliokarmas
+    }
 }

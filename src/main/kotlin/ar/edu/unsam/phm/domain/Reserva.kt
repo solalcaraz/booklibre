@@ -54,7 +54,7 @@ class Reserva(
             "No podés reseñar un libro cuyo préstamo todavía no comenzó"
         }
        resenia = Resenia(
-           lector.nombreCompleto, puntaje, comentario, fechaCreacion
+           lector.nombreCompleto, puntaje, comentario
        )
     }
 
