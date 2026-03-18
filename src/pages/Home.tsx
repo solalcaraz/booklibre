@@ -2,9 +2,9 @@ import { useState } from "react"
 import { LibroCard } from "../components/LibroCard"
 import type { FiltrosLibro, Orden, ReservaLibroHomeJSON } from "../types/ReservaLibroHome"
 import { reservaService } from "../services/ReservaService"
-import { Genero } from "../models/LibroResponseModel"
 import { formatEnum } from "../utils/formateEnumLibros"
 import DataGrid from "../components/DataGrid"
+import { Genero } from "../models/LibroResponseModel"
 
 const hoy = new Date().toISOString().split('T')[0] // para quedarme solo con la fecha sin el horario
 
@@ -69,6 +69,12 @@ export const Home = () => {
     const nuevosFiltros = { ...filtros, orden: e.target.value as Orden}
     setFiltros(nuevosFiltros)
     setFiltrosAplicados(nuevosFiltros)
+  }
+
+  const limpiarFiltros = () => {
+    setFiltros(filtrosIniciales)
+    setFiltrosAplicados(filtrosIniciales)
+    setErrores([])
   }
 
   return (
@@ -192,6 +198,11 @@ export const Home = () => {
             type="submit"
             className="w-full rounded-lg bg-sky-400 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-500 transition cursor-pointer"
           >Aplicar Filtros</button>
+          <button
+            type="button"
+            onClick={limpiarFiltros}
+            className="w-full rounded-lg border bg-sky-100 border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+          >Limpiar Filtros</button>
         </form>
       </aside>
 
@@ -210,6 +221,12 @@ export const Home = () => {
                 placeholder="Buscar por título..."
                 value={filtros.busqueda ?? ''}
                 onChange={e => actualizar('busqueda', e.target.value) }
+                onInput={e => {
+                  if((e.target as HTMLInputElement).value === '') {
+                    actualizar('busqueda', '')
+                    setFiltrosAplicados(prev => ({ ...prev, busqueda: '' }))
+                  }
+                }}
                 className="w-full border border-slate-200 rounded-md px-4 py-3 pr-28 focus:outline-none focus:ring-2 focus:ring-sky-300"
               />
 
