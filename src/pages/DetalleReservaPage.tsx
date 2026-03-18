@@ -6,11 +6,6 @@ import { reservaService } from '../services/ReservaService'
 import type { DetalleReserva } from '../types/DetalleReserva'
 import { LibroReserva } from '../components/DetalleReserva/LibroReserva'
 
-//[ x ]: Componentizar.
-//[ x ]: Crear objeto de dominio Reserva para validar fechas.
-//[ x ]: Formatear fechas.
-//[ x ]: Investigar como meter las fechas ocupadas en el input date. DataPicker. 
-
 export const DetalleReservaPage = () => {
   //Capturo los datos pasados de la vista de sol.
   const { id } = useParams<{ id: string }>()

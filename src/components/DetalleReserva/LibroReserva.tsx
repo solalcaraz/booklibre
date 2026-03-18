@@ -21,6 +21,11 @@ interface Props {
   setFechaHasta: Dispatch<SetStateAction<string>>
 }
 
+const main = 'max-w-5xl mx-auto px-6 py-8'
+const header = 'mb-6'
+const body = 'grid grid-cols-[300px_1fr] gap-6 items-start'
+const right = 'space-y-6'
+
 export const LibroReserva = ({
   libro,
   calificacion,
@@ -33,18 +38,24 @@ export const LibroReserva = ({
   setFechaHasta
 }: Props) => {
   return (
-    <>
-      <LibroHeader libro={libro} calificacion={calificacion} />
-      <LibroDetalle libro={libro} bibliokarmas={bibliokarmas}></LibroDetalle>
-      <TuReserva
-        libroId={libro.id}
-        fechaDesde={fechaDesde}
-        fechaHasta={fechaHasta}
-        fechasOcupadas={fechasOcupadas}
-        setFechaDesde={setFechaDesde}
-        setFechaHasta={setFechaHasta}
-      />
-      <LibroResenias ultimasResenias={ultimasResenias} />
-    </>
+    <main className={main}>
+      <div className={header}>
+        <LibroHeader libro={libro} calificacion={calificacion} />
+      </div>
+      <div className={body}>
+        <TuReserva
+          libroId={libro.id}
+          fechaDesde={fechaDesde}
+          fechaHasta={fechaHasta}
+          fechasOcupadas={fechasOcupadas}
+          setFechaDesde={setFechaDesde}
+          setFechaHasta={setFechaHasta}
+        />
+        <div className={right}>
+          <LibroDetalle libro={libro} bibliokarmas={bibliokarmas}></LibroDetalle>
+          <LibroResenias ultimasResenias={ultimasResenias} />
+        </div>
+      </div>
+    </main>
   )
 }

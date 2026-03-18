@@ -54,7 +54,7 @@ class ReservaService {
     const user = authService.userDeStorage()
     const url = `${API_URL}/crearReserva`
 
-    axios.post<CrearReservaJSON>(url, reserva, {
+    return await axios.post<CrearReservaJSON>(url, reserva, {
       headers: {
         userId: user.id
       }
