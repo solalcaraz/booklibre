@@ -112,7 +112,7 @@ class ReservaControllerTest {
     @Test
     fun `se pueden obtener libros disponibles para un usuario`() {
         mockMvc
-            .perform(MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}"))
+            .perform(MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario.id}"))
             .andExpect(status().isOk)
             .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$.items.length()").value(2))
@@ -122,7 +122,7 @@ class ReservaControllerTest {
     @Test
     fun `no se muestran los libros propios del usuario`() {
         mockMvc
-            .perform(MockMvcRequestBuilders.get("/librosDisponibles/${usuario2.id}"))
+            .perform(MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario2.id}"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.items.length()").value(1))
             .andExpect(jsonPath("$.items.[0].titulo").value("Libro Propio"))
@@ -141,7 +141,7 @@ class ReservaControllerTest {
         )
         mockMvc
             .perform(
-                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario.id}")
                     .param("fechaDesde", LocalDate.now().toString())
                     .param("fechaHasta", LocalDate.now().plusDays(7).toString())
             )
@@ -154,7 +154,7 @@ class ReservaControllerTest {
     fun `se pueden filtrar libros por busqueda de titulo`() {
         mockMvc
             .perform(
-                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario.id}")
                     .param("busqueda", "Rayuela")
             )
             .andExpect(status().isOk)
@@ -166,7 +166,7 @@ class ReservaControllerTest {
     fun `se pueden filtrar libros por busqueda de autor`() {
         mockMvc
             .perform(
-                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario.id}")
                     .param("busqueda", "Cortázar")
             )
             .andExpect(status().isOk)
@@ -178,7 +178,7 @@ class ReservaControllerTest {
     fun `una busqueda que no matchea devuelve lista vacia`() {
         mockMvc
             .perform(
-                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario.id}")
                     .param("busqueda", "Tolkien")
             )
             .andExpect(status().isOk)
@@ -188,7 +188,7 @@ class ReservaControllerTest {
     @Test
     fun `un usuario inexistente devuelve 404`() {
         mockMvc
-            .perform(MockMvcRequestBuilders.get("/librosDisponibles/9999"))
+            .perform(MockMvcRequestBuilders.get("/reserva/librosDisponibles/9999"))
             .andExpect(status().isNotFound)
     }
 
@@ -199,7 +199,7 @@ class ReservaControllerTest {
         // pagino para un solo libro asi me aparece uno en cada pagina
         mockMvc
             .perform(
-                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario.id}")
                     .param("numeroPagina", "0")
                     .param("tamanoPaginado", "1")
             )
@@ -214,7 +214,7 @@ class ReservaControllerTest {
     fun `la segunda pagina devuelve el resto`() {
         mockMvc
             .perform(
-                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario.id}")
                     .param("numeroPagina", "1")
                     .param("tamanoPaginado", "1")
             )
@@ -228,7 +228,7 @@ class ReservaControllerTest {
     fun `una pagina fuera de rango devuelve items vacio`() {
         mockMvc
             .perform(
-                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario.id}")
                     .param("numeroPagina", "99")
                     .param("tamanoPaginado", "10")
             )
@@ -242,7 +242,7 @@ class ReservaControllerTest {
     fun `orden TITULO_ASC devuelve libros ordenados de la A a la Z`() {
         mockMvc
             .perform(
-                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario.id}")
                     .param("orden", "TITULO_ASC")
             )
             .andExpect(status().isOk)
@@ -254,7 +254,7 @@ class ReservaControllerTest {
     fun `orden TITULO_DESC devuelve libros ordenados de la Z a la A`() {
         mockMvc
             .perform(
-                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario.id}")
                     .param("orden", "TITULO_DESC")
             )
             .andExpect(status().isOk)
@@ -266,7 +266,7 @@ class ReservaControllerTest {
     fun `orden AUTOR_ASC devuelve libros ordenados por autor alfabeticamente`() {
         mockMvc
             .perform(
-                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario.id}")
                     .param("orden", "AUTOR_ASC")
             )
             .andExpect(status().isOk)
@@ -301,7 +301,7 @@ class ReservaControllerTest {
 
         mockMvc
             .perform(
-                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario.id}")
                     .param("orden", "DUENO_ASC")
             )
             .andExpect(status().isOk)
@@ -328,7 +328,7 @@ class ReservaControllerTest {
 
         mockMvc
             .perform(
-                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario.id}")
                     .param("orden", "POPULARIDAD")
             )
             .andExpect(status().isOk)
