@@ -1,13 +1,17 @@
-import type { ReservaLibroHomeJSON } from "../types/ReservaLibroHome"
-import { formatEnum } from "../utils/formateEnumLibros"
+import { useNavigate } from "react-router"
+import type { ReservaLibroHomeJSON } from "../../types/ReservaLibroHome"
+import { formatEnum } from "../../utils/formateEnumLibros"
+
 
 interface LibroCardProps {
   libro: ReservaLibroHomeJSON
 }
 
 export const LibroCard = ( {libro}: LibroCardProps) => {
+  const navigate = useNavigate()
+
   return (
-    <article className="bg-white rounded-2xl shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden transition hover:shadow-[0_14px_40px_rgba(15,23,42,0.12)]">
+    <article onClick={() => navigate(`/libros/detalle/${libro.id}`)} className="bg-white rounded-2xl shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden transition hover:shadow-[0_14px_40px_rgba(15,23,42,0.12)] cursor-pointer">
 
       {/* Imagen */}
       <div className="bg-slate-50 p-6 flex justify-center">

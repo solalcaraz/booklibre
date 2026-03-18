@@ -1,11 +1,11 @@
 import { useState } from "react"
-import { LibroCard } from "../components/LibroCard"
 import type { FiltrosLibro, Orden, ReservaLibroHomeJSON } from "../types/ReservaLibroHome"
 import { reservaService } from "../services/ReservaService"
 import DataGrid from "../components/DataGrid"
 import { Genero } from "../models/LibroResponseModel"
 import { PanelFiltros } from "../components/Home/FiltrosCard"
 import { BarraBusqueda } from "../components/Home/BarraBusqueda"
+import { LibroCard } from "../components/Home/LibroCard"
 
 const hoy = new Date().toISOString().split('T')[0] // para quedarme solo con la fecha sin el horario
 
@@ -77,7 +77,7 @@ export const Home = () => {
   }
 
   return (
-    <main className="min-h-screen px-12 flex gap-8">
+    <main className="min-h-screen px-12 py-4 flex gap-8">
       
       <PanelFiltros
         filtros={filtros}
