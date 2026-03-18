@@ -109,36 +109,74 @@ export const Home = () => {
 
           <hr className="border-slate-200" />
 
-          {/* <fieldset>
-            <legend className="text-sm font-semibold text-slate-700">Rango de páginas</legend>
-
-            <input type="range" className="w-full mt-3 accent-sky-500"/>
-
-            <div className="flex justify-between text-xs text-slate-400 mt-1">
-              <span>150</span>
-              <span>450</span>
-            </div>
-          </fieldset> */}
           <fieldset>
             <legend className="text-sm font-semibold text-slate-700">Rango de páginas</legend>
-            <div className="flex gap-2 mt-3">
-              <div className="flex flex-col w-1/2">
-                <label className="text-xs text-slate-400">Mín</label>
-                <input
-                  type="number" min={0} max={1000}
-                  value={filtros.cantPaginasMin ?? 0}
-                  onChange={e => actualizar('cantPaginasMin', +e.target.value) }
-                  className="border border-slate-200 rounded-md px-2 py-1 text-sm"
-                />
+
+            <div className="mt-4">
+              
+              {/* Valores */}
+              <div className="flex justify-between text-xs text-slate-400 mb-2">
+                <span>{filtros.cantPaginasMin ?? 0}</span>
+                <span>{filtros.cantPaginasMax ?? 1000}</span>
               </div>
-              <div className="flex flex-col w-1/2">
-                <label className="text-xs text-slate-400">Máx</label>
-                <input
-                  type="number" min={0} max={1000}
-                  value={filtros.cantPaginasMax ?? 1000}
-                  onChange={e => actualizar('cantPaginasMax', +e.target.value) }
-                  className="border border-slate-200 rounded-md px-2 py-1 text-sm"
+
+              {/* Contenedor */}
+              <div className="relative w-full h-6 flex items-center">
+
+                {/* Barra base */}
+                <div className="absolute w-full h-1 bg-slate-200 rounded" />
+
+                {/* Barra activa */}
+                <div
+                  className="absolute h-1 bg-sky-400 rounded"
+                  style={{
+                    left: `${( (filtros.cantPaginasMin ?? 0) / 1000) * 100}%`,
+                    right: `${100 - ( (filtros.cantPaginasMax ?? 1000) / 1000) * 100}%`
+                  }}
                 />
+
+                {/* Slider mínimo */}
+                <input
+                  type="range"
+                  min={0}
+                  max={1000}
+                  value={filtros.cantPaginasMin ?? 0}
+                  onChange={e => {
+                    const value = +e.target.value
+                    if (value <= (filtros.cantPaginasMax ?? 1000)) {
+                      actualizar('cantPaginasMin', value)
+                    }
+                  }}
+                  className="absolute w-full appearance-none bg-transparent pointer-events-none
+                            [&::-webkit-slider-thumb]:pointer-events-auto
+                            [&::-webkit-slider-thumb]:appearance-none
+                            [&::-webkit-slider-thumb]:h-4
+                            [&::-webkit-slider-thumb]:w-4
+                            [&::-webkit-slider-thumb]:rounded-full
+                            [&::-webkit-slider-thumb]:bg-sky-500"
+                />
+
+                {/* Slider máximo */}
+                <input
+                  type="range"
+                  min={0}
+                  max={1000}
+                  value={filtros.cantPaginasMax ?? 1000}
+                  onChange={e => {
+                    const value = +e.target.value
+                    if (value >= (filtros.cantPaginasMin ?? 0)) {
+                      actualizar('cantPaginasMax', value)
+                    }
+                  }}
+                  className="absolute w-full appearance-none bg-transparent pointer-events-none
+                            [&::-webkit-slider-thumb]:pointer-events-auto
+                            [&::-webkit-slider-thumb]:appearance-none
+                            [&::-webkit-slider-thumb]:h-4
+                            [&::-webkit-slider-thumb]:w-4
+                            [&::-webkit-slider-thumb]:rounded-full
+                            [&::-webkit-slider-thumb]:bg-sky-500"
+                />
+
               </div>
             </div>
           </fieldset>
