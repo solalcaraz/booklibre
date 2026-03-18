@@ -1,7 +1,12 @@
 package ar.edu.unsam.phm.service
 
+import ar.edu.unsam.phm.domain.Coleccionable
+import ar.edu.unsam.phm.domain.Comun
+import ar.edu.unsam.phm.domain.Dedicatoria
 import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.dto.LibroDetalleDTO
+import ar.edu.unsam.phm.dto.TipoDeLibroDTO
+import ar.edu.unsam.phm.dto.toEntity
 import ar.edu.unsam.phm.repository.LibroRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.stereotype.Service
@@ -10,6 +15,7 @@ import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.dto.toDetalleDTO
 import ar.edu.unsam.phm.helpers.LibroAdapter
+import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 
 @Service
@@ -87,7 +93,9 @@ class LibroService(
     }
 
     fun borrarLibro(id: String) {
-        libroRepositorio.deleteById(id)
+        val idNumerico = id.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
+
+        libroRepositorio.deleteById(idNumerico)
     }
 
 }

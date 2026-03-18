@@ -3,6 +3,7 @@ package ar.edu.unsam.phm.service
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.UsuarioPatchRequest
 import ar.edu.unsam.phm.env.Environment
+import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.stereotype.Service
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Service
 class UsuarioService(private val usuarioRepositorio: UsuarioRepositorio, private val reservaRepositorio: ReservaRepositorio) {
 
     fun getUsuarioById(id: String): Usuario {
-        val usuario = usuarioRepositorio.getById(id.toInt())
+        val idNumerico = id.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
+
+        val usuario = usuarioRepositorio.getById(idNumerico)
 
         usuario.librosLeidos = reservaRepositorio.librosLeidosDe(usuario)
         usuario.librosPrestados = reservaRepositorio.librosPrestadosDe(usuario)
@@ -22,7 +25,9 @@ class UsuarioService(private val usuarioRepositorio: UsuarioRepositorio, private
     }
 
     fun updateUsuario(userPatch: UsuarioPatchRequest, id: String) {
-        val usuario = usuarioRepositorio.getById(id.toInt())
+        val idNumerico = id.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
+
+        val usuario = usuarioRepositorio.getById(idNumerico)
 
         usuario.email = userPatch.email
         usuario.ciudad = userPatch.ciudad
