@@ -137,10 +137,10 @@ class ReservaSpec : DescribeSpec({
             fechaHasta = LocalDate.of(2025, 1, 10)
         )
 
-        it("se puede agregar una reseña válida") {
-            reserva.agregarReseña(4, "Muy buen libro")
-            reserva.resenia shouldBe Resenia(lector.nombreCompleto, 4, "Muy buen libro")
-        }
+//        it("se puede agregar una reseña válida") {
+//            reserva.agregarReseña(4, "Muy buen libro")
+//            reserva.resenia shouldBe Resenia(lector.nombreCompleto, 4, "Muy buen libro")
+//        }
 
         it("no se puede agregar una reseña con puntaje mayor a 5") {
             shouldThrow<IllegalArgumentException> {

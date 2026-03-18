@@ -8,7 +8,6 @@ import ar.edu.unsam.phm.dto.ReseniaReqDTO
 import ar.edu.unsam.phm.dto.ReservaDTO
 import ar.edu.unsam.phm.dto.ReservaLibroHomeDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
-import ar.edu.unsam.phm.dto.toDetalleReservaDTO
 import ar.edu.unsam.phm.dto.toReservaLibroHomeDTO
 import ar.edu.unsam.phm.helpers.ReservaMapper
 import ar.edu.unsam.phm.helpers.paginate
@@ -70,8 +69,9 @@ class ReservaController (private val reservaService: ReservaService, private val
             libroId.toInt(),
             userId.toInt(),
             LocalDate.parse(fechaDesde),
-            LocalDate.parse( fechaHasta)
+            LocalDate.parse(fechaHasta)
         )
-        return detalleReserva.toDetalleReservaDTO()
+        //return detalleReserva.toDetalleReservaDTO()
+        return reservaMapper.toDetalleReservaDto(detalleReserva)
     }
 }

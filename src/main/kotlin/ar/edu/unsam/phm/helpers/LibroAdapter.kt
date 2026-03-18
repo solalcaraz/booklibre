@@ -1,8 +1,7 @@
 package ar.edu.unsam.phm.helpers
 
 import ar.edu.unsam.phm.domain.*
-import ar.edu.unsam.phm.dto.LibroDetalleDTO
-import ar.edu.unsam.phm.dto.TipoDeLibroDTO
+import ar.edu.unsam.phm.dto.*
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 

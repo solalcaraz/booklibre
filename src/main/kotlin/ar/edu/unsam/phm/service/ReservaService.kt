@@ -64,7 +64,6 @@ class ReservaService (
                             Ordenamiento.DUENO_ASC -> libros.sortedBy { it.dueno.nombreCompleto.lowercase() }
                         }
                     }
-                }
 
         val preReservasDisponibles = librosDisponibles.map { libro ->
             Reserva(
