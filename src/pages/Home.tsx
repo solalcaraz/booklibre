@@ -2,9 +2,10 @@ import { useState } from "react"
 import { LibroCard } from "../components/LibroCard"
 import type { FiltrosLibro, Orden, ReservaLibroHomeJSON } from "../types/ReservaLibroHome"
 import { reservaService } from "../services/ReservaService"
-import { formatEnum } from "../utils/formateEnumLibros"
 import DataGrid from "../components/DataGrid"
 import { Genero } from "../models/LibroResponseModel"
+import { PanelFiltros } from "../components/Home/FiltrosCard"
+import { BarraBusqueda } from "../components/Home/BarraBusqueda"
 
 const hoy = new Date().toISOString().split('T')[0] // para quedarme solo con la fecha sin el horario
 
@@ -42,8 +43,6 @@ export const Home = () => {
       nuevosErrores.push('La fecha de inicio no puede ser anterior a hoy')
     if (filtros.fechaDesde && filtros.fechaHasta && filtros.fechaHasta < filtros.fechaDesde)
       nuevosErrores.push('La fecha hasta no puede ser anterior a la fecha desde')
-    if (filtros.cantPaginasMin !== undefined && filtros.cantPaginasMax !== undefined && filtros.cantPaginasMin > filtros.cantPaginasMax)
-      nuevosErrores.push('El mínimo de páginas no puede ser mayor al máximo')
 
     setErrores(nuevosErrores)
     return nuevosErrores.length === 0
@@ -80,202 +79,27 @@ export const Home = () => {
   return (
     <main className="min-h-screen px-12 flex gap-8">
       
-      {/* Filtrado para busqueda */}
-      <aside className="w-fit rounded-2xl bg-white p-6 shadow-[0_10px_30px_rgba(15,23,42,0.08)] h-fit">
-        <form className="space-y-6" onSubmit={handleAplicarFiltros}>
-
-          {/* Erorres */}
-          {errores.length > 0 && (
-            <div className="text-xs text-red-500 space-y-1">
-              {errores.map(e => <p key={e}>{e}</p>)}
-            </div>
-          )}
-
-          <fieldset>
-            <legend className="text-sm font-semibold text-slate-700">GÉNERO</legend>
-            <div className="mt-3 space-y-2 text-sm text-slate-600">
-              {Object.values(Genero).map(genero => (
-                <label key={genero} className="flex items-center gap-2">
-                  <input 
-                    type="checkbox" 
-                    className="accent-sky-400" 
-                    checked={filtros.generos?.includes(genero) ?? false}
-                    onChange={e => handleGenero(genero, e.target.checked)}/>
-                  {formatEnum(genero)}
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
-          <hr className="border-slate-200" />
-
-          <fieldset>
-            <legend className="text-sm font-semibold text-slate-700">Rango de páginas</legend>
-
-            <div className="mt-4">
-              
-              {/* Valores */}
-              <div className="flex justify-between text-xs text-slate-400 mb-2">
-                <span>{filtros.cantPaginasMin ?? 0}</span>
-                <span>{filtros.cantPaginasMax ?? 1000}</span>
-              </div>
-
-              {/* Contenedor */}
-              <div className="relative w-full h-6 flex items-center">
-
-                {/* Barra base */}
-                <div className="absolute w-full h-1 bg-slate-200 rounded" />
-
-                {/* Barra activa */}
-                <div
-                  className="absolute h-1 bg-sky-400 rounded"
-                  style={{
-                    left: `${( (filtros.cantPaginasMin ?? 0) / 1000) * 100}%`,
-                    right: `${100 - ( (filtros.cantPaginasMax ?? 1000) / 1000) * 100}%`
-                  }}
-                />
-
-                {/* Slider mínimo */}
-                <input
-                  type="range"
-                  min={0}
-                  max={1000}
-                  value={filtros.cantPaginasMin ?? 0}
-                  onChange={e => {
-                    const value = +e.target.value
-                    if (value <= (filtros.cantPaginasMax ?? 1000)) {
-                      actualizar('cantPaginasMin', value)
-                    }
-                  }}
-                  className="absolute w-full appearance-none bg-transparent pointer-events-none
-                            [&::-webkit-slider-thumb]:pointer-events-auto
-                            [&::-webkit-slider-thumb]:appearance-none
-                            [&::-webkit-slider-thumb]:h-4
-                            [&::-webkit-slider-thumb]:w-4
-                            [&::-webkit-slider-thumb]:rounded-full
-                            [&::-webkit-slider-thumb]:bg-sky-500"
-                />
-
-                {/* Slider máximo */}
-                <input
-                  type="range"
-                  min={0}
-                  max={1000}
-                  value={filtros.cantPaginasMax ?? 1000}
-                  onChange={e => {
-                    const value = +e.target.value
-                    if (value >= (filtros.cantPaginasMin ?? 0)) {
-                      actualizar('cantPaginasMax', value)
-                    }
-                  }}
-                  className="absolute w-full appearance-none bg-transparent pointer-events-none
-                            [&::-webkit-slider-thumb]:pointer-events-auto
-                            [&::-webkit-slider-thumb]:appearance-none
-                            [&::-webkit-slider-thumb]:h-4
-                            [&::-webkit-slider-thumb]:w-4
-                            [&::-webkit-slider-thumb]:rounded-full
-                            [&::-webkit-slider-thumb]:bg-sky-500"
-                />
-
-              </div>
-            </div>
-          </fieldset>
-
-          <hr className="border-slate-200"/>
-
-          <fieldset>
-            <legend className="text-sm font-semibold text-slate-700">Rango de fechas para reservar</legend>
-            <div className="flex gap-3 mt-3">
-              <div className="flex flex-col w-1/2">
-                <label className="text-xs text-slate-400">Desde</label>
-                <input
-                  type="date" min={hoy} value={filtros.fechaDesde ?? hoy}
-                  onChange={e => actualizar('fechaDesde', e.target.value) }
-                  className="border border-slate-200 rounded-md px-2 py-1 text-sm"
-                />
-              </div>
-
-              <div className="flex flex-col w-1/2">
-                <label className="text-xs text-slate-400">Hasta</label>
-                <input
-                  type="date" min={filtros.fechaDesde ?? hoy}
-                  value={filtros.fechaHasta ?? hoy}
-                  onChange={e => actualizar('fechaHasta', e.target.value) }
-                  className="border border-slate-200 rounded-md px-2 py-1 text-sm"
-                />
-              </div>
-            </div>
-          </fieldset>
-
-          <hr className="border-slate-200"/>
-
-          <fieldset>
-            <legend className="text-sm font-semibold text-slate-700">Detalles</legend>
-            <div className="flex flex-col gap-2 mt-3">
-              <label className="text-xs text-slate-400">ISBN</label>
-              <input
-                type="text" placeholder="978-3-16..."
-                value={filtros.isbn ?? ''}
-                onChange={e => actualizar('isbn', e.target.value) }
-                className="border border-slate-200 rounded-md px-3 py-2 text-sm"
-              />
-            </div>
-
-            <div className="flex flex-col gap-2 mt-3">
-              <label className="text-xs text-slate-400">Prestado por...</label>
-              <input
-                type="text" placeholder="Usuario..."
-                value={filtros.usuarioPrestador ?? ''}
-                onChange={e => actualizar('usuarioPrestador', e.target.value) }
-                className="border border-slate-200 rounded-md px-3 py-2 text-sm"
-              />
-            </div>
-          </fieldset>
-          
-          <button 
-            type="submit"
-            className="w-full rounded-lg bg-sky-400 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-500 transition cursor-pointer"
-          >Aplicar Filtros</button>
-          <button
-            type="button"
-            onClick={limpiarFiltros}
-            className="w-full rounded-lg border bg-sky-100 border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
-          >Limpiar Filtros</button>
-        </form>
-      </aside>
+      <PanelFiltros
+        filtros={filtros}
+        errores={errores}
+        onAplicar={handleAplicarFiltros}
+        onLimpiar={limpiarFiltros}
+        onActualizar={actualizar}
+        onGenero={handleGenero}
+        hoy={hoy}
+      />
 
       <div className="flex flex-col gap-6 w-full">
-        {/* Barra de busqueda */}
-        <section className="rounded-2xl bg-white p-8 shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
-          <header>
-            <h1 className="text-3xl font-extrabold text-slate-800">Encuentra tu próxima lectura</h1>
-            <p className="text-slate-500 mt-2">Explora miles de libros disponibles para préstamo en nuestra comunidad.</p>
-          </header>
-
-          <form className="mt-6" onSubmit={handleBusqueda}>
-            <div className="relative">
-              <input
-                type="search"
-                placeholder="Buscar por título..."
-                value={filtros.busqueda ?? ''}
-                onChange={e => actualizar('busqueda', e.target.value) }
-                onInput={e => {
-                  if((e.target as HTMLInputElement).value === '') {
-                    actualizar('busqueda', '')
-                    setFiltrosAplicados(prev => ({ ...prev, busqueda: '' }))
-                  }
-                }}
-                className="w-full border border-slate-200 rounded-md px-4 py-3 pr-28 focus:outline-none focus:ring-2 focus:ring-sky-300"
-              />
-
-              <button
-                type="submit"
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-sky-500 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-600 transition cursor-pointer"
-              >Buscar</button>
-            </div>
-          </form>
-        </section>
-
+        <BarraBusqueda
+          busqueda={filtros.busqueda ?? ''}
+          onChangeBusqueda={v => actualizar('busqueda', v)}
+          onBuscar={handleBusqueda}
+          onLimpiar={() => {
+            actualizar('busqueda', '')
+            setFiltrosAplicados(prev => ({ ...prev, busqueda: '' }))
+          }}
+        />
+        
         {/* Header resultados */}
         <section className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-800">Libros Populares</h2>
@@ -295,7 +119,7 @@ export const Home = () => {
           </div>
         </section>
 
-        {/* Lista del resultado de libros */}
+        {/* Lista del resultado de libros con paginado */}
         <DataGrid<ReservaLibroHomeJSON, FiltrosLibro>
           fetchFunction={(req) => reservaService.getLibrosDisponiblesReserva(userId, req)}
           filter={filtrosAplicados}
