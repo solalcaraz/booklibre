@@ -25,28 +25,28 @@ data class RangoFechaDTO(
 )
 
 //Serializacion a DTO.
-fun ReservaSimulada.toDetalleReservaDTO(): DetalleReservaDTO {
-    val libro = this.reserva.libro
-
-    return DetalleReservaDTO(
-        bibliokarmasTotales = this.bibliokarmas,
-        calificacionPromedio = this.promedio,
-
-        ultimasResenias = this.ultimasReservas.map { reserva ->
-            val resenia = reserva.resenia!!
-            ReseniaDTO(
-                id = reserva.id,
-                nombreUsuario = resenia.nombreUsuario,
-                puntuacion = resenia.puntuacion,
-                comentario = resenia.comentario
-            )
-        },
-        rangosFechasOcupadas = this.reservasOcupadas.map { reservaOcupada ->
-            RangoFechaDTO(
-                fechaDesde = reservaOcupada.fechaDesde,
-                fechaHasta = reservaOcupada.fechaHasta
-            )
-        },
-        libroDetalleDTO = libro.toDetalleDTO(),
-    )
-}
+//fun ReservaSimulada.toDetalleReservaDTO(): DetalleReservaDTO {
+//    val libro = this.reserva.libro
+//
+//    return DetalleReservaDTO(
+//        bibliokarmasTotales = this.bibliokarmas,
+//        calificacionPromedio = this.promedio,
+//
+//        ultimasResenias = this.ultimasReservas.map { reserva ->
+//            val resenia = reserva.resenia!!
+//            ReseniaDTO(
+//                id = reserva.id,
+//                nombreUsuario = resenia.nombreUsuario,
+//                puntuacion = resenia.puntuacion,
+//                comentario = resenia.comentario
+//            )
+//        },
+//        rangosFechasOcupadas = this.reservasOcupadas.map { reservaOcupada ->
+//            RangoFechaDTO(
+//                fechaDesde = reservaOcupada.fechaDesde,
+//                fechaHasta = reservaOcupada.fechaHasta
+//            )
+//        },
+//        libroDetalleDTO = libro.toDetalleDTO(),
+//    )
+//}

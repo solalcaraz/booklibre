@@ -3,7 +3,6 @@ package ar.edu.unsam.phm.controller
 import ar.edu.unsam.phm.dto.LibroDetalleDTO
 import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
-import ar.edu.unsam.phm.dto.toDetalleDTO
 import ar.edu.unsam.phm.helpers.LibroAdapter
 import ar.edu.unsam.phm.helpers.ordenarLibros
 import ar.edu.unsam.phm.helpers.paginate
