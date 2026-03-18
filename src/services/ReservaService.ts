@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { API_URL } from '../env';
 import type { ReservaRequestModel, ReservaResponseModel } from '../models/ReservaModel';
+import type { ReservaLibroHomeJSON, FiltrosLibro } from '../types/ReservaLibroHome';
+import { getAxiosData } from './common';
 import type { PagReqModel, PagResModel } from '../models/PaginationModel';
 import type { ReseniaReq } from '../models/ReseniaModel';
 
@@ -13,6 +15,28 @@ class ReservaService {
   async calificar(request: ReseniaReq): Promise<void> {
     const response = await axios.post<void>(API_URL + '/reserva/calificar', request)
     return response.data
+  }
+
+  async getLibrosDisponiblesReserva(userId: number, req: PagReqModel<FiltrosLibro>): Promise<PagResModel<ReservaLibroHomeJSON>> {
+    const filtros = req.filter ?? {}
+    const params = { ...filtros, numeroPagina: req.pageNumber, tamanoPaginado: req.pageSize }
+    const queryLibros = () => axios.get<PagResModel<ReservaLibroHomeJSON>>(`${API_URL}/reserva/librosDisponibles/${userId}`, 
+      { params, 
+        // sobre escritura de los params con paramsSerializer, URL a mano
+        paramsSerializer: params => {
+          const searchParams = new URLSearchParams() // objeto apra constuir queries: clave=valor&clave=valor
+          Object.entries(params).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+              // si es un array (generos) evita generos[] y lo arma como generos=X generos=X
+              value.forEach(v => searchParams.append(key, v))
+              //para el resto de los valores solo los agrega a los filtros si existe como filtro no nulo
+            } else if (value !== undefined && value !== null && value !== '') {
+              searchParams.append(key, String(value))
+            }
+          })
+          return searchParams.toString()
+        } } )
+    return await getAxiosData(queryLibros)
   }
 }
 
