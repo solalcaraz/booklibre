@@ -55,12 +55,7 @@ export const Home = () => {
     actualizar('generos', nuevosGeneros)
   }
   
-  const handleAplicarFiltros = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (validar()) setFiltrosAplicados({ ...filtros })
-  }
-  
-  const handleBusqueda = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (validar()) setFiltrosAplicados({ ...filtros })
   }
@@ -83,7 +78,7 @@ export const Home = () => {
       <PanelFiltros
         filtros={filtros}
         errores={errores}
-        onAplicar={handleAplicarFiltros}
+        onAplicar={handleSubmit}
         onLimpiar={limpiarFiltros}
         onActualizar={actualizar}
         onGenero={handleGenero}
@@ -94,7 +89,7 @@ export const Home = () => {
         <BarraBusqueda
           busqueda={filtros.busqueda ?? ''}
           onChangeBusqueda={v => actualizar('busqueda', v)}
-          onBuscar={handleBusqueda}
+          onBuscar={handleSubmit}
           onLimpiar={() => {
             actualizar('busqueda', '')
             setFiltrosAplicados(prev => ({ ...prev, busqueda: '' }))

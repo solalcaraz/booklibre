@@ -27,6 +27,7 @@ export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActuali
         <fieldset>
           <legend className="text-sm font-semibold text-slate-700">GÉNERO</legend>
           <div className="mt-3 space-y-2 text-sm text-slate-600">
+            {/* desarmo el enum genero para mostrar en los checkbox cada uno */}
             {Object.values(Genero).map(genero => (
               <label key={genero} className="flex items-center gap-2">
                 <input

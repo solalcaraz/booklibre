@@ -14,11 +14,11 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
     <article onClick={() => navigate(`/libros/detalle/${libro.id}`)} className="bg-white rounded-2xl shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden transition hover:shadow-[0_14px_40px_rgba(15,23,42,0.12)] cursor-pointer">
 
       {/* Imagen */}
-      <div className="bg-slate-50 p-6 flex justify-center">
+      <div className="bg-slate-50 p-3 flex justify-center">
         <img
           src={libro.portada}
           alt="Libro"
-          className="h-56 object-contain"
+          className="h-56 object-cover"
         />
       </div>
 
@@ -36,12 +36,10 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
           </span>
         </div>
 
-        {/* titulo */}
         <h3 className="font-semibold text-slate-800 leading-snug">
           {libro.titulo}
         </h3>
 
-        {/* autor */}
         <p className="ttext-sm text-slate-500">
           {libro.autor}
         </p>
