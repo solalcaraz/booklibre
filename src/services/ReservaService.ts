@@ -17,17 +17,10 @@ class ReservaService {
     return response.data
   }
 
-  async getLibrosDisponiblesReserva(
-    userId: number,
-    req: PaginationRequestModel<FiltrosLibro>
-  ): Promise<PaginationResponseModel<ReservaLibroHomeJSON>> {
+  async getLibrosDisponiblesReserva(userId: number, req: PagReqModel<FiltrosLibro>): Promise<PagResModel<ReservaLibroHomeJSON>> {
     const filtros = req.filter ?? {}
-    const params = {
-      ...filtros,
-      numeroPagina: req.pageNumber,
-      tamanoPaginado: req.pageSize
-    }
-    const queryLibros = () => axios.get<PaginationResponseModel<ReservaLibroHomeJSON>>(`${API_URL}/librosDisponibles/${userId}`, { params } )
+    const params = { ...filtros, numeroPagina: req.pageNumber, tamanoPaginado: req.pageSize }
+    const queryLibros = () => axios.get<PagResModel<ReservaLibroHomeJSON>>(`${API_URL}/reserva/librosDisponibles/${userId}`, { params } )
     return await getAxiosData(queryLibros)
   }
 }
