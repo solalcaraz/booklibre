@@ -6,8 +6,9 @@ import { Genero } from "../models/LibroResponseModel"
 import { PanelFiltros } from "../components/Home/FiltrosCard"
 import { BarraBusqueda } from "../components/Home/BarraBusqueda"
 import { LibroCard } from "../components/Home/LibroCard"
+import { formatearFecha } from "../utils/formatearFecha"
 
-const hoy = new Date().toISOString().split('T')[0] // para quedarme solo con la fecha sin el horario
+const hoy = formatearFecha(new Date)
 
 const filtrosIniciales: FiltrosLibro = {
   generos: [],
