@@ -41,12 +41,11 @@ class FiltrosLibro (
                 (cantPaginasMax?.let { libro.cantPaginas <= it } ?: true)
 
     private fun cumpleIsbn(libro: Libro): Boolean =
-        isbn?.let { libro.isbn13 == it } ?: true
+        if (isbn.isNullOrBlank()) true else libro.isbn13 == isbn
 
     private fun cumpleUsuario(libro: Libro): Boolean =
-        usuarioPrestador?.let {
-            libro.dueno.nombreCompleto.contains(it, ignoreCase = true)
-        } ?: true
+        if (usuarioPrestador.isNullOrBlank()) true else
+            libro.dueno.nombreCompleto.contains(usuarioPrestador, ignoreCase = true)
 }
 
 enum class Ordenamiento {
