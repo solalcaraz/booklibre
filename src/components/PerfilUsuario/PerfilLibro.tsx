@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import { PencilSimpleIcon, TrashIcon, BookIcon } from '@phosphor-icons/react'
 import type { LibroUsuario } from '../../services/UsuarioService'
 import { formatDate } from '../../utils/formateDate'
