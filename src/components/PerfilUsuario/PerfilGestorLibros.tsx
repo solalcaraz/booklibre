@@ -1,5 +1,5 @@
 import { useEffect, type Dispatch, type SetStateAction } from 'react'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import {
   ArrowsDownUpIcon,
   PlusCircleIcon,

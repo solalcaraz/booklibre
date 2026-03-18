@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from 'react-router-dom'
 import { libroService } from "../services/LibroService";
 import { BaseInput } from "../components/BaseInput";
 import { Libro, type LibroFormData, type LibroErrors } from "../classes/Libro";

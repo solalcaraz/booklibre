@@ -2,7 +2,7 @@ import logoImg from '../assets/icons/logo.png'
 import bibliokarmaIcon from '../assets/icons/bibliokarma.png'
 import defaultUser from '../assets/images/user.png'
 import { useState } from 'react';
-import { NavLink } from 'react-router';
+import { NavLink } from 'react-router-dom'
 
 interface NavItemProps {
   to: string
