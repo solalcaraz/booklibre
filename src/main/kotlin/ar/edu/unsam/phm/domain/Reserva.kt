@@ -4,6 +4,17 @@ import ar.edu.unsam.phm.repository.EntidadConId
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
+enum class BusquedaPor(val value: String) {
+    TAB_PRESTADOS_A_MI("prestados-a-mi"),
+    TAB_PRESTADOS_POR_MI("prestados-por-mi")
+}
+
+enum class EstadoReserva(val value: String) {
+    ACTIVO("ACTIVO"),
+    DEVUELTO("DEVUELTO"),
+    PROXIMO_A_VENCER("PROXIMO A VENCER")
+}
+
 class Reserva(
     override var id: Int? = null,
     val libro: Libro,
@@ -16,9 +27,11 @@ class Reserva(
 
 ) : EntidadConId {
     init {
-        require(!fechaHasta.isBefore(fechaDesde)
-                && lector.id != libro.dueno.id) { // no puedo reservar mis propios libros ...
+        require(!fechaHasta.isBefore(fechaDesde)) { // no puedo reservar mis propios libros ...
             "La fecha hasta no puede ser anterior a la fecha desde, ni puedo reservar mis propios libros"
+        }
+        require(lector.id != libro.dueno.id){
+            "No puedo reservar mis propios libros"
         }
     }
 
@@ -34,11 +47,15 @@ class Reserva(
         return LocalDate.now().isAfter(this.fechaHasta)
     }
 
-    //Métodos para trabajar con reseña
-    fun agregarReseña(puntaje: Int, comentario: String) {
-       require( puntaje in 0..5){ "El puntaje debe estar entre 0 y 5"}
-       require( comentario.isNotBlank()){"El comentario no puede estar vacio"}
-       resenia = Resenia(lector.nombreCompleto,puntaje, comentario = comentario)
+    fun agregarReseña(puntaje: Int, comentario: String, fechaCreacion: LocalDate = LocalDate.now()) {
+        require( puntaje in 0..5){ "El puntaje debe estar entre 0 y 5"}
+        require( comentario.isNotBlank()){"El comentario no puede estar vacio"}
+        require(this.estaActiva() || this.estaFinalizada()) {
+            "No podés reseñar un libro cuyo préstamo todavía no comenzó"
+        }
+       resenia = Resenia(
+           lector.nombreCompleto, puntaje, comentario, fechaCreacion
+       )
     }
 
     fun calcularDias() = ChronoUnit.DAYS.between(fechaDesde, fechaHasta).toInt() + 1
@@ -46,4 +63,26 @@ class Reserva(
     fun calcularBiblioKarmas(cantidadReservas: Int): Int {
         return 5 * calcularDias() + libro.tipo.plusBiblioKarma(libro, lector, cantidadReservas)
     }
+
+    fun calcularEstado(): String {
+        if (estaFinalizada()) return EstadoReserva.DEVUELTO.value
+
+        val diasRestantes = ChronoUnit.DAYS.between(LocalDate.now(), fechaHasta)
+        if (diasRestantes in 0..2) {
+            return EstadoReserva.PROXIMO_A_VENCER.value
+        }
+        return EstadoReserva.ACTIVO.value
+    }
+
+    fun puedeCalificar(): Boolean = resenia == null && estaFinalizada()
 }
+
+data class ReservaSimulada(
+    val reserva: Reserva,
+    val cantidadReservasHistoricas: Int,
+    val promedio: Double,
+    val ultimasReservas: List<Reserva>,
+    val reservasOcupadas: List<Reserva>,
+    val bibliokarmas: Int
+)
+

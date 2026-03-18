@@ -1,29 +1,39 @@
 package ar.edu.unsam.phm.controller
 
-import ar.edu.unsam.phm.dto.DetalleLibroDTO
 import ar.edu.unsam.phm.dto.LibroDetalleDTO
 import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.dto.toDetalleDTO
+import ar.edu.unsam.phm.helpers.LibroAdapter
 import ar.edu.unsam.phm.helpers.ordenarLibros
 import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.service.LibroService
 import org.springframework.web.bind.annotation.*
 import ar.edu.unsam.phm.service.UsuarioService
+import org.springframework.http.HttpStatus
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @CrossOrigin("*")
-class LibroController(val libroService: LibroService, val usuarioService: UsuarioService) {
+class LibroController(val libroService: LibroService,
+                      val usuarioService: UsuarioService,
+                      val libroAdapter: LibroAdapter
+) {
 
     @GetMapping("/libro/{id}")
-    fun obtenerLibro(@PathVariable id: Int): LibroDetalleDTO = libroService.getById(id).toDetalleDTO()
+    fun obtenerLibro(@PathVariable id: Int): LibroDetalleDTO = libroAdapter.toDetalleDto(libroService.getById(id))
 
     @PostMapping("/libro/nuevo")
-    fun crearLibro(@RequestBody libroDTO : LibroDetalleDTO, @RequestParam usuarioId: Int) = libroService.create(libroDTO, usuarioId)
+    fun crearLibro(@RequestBody libroDTO : LibroDetalleDTO) = libroService.create(libroDTO)
 
     @PutMapping("/libro/{id}")
-    fun actualizarLibro(@PathVariable id: Int, @RequestBody libroDTO: LibroDetalleDTO) =
+    fun actualizarLibro(@PathVariable id: Int, @RequestBody libroDTO: LibroDetalleDTO) {
+        val libroOriginal = libroService.getById(id)
+        if (libroOriginal.dueno.id != libroDTO.idDueno){
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, "No puedes editar un libro que no es tuyo")
+        }
         libroService.update(id, libroDTO)
+    }
 
     @GetMapping("/misLibros/{userId}")
     fun listarMisLibros(
@@ -45,8 +55,4 @@ class LibroController(val libroService: LibroService, val usuarioService: Usuari
         return libroService.borrarLibro(bookId)
     }
 
-    @GetMapping("/libros/detalle/{id}")
-    fun getDetalleLibro(@PathVariable id: String): DetalleLibroDTO {
-        return libroService.getDetalle(id.toInt())
-    }
 }
