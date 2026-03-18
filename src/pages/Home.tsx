@@ -1,4 +1,4 @@
-import { act, useState } from "react"
+import { useState } from "react"
 import { LibroCard } from "../components/LibroCard"
 import type { FiltrosLibro, Orden, ReservaLibroHomeJSON } from "../types/ReservaLibroHome"
 import { reservaService } from "../services/ReservaService"
@@ -18,7 +18,7 @@ const filtrosIniciales: FiltrosLibro = {
   usuarioPrestador: '',
   orden: 'POPULARIDAD',
   numeroPagina: 0,
-  tamanoPaginado: 6
+  tamanoPaginado: 3
 }
 
 export const Home = () => {
@@ -245,6 +245,7 @@ export const Home = () => {
           fetchFunction={(req) => reservaService.getLibrosDisponiblesReserva(userId, req)}
           filter={filtrosAplicados}
           renderItem={(libro) => <LibroCard libro={libro} />}
+          pageSize={filtros.tamanoPaginado!}
         />
       </div>
     </main>

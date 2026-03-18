@@ -9,11 +9,10 @@ interface DataGridProps<TData, TFilter> {
   fetchFunction: FetchFunction<TData, TFilter>  // metodo del servicio que llama al endpoint que trae la data
   filter?: TFilter
   renderItem: (item: TData) => React.ReactNode  //componente (fila/card) que quiero renderizar dentro de la grid, la grid itera sola
+  pageSize: number
 }
 
-export const DEFAULT_PAGE_SIZE: number = 2
-
-export default function DataGrid<TData, TFilter>({ fetchFunction, filter, renderItem }: DataGridProps<TData, TFilter>) {
+export default function DataGrid<TData, TFilter>({ fetchFunction, filter, renderItem, pageSize }: DataGridProps<TData, TFilter>) {
   const [data, setData] = useState<TData[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -32,7 +31,7 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
       setLoading(true)
 
       const req = {
-        pageSize: DEFAULT_PAGE_SIZE,
+        pageSize: pageSize,
         pageNumber: pageToLoad,
         ...(filter ? { filter } : {})
       }
