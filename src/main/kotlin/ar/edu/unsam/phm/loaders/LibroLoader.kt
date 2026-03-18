@@ -19,8 +19,9 @@ import java.time.LocalDate
 @Order(2)
 class LibroLoader(private val libroRepositorio: LibroRepositorio, private val usuarioRepositorio: UsuarioRepositorio) : CommandLineRunner {
     override fun run(vararg args: String?) {
-        val usuario = usuarioRepositorio.getById(1)
-        val usuario2 = usuarioRepositorio.getById(2)
+        val usuario = usuarioRepositorio.getById(1) // dueno de libro 1 2 3
+        val usuario2 = usuarioRepositorio.getById(2) // dueno de libro 4 5 6
+        val usuario3 = usuarioRepositorio.getById(3) // dueno de libro 7 8
 
         val libro1 = Libro(
             titulo = "Orgullo y Prejuicio",
@@ -51,7 +52,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             editorial = "Cátedra",
             fechaPublicacion = LocalDate.of(1960, 1, 1),
             estado = Estado.BUENO,
-            dueno = usuario2
+            dueno = usuario
         ).apply {
             portada = Environment.API_URL + "/imagenes/Rayuela.jpg"
         }
@@ -85,7 +86,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             editorial = "Ace",
             fechaPublicacion = LocalDate.of(1900, 1, 1),
             estado = Estado.EXCELENTE,
-            dueno = usuario
+            dueno = usuario2
         ).apply {
             portada = Environment.API_URL + "/imagenes/dune.jpg"
         }
@@ -102,7 +103,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             editorial = "Sudamericana",
             fechaPublicacion = LocalDate.of(1900, 1, 1),
             estado = Estado.MUY_BUENO,
-            dueno = usuario
+            dueno = usuario2
         ).apply {
             portada = Environment.API_URL + "/imagenes/100anos.webp"
         }
@@ -119,7 +120,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             editorial = "Avery",
             fechaPublicacion = LocalDate.of(1900, 1, 1),
             estado = Estado.BUENO,
-            dueno = usuario
+            dueno = usuario2
         ).apply {
             portada = Environment.API_URL + "/imagenes/habitos.webp"
         }
@@ -136,7 +137,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             editorial = "DAW Books",
             fechaPublicacion = LocalDate.of(1900, 1, 1),
             estado = Estado.EXCELENTE,
-            dueno = usuario
+            dueno = usuario3
         ).apply {
             portada = Environment.API_URL + "/imagenes/viento.webp"
         }
@@ -153,7 +154,7 @@ class LibroLoader(private val libroRepositorio: LibroRepositorio, private val us
             editorial = "Scribner",
             fechaPublicacion = LocalDate.of(1900, 1, 1),
             estado = Estado.BUENO,
-            dueno = usuario
+            dueno = usuario3
         ). apply {
             /*portada = Environment.API_URL + "/imagenes/gatsby.jpg"*/
         }
