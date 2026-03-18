@@ -56,7 +56,7 @@ export const PerfilGestorLibros = ({
   }, [end, start])
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-4" data-testid="perfil-gestor-libros">
       <div className="flex flex-col justify-between md:flex-row md:items-center">
         <h2 className="text-3xl font-extrabold tracking-tight text-slate-800 mb-3">
           Gestión de Mis Libros

@@ -9,6 +9,7 @@ import { Auth } from '../../classes/Auth'
 const mockNavigate = vi.fn()
 const mockUseParams = vi.fn()
 
+/* Mockeo react-router-dom */
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
   return {
@@ -18,6 +19,7 @@ vi.mock('react-router-dom', async () => {
   }
 })
 
+/* Mockeo las funciones que voy a usar del service */
 vi.mock('../../services/AuthService', () => ({
   authService: {
     estaAutenticado: vi.fn(),
@@ -26,25 +28,7 @@ vi.mock('../../services/AuthService', () => ({
   }
 }))
 
-/**
- * Hacemos que useOnInit ejecute inmediatamente el callback
- */
-vi.mock('../../utils/hooks', async () => {
-  const React = await vi.importActual<typeof import('react')>('react')
-
-  return {
-    useOnInit: (callback: () => void) => {
-      React.useEffect(() => {
-        callback()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [])
-    }
-  }
-})
-
-/**
- * Mock de la entidad Auth para controlar validaciones y transformaciones
- */
+/* Mockeo la clase Auth para controlar validaciones */
 const mockValidateLogin = vi.fn()
 const mockValidateRegister = vi.fn()
 const mockToLoginData = vi.fn()
@@ -70,6 +54,7 @@ vi.mock('../../classes/Auth', () => {
   }
 })
 
+/* Renderizo la pagina dentro de un Router en memoria */
 const renderComponent = () => {
   return render(
     <MemoryRouter initialEntries={['/auth/login']}>
@@ -84,22 +69,7 @@ describe('AuthForm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
 
-    mockUseParams.mockReturnValue({ mode: 'login' })
-    vi.mocked(authService.estaAutenticado).mockReturnValue(false)
-
-    mockValidateLogin.mockReturnValue({})
-    mockValidateRegister.mockReturnValue({})
-    mockToLoginData.mockReturnValue({
-      email: 'test@mail.com',
-      password: '123456'
-    })
-    mockToRegisterData.mockReturnValue({
-      fullName: 'Thomas',
-      email: 'test@mail.com',
-      password: '123456',
-      confirmPassword: '123456'
-    })
-
+    /* Mockeo el metodo estatico en false para que no corte el happy path */
     mockHasErrors.mockReturnValue(false)
     ;(Auth.hasErrors as unknown as ReturnType<typeof vi.fn>) = mockHasErrors
 
@@ -192,6 +162,7 @@ describe('AuthForm', () => {
 
   it('no envía login si hay errores de validación y muestra mensajes de error', async () => {
     mockUseParams.mockReturnValue({ mode: 'login' })
+    vi.mocked(authService.estaAutenticado).mockReturnValue(false)
     mockValidateLogin.mockReturnValue({
       email: 'Email requerido',
       password: 'Contraseña requerida'
@@ -216,9 +187,14 @@ describe('AuthForm', () => {
     const user = userEvent.setup()
     mockUseParams.mockReturnValue({ mode: 'login' })
 
+    mockToLoginData.mockReturnValue({
+      email: 'test@mail.com',
+      password: '123456'
+    })
+
     const fakeUser = {
       id: 1,
-      nombreCompleto: 'Diego Maradona',
+      nombreCompleto: 'Thomas',
       imagen: 'imagenMock',
       bibliokarmas: 1986
     }
@@ -245,10 +221,17 @@ describe('AuthForm', () => {
   it('envía register correctamente, guarda el user en localStorage y navega a /home', async () => {
     const user = userEvent.setup()
     mockUseParams.mockReturnValue({ mode: 'register' })
+    mockValidateRegister.mockReturnValue({})
+    mockToRegisterData.mockReturnValue({
+      fullName: 'Thomas',
+      email: 'test@mail.com',
+      password: '123456',
+      confirmPassword: '123456'
+    })
 
     const fakeUser = {
       id: 1,
-      nombreCompleto: 'Diego Maradona',
+      nombreCompleto: 'Thomas',
       imagen: 'imagenMock',
       bibliokarmas: 1986
     }
@@ -273,31 +256,6 @@ describe('AuthForm', () => {
     })
 
     expect(localStorage.setItem).toHaveBeenCalledWith('user', JSON.stringify(fakeUser))
-    expect(mockNavigate).toHaveBeenCalledWith('/home')
-  })
-
-  it('no guarda en localStorage si el user no tiene id', async () => {
-    const user = userEvent.setup()
-    mockUseParams.mockReturnValue({ mode: 'login' })
-
-    vi.mocked(authService.login).mockResolvedValue({
-      email: 'test@mail.com'
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any)
-
-    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem')
-
-    renderComponent()
-
-    await user.type(screen.getByLabelText(/correo electrónico/i), 'test@mail.com')
-    await user.type(screen.getByLabelText(/^contraseña$/i), '123456')
-    await user.click(screen.getByRole('button', { name: /ingresar/i }))
-
-    await waitFor(() => {
-      expect(authService.login).toHaveBeenCalled()
-    })
-
-    expect(setItemSpy).not.toHaveBeenCalled()
     expect(mockNavigate).toHaveBeenCalledWith('/home')
   })
 

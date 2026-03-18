@@ -1,4 +1,4 @@
-import type { LoginData, RegisterData } from "../services/AuthService"
+import type { LoginData, RegisterData } from '../services/AuthService'
 
 export type AuthFormData = {
   fullName: string
@@ -99,10 +99,3 @@ export class Auth {
     return Object.keys(errors).length > 0
   }
 }
-
-/* toLoginDTO(): LoginDTO {
-    return {
-      username: this.username,
-      password: this.password
-    }
-  } */

@@ -60,6 +60,7 @@ export const PerfilLibro = ({ libro, onDelete }: LibroProps) => {
             className="transition hover:text-red-500 cursor-pointer"
             title="Eliminar"
             onClick={() => onDelete(libro.id)}
+            data-testid="delete-libro"
           >
             <TrashIcon size={22} />
           </button>

@@ -17,7 +17,10 @@ export const PerfilHeader = ({ usuario, onUpdate }: PerfilHeaderProps) => {
   }
 
   return (
-    <section className="flex flex-col justify-between gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:flex-row md:items-center">
+    <section
+      className="flex flex-col justify-between gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:flex-row md:items-center"
+      data-testid="perfil-header"
+    >
       <div className="flex items-start gap-4">
         <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-2 border-none bg-[#f7d8c900] text-3xl">
           <img src={usuario.imagen} alt="" className="rounded-full " />
@@ -47,6 +50,7 @@ export const PerfilHeader = ({ usuario, onUpdate }: PerfilHeaderProps) => {
       <button
         className="inline-flex items-center justify-center gap-2 self-start rounded-xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-200 cursor-pointer"
         onClick={() => setIsEditModalOpen(true)}
+        data-testid="editar-perfil"
       >
         <GearIcon size={20} /> Editar Perfil
       </button>

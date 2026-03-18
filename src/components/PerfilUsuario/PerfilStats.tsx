@@ -19,7 +19,10 @@ type StatsProps = {
 
 export const PerfilStats = ({ librosPrestados, librosLeidos }: StatsProps) => {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-[#faf4fb] p-5 shadow-sm">
+    <section
+      className="rounded-2xl border border-slate-200 bg-[#faf4fb] p-5 shadow-sm"
+      data-testid="perfil-stats"
+    >
       <div className="grid grid-cols-2 gap-4">
         <StatBox value={librosPrestados.toString()} label="Libros Prestados" />
         <StatBox value={librosLeidos.toString()} label="Libros Leídos" />
