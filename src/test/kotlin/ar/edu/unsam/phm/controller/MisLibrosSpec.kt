@@ -1,16 +1,10 @@
 package ar.edu.unsam.phm.controller
 
-import ar.edu.unsam.phm.domain.Coleccionable
-import ar.edu.unsam.phm.domain.Estado
-import ar.edu.unsam.phm.domain.Genero
-import ar.edu.unsam.phm.domain.Idioma
-import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.MiLibroDTO
-import ar.edu.unsam.phm.env.Environment
 import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.exceptions.NotFoundException
-import ar.edu.unsam.phm.helpers.UsuarioMapper
+import ar.edu.unsam.phm.helpers.LibroAdapter
 import ar.edu.unsam.phm.service.LibroService
 import ar.edu.unsam.phm.service.UsuarioService
 import org.junit.jupiter.api.DisplayName
@@ -23,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
@@ -31,6 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
+import org.springframework.test.web.servlet.MockMvc
 
 @WebMvcTest(LibroController::class)
 @DisplayName("Dado un LibroController")
@@ -39,6 +33,8 @@ class MisLibrosSpec(
 ) {
     @MockBean lateinit var usuarioService: UsuarioService
     @MockBean lateinit var libroService: LibroService
+    /* No lo uso pero tengo que mockearlo porque esta en el constructor del controller */
+    @MockBean lateinit var libroAdapter: LibroAdapter
 
     @Test
     @DisplayName("Cuando se elimina un libro existente, devuelve 200")
