@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { API_URL } from '../env'
-import type { PaginationResponseModel } from '../models/PaginationResponseModel'
 import { authService } from './AuthService'
+import type { PagResModel } from '../models/PaginationModel'
 
 export type FiltroLibros = 'Todos' | 'Disponibles' | 'Prestados'
 
@@ -58,9 +58,9 @@ class UsuarioService {
     page = 0,
     filter: FiltroLibros = 'Todos',
     sort?: LibroSort
-  ): Promise<PaginationResponseModel<LibroUsuario>> {
+  ): Promise<PagResModel<LibroUsuario>> {
     const user = authService.userDeStorage()
-    const response = await axios.get<PaginationResponseModel<LibroUsuario>>(
+    const response = await axios.get<PagResModel<LibroUsuario>>(
       API_URL +
         `/misLibros/${user.id}?page=${page}&size=3&filter=${filter}${sort ? `&sort=${sort.field},${sort.direction}` : ''}`
     )

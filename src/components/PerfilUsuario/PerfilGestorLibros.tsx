@@ -7,7 +7,7 @@ import {
   CaretRightIcon
 } from '@phosphor-icons/react'
 import type { LibroUsuario, FiltroLibros } from '../../services/UsuarioService'
-import type { PaginationState } from '../../models/PaginationResponseModel'
+import type { PaginationState } from '../../models/PaginationModel'
 import { PerfilLibro } from './PerfilLibro'
 import { PerfilTab } from './PerfilTab'
 
