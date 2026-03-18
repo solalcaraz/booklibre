@@ -28,7 +28,11 @@ class ReservaLoader(
         val libro5 = libroRepositorio.getById(5)
         val libro6 = libroRepositorio.getById(6)
         val libro7 = libroRepositorio.getById(7)
+        val libro8 = libroRepositorio.getById(8)
 
+        // maradona u1 = dueno de libro 1 2 3
+        // messi u2 = dueno de libro 4 5 6
+        // u3 = dueno de libro 7 8
 
         val reserva1 = Reserva(
             libro = libro1,
@@ -37,32 +41,32 @@ class ReservaLoader(
             fechaHasta = LocalDate.of(2026, 3, 14),
         )
         val reserva2 = Reserva(
-            libro = libro3,
+            libro = libro2,
             lector = usuario2,
             fechaDesde = LocalDate.of(2026, 3, 3),
             fechaHasta = LocalDate.of(2026, 3, 12),
         )
         val reserva3 = Reserva(
-            libro = libro4,
+            libro = libro3,
             lector = usuario2,
             fechaDesde = LocalDate.of(2026, 3, 8),
             fechaHasta = LocalDate.of(2026, 3, 14),
         )
         val reserva4 = Reserva(
-            libro = libro5,
-            lector = usuario2,
+            libro = libro4,
+            lector = usuario,
             fechaDesde = LocalDate.of(2026, 3, 7),
             fechaHasta = LocalDate.of(2026, 3, 10),
         )
         val reserva5 = Reserva(
-            libro = libro6,
-            lector = usuario2,
+            libro = libro5,
+            lector = usuario,
             fechaDesde = LocalDate.of(2026, 3, 28),
             fechaHasta = LocalDate.of(2026, 4, 14),
         )
         val reserva6 = Reserva(
-            libro = libro7,
-            lector = usuario2,
+            libro = libro6,
+            lector = usuario,
             fechaDesde = LocalDate.of(2026, 3, 7),
             fechaHasta = LocalDate.of(2026, 3, 10),
         )
@@ -74,8 +78,8 @@ class ReservaLoader(
         )
         reserva7.agregarReseña(4, "Libro buenardo")
         val reserva8 = Reserva(
-            libro = libro7,
-            lector = usuario3,
+            libro = libro8,
+            lector = usuario2,
             fechaDesde = LocalDate.of(2026, 1, 10),
             fechaHasta = LocalDate.of(2026, 1, 12),
         )
@@ -83,7 +87,7 @@ class ReservaLoader(
 
         val reserva9 = Reserva(
             libro = libro7,
-            lector = usuario2,
+            lector = usuario,
             fechaDesde = LocalDate.of(2026, 3, 20),
             fechaHasta = LocalDate.of(2026, 3, 25),
         )

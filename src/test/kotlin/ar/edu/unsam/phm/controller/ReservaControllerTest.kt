@@ -237,5 +237,103 @@ class ReservaControllerTest {
             .andExpect(jsonPath("$.totalItems").value(2))
     }
 
+// ORDENAMIENTO
+    @Test
+    fun `orden TITULO_ASC devuelve libros ordenados de la A a la Z`() {
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                    .param("orden", "TITULO_ASC")
+            )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.items[0].titulo").value("1984"))
+            .andExpect(jsonPath("$.items[1].titulo").value("Rayuela"))
+    }
+
+    @Test
+    fun `orden TITULO_DESC devuelve libros ordenados de la Z a la A`() {
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                    .param("orden", "TITULO_DESC")
+            )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.items[0].titulo").value("Rayuela"))
+            .andExpect(jsonPath("$.items[1].titulo").value("1984"))
+    }
+
+    @Test
+    fun `orden AUTOR_ASC devuelve libros ordenados por autor alfabeticamente`() {
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                    .param("orden", "AUTOR_ASC")
+            )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.items[0].autor").value("George Orwell"))
+            .andExpect(jsonPath("$.items[1].autor").value("Julio Cortázar"))
+    }
+
+    @Test
+    fun `orden DUENO_ASC devuelve libros ordenados por nombre del dueno alfabeticamente`() {
+        // agrego otro usuario y un libro asociadop para ver que el filtrado funcione
+        val usuario3 = Usuario(
+            nombreCompleto = "Ana Belgrano",
+            email = "ana@belgrano.com",
+            password = "admin"
+        )
+        usuarioRepositorio.create(usuario3)
+        val libroDeUsuario3 = Libro(
+            titulo = "El Aleph",
+            tipo = Comun,
+            descripcion = "Cuentos",
+            genero = Genero.LITERATURA_CLASICA,
+            autor = "Jorge Luis Borges",
+            cantPaginas = 200,
+            isbn13 = "9780142437889",
+            idioma = Idioma.ESPANOL,
+            editorial = "Penguin",
+            fechaPublicacion = LocalDate.of(1949, 1, 1),
+            estado = Estado.BUENO,
+            dueno = usuario3
+        )
+        libroRepositorio.create(libroDeUsuario3)
+
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                    .param("orden", "DUENO_ASC")
+            )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.items[0].dueno").value("Ana Belgrano"))
+            .andExpect(jsonPath("$.items[1].dueno").value("Lionel Messi"))
+            .andExpect(jsonPath("$.items[2].dueno").value("Lionel Messi"))
+    }
+
+    @Test
+    fun `orden POPULARIDAD devuelve primero el libro mas reservado`() {
+        // Rayuela tiene 2 reservas, 1984 no tiene ninguna
+        reservaRepositorio.create(Reserva(
+            libro = libroDeUsuario2,
+            lector = usuario,
+            fechaDesde = LocalDate.of(2025, 1, 1),
+            fechaHasta = LocalDate.of(2025, 1, 10)
+        ))
+        reservaRepositorio.create(Reserva(
+            libro = libroDeUsuario2,
+            lector = usuario,
+            fechaDesde = LocalDate.of(2025, 2, 1),
+            fechaHasta = LocalDate.of(2025, 2, 10)
+        ))
+
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.get("/librosDisponibles/${usuario.id}")
+                    .param("orden", "POPULARIDAD")
+            )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.items[0].titulo").value("Rayuela"))
+            .andExpect(jsonPath("$.items[1].titulo").value("1984"))
+    }
     // endregion
 }

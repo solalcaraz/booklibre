@@ -4,6 +4,17 @@ import ar.edu.unsam.phm.repository.EntidadConId
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
+enum class BusquedaPor(val value: String) {
+    TAB_PRESTADOS_A_MI("prestados-a-mi"),
+    TAB_PRESTADOS_POR_MI("prestados-por-mi")
+}
+
+enum class EstadoReserva(val value: String) {
+    ACTIVO("ACTIVO"),
+    DEVUELTO("DEVUELTO"),
+    PROXIMO_A_VENCER("PROXIMO A VENCER")
+}
+
 class Reserva(
     override var id: Int? = null,
     val libro: Libro,
@@ -52,6 +63,18 @@ class Reserva(
     fun calcularBiblioKarmas(cantidadReservas: Int): Int {
         return 5 * calcularDias() + libro.tipo.plusBiblioKarma(libro, lector, cantidadReservas)
     }
+
+    fun calcularEstado(): String {
+        if (estaFinalizada()) return EstadoReserva.DEVUELTO.value
+
+        val diasRestantes = ChronoUnit.DAYS.between(LocalDate.now(), fechaHasta)
+        if (diasRestantes in 0..2) {
+            return EstadoReserva.PROXIMO_A_VENCER.value
+        }
+        return EstadoReserva.ACTIVO.value
+    }
+
+    fun puedeCalificar(): Boolean = resenia == null && estaFinalizada()
 }
 
 data class ReservaSimulada(
