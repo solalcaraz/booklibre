@@ -30,7 +30,6 @@ export class Libro {
         public isbn13: string,
         public descripcion: string,
         public portada: string,
-        public calificacionPromedio: number,
         public dueno: string
     ) {}
 
@@ -57,19 +56,4 @@ export class Libro {
     static hasErrors(errors: LibroErrors): boolean {
         return Object.keys(errors).length > 0
     }
-}
-
-export type LibroHomeJSON = {
-    id: number
-    titulo: string
-    genero: string
-    autor: string
-    tipo: string
-    isbn13: string
-    idioma: string
-    estado: string
-    dueno: string
-    calificacionPromedio: number
-    //biblioKarmasTotal: number
-    portada: string
 }
