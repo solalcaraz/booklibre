@@ -161,6 +161,7 @@ export const EditProfileModal = ({
                     type="submit"
                     disabled={loading}
                     className="cursor-pointer rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
+                    data-testid="patch-usuario"
                   >
                     {loading ? 'Guardando...' : 'Guardar cambios'}
                   </button>
