@@ -27,9 +27,11 @@ class Reserva(
 
 ) : EntidadConId {
     init {
-        require(!fechaHasta.isBefore(fechaDesde)
-                && lector.id != libro.dueno.id) { // no puedo reservar mis propios libros ...
+        require(!fechaHasta.isBefore(fechaDesde)) { // no puedo reservar mis propios libros ...
             "La fecha hasta no puede ser anterior a la fecha desde, ni puedo reservar mis propios libros"
+        }
+        require(lector.id != libro.dueno.id){
+            "No puedo reservar mis propios libros"
         }
     }
 
@@ -45,11 +47,15 @@ class Reserva(
         return LocalDate.now().isAfter(this.fechaHasta)
     }
 
-    //Métodos para trabajar con reseña
-    fun agregarReseña(puntaje: Int, comentario: String) {
-       require( puntaje in 0..5){ "El puntaje debe estar entre 0 y 5"}
-       require( comentario.isNotBlank()){"El comentario no puede estar vacio"}
-       resenia = Resenia(lector.nombreCompleto,puntaje, comentario = comentario)
+    fun agregarReseña(puntaje: Int, comentario: String, fechaCreacion: LocalDate = LocalDate.now()) {
+        require( puntaje in 0..5){ "El puntaje debe estar entre 0 y 5"}
+        require( comentario.isNotBlank()){"El comentario no puede estar vacio"}
+        require(this.estaActiva() || this.estaFinalizada()) {
+            "No podés reseñar un libro cuyo préstamo todavía no comenzó"
+        }
+       resenia = Resenia(
+           lector.nombreCompleto, puntaje, comentario, fechaCreacion
+       )
     }
 
     fun calcularDias() = ChronoUnit.DAYS.between(fechaDesde, fechaHasta).toInt() + 1
@@ -70,3 +76,13 @@ class Reserva(
 
     fun puedeCalificar(): Boolean = resenia == null && estaFinalizada()
 }
+
+data class ReservaSimulada(
+    val reserva: Reserva,
+    val cantidadReservasHistoricas: Int,
+    val promedio: Double,
+    val ultimasReservas: List<Reserva>,
+    val reservasOcupadas: List<Reserva>,
+    val bibliokarmas: Int
+)
+

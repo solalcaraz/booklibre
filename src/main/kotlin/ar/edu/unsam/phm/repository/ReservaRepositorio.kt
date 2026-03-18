@@ -47,4 +47,24 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
     // Los libros disponibles en un rango de fechas
     fun libroEstaDisponibleEntre(libro: Libro, desde: LocalDate, hasta: LocalDate): Boolean =
         buscarPorLibro(libro).none { it.seSuperponeCon(desde, hasta)
-}}
+        }
+
+    fun getPuntacionPromedio(libro:Libro): Double{
+        val resenias = buscarPorLibro(libro).mapNotNull { it.resenia }
+        if( resenias.isEmpty()) return 0.0
+        return resenias.sumOf { it.puntuacion } / resenias.size.toDouble()
+    }
+
+    fun getUltimasReservas(libro:Libro): List<Reserva>{
+        return buscarPorLibro(libro)
+            .filter { it.estaFinalizada() }
+            .filter { it.resenia != null }
+            .sortedByDescending { it.resenia!!.fechaCreacion }
+            .take(2)
+    }
+
+    fun getReservasOcupadas(libro:Libro): List<Reserva>{
+        return buscarPorLibro(libro)
+            .filter { !it.estaFinalizada() }
+    }
+}

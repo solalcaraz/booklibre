@@ -1,6 +1,5 @@
 package ar.edu.unsam.phm.controller
 
-import ar.edu.unsam.phm.dto.DetalleLibroDTO
 import ar.edu.unsam.phm.dto.LibroDetalleDTO
 import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
@@ -45,8 +44,4 @@ class LibroController(val libroService: LibroService, val usuarioService: Usuari
         return libroService.borrarLibro(bookId)
     }
 
-    @GetMapping("/libros/detalle/{id}")
-    fun getDetalleLibro(@PathVariable id: String): DetalleLibroDTO {
-        return libroService.getDetalle(id.toInt())
-    }
 }
