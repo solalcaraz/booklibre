@@ -2,12 +2,12 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { MainLayout } from './layout/MainLayout'
 import { AuthLayout } from './layout/AuthLayout'
 import { AuthForm } from './pages/AuthForm'
-import { DetalleLibroPage } from './pages/DetalleLibroPage'
 import { Prestamos } from './pages/Prestamos'
 import { PerfilUsuario } from './pages/PerfilUsuario'
 import { Home } from './pages/Home'
 import LibroForm from './pages/LibroForm'
 import './App.css'
+import { DetalleReservaPage } from './pages/DetalleReservaPage'
 
 function App() {
   return (
@@ -24,7 +24,7 @@ function App() {
             <Route path="/profile" element={<PerfilUsuario />} />
             <Route path="/libro/nuevo" element={<LibroForm />} />
             <Route path="/libros/editar/:id" element={<LibroForm />} />
-            <Route path="/libros/detalle/:id" element={<DetalleLibroPage />} />
+            <Route path="/detalles/:id" element={<DetalleReservaPage />} />
           </Route>
         </Route>
       </Routes>
