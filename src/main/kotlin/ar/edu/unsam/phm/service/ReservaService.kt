@@ -113,6 +113,10 @@ class ReservaService (
         throw IllegalStateException("El libro ya se encuentra reservado en esas fechas.")
       }
 
+        val cantidadReservas = reservaRepositorio.buscarPorLibro(libro).size
+        val bibliokarmasGanados = nuevaReserva.calcularBiblioKarmas(cantidadReservas)
+        usuario.aumentarBiblioKarmas(bibliokarmasGanados)
+        usuarioRepositorio.update(usuario)
       reservaRepositorio.create(nuevaReserva)
     }
 }
