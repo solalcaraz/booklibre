@@ -1,20 +1,24 @@
-import type { LibroHomeJSON } from "../classes/Libro"
-import { formatEnum } from "../utils/formateEnumLibros"
+import { useNavigate } from "react-router"
+import type { ReservaLibroHomeJSON } from "../../types/ReservaLibroHome"
+import { formatEnum } from "../../utils/formateEnumLibros"
+
 
 interface LibroCardProps {
-  libro: LibroHomeJSON
+  libro: ReservaLibroHomeJSON
 }
 
 export const LibroCard = ( {libro}: LibroCardProps) => {
+  const navigate = useNavigate()
+
   return (
-    <article className="bg-white rounded-2xl shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden transition hover:shadow-[0_14px_40px_rgba(15,23,42,0.12)]">
+    <article onClick={() => navigate(`/libros/detalle/${libro.id}`)} className="bg-white rounded-2xl shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden transition hover:shadow-[0_14px_40px_rgba(15,23,42,0.12)] cursor-pointer">
 
       {/* Imagen */}
-      <div className="bg-slate-50 p-6 flex justify-center">
+      <div className="bg-slate-50 p-3 flex justify-center">
         <img
           src={libro.portada}
           alt="Libro"
-          className="h-56 object-contain"
+          className="h-56 object-cover"
         />
       </div>
 
@@ -32,12 +36,10 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
           </span>
         </div>
 
-        {/* titulo */}
         <h3 className="font-semibold text-slate-800 leading-snug">
           {libro.titulo}
         </h3>
 
-        {/* autor */}
         <p className="ttext-sm text-slate-500">
           {libro.autor}
         </p>
@@ -64,7 +66,7 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
 
           <div>
             <p className="text-slate-400">Bibliokarma</p>
-            <p>+340</p>
+            <p>+{libro.biblioKarmasTotal}</p>
           </div>
 
         </div>

@@ -30,7 +30,6 @@ export class Libro {
         public isbn13: string,
         public descripcion: string,
         public portada: string,
-        public calificacionPromedio: number,
         public dueno: string
     ) {}
 
@@ -39,7 +38,8 @@ export class Libro {
 
         const requiredFields: (keyof LibroFormData)[] = [
             'titulo', 'tipo', 'genero', 'autor', 'idioma', 
-            'estado', 'editorial', 'isbn13', 'descripcion'
+            'estado', 'editorial', 'isbn13', 'descripcion',
+            'fecha_publicacion'
         ];
         requiredFields.forEach(field => {
             if (!this[field as keyof this]?.toString().trim()) {
@@ -47,8 +47,11 @@ export class Libro {
             }
         });
 
-        if (this.paginas && isNaN(Number(this.paginas))) {
+        const numPaginas = Number(this.paginas);
+        if (!this.paginas || isNaN(numPaginas)) {
             errors.paginas = 'La cantidad de páginas debe ser un número';
+        } else if (numPaginas <= 0) {
+            errors.paginas = 'La cantidad de páginas debe ser mayor a 0';
         }
         
         return errors
@@ -57,19 +60,4 @@ export class Libro {
     static hasErrors(errors: LibroErrors): boolean {
         return Object.keys(errors).length > 0
     }
-}
-
-export type LibroHomeJSON = {
-    id: number
-    titulo: string
-    genero: string
-    autor: string
-    tipo: string
-    isbn13: string
-    idioma: string
-    estado: string
-    dueno: string
-    calificacionPromedio: number
-    //biblioKarmasTotal: number
-    portada: string
 }

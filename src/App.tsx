@@ -24,7 +24,7 @@ function App() {
             <Route path="/profile" element={<PerfilUsuario />} />
             <Route path="/libro/nuevo" element={<LibroForm />} />
             <Route path="/libros/editar/:id" element={<LibroForm />} />
-            <Route path="/detalleS/:id" element={<DetalleReservaPage />} />
+            <Route path="/detalles/:id" element={<DetalleReservaPage />} />
           </Route>
         </Route>
       </Routes>
