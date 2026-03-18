@@ -38,7 +38,8 @@ export class Libro {
 
         const requiredFields: (keyof LibroFormData)[] = [
             'titulo', 'tipo', 'genero', 'autor', 'idioma', 
-            'estado', 'editorial', 'isbn13', 'descripcion'
+            'estado', 'editorial', 'isbn13', 'descripcion',
+            'fecha_publicacion'
         ];
         requiredFields.forEach(field => {
             if (!this[field as keyof this]?.toString().trim()) {
@@ -46,8 +47,11 @@ export class Libro {
             }
         });
 
-        if (this.paginas && isNaN(Number(this.paginas))) {
+        const numPaginas = Number(this.paginas);
+        if (!this.paginas || isNaN(numPaginas)) {
             errors.paginas = 'La cantidad de páginas debe ser un número';
+        } else if (numPaginas <= 0) {
+            errors.paginas = 'La cantidad de páginas debe ser mayor a 0';
         }
         
         return errors

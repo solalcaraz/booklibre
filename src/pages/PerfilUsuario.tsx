@@ -8,7 +8,7 @@ import {
   type EditProfileData,
   type LibroSort
 } from '../services/UsuarioService'
-import type { PaginationState } from '../models/PaginationResponseModel'
+import type { PaginationState } from '../models/PaginationModel'
 import { type ErrorCustom, type ErrorResponse, getMensajeError } from '../utils/errorHandler'
 import { PerfilHeader } from '../components/PerfilUsuario/PerfilHeader'
 import { PerfilInfoCard } from '../components/PerfilUsuario/PerfilInfoCard'

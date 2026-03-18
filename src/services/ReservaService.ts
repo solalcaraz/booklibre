@@ -1,20 +1,19 @@
 import axios from 'axios';
 import { API_URL } from '../env';
-import type { PaginationResponseModel } from '../models/PaginationResponseModel';
 import type { ReservaRequestModel, ReservaResponseModel } from '../models/ReservaModel';
-import type { PaginationRequestModel } from '../models/PaginationRequestModel';
 import type { ReservaLibroHomeJSON, FiltrosLibro } from '../types/ReservaLibroHome';
 import { getAxiosData } from './common';
+import type { PagReqModel, PagResModel } from '../models/PaginationModel';
+import type { ReseniaReq } from '../models/ReseniaModel';
 
 class ReservaService {
-  //Todo: send filter
-  async misReservas(request: PaginationRequestModel<ReservaRequestModel>): Promise<PaginationResponseModel<ReservaResponseModel>> {
-    const response = await axios.post<PaginationResponseModel<ReservaResponseModel>>(API_URL + '/reserva/misReservas', request)
+  async buscarReservas(request: PagReqModel<ReservaRequestModel>): Promise<PagResModel<ReservaResponseModel>> {
+    const response = await axios.post<PagResModel<ReservaResponseModel>>(API_URL + '/reserva/obtenerReservas', request)
     return response.data
   }
 
-  async prestados(request: PaginationRequestModel<ReservaRequestModel>): Promise<PaginationResponseModel<ReservaResponseModel>> {
-    const response = await axios.post<PaginationResponseModel<ReservaResponseModel>>(API_URL + '/reserva/prestados', request)
+  async calificar(request: ReseniaReq): Promise<void> {
+    const response = await axios.post<void>(API_URL + '/reserva/calificar', request)
     return response.data
   }
 

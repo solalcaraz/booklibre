@@ -1,8 +1,9 @@
 import axios from "axios";
-import type { LibroDetalleResponse } from "../responses/LibroResponse";
 import { API_URL } from "../env";
 import type { DetalleLibro } from '../types/DetalleLibro'
 import type { LibroFormData } from "../classes/Libro";
+import type { LibroDetalleResponse } from "../models/LibroResponseModel";
+import { authService } from "./AuthService";
 
 class LibroService {
     
@@ -18,18 +19,19 @@ class LibroService {
     const response = await axios.get<LibroDetalleResponse>(API_URL + '/libro/' + id)
     return response.data
   }
-  async save(libroData: LibroFormData): Promise<void> {
-    await axios.post(`${API_URL}/libro/nuevo`, this.mapToDTO(libroData), {
-      params: { usuarioId: 1 } // Hardcodeado momentáneamente, tiene que tomar el id del usuario logueado
-    })
+  async create(libroData: LibroFormData): Promise<void> {
+    await axios.post(`${API_URL}/libro/nuevo`, this.mapToDTO(libroData))
   }
 
   async update(id: string, libroData: LibroFormData): Promise<void> {
-    await axios.put(`${API_URL}/libro/${id}`, this.mapToDTO(libroData))
+    await axios.put(`${API_URL}/libro/${id}`, this.mapToDTO(libroData, id))
   }
 
-  private mapToDTO(libroData: LibroFormData) {
+  private mapToDTO(libroData: LibroFormData, id: string | number | null = null) {
+    const user = authService.userDeStorage();
+
     return {
+      id: id ? Number(id) : null,
       titulo: libroData.titulo,
       tipo: libroData.tipo,
       genero: libroData.genero,
@@ -41,7 +43,8 @@ class LibroService {
       paginas: Number(libroData.paginas),
       isbn13: libroData.isbn13,
       descripcion: libroData.descripcion,
-      portada: libroData.portada
+      portada: libroData.portada,
+      idDueno: user.id
     }
   }
 }
