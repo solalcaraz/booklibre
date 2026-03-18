@@ -14,6 +14,7 @@ import java.time.LocalDate
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.dto.toDetalleDTO
+import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 
 @Service
@@ -110,7 +111,9 @@ class LibroService(
     }
 
     fun borrarLibro(id: String) {
-        libroRepositorio.deleteById(id)
+        val idNumerico = id.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
+
+        libroRepositorio.deleteById(idNumerico)
     }
 
 }
