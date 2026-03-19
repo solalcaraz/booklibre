@@ -21,15 +21,20 @@ class UsuarioLoader(private val usuarioRepositorio: UsuarioRepositorio): Command
             telefono = "+54 (11) 123-4567"
             bibliokarmas = 1986
             imagen = Environment.API_URL + "/imagenes/diego.jpg"
-            librosLeidos = 45
-            librosPrestados = 12
         }
 
         val usuario2 = Usuario(
-            nombreCompleto = "Lionel Messi",
-            email = "lionel@messi.com",
+            nombreCompleto = "Max Verstappen",
+            email = "max@verstappen.com",
             password =  "admin"
-        )
+        ).apply {
+            descripcion = "The Flying Dutchman"
+            ciudad = "Maaseik, Bélgica"
+            telefono = "+54 (11) 123-4567"
+            bibliokarmas = 2023
+            imagen = "https://cdn.crash.net/2025-10/si202510191331.jpg?width=1600&aspect_ratio=1:1"
+        }
+
         val usuario3 = Usuario(
             nombreCompleto = "Ye west",
             email = "yewest@bully.com",

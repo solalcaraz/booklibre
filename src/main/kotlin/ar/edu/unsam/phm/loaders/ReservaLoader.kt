@@ -29,9 +29,15 @@ class ReservaLoader(
         val libro6 = libroRepositorio.getById(6)
         val libro7 = libroRepositorio.getById(7)
         val libro8 = libroRepositorio.getById(8)
+        val libro9 = libroRepositorio.getById(9)
+        val libro10 = libroRepositorio.getById(10)
+        val libro11 = libroRepositorio.getById(11)
+        val libro12 = libroRepositorio.getById(12)
+        val libro13 = libroRepositorio.getById(13)
+        val libro14 = libroRepositorio.getById(14)
 
         // maradona u1 = dueno de libro 1 2 3
-        // messi u2 = dueno de libro 4 5 6
+        // verstappen u2 = dueno de libro 4 5 6 9 10 11 12 13 14
         // u3 = dueno de libro 7 8
 
         val reserva1 = Reserva(
@@ -56,7 +62,7 @@ class ReservaLoader(
             libro = libro4,
             lector = usuario,
             fechaDesde = LocalDate.of(2026, 3, 7),
-            fechaHasta = LocalDate.of(2026, 3, 10),
+            fechaHasta = LocalDate.of(2026, 5, 25),
         )
         val reserva5 = Reserva(
             libro = libro5,
@@ -91,6 +97,25 @@ class ReservaLoader(
             fechaDesde = LocalDate.of(2026, 3, 20),
             fechaHasta = LocalDate.of(2026, 3, 25),
         )
+        val reserva10 = Reserva(
+            libro = libro9,
+            lector = usuario,
+            fechaDesde = LocalDate.of(2026, 3, 17),
+            fechaHasta = LocalDate.of(2026, 3, 25)
+        )
+        val reserva11 = Reserva(
+            libro = libro11,
+            lector = usuario,
+            fechaDesde = LocalDate.of(2026, 3, 10),
+            fechaHasta = LocalDate.of(2026, 4, 21)
+        )
+        val reserva12 = Reserva(
+            libro = libro13,
+            lector = usuario,
+            fechaDesde = LocalDate.of(2026, 2, 24),
+            fechaHasta = LocalDate.of(2026, 4, 30)
+        )
+
         reservaRepositorio.create(reserva1)
         reservaRepositorio.create(reserva2)
         reservaRepositorio.create(reserva3)
@@ -100,6 +125,9 @@ class ReservaLoader(
         reservaRepositorio.create(reserva7)
         reservaRepositorio.create(reserva8)
         reservaRepositorio.create(reserva9)
+        reservaRepositorio.create(reserva10)
+        reservaRepositorio.create(reserva11)
+        reservaRepositorio.create(reserva12)
 
         println("Reservas cargadas en memoria")
     }
