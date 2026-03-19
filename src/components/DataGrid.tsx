@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { PagReqModel, PagResModel } from '../models/PaginationModel';
+import { Spinner } from './Spinner';
 
 type FetchFunction<TData, TFilter> = (
   request: PagReqModel<TFilter>
@@ -57,7 +58,7 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
     <div>
       {/* ------ CONTENIDO ------*/}
       {loading ? (
-        <div className="text-center py-10">Loading...</div>
+        <Spinner />
       ) : (
         <div className="grid grid-cols-3 gap-6">
           {data?.map((item, i) => (
