@@ -46,7 +46,7 @@ open class Repositorio<T : EntidadConId>(
     }
 
     fun getById(id: Int): T {
-        return objetos[id] ?: throw NotFoundException("No se encontró el objeto con ID $id.")
+        return objetos[id] ?: throw NotFoundException("No se encontró el objeto con ID $id.") // no deberia explotar
     }
 
     fun getAll(): List<T> = objetos.values.toList()

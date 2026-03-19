@@ -8,7 +8,7 @@ import java.time.LocalDate
 class Libro(
     override var id: Int? = null,
     var titulo: String,
-    var tipo: TipoDeLibro,
+    var tipo: TipoDeLibro, // refactor - herencia al tipo de libro
     var descripcion: String,
     var genero: Genero,
     var autor: String,

@@ -24,12 +24,12 @@ class ReservaService (
     private val usuarioRepositorio: UsuarioRepositorio
 ) {
     fun getMisReservas(payload: PaginationReqDTO<ReservaRequestDTO>): PaginationResponseDTO<Reserva> {
-        var reservas = reservaRepositorio.getAll()
+        var reservas = reservaRepositorio.getAll() // filtros en el repo
         // filtrado por tab si es prestado por mi o los que preste
         if (payload.filter?.busquedaPor == BusquedaPor.TAB_PRESTADOS_POR_MI.value){
             reservas = reservas.filter { it.libro.dueno.id.toString() == payload.filter.usuarioId }
         } else if (payload.filter?.busquedaPor == BusquedaPor.TAB_PRESTADOS_A_MI.value) {
-            reservas = reservas.filter { it.lector.id.toString() == payload.filter.usuarioId }
+            reservas = reservas.filter { it.lector.id.toString() == payload.filter.usuarioId } // componer en una funcion privada el filtro
         }
 
         // filtrado por input de busqueda
@@ -52,6 +52,7 @@ class ReservaService (
 
         // verifica disponibilidad real con el repo de Reservas, aplica busqueda por teclado, filtros y ordena
         val librosDisponibles =
+            // FILTRADO EN BD - repo
             (if (filtros.busqueda.isNullOrBlank()) libroRepositorio.getAll() else libroRepositorio.search(filtros.busqueda))
                     .filter { it.dueno.id != usuario.id }
                     .filter { reservaRepositorio.libroEstaDisponibleEntre(it, filtros.fechaDesde, filtros.fechaHasta) }
@@ -102,7 +103,7 @@ class ReservaService (
         val ultimasReservas = reservaRepositorio.getUltimasReservas(libro)
         val reservasOcupadas = reservaRepositorio.getReservasOcupadas(libro)
 
-        return ReservaSimulada(
+        return ReservaSimulada(  // DTO , chau data class
             reserva = reserva,
             cantidadReservasHistoricas = cantidadReservas,
             promedio = promedio,
@@ -123,11 +124,11 @@ class ReservaService (
         fechaHasta = reserva.fechaHasta,
       )
 
-      val reservasActivas = reservaRepositorio.buscarPorLibro(libro).filter { !it.estaFinalizada() }
+      val reservasActivas = reservaRepositorio.buscarPorLibro(libro).filter { !it.estaFinalizada() } // filtro al repo
       val seSuperpone = reservasActivas.any{ it.seSuperponeCon(reserva.fechaDesde, reserva.fechaHasta) }
 
       if( seSuperpone){
-        throw IllegalStateException("El libro ya se encuentra reservado en esas fechas.")
+        throw IllegalStateException("El libro ya se encuentra reservado en esas fechas.") //otra exception, el usuario la pifio
       }
 
         val cantidadReservas = reservaRepositorio.buscarPorLibro(libro).size

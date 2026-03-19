@@ -48,7 +48,7 @@ class ReservaController (private val reservaService: ReservaService, private val
         )
     }
 
-    @GetMapping("/librosDisponibles/{userId}")
+    @GetMapping("/librosDisponibles/{userId}") // convertir a DTO en el service y devolver directo
     fun listarLibros(@PathVariable userId: String, @ModelAttribute filtros: FiltrosLibro): PaginationResponseDTO<ReservaLibroHomeDTO> {
         val ( libros, cantReservas ) = reservaService.getLibrosDisponibles(userId.toInt(), filtros)
         val dtos = libros.zip(cantReservas).map { ( libro, cantidad ) -> libro.toReservaLibroHomeDTO(cantidad) }.toList()

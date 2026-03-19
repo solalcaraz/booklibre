@@ -61,7 +61,7 @@ class Reserva(
     fun calcularDias() = ChronoUnit.DAYS.between(fechaDesde, fechaHasta).toInt() + 1
 
     fun calcularBiblioKarmas(cantidadReservas: Int): Int {
-        return 5 * calcularDias() + libro.tipo.plusBiblioKarma(libro, lector, cantidadReservas)
+        return 5 * calcularDias() + libro.tipo.plusBiblioKarma(libro, lector, cantidadReservas) // pasar bibliokarmas como int, sirve pasar el objeto usuario completo?
     }
 
     fun calcularEstado(): String {
