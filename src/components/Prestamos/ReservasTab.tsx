@@ -3,6 +3,7 @@ import type { ReservaRequestModel, ReservaResponseModel } from '../../models/Res
 import { reservaService } from '../../services/ReservaService'
 import DataGrid from '../DataGrid'
 import { ReservasCard } from './ReservaCard'
+import { authService } from '../../services/AuthService'
 
 interface Props {
   tab: string
@@ -13,7 +14,7 @@ export const ReservasTab = ({ tab }: Props) => {
   const [filtro, setFiltro] = useState<ReservaRequestModel>({
     inputSearch: '',
     busquedaPor: tab,
-    usuarioId: '1' //Todo: consumir usuario logeado
+    usuarioId: authService.userDeStorage().id
   })
 
   const filtrar = (e?: any) => {
@@ -34,11 +35,6 @@ export const ReservasTab = ({ tab }: Props) => {
   const changeInput = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
     const value = e.target.value
     setInput(value)
-    
-    //Todo: cuadno se borra el filtro con la x resetear pero no funca
-    // if (value.length === 0) {
-    //   filtrar()
-    // }
   }
 
   return (
