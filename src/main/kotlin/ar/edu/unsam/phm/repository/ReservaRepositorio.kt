@@ -3,6 +3,10 @@ package ar.edu.unsam.phm.repository
 import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.domain.Usuario
+import ar.edu.unsam.phm.dto.MiLibroDTO
+import ar.edu.unsam.phm.dto.PaginationResponseDTO
+import ar.edu.unsam.phm.helpers.ordenarLibros
+import ar.edu.unsam.phm.helpers.paginate
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
@@ -31,17 +35,48 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
         return reservaActivaDeLibro(libro) != null
     }
 
-    /* Los libros leídos de un usuario son todas sus reservas que ya finalizaron */
-    fun librosLeidosDe(usuario: Usuario): Int {
+    /* Cantidad de libros leídos de un usuario = todas sus reservas que ya finalizaron */
+    fun cantidadLeidosDe(usuario: Usuario): Int {
         return objetos.values
             .filter { it.lector.id == usuario.id }
             .count { it.estaFinalizada() }
     }
 
-    /* Los libros prestados de un usuario son todas las reservas de cuyo libro es dueño */
-    fun librosPrestadosDe(usuario: Usuario): Int {
+    /* Cantidad de libros prestados de un usuario = todas las reservas de cuyo libro es dueño */
+    fun cantidadPrestadosDe(usuario: Usuario): Int {
         return objetos.values
             .count { it.libro.dueno.id == usuario.id }
+    }
+
+    fun librosPrestadosDe(usuario: Usuario): List<Libro> {
+        return objetos.values.filter { it.libro.dueno.id == usuario.id && it.estaActiva()}.map { it.libro }
+    }
+
+    fun buscarMisLibros(usuario: Usuario, librosDelUsuario: List<Libro>, filter: String, sort: String?, page: Int, size: Int): PaginationResponseDTO<MiLibroDTO> {
+        val librosPrestados = librosPrestadosDe(usuario)
+        val idsPrestados = librosPrestados.map { it.id }.toSet()
+
+        val librosFiltrados = when (filter) {
+            "Disponibles" -> librosDelUsuario.filter { it.id !in idsPrestados }
+            "Prestados" -> librosPrestados
+            else -> librosDelUsuario
+        }
+
+        val librosDto = librosFiltrados.map { libro ->
+            MiLibroDTO(
+                id = libro.id,
+                titulo = libro.titulo,
+                autor = libro.autor,
+                genero = libro.genero.label,
+                estadoReserva = if (libro.id in idsPrestados) "PRESTADO" else "DISPONIBLE",
+                agregadoEl = libro.fechaPublicacion,
+                portada = libro.portada
+            )
+        }
+
+        val librosOrdenados = ordenarLibros(librosDto, sort)
+
+        return paginate(librosOrdenados, page, size)
     }
 
     // Los libros disponibles en un rango de fechas
