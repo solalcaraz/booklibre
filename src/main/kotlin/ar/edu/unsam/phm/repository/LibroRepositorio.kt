@@ -21,6 +21,9 @@ class LibroRepositorio : Repositorio<Libro>(LibroSearchStrategy()) {
     fun librosDe(usuario: Usuario): List<Libro> {
         return objetos.values.filter { it.dueno == usuario }
     }
+    /* Este es el contrato de implementación para cuando migremos a DB */
+    /*fun librosDisponiblesDe(usuario: Usuario): List<Libro> {}
+    fun librosPrestadosDe(usuario: Usuario): List<Libro> {}*/
 
     fun deleteById(libroId: Int) {
         objetos.remove(libroId)?: throw NotFoundException("No se encontró el objeto con ID $libroId.")

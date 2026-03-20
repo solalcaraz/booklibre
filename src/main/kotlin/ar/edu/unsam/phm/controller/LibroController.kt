@@ -15,10 +15,8 @@ import org.springframework.web.server.ResponseStatusException
 @RestController
 @CrossOrigin("*")
 class LibroController(val libroService: LibroService,
-                      val usuarioService: UsuarioService,
                       val libroAdapter: LibroAdapter
 ) {
-
     @GetMapping("/libro/{id}")
     fun obtenerLibro(@PathVariable id: Int): LibroDetalleDTO = libroAdapter.toDetalleDto(libroService.getById(id))
 
@@ -38,20 +36,12 @@ class LibroController(val libroService: LibroService,
     fun listarMisLibros(
         @PathVariable userId: String, // Esto después va a ser un token por headers
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "3") size: Int,
+        @RequestParam(defaultValue = "3") size: Int, // Cambiable por @ModelAttribute
         @RequestParam(defaultValue = "Todos") filter: String,
         @RequestParam(required = false) sort: String?
-    ): PaginationResponseDTO<MiLibroDTO> {
-        val usuario = usuarioService.getUsuarioById(userId)
-        val libros = libroService.misLibros(usuario, filter)
-        val librosOrdenados = ordenarLibros(libros, sort)
+    ): PaginationResponseDTO<MiLibroDTO> = libroService.misLibros(userId, filter, sort, page, size)
 
-        return paginate(librosOrdenados, page, size)
-    }
 
     @DeleteMapping("/misLibros/{bookId}")
-    fun removeLibro(@PathVariable bookId: String){
-        return libroService.borrarLibro(bookId)
-    }
-
+    fun removeLibro(@PathVariable bookId: String) = libroService.borrarLibro(bookId)
 }

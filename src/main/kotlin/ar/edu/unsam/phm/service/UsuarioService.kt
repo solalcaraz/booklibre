@@ -16,8 +16,8 @@ class UsuarioService(private val usuarioRepositorio: UsuarioRepositorio, private
 
         val usuario = usuarioRepositorio.getById(idNumerico)
 
-        usuario.librosLeidos = reservaRepositorio.librosLeidosDe(usuario)
-        usuario.librosPrestados = reservaRepositorio.librosPrestadosDe(usuario)
+        usuario.librosLeidos = reservaRepositorio.cantidadLeidosDe(usuario)
+        usuario.librosPrestados = reservaRepositorio.cantidadPrestadosDe(usuario)
         /* No actualizo el repositorio porque lo voy a calcular siempre,
         no me interesa persistir esta data  */
 
