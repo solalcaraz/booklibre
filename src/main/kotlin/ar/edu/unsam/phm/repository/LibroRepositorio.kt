@@ -8,8 +8,9 @@ import org.springframework.stereotype.Component
 class LibroSearchStrategy : SearchStrategy<Libro> {
     override fun matches(obj: Libro, value: String): Boolean {
         val busqueda = value.trim().lowercase()
-        return obj.titulo.contains(value, ignoreCase = true) ||
-                obj.autor.split(" ").any { palabra ->
+        val data = obj.data
+        return data.titulo.contains(value, ignoreCase = true) ||
+                data.autor.split(" ").any { palabra ->
                     palabra.lowercase().startsWith(busqueda)
                 }
     }
@@ -19,7 +20,7 @@ class LibroSearchStrategy : SearchStrategy<Libro> {
 class LibroRepositorio : Repositorio<Libro>(LibroSearchStrategy()) {
 
     fun librosDe(usuario: Usuario): List<Libro> {
-        return objetos.values.filter { it.dueno == usuario }
+        return objetos.values.filter { it.data.dueno == usuario }
     }
     /* Este es el contrato de implementación para cuando migremos a DB */
     /*fun librosDisponiblesDe(usuario: Usuario): List<Libro> {}
