@@ -28,7 +28,6 @@ data class FiltrosLibro (
 }
 
 fun Libro.cumpleFiltros(filtros: FiltrosLibro): Boolean =
-    (filtros.busqueda.isNullOrBlank() || data.titulo.contains(filtros.busqueda, ignoreCase = true)) &&
     (filtros.generos.isEmpty() || data.genero in filtros.generos) &&
     (filtros.cantPaginasMin?.let { data.cantPaginas >= it } ?: true) &&
     (filtros.cantPaginasMax?.let { data.cantPaginas <= it } ?: true) &&

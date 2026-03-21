@@ -33,7 +33,8 @@ class LibroRepositorio : Repositorio<Libro>(LibroSearchStrategy()) {
     }
 
     fun getLibrosDisponibles(filtros: FiltrosLibro, usuarioId: Int, idLibrosOcupados: Set<Int>): List<Libro> =
-        objetos.values
+        // primero busca si hay una busqueda por teclado con el metodo search
+        (if (filtros.busqueda.isNullOrBlank()) objetos.values.toList() else search(filtros.busqueda))
             // que no sean sus propios libros, ni que esten en la lista de libros reservados y que cumpla con los filtros
             .filter {  it.data.dueno.id != usuarioId && it.id !in idLibrosOcupados && it.cumpleFiltros(filtros) }
             .sortedWith(filtros.orden.criterio())
