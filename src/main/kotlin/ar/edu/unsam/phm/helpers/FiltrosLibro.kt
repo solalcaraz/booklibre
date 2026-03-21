@@ -4,7 +4,7 @@ import ar.edu.unsam.phm.domain.Genero
 import ar.edu.unsam.phm.domain.Libro
 import java.time.LocalDate
 
-class FiltrosLibro (
+data class FiltrosLibro (
     val generos: List<Genero> = emptyList(),
     val cantPaginasMin: Int? = null,
     val cantPaginasMax: Int? = null,
@@ -12,12 +12,12 @@ class FiltrosLibro (
     val fechaHasta: LocalDate = LocalDate.now(),
     val isbn: String? = null,
     val usuarioPrestador: String? = null,
-    val orden: Ordenamiento = Ordenamiento.POPULARIDAD,
+    val orden: Ordenamiento = Ordenamiento.TITULO_ASC,
     val busqueda: String? = null,
     val numeroPagina: Int = 0,
     val tamanoPaginado: Int = 6
 ) {
-    // no puede ver libros anterior a hoy
+    // validaciones propias de este objetito
     init {
         require(fechaDesde >= LocalDate.now()) { "La fecha de inicio no puede ser en el pasado" }
         require(!fechaHasta.isBefore(fechaDesde)) { "La fecha de fin no puede ser anterior a la de inicio" }
@@ -26,32 +26,27 @@ class FiltrosLibro (
             "El rango de páginas es inválido"
         }
     }
-
-    fun aplicarA(libro: Libro): Boolean =
-            cumpleGenero(libro) &&
-            cumpleCantPaginas(libro) &&
-            cumpleIsbn(libro) &&
-            cumpleUsuario(libro)
-
-    private fun cumpleGenero(libro: Libro): Boolean =
-        generos.isEmpty() || libro.genero in generos
-
-    private fun cumpleCantPaginas(libro: Libro): Boolean =
-        (cantPaginasMin?.let { libro.cantPaginas >= it } ?: true) &&
-                (cantPaginasMax?.let { libro.cantPaginas <= it } ?: true)
-
-    private fun cumpleIsbn(libro: Libro): Boolean =
-        if (isbn.isNullOrBlank()) true else libro.isbn13 == isbn
-
-    private fun cumpleUsuario(libro: Libro): Boolean =
-        if (usuarioPrestador.isNullOrBlank()) true else
-            libro.dueno.nombreCompleto.contains(usuarioPrestador, ignoreCase = true)
 }
 
+fun Libro.cumpleFiltros(filtros: FiltrosLibro): Boolean =
+    (filtros.busqueda.isNullOrBlank() || data.titulo.contains(filtros.busqueda, ignoreCase = true)) &&
+    (filtros.generos.isEmpty() || data.genero in filtros.generos) &&
+    (filtros.cantPaginasMin?.let { data.cantPaginas >= it } ?: true) &&
+    (filtros.cantPaginasMax?.let { data.cantPaginas <= it } ?: true) &&
+    (filtros.isbn?.let { data.isbn13.contains(it) } ?: true) &&
+    (filtros.usuarioPrestador?.let { data.dueno.nombreCompleto.contains(it, ignoreCase = true) } ?: true)
+
+
 enum class Ordenamiento {
-    POPULARIDAD, // del mas reservado al menos
     TITULO_ASC,
     TITULO_DESC,
     AUTOR_ASC,
-    DUENO_ASC
+    DUENO_ASC;
+
+    fun criterio(): Comparator<Libro> = when (this) {
+        TITULO_ASC -> compareBy { it.data.titulo.lowercase() }
+        TITULO_DESC -> compareByDescending { it.data.titulo.lowercase() }
+        AUTOR_ASC -> compareBy { it.data.autor.lowercase() }
+        DUENO_ASC -> compareBy { it.data.dueno.nombreCompleto.lowercase() }
+    }
 }
