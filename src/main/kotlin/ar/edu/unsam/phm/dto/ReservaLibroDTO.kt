@@ -25,7 +25,6 @@ fun Reserva.toReservaLibroDTO(cantidadReservas:Int, puntuaciones: List<Int>): Re
         is LibroComun -> TipoDeLibroDTO.COMUN
         is LibroDedicatoria -> TipoDeLibroDTO.DEDICATORIA
         is LibroColeccionable -> TipoDeLibroDTO.COLECCIONABLE
-        else -> TipoDeLibroDTO.COMUN //por default es comun
     }
     val libro = this.libro.data //armo un pequeño objeto libro.data para no tener tantos llamados
 

@@ -19,7 +19,7 @@ data class LibroData(
     val dueno: Usuario,
     var portada: String = Environment.API_URL + "/imagenes/libro-nuevo.jpg"
 )
-abstract class Libro(
+sealed class Libro(
     var data: LibroData,
     override var id: Int? = null
 ) : EntidadConId {
