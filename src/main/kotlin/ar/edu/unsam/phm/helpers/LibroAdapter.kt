@@ -17,14 +17,14 @@ class LibroMapper : LibroAdapter {
         val libroData = LibroData(
             titulo = dto.titulo,
             descripcion = dto.descripcion,
-            genero = dto.genero,
+            genero = Genero.valueOf(dto.genero),
             autor = dto.autor,
             cantPaginas = dto.paginas,
             isbn13 = dto.isbn13,
-            idioma = dto.idioma,
+            idioma = Idioma.valueOf(dto.idioma),
             editorial = dto.editorial,
             fechaPublicacion = LocalDate.parse(dto.fechaPublicacion),
-            estado = dto.estado,
+            estado = Estado.valueOf(dto.estado),
             dueno = usuarioDueno,
             portada = dto.portada
         )
@@ -46,21 +46,22 @@ class LibroMapper : LibroAdapter {
             else -> throw IllegalArgumentException("Tipo de libro desconocido")
         }
 
+        val libroData = libro.data //para achicar los llamados
         return LibroDetalleDTO(
             id = libro.id,
-            titulo = libro.data.titulo,
+            titulo = libroData.titulo,
             tipo = tipoDto,
-            genero = libro.data.genero,
-            autor = libro.data.autor,
-            idioma = libro.data.idioma,
-            estado = libro.data.estado,
-            editorial = libro.data.editorial,
-            fechaPublicacion = libro.data.fechaPublicacion.toString(),
-            paginas = libro.data.cantPaginas,
-            isbn13 = libro.data.isbn13,
-            descripcion = libro.data.descripcion,
-            portada = libro.data.portada,
-            idDueno = libro.data.dueno.id ?: 0
+            genero = libroData.genero.label,
+            autor = libroData.autor,
+            idioma = libroData.idioma.label,
+            estado = libroData.estado.label,
+            editorial = libroData.editorial,
+            fechaPublicacion = libroData.fechaPublicacion.toString(),
+            paginas = libroData.cantPaginas,
+            isbn13 = libroData.isbn13,
+            descripcion = libroData.descripcion,
+            portada = libroData.portada,
+            idDueno = libroData.dueno.id ?: 0
         )
     }
 }

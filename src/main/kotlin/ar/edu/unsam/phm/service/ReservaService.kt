@@ -27,7 +27,7 @@ class ReservaService (
         var reservas = reservaRepositorio.getAll() // filtros en el repo
         // filtrado por tab si es prestado por mi o los que preste
         if (payload.filter?.busquedaPor == BusquedaPor.TAB_PRESTADOS_POR_MI.value){
-            reservas = reservas.filter { it.libro.dueno.id.toString() == payload.filter.usuarioId }
+            reservas = reservas.filter { it.libro.data.dueno.id.toString() == payload.filter.usuarioId }
         } else if (payload.filter?.busquedaPor == BusquedaPor.TAB_PRESTADOS_A_MI.value) {
             reservas = reservas.filter { it.lector.id.toString() == payload.filter.usuarioId } // componer en una funcion privada el filtro
         }
@@ -36,8 +36,8 @@ class ReservaService (
         val search = payload.filter?.inputSearch?.trim()
         if (!search.isNullOrEmpty()) {
             reservas = reservas.filter {
-                it.libro.titulo.contains(search, ignoreCase = true) ||
-                        it.libro.autor.contains(search, ignoreCase = true)
+                it.libro.data.titulo.contains(search, ignoreCase = true) ||
+                        it.libro.data.autor.contains(search, ignoreCase = true)
             }
         }
         return paginate(reservas, payload.pageNumber, payload.pageSize)
@@ -54,16 +54,16 @@ class ReservaService (
         val librosDisponibles =
             // FILTRADO EN BD - repo
             (if (filtros.busqueda.isNullOrBlank()) libroRepositorio.getAll() else libroRepositorio.search(filtros.busqueda))
-                    .filter { it.dueno.id != usuario.id }
+                    .filter { it.data.dueno.id != usuario.id }
                     .filter { reservaRepositorio.libroEstaDisponibleEntre(it, filtros.fechaDesde, filtros.fechaHasta) }
                     .filter { filtros.aplicarA(it) }
                     .let { libros ->
                         when (filtros.orden) {
                             Ordenamiento.POPULARIDAD -> libros.sortedByDescending { reservasPorLibro[it.id] ?: 0 } // si no fue reservado le dejo un 0 para garantizar que se traiga igualmente y no quede null
-                            Ordenamiento.TITULO_ASC -> libros.sortedBy { it.titulo.lowercase() }
-                            Ordenamiento.TITULO_DESC -> libros.sortedByDescending { it.titulo.lowercase() }
-                            Ordenamiento.AUTOR_ASC -> libros.sortedBy { it.autor }
-                            Ordenamiento.DUENO_ASC -> libros.sortedBy { it.dueno.nombreCompleto.lowercase() }
+                            Ordenamiento.TITULO_ASC -> libros.sortedBy { it.data.titulo.lowercase() }
+                            Ordenamiento.TITULO_DESC -> libros.sortedByDescending { it.data.titulo.lowercase() }
+                            Ordenamiento.AUTOR_ASC -> libros.sortedBy { it.data.autor }
+                            Ordenamiento.DUENO_ASC -> libros.sortedBy { it.data.dueno.nombreCompleto.lowercase() }
                         }
                     }
 
