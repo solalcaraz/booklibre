@@ -24,10 +24,6 @@ abstract class Libro(
     override var id: Int? = null
 ) : EntidadConId {
     abstract fun plusBiblioKarma(cantidadBibliokarmas: Int, cantidadReservas: Int): Int
-    fun calcularCalificacionPromedio(): Double {
-        // TODO: definir como queda la reserva{puntaje, comentario}
-        return 0.0
-    }
 }
 
 class LibroComun(data: LibroData) : Libro(data) {
@@ -47,35 +43,26 @@ class LibroColeccionable(data:LibroData) : Libro(data) {
     }
 }
 
-//enum class Genero(val label: String) {
-//    DRAMA("Drama"),
-//    CIENCIA_FICCION("Ciencia Ficción"),
-//    ROMANCE("Romance"),
-//    AUTOAYUDA("Autoayuda"),
-//    DISENO("Diseño"),
-//    LITERATURA_CLASICA("Literatura Clásica"),
-//}
-
-enum class Genero {
-    DRAMA,
-    CIENCIA_FICCION,
-    ROMANCE,
-    AUTOAYUDA,
-    DISENO,
-    LITERATURA_CLASICA
+enum class Genero(val label: String) {
+    DRAMA("Drama"),
+    CIENCIA_FICCION("Ciencia Ficción"),
+    ROMANCE("Romance"),
+    AUTOAYUDA("Autoayuda"),
+    DISENO("Diseño"),
+    LITERATURA_CLASICA("Literatura Clásica"),
 }
 
-enum class Idioma {
-    ESPANOL,
-    INGLES,
-    FRANCES,
-    PORTUGUES
+enum class Idioma(val label: String) {
+    ESPANOL("Español"),
+    INGLES("Inglés"),
+    FRANCES("Francés"),
+    PORTUGUES("Portugués")
 }
 
-enum class Estado {
-    EXCELENTE,
-    MUY_BUENO,
-    BUENO,
-    MALO,
-    REGULAR
+enum class Estado(val label: String) {
+    EXCELENTE("Excelente"),
+    MUY_BUENO("Muy bueno"),
+    BUENO("Bueno"),
+    MALO("Malo"),
+    REGULAR("Regular")
 }
