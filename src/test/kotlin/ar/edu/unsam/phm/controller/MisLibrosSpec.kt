@@ -2,6 +2,7 @@ package ar.edu.unsam.phm.controller
 
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.MiLibroDTO
+import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.LibroAdapter
@@ -99,8 +100,16 @@ class MisLibrosSpec(
             portada = "portadaMock"
         )
 
+        val paginaMock = PaginationResponseDTO(
+            items = listOf(libro1, libro2),
+            page = 0,
+            size = 3,
+            totalItems = 2,
+            totalPages = 1
+        )
+
         `when`(usuarioService.getUsuarioById("1")).thenReturn(usuario)
-        `when`(libroService.misLibros(usuario, "Todos")).thenReturn(listOf(libro1, libro2))
+        `when`(libroService.misLibros("1", "Todos", null, 0, 3)).thenReturn(paginaMock)
 
         mockMvc.perform(
             get("/misLibros/1")
@@ -121,7 +130,7 @@ class MisLibrosSpec(
     @Test
     @DisplayName("Cuando se listan los libros de un usuario no existente, devuelve 404")
     fun listar_mis_libros_usuario_not_found() {
-        `when`(usuarioService.getUsuarioById("99"))
+        `when`(libroService.misLibros("99", "Todos", null, 0, 3))
             .thenThrow(NotFoundException("Usuario no encontrado"))
 
         mockMvc.perform(
@@ -136,7 +145,7 @@ class MisLibrosSpec(
     @Test
     @DisplayName("Cuando se listan los libros de un usuario no existente, devuelve 404")
     fun listar_mis_libros_usuario_invalid_id() {
-        `when`(usuarioService.getUsuarioById("falopa"))
+        `when`(libroService.misLibros("falopa", "Todos", null, 0, 3))
             .thenThrow(BadRequestException("Usuario con ID invalido"))
 
         mockMvc.perform(
