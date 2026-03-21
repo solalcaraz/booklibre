@@ -48,8 +48,7 @@ class ReservaService (
     }
 
     fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): PaginationResponseDTO<ReservaLibroDTO> {
-        // valido que el id del usuario existe
-        if (!usuarioRepositorio.existeConId(usuarioId)) throw NotFoundException("No existe el usuario con el id: $usuarioId")
+        // valido que el id del usuario existe y lo asigno
         val usuario = usuarioRepositorio.getById(usuarioId)
 
         /* filtro los id de los libros que estan ocupados en la fecha de filtros (id porque es un dato mas liviano que traer el objeto completo.
