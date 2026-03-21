@@ -79,10 +79,22 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
         return paginate(librosOrdenados, page, size)
     }
 
-    // Los libros disponibles en un rango de fechas
-    fun libroEstaDisponibleEntre(libro: Libro, desde: LocalDate, hasta: LocalDate): Boolean =
-        buscarPorLibro(libro).none { it.seSuperponeCon(desde, hasta)
-        }
+    // filtra por el id de los libros que estan reservados
+    fun getIdLibrosOcupadosEntre(desde: LocalDate, hasta: LocalDate): Set<Int> =
+        objetos.values
+            .filter { it.seSuperponeCon(desde, hasta) }
+            .mapNotNull { it.libro.id }
+            .toSet()
+
+    // devuelve la cantidad de reservas que tiene un libro
+    fun getCantidadReservasPorLibro(id: Int): Int =
+        objetos.values.count { it.libro.id == id }
+
+    // devuelve una lista de las puntaciones que tiene un libro
+    fun getPuntuacionesByLibro(id: Int): List<Int> =
+        objetos.values
+            .filter { it.libro.id == id }
+            .mapNotNull { it.resenia?.puntuacion }
 
     fun getPuntacionPromedio(libro:Libro): Double{
         val resenias = buscarPorLibro(libro).mapNotNull { it.resenia }

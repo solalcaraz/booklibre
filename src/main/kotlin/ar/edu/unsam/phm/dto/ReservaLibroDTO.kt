@@ -1,14 +1,11 @@
 package ar.edu.unsam.phm.dto
 
-import ar.edu.unsam.phm.domain.Estado
-import ar.edu.unsam.phm.domain.Genero
-import ar.edu.unsam.phm.domain.Idioma
 import ar.edu.unsam.phm.domain.LibroColeccionable
 import ar.edu.unsam.phm.domain.LibroComun
 import ar.edu.unsam.phm.domain.LibroDedicatoria
 import ar.edu.unsam.phm.domain.Reserva
 
-data class ReservaLibroHomeDTO(
+data class ReservaLibroDTO(
     var id: Int?,
     var titulo: String,
     var genero: String,
@@ -23,7 +20,7 @@ data class ReservaLibroHomeDTO(
     var portada: String
 )
 
-fun Reserva.toReservaLibroHomeDTO(cantidadReservas:Int, puntuacionTotal: Int): ReservaLibroHomeDTO {
+fun Reserva.toReservaLibroDTO(cantidadReservas:Int, puntuaciones: List<Int>): ReservaLibroDTO {
     val tipoDTO = when (this.libro) {
         is LibroComun -> TipoDeLibroDTO.COMUN
         is LibroDedicatoria -> TipoDeLibroDTO.DEDICATORIA
@@ -32,7 +29,7 @@ fun Reserva.toReservaLibroHomeDTO(cantidadReservas:Int, puntuacionTotal: Int): R
     }
     val libro = this.libro.data //armo un pequeño objeto libro.data para no tener tantos llamados
 
-    return ReservaLibroHomeDTO(
+    return ReservaLibroDTO(
         id = this.libro.id!!,
         titulo = libro.titulo,
         genero = libro.genero.label,
@@ -42,7 +39,7 @@ fun Reserva.toReservaLibroHomeDTO(cantidadReservas:Int, puntuacionTotal: Int): R
         idioma = libro.idioma.label,
         estado = libro.estado.label,
         dueno = libro.dueno.nombreCompleto,
-        calificacionPromedio = this.calcularCalificacionPromedio(puntuacionTotal),
+        calificacionPromedio = this.libro.calcularCalificacionPromedio(puntuaciones),
         biblioKarmasTotal = this.calcularBiblioKarmas(cantidadReservas),
         portada = libro.portada
     )

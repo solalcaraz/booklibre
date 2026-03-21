@@ -24,6 +24,9 @@ abstract class Libro(
     override var id: Int? = null
 ) : EntidadConId {
     abstract fun plusBiblioKarma(cantidadBibliokarmas: Int, cantidadReservas: Int): Int
+
+    fun calcularCalificacionPromedio(puntuaciones: List<Int>): Double =
+        if (puntuaciones.isEmpty()) 0.0 else puntuaciones.average()
 }
 
 class LibroComun(data: LibroData) : Libro(data) {
