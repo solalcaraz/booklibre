@@ -28,7 +28,7 @@ import java.time.LocalDate
 @CrossOrigin("*")
 @RequestMapping("/reserva")
 
-class ReservaController (private val reservaService: ReservaService, private val reservaMapper: ReservaMapper) {
+class ReservaController(private val reservaService: ReservaService, private val reservaMapper: ReservaMapper) {
 
     @PostMapping("/obtenerReservas")
     fun obtenerReservas(
@@ -47,33 +47,38 @@ class ReservaController (private val reservaService: ReservaService, private val
     }
 
     @GetMapping("/librosDisponibles/{userId}")
-    fun listarLibros(@PathVariable userId: String, @ModelAttribute filtros: FiltrosLibro): PaginationResponseDTO<ReservaLibroDTO> =
+    fun listarLibros(
+        @PathVariable userId: String,
+        @ModelAttribute filtros: FiltrosLibro
+    ): PaginationResponseDTO<ReservaLibroDTO> =
         reservaService.getLibrosDisponiblesParaReserva(userId.toInt(), filtros)
 
     @PostMapping("/calificar")
-    fun calificar( @RequestBody payload: ReseniaReqDTO ) {
+    fun calificar(@RequestBody payload: ReseniaReqDTO) {
         reservaService.calificar(payload)
     }
 
     @GetMapping("/detalles/{libroId}")
     fun getDetalles(
-        @PathVariable libroId:String,
+        @PathVariable libroId: String,
         @RequestHeader("userId") userId: String,
         @RequestParam fechaDesde: String,
         @RequestParam fechaHasta: String
     ): DetalleReservaDTO {
-        val detalleReserva = reservaService.getDetalleReserva(
+        return reservaService.getDetalleReserva(
             libroId.toInt(),
             userId.toInt(),
             LocalDate.parse(fechaDesde),
             LocalDate.parse(fechaHasta)
         )
-        //return detalleReserva.toDetalleReservaDTO()
-        return reservaMapper.toDetalleReservaDto(detalleReserva)
     }
-  @PostMapping("/crear")
-  fun crearReserva( @RequestHeader("userId") userId: String,
-    @RequestBody reserva: CrearReservaDTO){
-     reservaService.crearReserva(userId.toInt(), reserva)
-  }
+
+    @PostMapping("/crear")
+    fun crearReserva(
+        @RequestHeader("userId") userId: String,
+        @RequestBody reserva: CrearReservaDTO
+    ): ReservaDTO {
+        val nuevaReserva = reservaService.crearReserva(userId.toInt(), reserva)
+        return reservaMapper.toDto(nuevaReserva)
+    }
 }
