@@ -6,12 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="69efba49-111b-44f0-82f5-a8580d624123" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/ReservaController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/ReservaController.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Reserva.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Reserva.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/DetalleReservaDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/DetalleReservaDTO.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/helpers/ReservaAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/helpers/ReservaAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/ReservaRepositorio.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/ReservaRepositorio.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/ReservaService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/ReservaService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/ReservaControllerTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/ReservaControllerTest.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,6 +85,15 @@
     "Gradle.Build backend-2026-grupo8.executor": "Run",
     "Gradle.MisLibrosSpec.executor": "Run",
     "Gradle.RecetaControllerTest.executor": "Run",
+    "Gradle.ReservaControllerDetalleSpec.crear_reserva_bad_request.executor": "Run",
+    "Gradle.ReservaControllerDetalleSpec.executor": "Run",
+    "Gradle.ReservaControllerDetalleSpec.getDetallesBadRequestFechasInvalidas.executor": "Run",
+    "Gradle.ReservaControllerTest.No puedo reservar mis propios libros.executor": "Run",
+    "Gradle.ReservaControllerTest.executor": "Run",
+    "Gradle.ReservaControllerTest.intentar crear una reserva con fechas superpuestas devuelve 409 Conflict.executor": "Run",
+    "Gradle.ReservaControllerTest.pedir detalles con fecha hasta anterior a desde devuelve 400 Bad Request.executor": "Run",
+    "Gradle.ReservaControllerTest.se puede crear una reserva correctamente.executor": "Run",
+    "Gradle.ReservaControllerTest.se pueden obtener los detalles de simulacion de una reserva.executor": "Run",
     "Gradle.ReservaControllerTest.una pagina fuera de rango devuelve items vacio.executor": "Run",
     "Gradle.Tests in 'ar.edu.unsam.phm.controller'.executor": "Run",
     "Gradle.Tests in 'backend-2026-grupo8.test'.executor": "Run",
@@ -144,20 +148,9 @@
         <option value="SpringBootApplicationConfigurationType" />
       </set>
     </option>
-    <option name="configurationStatuses">
-      <map>
-        <entry key="SpringBootApplicationConfigurationType">
-          <value>
-            <map>
-              <entry key="BookLibre" value="STOPPED" />
-            </map>
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.BookLibre">
-    <configuration name="AuthSpec" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+  <component name="RunManager" selected="Gradle.Tests in 'ar.edu.unsam.phm.controller'">
+    <configuration name="ReservaControllerTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -170,7 +163,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;ar.edu.unsam.phm.controller.AuthSpec&quot;" />
+            <option value="&quot;ar.edu.unsam.phm.controller.ReservaControllerTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -184,7 +177,7 @@
       <GradleCoverageDisabled>false</GradleCoverageDisabled>
       <method v="2" />
     </configuration>
-    <configuration name="MisLibrosSpec" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="ReservaControllerTest.No puedo reservar mis propios libros" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -197,7 +190,61 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;ar.edu.unsam.phm.controller.MisLibrosSpec&quot;" />
+            <option value="&quot;ar.edu.unsam.phm.controller.ReservaControllerTest.No puedo reservar mis propios libros&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="ReservaControllerTest.intentar crear una reserva con fechas superpuestas devuelve 409 Conflict" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;ar.edu.unsam.phm.controller.ReservaControllerTest.intentar crear una reserva con fechas superpuestas devuelve 409 Conflict&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="ReservaControllerTest.se puede crear una reserva correctamente" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;ar.edu.unsam.phm.controller.ReservaControllerTest.se puede crear una reserva correctamente&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -238,51 +285,13 @@
       <GradleCoverageDisabled>false</GradleCoverageDisabled>
       <method v="2" />
     </configuration>
-    <configuration name="Tests in 'backend-2026-grupo8.test'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <GradleProfilingDisabled>false</GradleProfilingDisabled>
-      <GradleCoverageDisabled>false</GradleCoverageDisabled>
-      <method v="2" />
-    </configuration>
-    <configuration name="BookLibre" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
-      <module name="backend-2026-grupo8.main" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="ar.edu.unsam.phm.BookLibre" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="ar.edu.unsam.phm.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Spring Boot.BookLibre" />
         <item itemvalue="Gradle.Tests in 'ar.edu.unsam.phm.controller'" />
-        <item itemvalue="Gradle.Tests in 'backend-2026-grupo8.test'" />
-        <item itemvalue="Gradle.MisLibrosSpec" />
-        <item itemvalue="Gradle.AuthSpec" />
+        <item itemvalue="Gradle.ReservaControllerTest" />
+        <item itemvalue="Gradle.ReservaControllerTest.intentar crear una reserva con fechas superpuestas devuelve 409 Conflict" />
+        <item itemvalue="Gradle.ReservaControllerTest.se puede crear una reserva correctamente" />
+        <item itemvalue="Gradle.ReservaControllerTest.No puedo reservar mis propios libros" />
       </list>
     </recent_temporary>
   </component>
