@@ -1,12 +1,11 @@
 package ar.edu.unsam.phm.dto
 
-import ar.edu.unsam.phm.domain.*
 import java.time.LocalDate
 
-enum class TipoDeLibroDTO {
-    COMUN,
-    DEDICATORIA,
-    COLECCIONABLE
+enum class TipoDeLibroDTO(val label: String) {
+    COMUN("Común"),
+    DEDICATORIA("Con dedicatoria"),
+    COLECCIONABLE("Coleccionable")
 }
 
 data class LibroDetalleDTO(
