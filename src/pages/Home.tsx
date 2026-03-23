@@ -19,7 +19,7 @@ const filtrosIniciales: FiltrosLibro = {
   fechaHasta: hoy,
   isbn: '',
   usuarioPrestador: '',
-  orden: 'POPULARIDAD',
+  orden: 'TITULO_ASC',
   numeroPagina: 0,
   tamanoPaginado: 3
 }
@@ -29,8 +29,7 @@ export const Home = () => {
   const [filtrosAplicados, setFiltrosAplicados] = useState<FiltrosLibro>(filtrosIniciales)
   const [errores, setErrores] = useState<string[]>([])
 
-  //TODO: cambiar por local storage
-  const userId = 2 //+JSON.parse(localStorage.getItem('user')!).id
+  const userId = +JSON.parse(localStorage.getItem('user')!).id
 
   // metodo para actualizar inputs dinamicamente
   const actualizar = (campo: keyof FiltrosLibro, valor: unknown) => {
@@ -108,7 +107,6 @@ export const Home = () => {
               onChange={handleOrden}
               className="border border-slate-200 rounded-md px-2 py-1 text-slate-700"
             >
-              <option value="POPULARIDAD">Popularidad</option>
               <option value="TITULO_ASC">Título A→Z</option>
               <option value="TITULO_DESC">Título Z→A</option>
               <option value="AUTOR_ASC">Autor A→Z</option>
