@@ -3,11 +3,9 @@ import { API_URL } from "../env";
 import type { LibroFormData } from "../classes/Libro";
 import type { LibroDetalleResponse } from "../models/LibroResponseModel";
 import { authService } from "./AuthService";
+import { GENERO_OPTIONS, IDIOMA_OPTIONS, ESTADO_OPTIONS, getKeyFromLabel } from "../utils/formateEnumLibros";
 
 class LibroService {
-    
-
-  // O ESTA (ille)
   async getById(id: string): Promise<LibroDetalleResponse> {
     const response = await axios.get<LibroDetalleResponse>(API_URL + '/libro/' + id)
     return response.data
@@ -27,10 +25,10 @@ class LibroService {
       id: id ? Number(id) : null,
       titulo: libroData.titulo,
       tipo: libroData.tipo,
-      genero: libroData.genero,
+      genero: getKeyFromLabel(GENERO_OPTIONS, libroData.genero),
       autor: libroData.autor,
-      idioma: libroData.idioma,
-      estado: libroData.estado,
+      idioma: getKeyFromLabel(IDIOMA_OPTIONS, libroData.idioma),
+      estado: getKeyFromLabel(ESTADO_OPTIONS, libroData.estado),
       editorial: libroData.editorial,
       fechaPublicacion: libroData.fecha_publicacion,
       paginas: Number(libroData.paginas),
