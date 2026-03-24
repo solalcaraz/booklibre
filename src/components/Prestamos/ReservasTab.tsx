@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import type { ReservaRequestModel, ReservaResponseModel } from '../../models/ReservaModel'
-import { reservaService } from '../../services/ReservaService'
-import DataGrid from '../DataGrid'
+import DataGrid, { type FetchFunction } from '../DataGrid'
 import { ReservasCard } from './ReservaCard'
 import { authService } from '../../services/AuthService'
+import { Spinner } from '../Spinner'
 
 interface Props {
   tab: string
+  fetchFunction: FetchFunction<ReservaResponseModel, ReservaRequestModel>
 }
 
-export const ReservasTab = ({ tab }: Props) => {
+export const ReservasTab = ({ tab, fetchFunction }: Props) => {
   const [input, setInput] = useState<string>('')
+  const [loading, setLoading] = useState(false);
   const [filtro, setFiltro] = useState<ReservaRequestModel>({
     inputSearch: '',
-    busquedaPor: tab,
     usuarioId: authService.userDeStorage().id
   })
 
@@ -25,12 +26,11 @@ export const ReservasTab = ({ tab }: Props) => {
     }))
   }
 
-  useEffect(() => {
-    setFiltro(prev => ({
-      ...prev,
-      busquedaPor: tab
-    }))
-  }, [tab])
+  const reload = () => {
+    setLoading(true)
+    filtrar()
+    setLoading(false)
+  }
   
   const changeInput = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
     const value = e.target.value
@@ -51,12 +51,16 @@ export const ReservasTab = ({ tab }: Props) => {
         </div>
       </form>
 
-      <DataGrid<ReservaResponseModel, ReservaRequestModel>
-        fetchFunction={reservaService.buscarReservas}
-        filter={filtro}
-        renderItem={(reserva) => ( <ReservasCard reserva={reserva} tab={tab} reload={filtrar} />)}
-        pageSize={4}
-      />
+      {loading ? (
+        <Spinner />
+      ) : (  
+        <DataGrid<ReservaResponseModel, ReservaRequestModel>
+          fetchFunction={fetchFunction}
+          filter={filtro}
+          renderItem={(reserva) => ( <ReservasCard reserva={reserva} tab={tab} reload={reload} />)}
+          pageSize={4}
+        />
+      )}
     </>
   )
 }

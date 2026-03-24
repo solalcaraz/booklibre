@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { PagReqModel, PagResModel } from '../models/PaginationModel';
 import { Spinner } from './Spinner';
 
-type FetchFunction<TData, TFilter> = (
+export type FetchFunction<TData, TFilter> = (
   request: PagReqModel<TFilter>
 ) => Promise<PagResModel<TData>>
 

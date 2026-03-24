@@ -91,7 +91,7 @@ export const ReservasCard = ({ reserva, tab, reload }: Props) => {
           </button>)
         }
 
-        {reserva.reseniaPuntuacion && (
+        {tab === TAB_PRESTADOS_A_MI && reserva.reseniaPuntuacion && (
           <div className="flex justify-center gap-2 mb-4">
             {[1,2,3,4,5].map((star) => (
               <span
