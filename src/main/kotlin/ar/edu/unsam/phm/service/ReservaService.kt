@@ -3,14 +3,16 @@ package ar.edu.unsam.phm.service
 import ar.edu.unsam.phm.domain.BusquedaPor
 import ar.edu.unsam.phm.domain.Resenia
 import ar.edu.unsam.phm.helpers.FiltrosLibro
-import ar.edu.unsam.phm.helpers.Ordenamiento
 import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.dto.PaginationReqDTO
 import ar.edu.unsam.phm.domain.ReservaSimulada
 import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.dto.ReseniaReqDTO
+import ar.edu.unsam.phm.dto.ReservaLibroDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
+import ar.edu.unsam.phm.dto.toReservaLibroDTO
+import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.repository.LibroRepositorio
 import ar.edu.unsam.phm.repository.ReseniaRepositorio
 import ar.edu.unsam.phm.repository.ReservaRepositorio
@@ -33,43 +35,28 @@ class ReservaService (
         return reservaRepositorio.getPrestadosPorMi(payload.filter!!.usuarioId, payload.pageNumber, payload.pageSize, payload.filter.inputSearch)
     }
 
-    fun getLibrosDisponibles(usuarioId: Int, filtros: FiltrosLibro): Pair<List<Reserva>, List<Int>> {
+    fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): PaginationResponseDTO<ReservaLibroDTO> {
+        // valido que el id del usuario existe y lo asigno
         val usuario = usuarioRepositorio.getById(usuarioId)
-        // Agrupa los libros por id y cuenta cuantos hay de cada uno.
-        val reservasPorLibro= reservaRepositorio.getAll()
-            .groupingBy { it.libro.id }
-            .eachCount()
 
-        // verifica disponibilidad real con el repo de Reservas, aplica busqueda por teclado, filtros y ordena
-        val librosDisponibles =
-            // FILTRADO EN BD - repo
-            (if (filtros.busqueda.isNullOrBlank()) libroRepositorio.getAll() else libroRepositorio.search(filtros.busqueda))
-                    .filter { it.dueno.id != usuario.id }
-                    .filter { reservaRepositorio.libroEstaDisponibleEntre(it, filtros.fechaDesde, filtros.fechaHasta) }
-                    .filter { filtros.aplicarA(it) }
-                    .let { libros ->
-                        when (filtros.orden) {
-                            Ordenamiento.POPULARIDAD -> libros.sortedByDescending { reservasPorLibro[it.id] ?: 0 } // si no fue reservado le dejo un 0 para garantizar que se traiga igualmente y no quede null
-                            Ordenamiento.TITULO_ASC -> libros.sortedBy { it.titulo.lowercase() }
-                            Ordenamiento.TITULO_DESC -> libros.sortedByDescending { it.titulo.lowercase() }
-                            Ordenamiento.AUTOR_ASC -> libros.sortedBy { it.autor }
-                            Ordenamiento.DUENO_ASC -> libros.sortedBy { it.dueno.nombreCompleto.lowercase() }
-                        }
-                    }
+        /* filtro los id de los libros que estan ocupados en la fecha de filtros (id porque es un dato mas liviano que traer el objeto completo.
+            para luego descartarlos en el filtro que hace el repo de libros porque pueden haber libros disponibles pero que nunca se reservaron
+         */
+        val idLibrosOcupados = reservaRepositorio.getIdLibrosOcupadosEntre(filtros.fechaDesde, filtros.fechaHasta)
 
-        val preReservasDisponibles = librosDisponibles.map { libro ->
-            Reserva(
-                libro = libro,
-                lector = usuario,
-                fechaDesde = filtros.fechaDesde,
-                fechaHasta = filtros.fechaHasta
-            )
-        }
+        // trae la pre reserva de los libros filtrados y ordenados
+        val reservaDeLibrosDisponibles =
+            libroRepositorio.getLibrosDisponibles(filtros, usuario.id!!, idLibrosOcupados).map { libro ->
+                val cantidadReservas = reservaRepositorio.getCantidadReservasPorLibro(libro.id!!)
+                val puntuaciones = reservaRepositorio.getPuntuacionesByLibro(libro.id!!)
+                Reserva(
+                    libro = libro, lector = usuario, fechaDesde = filtros.fechaDesde, fechaHasta = filtros.fechaHasta
+                ).toReservaLibroDTO(cantidadReservas, puntuaciones)
+            }
 
-        val cantidadReservas = librosDisponibles.map { reservasPorLibro[it.id] ?: 0 }
-
-        return preReservasDisponibles to cantidadReservas
+        return paginate(reservaDeLibrosDisponibles, filtros.numeroPagina, filtros.tamanoPaginado)
     }
+
 
     fun calificar(resenia: ReseniaReqDTO) {
         val reserva = reservaRepositorio.getById(resenia.reservaId)

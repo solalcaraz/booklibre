@@ -26,7 +26,7 @@ class LibroController(val libroService: LibroService,
     @PutMapping("/libro/{id}")
     fun actualizarLibro(@PathVariable id: Int, @RequestBody libroDTO: LibroDetalleDTO) {
         val libroOriginal = libroService.getById(id)
-        if (libroOriginal.dueno.id != libroDTO.idDueno){
+        if (libroOriginal.data.dueno.id != libroDTO.idDueno){
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "No puedes editar un libro que no es tuyo")
         }
         libroService.update(id, libroDTO)

@@ -47,7 +47,7 @@ class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
     }
 
     private fun toDto(reserva: Reserva, puntuacion: Double, cantidadReservas: Int): ReservaDTO {
-        val libroResumen = LibroResumen(reserva.libro.titulo, reserva.libro.autor, puntuacion, reserva.libro.portada)
+        val libroResumen = LibroResumen(reserva.libro.data.titulo, reserva.libro.data.autor, puntuacion, reserva.libro.data.portada)
         return ReservaDTO( reserva.id, libroResumen, reserva.lector.nombreCompleto,
             reserva.calcularBiblioKarmas(cantidadReservas), reserva.fechaDesde, reserva.fechaHasta, reserva.calcularEstado(), reserva.puedeCalificar(), reserva.resenia?.puntuacion)
     }
