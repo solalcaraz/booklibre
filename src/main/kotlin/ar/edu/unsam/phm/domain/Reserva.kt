@@ -47,15 +47,12 @@ class Reserva(
         return LocalDate.now().isAfter(this.fechaHasta)
     }
 
-    fun agregarReseña(puntaje: Int, comentario: String, fechaCreacion: LocalDate = LocalDate.now()) {
-        require( puntaje in 0..5){ "El puntaje debe estar entre 0 y 5"}
-        require( comentario.isNotBlank()){"El comentario no puede estar vacio"}
+    fun validarReseña(resenia: Resenia) {
+        require( resenia.puntuacion in 0..5){ "El puntaje debe estar entre 0 y 5"}
+        require( resenia.comentario.isNotBlank()){"El comentario no puede estar vacio"}
         require(this.estaActiva() || this.estaFinalizada()) {
             "No podés reseñar un libro cuyo préstamo todavía no comenzó"
         }
-       resenia = Resenia(
-           lector.nombreCompleto, puntaje, comentario
-       )
     }
 
     fun calcularDias() = ChronoUnit.DAYS.between(fechaDesde, fechaHasta).toInt() + 1

@@ -13,6 +13,7 @@ import ar.edu.unsam.phm.dto.ReservaRequestDTO
 import ar.edu.unsam.phm.dto.toReservaLibroHomeDTO
 import ar.edu.unsam.phm.helpers.ReservaMapper
 import ar.edu.unsam.phm.helpers.paginate
+import ar.edu.unsam.phm.service.ReseniaService
 import ar.edu.unsam.phm.service.ReservaService
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
@@ -30,22 +31,23 @@ import java.time.LocalDate
 @CrossOrigin("*")
 @RequestMapping("/reserva")
 
-class ReservaController (private val reservaService: ReservaService, private val reservaMapper: ReservaMapper) {
+class ReservaController (private val reservaService: ReservaService, private val reservaMapper: ReservaMapper,
+    private val reseniaService: ReseniaService) {
 
-    @PostMapping("/obtenerReservas")
+    @PostMapping("/obtenerMisReservas")
     fun obtenerReservas(
         @RequestBody payload: PaginationReqDTO<ReservaRequestDTO>
     ): PaginationResponseDTO<ReservaDTO> {
         val page = reservaService.getMisReservas(payload)
-        val reservasDto = page.items.map { reservaMapper.toDto(it) }
+        return mapReservas(page)
+    }
 
-        return PaginationResponseDTO(
-            items = reservasDto,
-            page = page.page,
-            size = page.size,
-            totalItems = page.totalItems,
-            totalPages = page.totalPages
-        )
+    @PostMapping("/obtenerPrestadosPorMi")
+    fun obtenerPrestadosPorMi(
+        @RequestBody payload: PaginationReqDTO<ReservaRequestDTO>
+    ): PaginationResponseDTO<ReservaDTO> {
+        val page = reservaService.getPrestadosPorMi(payload)
+        return mapReservas(page)
     }
 
     @GetMapping("/librosDisponibles/{userId}") // convertir a DTO en el service y devolver directo
@@ -81,4 +83,11 @@ class ReservaController (private val reservaService: ReservaService, private val
     @RequestBody reserva: CrearReservaDTO){
      reservaService.crearReserva(userId.toInt(), reserva)
   }
+
+    private fun mapReservas(page: PaginationResponseDTO<Reserva>): PaginationResponseDTO<ReservaDTO>{
+        val librosId: List<Int> = page.items.mapNotNull { it.libro.id }.distinct()
+        val promedioPorLibro: Map<Int, Double> = reseniaService.getPromedioPorLibro(librosId)
+        val cantidadDeReservasPorLibro: Map<Int, Int> = reservaService.getCantidadDeReservasPorLibro(librosId)
+        return reservaMapper.toDtoReservaPag(page, promedioPorLibro, cantidadDeReservasPorLibro)
+    }
 }

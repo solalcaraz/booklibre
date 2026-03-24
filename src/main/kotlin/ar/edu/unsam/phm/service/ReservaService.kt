@@ -1,6 +1,7 @@
 package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.BusquedaPor
+import ar.edu.unsam.phm.domain.Resenia
 import ar.edu.unsam.phm.helpers.FiltrosLibro
 import ar.edu.unsam.phm.helpers.Ordenamiento
 import ar.edu.unsam.phm.domain.Reserva
@@ -10,8 +11,8 @@ import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.dto.ReseniaReqDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
-import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.repository.LibroRepositorio
+import ar.edu.unsam.phm.repository.ReseniaRepositorio
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.stereotype.Service
@@ -21,26 +22,15 @@ import java.time.LocalDate
 class ReservaService (
     private val reservaRepositorio: ReservaRepositorio,
     private val libroRepositorio: LibroRepositorio,
-    private val usuarioRepositorio: UsuarioRepositorio
-) {
+    private val usuarioRepositorio: UsuarioRepositorio,
+    private val reseniaRepositorio: ReseniaRepositorio
+    ) {
     fun getMisReservas(payload: PaginationReqDTO<ReservaRequestDTO>): PaginationResponseDTO<Reserva> {
-        var reservas = reservaRepositorio.getAll() // filtros en el repo
-        // filtrado por tab si es prestado por mi o los que preste
-        if (payload.filter?.busquedaPor == BusquedaPor.TAB_PRESTADOS_POR_MI.value){
-            reservas = reservas.filter { it.libro.dueno.id.toString() == payload.filter.usuarioId }
-        } else if (payload.filter?.busquedaPor == BusquedaPor.TAB_PRESTADOS_A_MI.value) {
-            reservas = reservas.filter { it.lector.id.toString() == payload.filter.usuarioId } // componer en una funcion privada el filtro
-        }
+        return reservaRepositorio.getPrestadosAMi(payload.filter!!.usuarioId, payload.pageNumber, payload.pageSize, payload.filter.inputSearch)
+    }
 
-        // filtrado por input de busqueda
-        val search = payload.filter?.inputSearch?.trim()
-        if (!search.isNullOrEmpty()) {
-            reservas = reservas.filter {
-                it.libro.titulo.contains(search, ignoreCase = true) ||
-                        it.libro.autor.contains(search, ignoreCase = true)
-            }
-        }
-        return paginate(reservas, payload.pageNumber, payload.pageSize)
+    fun getPrestadosPorMi(payload: PaginationReqDTO<ReservaRequestDTO>): PaginationResponseDTO<Reserva> {
+        return reservaRepositorio.getPrestadosPorMi(payload.filter!!.usuarioId, payload.pageNumber, payload.pageSize, payload.filter.inputSearch)
     }
 
     fun getLibrosDisponibles(usuarioId: Int, filtros: FiltrosLibro): Pair<List<Reserva>, List<Int>> {
@@ -83,7 +73,10 @@ class ReservaService (
 
     fun calificar(resenia: ReseniaReqDTO) {
         val reserva = reservaRepositorio.getById(resenia.reservaId)
-        reserva.agregarReseña(resenia.puntuacion, resenia.comentario)
+        val nuevaResenia = Resenia(reserva.libro.id!!, reserva.lector.nombreCompleto, resenia.puntuacion, resenia.comentario)
+        reserva.validarReseña(nuevaResenia)
+        reseniaRepositorio.create(nuevaResenia)
+        reserva.resenia = nuevaResenia
     }
 
     fun getDetalleReserva(libroId: Int, userId:Int, fechaDesde: LocalDate, fechaHasta: LocalDate): ReservaSimulada {
@@ -136,5 +129,12 @@ class ReservaService (
         usuario.aumentarBiblioKarmas(bibliokarmasGanados)
         usuarioRepositorio.update(usuario)
       reservaRepositorio.create(nuevaReserva)
+    }
+
+    fun getCantidadDeReservasPorLibro(librosIds: List<Int>): Map<Int, Int>  {
+        return librosIds.associateWith { libroId ->
+            val libro = libroRepositorio.getById(libroId)
+            reservaRepositorio.buscarPorLibro(libro).size
+        }
     }
 }

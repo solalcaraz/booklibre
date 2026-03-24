@@ -1,4 +1,5 @@
 package ar.edu.unsam.phm.repository
+import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.exceptions.NotFoundException
 
 // Se implementa el patron strategy para determinar el método de búsqueda según el tipo de repositorio
@@ -67,4 +68,13 @@ open class Repositorio<T : EntidadConId>(
         objetos.clear()
         proximoId = 0
     }
+
+    //Consultar: puede ir aca y directamente llamar desde el mismo repo
+//    fun <T> paginate(
+//        items: List<T>,
+//        page: Int,
+//        size: Int
+//    ): PaginationResponseDTO<T> {
+//        ...
+//    }
 }

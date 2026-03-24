@@ -9,6 +9,7 @@ import ar.edu.unsam.phm.helpers.ordenarLibros
 import ar.edu.unsam.phm.helpers.paginate
 import org.springframework.stereotype.Component
 import java.time.LocalDate
+import kotlin.text.isNullOrEmpty
 
 class ReservaSearchStrategy : SearchStrategy<Reserva> {
     override fun matches(obj: Reserva, value: String): Boolean {
@@ -101,5 +102,27 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
     fun getReservasOcupadas(libro:Libro): List<Reserva>{
         return buscarPorLibro(libro)
             .filter { !it.estaFinalizada() }
+    }
+
+    fun getPrestadosPorMi(usuarioId: String, pageNumber: Int, pageSize: Int, search: String?): PaginationResponseDTO<Reserva>  {
+        var reservas = objetos.values.filter { it.libro.dueno.id.toString() == usuarioId }
+        reservas = filtrarReservas(reservas, search)
+        return paginate(reservas, pageNumber, pageSize)
+    }
+
+    fun getPrestadosAMi(usuarioId: String, pageNumber: Int, pageSize: Int, search: String?): PaginationResponseDTO<Reserva>  {
+        var reservas = objetos.values.filter { it.lector.id.toString() == usuarioId }
+        reservas = filtrarReservas(reservas, search)
+        return paginate(reservas, pageNumber, pageSize)
+    }
+
+    private fun filtrarReservas(reservas: List<Reserva>, search: String?): List<Reserva> {
+        if (!search.isNullOrEmpty()) {
+            return reservas.filter {
+                it.libro.titulo.contains(search, ignoreCase = true) ||
+                        it.libro.autor.contains(search, ignoreCase = true)
+            }
+        }
+        return reservas
     }
 }
