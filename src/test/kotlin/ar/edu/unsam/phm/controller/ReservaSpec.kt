@@ -1,6 +1,7 @@
 package ar.edu.unsam.phm.controller
 
 import ar.edu.unsam.phm.domain.*
+import ar.edu.unsam.phm.exceptions.BadRequestException
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
@@ -129,7 +130,7 @@ class ReservaSpec : DescribeSpec({
         }
     }
 
-    describe("agregarReseña") {
+    describe("validarReseña") {
         val reserva = Reserva(
             libro = libroComun,
             lector = lector,
@@ -137,26 +138,27 @@ class ReservaSpec : DescribeSpec({
             fechaHasta = LocalDate.of(2025, 1, 10)
         )
 
-//        it("se puede agregar una reseña válida") {
-//            reserva.agregarReseña(4, "Muy buen libro")
-//            reserva.resenia shouldBe Resenia(lector.nombreCompleto, 4, "Muy buen libro")
-//        }
-
-        it("no se puede agregar una reseña con puntaje mayor a 5") {
-            shouldThrow<IllegalArgumentException> {
-                reserva.agregarReseña(6, "Excelente")
+        it("se puede validar una reseña válida") {
+            shouldNotThrow<BadRequestException> {
+                reserva.validarReseña(Resenia(libroComun.id!!, lector.nombreCompleto, 4, "Muy buen libro"))
             }
         }
 
-        it("no se puede agregar una reseña con puntaje negativo") {
-            shouldThrow<IllegalArgumentException> {
-                reserva.agregarReseña(-1, "Malo")
+        it("no se puede validar una reseña con puntaje mayor a 5") {
+            shouldThrow<BadRequestException> {
+                reserva.validarReseña(Resenia(libroComun.id!!, lector.nombreCompleto, 6, "Excelente"))
             }
         }
 
-        it("no se puede agregar una reseña con comentario vacío") {
-            shouldThrow<IllegalArgumentException> {
-                reserva.agregarReseña(3, "")
+        it("no se puede validar una reseña con puntaje negativo") {
+            shouldThrow<BadRequestException> {
+                reserva.validarReseña(Resenia(libroComun.id!!, lector.nombreCompleto, -1, "Malo"))
+            }
+        }
+
+        it("no se puede validar una reseña con comentario vacío") {
+            shouldThrow<BadRequestException> {
+                reserva.validarReseña(Resenia(libroComun.id!!, lector.nombreCompleto, 3, ""))
             }
         }
     }

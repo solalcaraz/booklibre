@@ -37,6 +37,8 @@ class ReservaControllerTest {
     lateinit var libroDeUsuario2: Libro
     lateinit var libro2DeUsuario2: Libro
     lateinit var libroPropio: Libro
+    lateinit var reserva1: Reserva
+    lateinit var reserva2: Reserva
 
     @BeforeEach
     fun init() {
@@ -105,6 +107,15 @@ class ReservaControllerTest {
         libroRepositorio.create(libroPropio)
         libroRepositorio.create(libroDeUsuario2)
         libroRepositorio.create(libro2DeUsuario2)
+
+        reserva1 = Reserva(
+            libro = libroDeUsuario2,
+            lector = usuario,
+            fechaDesde = LocalDate.now(),
+            fechaHasta = LocalDate.now().plusDays(5)
+        )
+
+        reservaRepositorio.create(reserva1)
     }
 
     // region GET /librosDisponibles/{userId}
@@ -335,5 +346,151 @@ class ReservaControllerTest {
             .andExpect(jsonPath("$.items[0].titulo").value("Rayuela"))
             .andExpect(jsonPath("$.items[1].titulo").value("1984"))
     }
+
+    // CALIFICAR
+    @Test
+    @DisplayName("calificar una reserva finalizada")
+    fun calificarReserva() {
+        val reserva = Reserva(
+            libro = libroDeUsuario2,
+            lector = usuario,
+            fechaDesde = LocalDate.of(2025, 1, 1),
+            fechaHasta = LocalDate.of(2025, 1, 10)
+        )
+        reservaRepositorio.create(reserva)
+
+        val reseniaJson = """
+            {
+                "reservaId": ${reserva.id},
+                "puntuacion": 4,
+                "comentario": "Muy buen libro"
+            }
+        """.trimIndent()
+
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.post("/reserva/calificar")
+                    .contentType("application/json")
+                    .content(reseniaJson)
+            )
+            .andExpect(status().isOk)
+    }
+
+    // MIS RESERVAS
+    @Test
+    @DisplayName("se pueden obtener mis reservas")
+    fun obtenerReservas() {
+        val payload = """
+        {
+          "pageSize": 10,
+          "pageNumber": 0,
+          "filter": {
+            "usuarioId": "${usuario.id}",
+            "inputSearch": ""
+          }
+        }
+    """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/reserva/obtenerMisReservas")
+                .contentType("application/json")
+                .content(payload)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.items.length()").value(1))
+            .andExpect(jsonPath("$.items[0].libroResumen.titulo").value("Rayuela"))
+            .andExpect(jsonPath("$.items[0].prestadoPor").value("Diego Maradona"))
+    }
+
+    @Test
+    @DisplayName("se pueden filtrar mis reservas por titulo")
+    fun filtrarReservas() {
+        val payload = """
+        {
+          "pageSize": 10,
+          "pageNumber": 0,
+          "filter": {
+            "usuarioId": "${usuario.id}",
+            "inputSearch": "Rayuela"
+          }
+        }
+    """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/reserva/obtenerMisReservas")
+                .contentType("application/json")
+                .content(payload)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.items.length()").value(1))
+    }
+
+    @Test
+    @DisplayName("una busqueda sin resultados devuelve lista vacia")
+    fun reservaSinResultados() {
+        val payload = """
+        {
+          "pageSize": 10,
+          "pageNumber": 0,
+          "filter": {
+            "usuarioId": "${usuario.id}",
+            "inputSearch": "falopita"
+          }
+        }
+    """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/reserva/obtenerMisReservas")
+                .contentType("application/json")
+                .content(payload)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.items.length()").value(0))
+    }
+
+    @Test
+    @DisplayName("si falta usuarioId devuelve bad request")
+    fun reservaErrorUsuarioID() {
+        val payload = """
+        {
+          "pageSize": 10,
+          "pageNumber": 0,
+          "filter": {
+            "inputSearch": ""
+          }
+        }
+    """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/reserva/obtenerMisReservas")
+                .contentType("application/json")
+                .content(payload)
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    @DisplayName("se pueden obtener libros prestados por mi")
+    fun obtenerPrestadosPorMi() {
+        val payload = """
+        {
+          "pageSize": 10,
+          "pageNumber": 0,
+          "filter": {
+            "usuarioId": "${usuario2.id}",
+            "inputSearch": ""
+          }
+        }
+    """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/reserva/obtenerPrestadosPorMi")
+                .contentType("application/json")
+                .content(payload)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.items.length()").value(1))
+    }
+
     // endregion
 }
