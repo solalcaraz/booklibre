@@ -17,11 +17,11 @@ interface Props {
 
 const section = 'bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-4 sticky top-6'
 const title = 'text-base font-semibold text-slate-700 flex items-center gap-2'
-const fieldWrapper = 'flex flex-col gap-1'
+const fieldWrapper = 'flex flex-col gap-1 mb-3'
 const fieldLabel = 'text-xs text-slate-500'
 const input =
   'w-full text-sm border border-slate-200 rounded-lg px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-200'
-const detailRow = 'flex justify-between items-center text-sm'
+const detailRow = 'flex justify-between items-center text-sm mb-3'
 const detailLabel = 'text-slate-500'
 const detailDias = 'font-semibold text-sky-600'
 const alertError = 'text-xs text-red-500 text-center leading-snug'
@@ -32,7 +32,7 @@ const ocupadasItem = 'text-xs text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg'
 const btnBase =
   'w-full py-3 rounded-xl text-sm font-bold transition text-white hover:brightness-95 disabled:cursor-not-allowed'
 const btnExito = 'bg-emerald-500'
-const btnNormal = 'bg-[#f97c5a] disabled:bg-slate-200 disabled:text-slate-400'
+const btnNormal = 'bg-[#f97c5a] disabled:bg-slate-200 disabled:text-slate-400 mb-3'
 
 export const TuReserva = ({
   libroId,
@@ -157,16 +157,18 @@ export const TuReserva = ({
         )}
       </form>
 
-      <section>
-        <h4 className={ocupadasTitle}>Fechas ocupadas</h4>
-        <ul className={ocupadasList}>
-          {fechasOcupadas.map((fecha, i) => (
-            <li key={i} className={ocupadasItem}>
-              {fecha.fechaDesde} — {fecha.fechaHasta}
-            </li>
-          ))}
-        </ul>
-      </section>
+      {fechasOcupadas.length > 0 && (
+        <section>
+          <h4 className={ocupadasTitle}>Fechas ocupadas</h4>
+          <ul className={ocupadasList}>
+            {fechasOcupadas.map((fecha, i) => (
+              <li key={i} className={ocupadasItem}>
+                {fecha.fechaDesde} — {fecha.fechaHasta}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </section>
   )
 }
