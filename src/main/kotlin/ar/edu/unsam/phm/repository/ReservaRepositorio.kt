@@ -117,7 +117,7 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
     }
 
     fun getPrestadosPorMi(usuarioId: String, pageNumber: Int, pageSize: Int, search: String?): PaginationResponseDTO<Reserva>  {
-        var reservas = objetos.values.filter { it.libro.dueno.id.toString() == usuarioId }
+        var reservas = objetos.values.filter { it.libro.data.dueno.id.toString() == usuarioId }
         reservas = filtrarReservas(reservas, search)
         return paginate(reservas, pageNumber, pageSize)
     }
@@ -131,8 +131,8 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
     private fun filtrarReservas(reservas: List<Reserva>, search: String?): List<Reserva> {
         if (!search.isNullOrEmpty()) {
             return reservas.filter {
-                it.libro.titulo.contains(search, ignoreCase = true) ||
-                        it.libro.autor.contains(search, ignoreCase = true)
+                it.libro.data.titulo.contains(search, ignoreCase = true) ||
+                        it.libro.data.autor.contains(search, ignoreCase = true)
             }
         }
         return reservas
