@@ -1,4 +1,6 @@
 import type { LibroDetalleDTO } from '../../types/DetalleReserva'
+import { formatDate } from '../../utils/formateDate'
+import { formatEnum } from '../../utils/formateEnumLibros'
 
 interface Props {
   libro: LibroDetalleDTO
@@ -20,7 +22,7 @@ export const LibroDetalle = ({ libro, bibliokarmas }: Props) => {
       <h3 className={title}>Detalles del libro</h3>
       <dl className={grid}>
         <div className={item}>
-          <dt className={dt}>Tipo</dt> <dd className={dd}>{libro.tipo}</dd>
+          <dt className={dt}>Tipo</dt> <dd className={dd}>{formatEnum(libro.tipo)}</dd>
         </div>
         <div className={item}>
           <dt className={dt}>Género</dt> <dd className={dd}>{libro.genero}</dd>
@@ -32,7 +34,8 @@ export const LibroDetalle = ({ libro, bibliokarmas }: Props) => {
           <dt className={dt}>Páginas</dt> <dd className={dd}>{libro.paginas}</dd>
         </div>
         <div className={item}>
-          <dt className={dt}>Publicado</dt> <dd className={dd}>{libro.fechaPublicacion}</dd>
+          <dt className={dt}>Publicado</dt>{' '}
+          <dd className={dd}>{formatDate(libro.fechaPublicacion)}</dd>
         </div>
         <div className={item}>
           <dt className={dt}>Idioma</dt> <dd className={dd}>{libro.idioma}</dd>
