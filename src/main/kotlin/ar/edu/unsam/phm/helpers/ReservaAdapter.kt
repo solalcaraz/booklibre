@@ -13,7 +13,7 @@ interface ReservaAdapter {
 @Service
 class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
     override fun toDto(reserva: Reserva): ReservaDTO {
-        val libroResumen = LibroResumen(reserva.libro.titulo, reserva.libro.autor, 4.5, reserva.libro.portada)
+        val libroResumen = LibroResumen(reserva.libro.data.titulo, reserva.libro.data.autor, 4.5, reserva.libro.data.portada)
         return ReservaDTO( reserva.id, libroResumen, reserva.lector.nombreCompleto,
             240, reserva.fechaDesde, reserva.fechaHasta, reserva.calcularEstado(), reserva.puedeCalificar(), reserva.resenia?.puntuacion)
     }

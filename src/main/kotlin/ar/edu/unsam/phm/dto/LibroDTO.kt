@@ -1,23 +1,21 @@
 package ar.edu.unsam.phm.dto
 
-import ar.edu.unsam.phm.domain.*
-import ar.edu.unsam.phm.exceptions.LibroException
 import java.time.LocalDate
 
-enum class TipoDeLibroDTO {
-    COMUN,
-    DEDICATORIA,
-    COLECCIONABLE
+enum class TipoDeLibroDTO(val label: String) {
+    COMUN("Común"),
+    DEDICATORIA("Con dedicatoria"),
+    COLECCIONABLE("Coleccionable")
 }
 
 data class LibroDetalleDTO(
     val id: Int?,
     val titulo: String,
     val tipo: TipoDeLibroDTO,
-    val genero: Genero,
+    val genero: String,
     val autor: String,
-    val idioma: Idioma,
-    val estado: Estado,
+    val idioma: String,
+    val estado: String,
     val editorial: String,
     val fechaPublicacion: String,
     val paginas: Int,

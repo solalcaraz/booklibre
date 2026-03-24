@@ -1,6 +1,5 @@
 package ar.edu.unsam.phm.controller
 
-import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.DetalleReservaDTO
 import ar.edu.unsam.phm.helpers.FiltrosLibro
@@ -8,9 +7,8 @@ import ar.edu.unsam.phm.dto.PaginationReqDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.dto.ReseniaReqDTO
 import ar.edu.unsam.phm.dto.ReservaDTO
-import ar.edu.unsam.phm.dto.ReservaLibroHomeDTO
+import ar.edu.unsam.phm.dto.ReservaLibroDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
-import ar.edu.unsam.phm.dto.toReservaLibroHomeDTO
 import ar.edu.unsam.phm.helpers.ReservaMapper
 import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.service.ReservaService
@@ -48,12 +46,9 @@ class ReservaController (private val reservaService: ReservaService, private val
         )
     }
 
-    @GetMapping("/librosDisponibles/{userId}") // convertir a DTO en el service y devolver directo
-    fun listarLibros(@PathVariable userId: String, @ModelAttribute filtros: FiltrosLibro): PaginationResponseDTO<ReservaLibroHomeDTO> {
-        val ( libros, cantReservas ) = reservaService.getLibrosDisponibles(userId.toInt(), filtros)
-        val dtos = libros.zip(cantReservas).map { ( libro, cantidad ) -> libro.toReservaLibroHomeDTO(cantidad) }.toList()
-        return paginate(dtos, filtros.numeroPagina, filtros.tamanoPaginado)
-    }
+    @GetMapping("/librosDisponibles/{userId}")
+    fun listarLibros(@PathVariable userId: String, @ModelAttribute filtros: FiltrosLibro): PaginationResponseDTO<ReservaLibroDTO> =
+        reservaService.getLibrosDisponiblesParaReserva(userId.toInt(), filtros)
 
     @PostMapping("/calificar")
     fun calificar( @RequestBody payload: ReseniaReqDTO ) {

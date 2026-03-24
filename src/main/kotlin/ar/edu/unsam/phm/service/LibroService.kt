@@ -31,7 +31,7 @@ class LibroService(
 
     fun update(id: Int, libroDto: LibroDetalleDTO) {
         val libroExistente = libroRepositorio.getById(id)
-        val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.dueno)
+        val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.data.dueno)
         libroRepositorio.update(libroActualizado)
     }
 
