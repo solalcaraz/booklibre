@@ -108,7 +108,14 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
         return buscarPorLibro(libro)
             .filter { !it.estaFinalizada() }
     }
+
     fun tieneReservasSuperpuestas(libro: Libro, desde: LocalDate, hasta: LocalDate): Boolean {
         return getReservasOcupadas(libro).any { it.seSuperponeCon(desde, hasta) }
+    }
+
+    fun usuarioTieneReservaActiva(libro: Libro, usuario: Usuario): Boolean{
+        return buscarPorLibro(libro).any{
+            it.lector.id == usuario.id && !it.estaFinalizada()
+        }
     }
 }

@@ -425,5 +425,43 @@ class ReservaControllerTest {
                 )
             }
     }
+
+    @Test
+    fun `Intenta crear una reserva cuando previamente ya lo hizo`(){
+        val fechaDesde = LocalDate.now().plusDays(10)
+        val fechaHasta = LocalDate.now().plusDays(20)
+
+        reservaRepositorio.create(
+            Reserva(
+                libro = libroDeUsuario2,
+                lector = usuario,
+                fechaDesde = fechaDesde,
+                fechaHasta = fechaHasta
+            )
+        )
+
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.post("/reserva/crear")
+                    .header("userId", usuario.id!!)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {
+                          "libroId": ${libroDeUsuario2.id},
+                          "fechaDesde": "${fechaDesde.plusDays(20)}",
+                          "fechaHasta": "${fechaHasta.plusDays(30)}"
+                        }
+                    """.trimIndent())
+            )
+            .andExpect(status().isConflict)
+            .andExpect { result ->
+                val excepcionLanzada = result.resolvedException
+                assertTrue(excepcionLanzada is ConflictException)
+                assertEquals(
+                    "Ya tenés una reserva activa para este libro. Dejá leer a los demás chimwe",
+                    excepcionLanzada?.message
+                )
+            }
+    }
     // endregion
 }

@@ -132,9 +132,14 @@ class ReservaService(
         }
 
         val seSuperpone = reservaRepositorio.tieneReservasSuperpuestas(libro, reserva.fechaDesde, reserva.fechaHasta)
-
         if (seSuperpone) {
             throw ConflictException("El libro ya se encuentra reservado en esas fechas.") //otra exception, el usuario la pifio
+        }
+
+        //Validacion para que el usuario no reserve mas de una vez.
+        val usuarioYaLoReservo = reservaRepositorio.usuarioTieneReservaActiva(libro, usuario)
+        if( usuarioYaLoReservo ) {
+            throw ConflictException("Ya tenés una reserva activa para este libro. Dejá leer a los demás chimwe")
         }
 
         val cantidadReservas = reservaRepositorio.buscarPorLibro(libro).size
