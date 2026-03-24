@@ -1,6 +1,7 @@
 package ar.edu.unsam.phm.domain
 
 import ar.edu.unsam.phm.repository.EntidadConId
+import ar.edu.unsam.phm.exceptions.BadRequestException
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -48,10 +49,14 @@ class Reserva(
     }
 
     fun validarReseña(resenia: Resenia) {
-        require( resenia.puntuacion in 0..5){ "El puntaje debe estar entre 0 y 5"}
-        require( resenia.comentario.isNotBlank()){"El comentario no puede estar vacio"}
-        require(this.estaActiva() || this.estaFinalizada()) {
-            "No podés reseñar un libro cuyo préstamo todavía no comenzó"
+        if (resenia.puntuacion !in 0..5) {
+            throw BadRequestException("El puntaje debe estar entre 0 y 5")
+        }
+        if (resenia.comentario.isBlank()) {
+            throw BadRequestException("El comentario no puede estar vacio")
+        }
+        if (!(this.estaActiva() || this.estaFinalizada())) {
+            throw BadRequestException("No podés reseñar un libro cuyo préstamo todavía no comenzó")
         }
     }
 
