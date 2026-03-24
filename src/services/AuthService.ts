@@ -12,7 +12,7 @@ export type RegisterData = {
   password: string
 }
 
-type AuthResponse = {
+export type AuthResponse = {
   id: number,
   nombreCompleto: string,
   imagen: string,

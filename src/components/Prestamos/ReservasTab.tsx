@@ -55,6 +55,7 @@ export const ReservasTab = ({ tab }: Props) => {
         fetchFunction={reservaService.buscarReservas}
         filter={filtro}
         renderItem={(reserva) => ( <ReservasCard reserva={reserva} tab={tab} reload={filtrar} />)}
+        pageSize={4}
       />
     </>
   )

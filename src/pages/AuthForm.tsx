@@ -1,11 +1,12 @@
 import type { ChangeEvent, SubmitEvent } from 'react'
 import { useState } from 'react'
-import { Link, useParams, useNavigate } from 'react-router'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import { HandWavingIcon, UserPlusIcon } from '@phosphor-icons/react'
 import { FormInput } from '../components/FormInput'
 import { type AuthErrors, type AuthFormData, Auth } from '../classes/Auth'
 import { useOnInit } from '../utils/hooks'
 import { authService } from '../services/AuthService'
+import { getMensajeError, type ErrorCustom, type ErrorResponse } from '../utils/errorHandler'
 
 const initialFormData: AuthFormData = {
   fullName: '',
@@ -17,6 +18,7 @@ const initialFormData: AuthFormData = {
 export const AuthForm = () => {
   const [formData, setFormData] = useState<AuthFormData>(initialFormData)
   const [formErrors, setFormErrors] = useState<AuthErrors>({})
+  const [responseErrors, setResponseErrors] = useState<ErrorCustom | null>(null)
   const navigate = useNavigate()
   const { mode } = useParams()
 
@@ -107,6 +109,7 @@ export const AuthForm = () => {
 
       navigate('/home')
     } catch (error) {
+      setResponseErrors(getMensajeError(error as ErrorResponse))
       console.log(error)
     }
   }
@@ -184,9 +187,13 @@ export const AuthForm = () => {
             <button
               type="submit"
               className="w-full rounded-lg bg-[#7bedac] px-4 py-3 text-sm font-bold text-slate-800 transition hover:brightness-95 cursor-pointer"
+              data-testid="authButton"
             >
               {content.buttonText}
             </button>
+            {responseErrors && (
+              <div className="text-red-500 text-center">{responseErrors.message}</div>
+            )}
           </form>
 
           <p className="mt-6 text-center text-sm text-slate-500">

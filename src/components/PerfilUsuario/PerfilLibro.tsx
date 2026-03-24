@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import { PencilSimpleIcon, TrashIcon, BookIcon } from '@phosphor-icons/react'
 import type { LibroUsuario } from '../../services/UsuarioService'
 import { formatDate } from '../../utils/formateDate'
@@ -60,6 +60,7 @@ export const PerfilLibro = ({ libro, onDelete }: LibroProps) => {
             className="transition hover:text-red-500 cursor-pointer"
             title="Eliminar"
             onClick={() => onDelete(libro.id)}
+            data-testid="delete-libro"
           >
             <TrashIcon size={22} />
           </button>
