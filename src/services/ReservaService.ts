@@ -20,8 +20,8 @@ class ReservaService {
     return response.data
   }
 
-  async calificar(request: ReseniaReq): Promise<void> {
-    const response = await axios.post<void>(API_URL + '/reserva/calificar', request)
+  async calificar(request: ReseniaReq): Promise<string> {
+    const response = await axios.post<string>(API_URL + '/reserva/calificar', request)
     return response.data
   }
 

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { ReseniaReq } from '../../models/ReseniaModel'
 import type { ReservaResponseModel } from '../../models/ReservaModel'
 import { reservaService } from '../../services/ReservaService'
+import { getMensajeError, type ErrorResponse } from '../../utils/errorHandler'
 
 interface Props {
   open: boolean | null
@@ -14,20 +15,37 @@ export function CalificarPopup({ open, onClose, reserva }: Props) {
   const [hover, setHover] = useState(0)
   const [comentario, setComentario] = useState('')
   const [mostrarError, setMostrarError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   if (!open) return null
 
-  const submit = () => {
-    if (puntaje === 0 || comentario.length === 0){
+  const submit = async () => {
+    setErrorMessage(null)
+
+    if (puntaje === 0 || comentario.length === 0) {
       setMostrarError(true)
-    } else {
-      const payload: ReseniaReq = {
-        reservaId: reserva.id,
-        puntuacion: puntaje,
-        comentario
-      }
-      reservaService.calificar(payload)
+      return
+    }
+
+    setMostrarError(false)
+    const payload: ReseniaReq = {
+      reservaId: reserva.id,
+      puntuacion: puntaje,
+      comentario
+    }
+
+    setLoading(true)
+
+    try {
+      await reservaService.calificar(payload)
       onClose(true)
+    } catch (error: unknown) {
+      const { message } = getMensajeError(error as ErrorResponse)
+      setErrorMessage(message)
+      console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -41,6 +59,12 @@ export function CalificarPopup({ open, onClose, reserva }: Props) {
             Debe completar puntuacion y comentario
           </div> )
         }
+
+        {errorMessage && (
+          <div className='text-red-500 mb-3'>
+            {errorMessage}
+          </div>
+        )}
 
         {/* ⭐ puntaje */}
         <div className="flex justify-center gap-2 mb-4">
@@ -74,8 +98,12 @@ export function CalificarPopup({ open, onClose, reserva }: Props) {
             Cancelar
           </button>
 
-          <button onClick={submit} className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700" >
-            Enviar
+          <button
+            onClick={submit}
+            disabled={loading}
+            className={`px-4 py-2 rounded-lg text-white ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+          >
+            {loading ? 'Enviando...' : 'Enviar'}
           </button>
         </div>
       </div>
