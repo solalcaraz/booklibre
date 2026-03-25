@@ -96,12 +96,6 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
             .filter { it.libro.id == id }
             .mapNotNull { it.resenia?.puntuacion }
 
-    fun getPuntacionPromedio(libro:Libro): Double{
-        val resenias = buscarPorLibro(libro).mapNotNull { it.resenia }
-        if( resenias.isEmpty()) return 0.0
-        return resenias.sumOf { it.puntuacion } / resenias.size.toDouble()
-    }
-
     fun getUltimasReservas(libro:Libro): List<Reserva>{
         return buscarPorLibro(libro)
             .filter { it.estaFinalizada() }
@@ -113,5 +107,15 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
     fun getReservasOcupadas(libro:Libro): List<Reserva>{
         return buscarPorLibro(libro)
             .filter { !it.estaFinalizada() }
+    }
+
+    fun tieneReservasSuperpuestas(libro: Libro, desde: LocalDate, hasta: LocalDate): Boolean {
+        return getReservasOcupadas(libro).any { it.seSuperponeCon(desde, hasta) }
+    }
+
+    fun usuarioTieneReservaActiva(libro: Libro, usuario: Usuario): Boolean{
+        return buscarPorLibro(libro).any{
+            it.lector.id == usuario.id && !it.estaFinalizada()
+        }
     }
 }
