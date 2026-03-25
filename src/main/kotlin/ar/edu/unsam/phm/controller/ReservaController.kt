@@ -81,13 +81,14 @@ class ReservaController (private val reservaService: ReservaService, private val
         @RequestHeader("userId") userId: String,
         @RequestBody reserva: CrearReservaDTO
     ): ReservaDTO {
-        val nuevaReserva = reservaService.crearReserva(userId.toInt(), reserva)
-        return reservaMapper.toDto(nuevaReserva)
+        val (nuevaReserva, cantidadReservas) = reservaService.crearReserva(userId.toInt(), reserva)
+        val puntuacion: Double = reseniaService.getPromedioPorLibro(reserva.libroId)
+        return reservaMapper.toDto(nuevaReserva, puntuacion, cantidadReservas)
     }
 
     private fun mapReservas(page: PaginationResponseDTO<Reserva>): PaginationResponseDTO<ReservaDTO>{
         val librosId: List<Int> = page.items.mapNotNull { it.libro.id }.distinct()
-        val promedioPorLibro: Map<Int, Double> = reseniaService.getPromedioPorLibro(librosId)
+        val promedioPorLibro: Map<Int, Double> = reseniaService.getMapaPromedioPorLibro(librosId)
         val cantidadDeReservasPorLibro: Map<Int, Int> = reservaService.getCantidadDeReservasPorLibro(librosId)
         return reservaMapper.toDtoReservaPag(page, promedioPorLibro, cantidadDeReservasPorLibro)
     }

@@ -7,11 +7,15 @@ import org.springframework.stereotype.Service
 class ReseniaService (
     private val reseniaRepositorio: ReseniaRepositorio
 ) {
-    fun getPromedioPorLibro(librosIds: List<Int>): Map<Int, Double> {
-        return librosIds.associateWith { libroId ->
-            val resenias = reseniaRepositorio.getReseniasPorLibro(libroId)
-            if (resenias.isEmpty()) 0.0
-            else resenias.sumOf { it.puntuacion }.toDouble() / resenias.size
+    fun getMapaPromedioPorLibro(librosIds: List<Int>): Map<Int, Double> {
+        return librosIds.associateWith { libroId -> getPromedioPorLibro(libroId) }
+    }
+
+    fun getPromedioPorLibro(libroId: Int): Double {
+        val resenias = reseniaRepositorio.getReseniasPorLibro(libroId)
+        if (resenias.isEmpty()){
+            return 0.0
         }
+        return resenias.sumOf { it.puntuacion }.toDouble() / resenias.size
     }
 }

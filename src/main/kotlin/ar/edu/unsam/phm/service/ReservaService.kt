@@ -106,7 +106,7 @@ class ReservaService(
         )
     }
 
-    fun crearReserva(userID: Int, reserva: CrearReservaDTO): Reserva {
+    fun crearReserva(userID: Int, reserva: CrearReservaDTO): Pair<Reserva, Int> {
 
         val libro = libroRepositorio.getById(reserva.libroId)
         val usuario = usuarioRepositorio.getById(userID)
@@ -139,7 +139,7 @@ class ReservaService(
         usuario.aumentarBiblioKarmas(bibliokarmasGanados)
         usuarioRepositorio.update(usuario)
         reservaRepositorio.create(nuevaReserva)
-        return nuevaReserva
+        return Pair(nuevaReserva, cantidadReservas)
     }
 
     fun getCantidadDeReservasPorLibro(librosIds: List<Int>): Map<Int, Int>  {
