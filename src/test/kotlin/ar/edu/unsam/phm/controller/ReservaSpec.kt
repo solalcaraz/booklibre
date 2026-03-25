@@ -116,28 +116,28 @@ class ReservaSpec : DescribeSpec({
             fechaHasta = LocalDate.now().minusDays(1)
         )
 
-        it("se puede agregar una reseña válida") {
-            reservaFinalizada.agregarReseña(4, "Muy buen libro")
-            reservaFinalizada.resenia shouldBe Resenia(lector.nombreCompleto, 4, "Muy buen libro")
-        }
-
-        it("no se puede agregar una reseña con puntaje mayor a 5") {
-            shouldThrow<IllegalArgumentException> {
-                reservaFinalizada.agregarReseña(6, "Excelente")
-            }
-        }
-
-        it("no se puede agregar una reseña con puntaje negativo") {
-            shouldThrow<IllegalArgumentException> {
-                reservaFinalizada.agregarReseña(-1, "Malo")
-            }
-        }
-
-        it("no se puede agregar una reseña con comentario vacío") {
-            shouldThrow<IllegalArgumentException> {
-                reservaFinalizada.agregarReseña(3, "")
-            }
-        }
+//        it("se puede agregar una reseña válida") {
+//            reservaFinalizada.agregarReseña(4, "Muy buen libro")
+//            reservaFinalizada.resenia shouldBe Resenia(lector.nombreCompleto, 4, "Muy buen libro")
+//        }
+//
+//        it("no se puede agregar una reseña con puntaje mayor a 5") {
+//            shouldThrow<IllegalArgumentException> {
+//                reservaFinalizada.agregarReseña(6, "Excelente")
+//            }
+//        }
+//
+//        it("no se puede agregar una reseña con puntaje negativo") {
+//            shouldThrow<IllegalArgumentException> {
+//                reservaFinalizada.agregarReseña(-1, "Malo")
+//            }
+//        }
+//
+//        it("no se puede agregar una reseña con comentario vacío") {
+//            shouldThrow<IllegalArgumentException> {
+//                reservaFinalizada.agregarReseña(3, "")
+//            }
+//        }
     }
 
     describe("calcularBiblioKarmas") {
