@@ -14,6 +14,5 @@ export interface ReservaResponseModel {
 
 export interface ReservaRequestModel {
   inputSearch: string;
-  busquedaPor: string;
   usuarioId: string;
 }

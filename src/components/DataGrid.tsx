@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import type { PagReqModel, PagResModel } from '../models/PaginationModel';
+import { Spinner } from './Spinner';
+import { type ErrorCustom, type ErrorResponse, getMensajeError } from '../utils/errorHandler'
+import { ErrorCard } from './ErrorCard';
+import { useNavigate } from 'react-router-dom';
 
-type FetchFunction<TData, TFilter> = (
+export type FetchFunction<TData, TFilter> = (
   request: PagReqModel<TFilter>
 ) => Promise<PagResModel<TData>>
 
@@ -17,8 +21,10 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<ErrorCustom | null>(null)
 
   const prevFilterRef = useRef(filter)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const filterChanged = prevFilterRef.current !== filter
@@ -29,6 +35,7 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
 
     async function load() {
       setLoading(true)
+      setError(null)
 
       const req = {
         pageSize: pageSize,
@@ -36,11 +43,17 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
         ...(filter ? { filter } : {})
       }
 
-      const res = await fetchFunction(req)
+      try {
+        const res = await fetchFunction(req)
 
-      setData(res.items)
-      setTotalPages(res.totalPages)
-      setLoading(false)
+        setData(res.items)
+        setTotalPages(res.totalPages)
+      } catch (error: unknown) {
+        setError(getMensajeError(error as ErrorResponse))
+        console.log(error)
+      } finally {
+        setLoading(false)
+      }
 
       // Si cambió filtro y no estábamos en 0 → sincronizar page
       if (filterChanged && page !== 0) {
@@ -55,11 +68,22 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
   return (
     <div>
       {/* ------ CONTENIDO ------*/}
-      {loading ? (
-        <div className="text-center py-10">Loading...</div>
+
+      {error ? (
+        <ErrorCard
+          error={error}
+          onRetry={() => window.location.reload()}
+          onVolver={() => navigate(-1)}
+        />
+      ) : loading ? (
+        <Spinner />
+      ) : data.length === 0 ? (
+        <div className="text-center py-10 text-gray-600">
+          No se encontraron resultados para los filtros aplicados.
+        </div>
       ) : (
         <div className="grid grid-cols-3 gap-6">
-          {data?.map((item, i) => (
+          {data.map((item, i) => (
             <div key={i}>
               {renderItem(item)}
             </div>

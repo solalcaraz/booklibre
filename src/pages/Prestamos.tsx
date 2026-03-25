@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Tabs, type Tab } from "../components/Tabs"
 import { ReservasTab } from "../components/Prestamos/ReservasTab"
 import { TAB_PRESTADOS_A_MI, TAB_PRESTADOS_POR_MI } from "../constants/ReservasConstants"
+import { reservaService } from "../services/ReservaService"
 
 export const Prestamos = () => {
   const [activeTab, setActiveTab] = useState(TAB_PRESTADOS_A_MI)
@@ -24,9 +25,16 @@ export const Prestamos = () => {
 
       <Tabs tabs={prestamosTabs} active={activeTab} onChange={handleTabChange} />
 
-      <div className="flex flex-col gap-6 px-4 my-7">
-        <ReservasTab tab={activeTab} />
-      </div>
+      {activeTab === TAB_PRESTADOS_A_MI && (
+        <div className="flex flex-col gap-6 px-4 my-7">
+          <ReservasTab tab={activeTab} fetchFunction={reservaService.buscarPrestadosAmi}/>
+        </div>
+      )}
+      {activeTab === TAB_PRESTADOS_POR_MI && (
+        <div className="flex flex-col gap-6 px-4 my-7">
+          <ReservasTab tab={activeTab} fetchFunction={reservaService.buscarPrestadosPorMi}/>
+        </div>
+      )}
     </div>
   )
 }

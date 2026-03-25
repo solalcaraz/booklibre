@@ -10,18 +10,18 @@ import { authService } from './AuthService'
 import type { CrearReservaJSON } from '../classes/Reserva'
 
 class ReservaService {
-  async buscarReservas(
-    request: PagReqModel<ReservaRequestModel>
-  ): Promise<PagResModel<ReservaResponseModel>> {
-    const response = await axios.post<PagResModel<ReservaResponseModel>>(
-      API_URL + '/reserva/obtenerReservas',
-      request
-    )
+  async buscarPrestadosAmi(request: PagReqModel<ReservaRequestModel>): Promise<PagResModel<ReservaResponseModel>> {
+    const response = await axios.post<PagResModel<ReservaResponseModel>>( API_URL + '/reserva/obtenerMisReservas', request )
     return response.data
   }
 
-  async calificar(request: ReseniaReq): Promise<void> {
-    const response = await axios.post<void>(API_URL + '/reserva/calificar', request)
+  async buscarPrestadosPorMi(request: PagReqModel<ReservaRequestModel>): Promise<PagResModel<ReservaResponseModel>> {
+    const response = await axios.post<PagResModel<ReservaResponseModel>>( API_URL + '/reserva/obtenerPrestadosPorMi', request )
+    return response.data
+  }
+
+  async calificar(request: ReseniaReq): Promise<string> {
+    const response = await axios.post<string>(API_URL + '/reserva/calificar', request)
     return response.data
   }
 
