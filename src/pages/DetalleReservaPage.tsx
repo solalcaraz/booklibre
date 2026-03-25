@@ -1,10 +1,12 @@
-import { useParams, useSearchParams } from 'react-router'
+import { useNavigate, useParams, useSearchParams, type ErrorResponse } from 'react-router'
 import { useOnInit } from '../utils/hooks'
 import { useState } from 'react'
 import { Spinner } from '../components/Spinner'
 import { reservaService } from '../services/ReservaService'
 import type { DetalleReserva } from '../types/DetalleReserva'
 import { LibroReserva } from '../components/DetalleReserva/LibroReserva'
+import { getMensajeError, type ErrorCustom } from '../utils/errorHandler'
+import { ErrorCard } from '../components/ErrorCard'
 
 export const DetalleReservaPage = () => {
   //Capturo los datos pasados de la vista de sol.
@@ -14,22 +16,23 @@ export const DetalleReservaPage = () => {
   const fechaHastaURL = searchParams.get('fechaHasta') || ''
   const [fechaDesde, setFechaDesde] = useState(fechaDesdeURL)
   const [fechaHasta, setFechaHasta] = useState(fechaHastaURL)
+  const navigate = useNavigate()
 
   //Estado de la pagina.
   const [detalleReserva, setDetalleReserva] = useState<DetalleReserva | null>(null)
-  const [error, setError] = useState<boolean>(false)
+  const [error, setError] = useState<ErrorCustom | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
 
   const getDetalleReserva = async () => {
     try {
       if (!id) {
-        setError(true)
+        setError({ message: 'No se encuentra ID' })
         return
       }
       const reserva = await reservaService.getDetalleLibroByID(id, fechaDesde, fechaHasta)
       setDetalleReserva(reserva)
     } catch (error) {
-      setError(true)
+      setError(getMensajeError(error as ErrorResponse))
       console.log(error)
     } finally {
       setLoading(false)
@@ -41,7 +44,13 @@ export const DetalleReservaPage = () => {
   if (loading) return <Spinner />
 
   if (error || !detalleReserva) {
-    return <div>Hubo un error al cargar la reserva del libro con id {id}</div>
+    return (
+      <ErrorCard
+        error={error!}
+        onRetry={() => window.location.reload()}
+        onVolver={() => navigate(-1)}
+      />
+    )
   }
 
   const libro = detalleReserva.libroDetalleDTO

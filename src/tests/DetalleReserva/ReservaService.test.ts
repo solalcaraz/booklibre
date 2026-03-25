@@ -1,0 +1,179 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import axios from 'axios'
+import { reservaService } from '../../services/ReservaService'
+import { authService } from '../../services/AuthService'
+
+vi.mock('axios')
+const mockedAxios = vi.mocked(axios, true)
+
+// Mockeamos el authService para que devuelva un usuario falso
+vi.mock('../../services/AuthService', () => ({
+  authService: {
+    userDeStorage: vi.fn()
+  }
+}))
+
+describe('ReservaService', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.mocked(authService.userDeStorage).mockReturnValue({
+      id: 1,
+      nombreCompleto: 'Test User',
+      imagen: 'img.jpg',
+      bibliokarmas: 100
+    })
+  })
+
+  it('getDetalle: Lanza error si la API falla (ej. 404/500)', async () => {
+    mockedAxios.get.mockRejectedValueOnce(new Error('Libro no encontrado'))
+
+    await expect(
+      reservaService.getDetalleLibroByID('99', '2026-01-01', '2026-01-10')
+    ).rejects.toThrow('Libro no encontrado')
+  })
+
+  it('getDetalle: Llama a la URL correcta con los headers y params', async () => {
+    mockedAxios.get.mockResolvedValueOnce({ data: { calificacionPromedio: 4 } })
+
+    const result = await reservaService.getDetalleLibroByID('1', '2026-01-01', '2026-01-10')
+
+    expect(mockedAxios.get).toHaveBeenCalledWith(
+      expect.stringContaining('/reserva/detalles/1'),
+      expect.objectContaining({
+        headers: { userId: 1 },
+        params: { fechaDesde: '2026-01-01', fechaHasta: '2026-01-10' }
+      })
+    )
+    expect(result).toEqual({ calificacionPromedio: 4 })
+  })
+
+  it('crearReserva: Lanza error si el back devuelve 409 Conflicto', async () => {
+    mockedAxios.post.mockRejectedValueOnce(new Error('Fechas ocupadas'))
+
+    const mockReserva = { libroId: '1', fechaDesde: '2026-01-01', fechaHasta: '2026-01-10' }
+
+    await expect(reservaService.crearReserva(mockReserva)).rejects.toThrow('Fechas ocupadas')
+  })
+})
+
+describe('ReservaService', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  describe('buscarPrestadosAmi', () => {
+    it('devuelve datos correctamente', async () => {
+      const request = {
+        pageSize: 10,
+        pageNumber: 0,
+        filter: {
+          inputSearch: '',
+          usuarioId: '1'
+        }
+      }
+      const mockResponse = {
+        items: [],
+        page: 0,
+        size: 10,
+        totalItems: 0,
+        totalPages: 0
+      }
+
+      mockedAxios.post.mockResolvedValueOnce({ data: mockResponse })
+
+      const result = await reservaService.buscarPrestadosAmi(request)
+
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        expect.stringContaining('/reserva/obtenerMisReservas'),
+        request
+      )
+
+      expect(result).toEqual(mockResponse)
+    })
+
+    it('lanza error si la API falla', async () => {
+      const request = {
+        pageSize: 10,
+        pageNumber: 0,
+        filter: {
+          inputSearch: '',
+          usuarioId: '1'
+        }
+      }
+
+      mockedAxios.post.mockRejectedValueOnce(new Error('Error API'))
+
+      await expect(
+        reservaService.buscarPrestadosAmi(request)
+      ).rejects.toThrow('Error API')
+    })
+  })
+
+  describe('buscarPrestadosPorMi', () => {
+    it('llama a la URL correcta y devuelve datos', async () => {
+      const request = {
+        pageSize: 10,
+        pageNumber: 0,
+        filter: {
+          inputSearch: '',
+          usuarioId: '1'
+        }
+      }
+      const mockResponse = {
+        items: [],
+        page: 0,
+        size: 10,
+        totalItems: 0,
+        totalPages: 0
+      }
+
+      mockedAxios.post.mockResolvedValueOnce({ data: mockResponse })
+
+      const result = await reservaService.buscarPrestadosPorMi(request)
+
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        expect.stringContaining('/reserva/obtenerPrestadosPorMi'),
+        request
+      )
+
+      expect(result).toEqual(mockResponse)
+    })
+
+    // omito error porque es igual que el anterior
+  })
+
+  describe('calificar', () => {
+    it('devuelve string correctamente', async () => {
+      const request = {
+        reservaId: 1,
+        puntuacion: 5,
+        comentario: 'Excelente'
+      }
+
+      mockedAxios.post.mockResolvedValueOnce({ data: 'OK' })
+
+      const result = await reservaService.calificar(request)
+
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        expect.stringContaining('/reserva/calificar'),
+        request
+      )
+
+      expect(result).toBe('OK')
+    })
+
+    it('lanza error si falla la API', async () => {
+      const request = {
+        reservaId: 1,
+        puntuacion: 5,
+        comentario: 'Excelente'
+      }
+
+      mockedAxios.post.mockRejectedValueOnce(new Error('Error al calificar'))
+
+      await expect(
+        reservaService.calificar(request)
+      ).rejects.toThrow('Error al calificar')
+    })
+  })
+})
