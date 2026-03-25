@@ -18,7 +18,9 @@ open class Repositorio<T : EntidadConId>(
 
     fun create(obj: T) {
         if (obj.id != null) {
-            throw IllegalArgumentException("No se puede crear un objeto que ya tiene ID.")
+            update(obj)
+            return
+            /*throw IllegalArgumentException("No se puede crear un objeto que ya tiene ID.")*/
         }
 
         obj.id = proximoId++
@@ -46,12 +48,10 @@ open class Repositorio<T : EntidadConId>(
     }
 
     fun getById(id: Int): T {
-        return objetos[id] ?: throw NotFoundException("No se encontró el objeto con ID $id.") // no deberia explotar
+        return objetos[id] ?: throw NotFoundException("No se encontró el objeto con ID $id.")
     }
 
     fun getAll(): List<T> = objetos.values.toList()
-
-    fun existeConId(id: Int): Boolean = objetos.containsKey(id)
 
     private fun validarConId(obj: T) {
         if (obj.id == null) {
@@ -65,6 +65,6 @@ open class Repositorio<T : EntidadConId>(
 
     fun clearInit(){
         objetos.clear()
-        proximoId = 0
+        proximoId = 1
     }
 }
