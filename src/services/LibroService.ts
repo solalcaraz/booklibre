@@ -6,10 +6,18 @@ import { authService } from "./AuthService";
 import { GENERO_OPTIONS, IDIOMA_OPTIONS, ESTADO_OPTIONS, getKeyFromLabel } from "../utils/formateEnumLibros";
 
 class LibroService {
-  async getById(id: string): Promise<LibroDetalleResponse> {
-    const response = await axios.get<LibroDetalleResponse>(API_URL + '/libro/' + id)
+  // async getById(id: string): Promise<LibroDetalleResponse> {
+  //   const response = await axios.get<LibroDetalleResponse>(API_URL + '/libro/' + id)
+  //   return response.data
+  // }
+  async getByIdFor(id: string): Promise<LibroDetalleResponse> {
+    const user = authService.userDeStorage();
+    const response = await axios.get<LibroDetalleResponse>(`${API_URL}/libro/${id}`, {
+      headers: { 'X-User-Id': user.id }
+    })
     return response.data
   }
+
   async create(libroData: LibroFormData): Promise<void> {
     await axios.post(`${API_URL}/libro/nuevo`, this.mapToDTO(libroData))
   }

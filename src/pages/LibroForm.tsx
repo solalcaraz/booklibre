@@ -5,7 +5,6 @@ import { BaseInput } from "../components/BaseInput";
 import { Libro, type LibroFormData, type LibroErrors } from "../classes/Libro";
 import { GENERO_OPTIONS, TIPO_OPTIONS, IDIOMA_OPTIONS, ESTADO_OPTIONS } from "../utils/formateEnumLibros";
 import { useOnInit } from "../utils/hooks";
-import { authService } from "../services/AuthService";
 
 const initialFormData: LibroFormData = {
     titulo: "", tipo: "", genero: "", autor: "", idioma: "",
@@ -30,14 +29,7 @@ export default function LibroForm() {
     const loadLibro = async () => {
     if (!id) return;
     try {
-        const data = await libroService.getById(id);
-        const user = authService.userDeStorage();
-
-        //Validamos al dueño
-        if (data.idDueno !== user.id) {
-            setAccessError("No tienes permisos para editar este libro.");
-            return;
-        }
+        const data = await libroService.getByIdFor(id);
 
         setFormData({
             ...initialFormData,
@@ -55,11 +47,18 @@ export default function LibroForm() {
 
             paginas: data.paginas ? data.paginas.toString() : "0",
         });
-    } catch (error) {
-        if (error.response?.status === 404) {
-            setAccessError("El libro solicitado no existe.");
+    } catch (error: any) {
+        const status = error.response?.status;
+        const mensajeBack = error.response?.data?.message;
+
+        if (status === 403) {
+            setAccessError(mensajeBack || "No tenés permisos para modificar este libro.");
+        } else if (status === 404) {
+            setAccessError(mensajeBack || "Este libro no existe.");
+        } else if (status >= 500 || !status) { 
+            setAccessError("El servidor no responde. Por favor, intenta más tarde.");
         } else {
-            setAccessError("Ocurrió un error al cargar el libro.");
+            setAccessError("¡Ocurrió un error inesperado! " + mensajeBack);
         }
     }
 };
@@ -96,8 +95,9 @@ export default function LibroForm() {
                 await libroService.create(formData);
                 navigate('/profile');
             }
-        } catch (error) {
-            console.error("Error al persistir el libro:", error);
+        } catch (error: any) {
+            const mensajeBack = error.response?.data?.message;
+            alert(mensajeBack || "¡Error al guardar el libro! No se pudo conectar con el servidor. Intente de nuevo más tarde.");
         }
     };
 
