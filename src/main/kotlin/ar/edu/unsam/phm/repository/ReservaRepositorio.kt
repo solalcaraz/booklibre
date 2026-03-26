@@ -26,16 +26,6 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
         return objetos.values.filter { it.libro == libro }
     }
 
-    /* Trae la reserva activa del libro si hay */
-    fun reservaActivaDeLibro(libro: Libro): Reserva? {
-        return buscarPorLibro(libro).find { it.estaActiva() }
-    }
-
-    /* Devuelve true si el libro está prestado actualmente*/
-    fun libroEstaPrestado(libro: Libro): Boolean {
-        return reservaActivaDeLibro(libro) != null
-    }
-
     /* Cantidad de libros leídos de un usuario = todas sus reservas que ya finalizaron */
     fun cantidadLeidosDe(usuario: Usuario): Int {
         return objetos.values
@@ -76,7 +66,7 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
             )
         }
 
-        /* Antes de ordenarlos yo necesito que ya esten etiquetados con "PRESTADO" o "DISPONIBLE"
+        /* Antes de ordenarlos yo necesito que ya estén etiquetados con "PRESTADO" o "DISPONIBLE"
         porque uno de los sorts es por el estado de la reserva, y el otro por fecha de agregado */
         /* Entiendo que después la base de datos puede agregar una columna con esa etiqueta a la tabla,
         y no hace falta terminar armando el DTO en el repositorio, delegándolo al controller */
