@@ -58,6 +58,7 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
         val idsPrestados = librosPrestados.map { it.id }.toSet()
 
         val librosFiltrados = when (filter) {
+            /* Los libros disponibles son todos los libros del usuario que no estén prestados */
             "Disponibles" -> librosDelUsuario.filter { it.id !in idsPrestados }
             "Prestados" -> librosPrestados
             else -> librosDelUsuario
@@ -75,6 +76,10 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
             )
         }
 
+        /* Antes de ordenarlos yo necesito que ya esten etiquetados con "PRESTADO" o "DISPONIBLE"
+        porque uno de los sorts es por el estado de la reserva, y el otro por fecha de agregado */
+        /* Entiendo que después la base de datos puede agregar una columna con esa etiqueta a la tabla,
+        y no hace falta terminar armando el DTO en el repositorio, delegándolo al controller */
         val librosOrdenados = ordenarLibros(librosDto, sort)
 
         return paginate(librosOrdenados, page, size)

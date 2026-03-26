@@ -3,6 +3,7 @@ package ar.edu.unsam.phm.controller
 import ar.edu.unsam.phm.dto.LibroDetalleDTO
 import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
+import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.helpers.LibroAdapter
 import ar.edu.unsam.phm.helpers.ordenarLibros
 import ar.edu.unsam.phm.helpers.paginate
@@ -14,9 +15,10 @@ import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @CrossOrigin("*")
-class LibroController(val libroService: LibroService,
-                      val libroAdapter: LibroAdapter
-) {
+class LibroController(
+    val libroService: LibroService,
+    val libroAdapter: LibroAdapter
+){
     @GetMapping("/libro/{id}")
     fun obtenerLibro(@PathVariable id: Int): LibroDetalleDTO = libroAdapter.toDetalleDto(libroService.getById(id))
 
@@ -39,9 +41,16 @@ class LibroController(val libroService: LibroService,
         @RequestParam(defaultValue = "3") size: Int, // Cambiable por @ModelAttribute
         @RequestParam(defaultValue = "Todos") filter: String,
         @RequestParam(required = false) sort: String?
-    ): PaginationResponseDTO<MiLibroDTO> = libroService.misLibros(userId, filter, sort, page, size)
+    ): PaginationResponseDTO<MiLibroDTO> {
+        val idNumerico = userId.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
 
+        return libroService.misLibros(idNumerico, filter, sort, page, size)
+    }
 
     @DeleteMapping("/misLibros/{bookId}")
-    fun removeLibro(@PathVariable bookId: String) = libroService.borrarLibro(bookId)
+    fun removeLibro(@PathVariable bookId: String) {
+        val idNumerico = bookId.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
+
+        return libroService.borrarLibro(idNumerico)
+    }
 }

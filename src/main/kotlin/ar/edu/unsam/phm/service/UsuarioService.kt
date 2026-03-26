@@ -3,7 +3,6 @@ package ar.edu.unsam.phm.service
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.UsuarioPatchRequest
 import ar.edu.unsam.phm.env.Environment
-import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.stereotype.Service
@@ -11,30 +10,25 @@ import org.springframework.stereotype.Service
 @Service
 class UsuarioService(private val usuarioRepositorio: UsuarioRepositorio, private val reservaRepositorio: ReservaRepositorio) {
 
-    fun getUsuarioById(id: String): Usuario {
-        val idNumerico = id.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
-
-        val usuario = usuarioRepositorio.getById(idNumerico)
+    fun getUsuarioById(id: Int): Usuario {
+        val usuario = usuarioRepositorio.getById(id)
 
         usuario.librosLeidos = reservaRepositorio.cantidadLeidosDe(usuario)
         usuario.librosPrestados = reservaRepositorio.cantidadPrestadosDe(usuario)
-        /* No actualizo el repositorio porque lo voy a calcular siempre,
-        no me interesa persistir esta data  */
+        /* No actualizo el repositorio porque lo voy a calcular siempre, no me interesa persistir esta data  */
 
         return usuario
     }
 
-    fun updateUsuario(userPatch: UsuarioPatchRequest, id: String) {
-        val idNumerico = id.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
-
-        val usuario = usuarioRepositorio.getById(idNumerico)
+    fun updateUsuario(userPatch: UsuarioPatchRequest, id: Int) {
+        val usuario = usuarioRepositorio.getById(id)
 
         usuario.email = userPatch.email
         usuario.ciudad = userPatch.ciudad
         usuario.telefono = userPatch.telefono
         usuario.nombreCompleto = userPatch.nombreCompleto
         usuario.descripcion = userPatch.descripcion
-        if(userPatch.imagen == "") usuario.imagen = Environment.API_URL + "/imagenes/default_user.png"
+        if (userPatch.imagen == "") usuario.imagen = Environment.API_URL + "/imagenes/default_user.png"
         else usuario.imagen = userPatch.imagen
         usuario.cambiarTipo(userPatch.tipoUsuario)
 

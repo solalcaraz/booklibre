@@ -29,7 +29,7 @@ class AuthService(private val usuarioRepositorio: UsuarioRepositorio) {
 
     fun register(usuario: RegisterRequest): Usuario {
         val existe = usuarioRepositorio.search(usuario.email).firstOrNull()
-        if(existe != null) throw ConflictException("Este usuario ya está registrado")
+        if (existe != null) throw ConflictException("Este usuario ya está registrado")
 
         val nuevoUsuario = Usuario(
             nombreCompleto = usuario.nombreCompleto,
