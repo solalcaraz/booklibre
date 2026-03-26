@@ -70,9 +70,14 @@ describe('LibroService', () => {
         const mockResponse = { ...LIBRO_FORM_MOCK, id: 1, idDueno: 10 }
         mockedAxios.get.mockResolvedValue({ data: mockResponse })
 
-        const result = await libroService.getById("1")
+        const result = await libroService.getByIdFor("1")
 
-        expect(mockedAxios.get).toHaveBeenCalledWith(expect.stringContaining('/libro/1'))
+        expect(mockedAxios.get).toHaveBeenCalledWith(expect.stringContaining('/libro/1'),
+        {
+            headers: {
+                'X-User-Id': 10
+            }
+        })
         expect(result).toEqual(mockResponse)
     })
 

@@ -25,22 +25,12 @@ describe('LibroForm - Casos de Borde', () => {
     })
 
     it('muestra mensaje de error si el libro no le pertenece al usuario logueado', async () => {
-        vi.spyOn(libroService, 'getById').mockResolvedValue({
-            id: 123,
-            titulo: "Libro Prohibido",
-            tipo: TipoDeLibro.COLECCIONABLE,
-            genero: Genero.CIENCIA_FICCION,
-            autor: "Isaac Asimov",
-            idioma: Idioma.INGLES,
-            estado: Estado.EXCELENTE,
-            editorial: "Minotauro",
-            fechaPublicacion: "1951-01-01",
-            paginas: 250,
-            isbn13: "9780553293357",
-            descripcion: "Fundación",
-            portada: "portada.jpg",
-            idDueno: 99
-        })
+        vi.spyOn(libroService, 'getByIdFor').mockRejectedValue({
+        response: {
+            status: 403,
+            data: { message: "No tenés permisos para modificar este libro." }
+        }
+    })
 
         render(
             <MemoryRouter initialEntries={['/libros/editar/123']}>
@@ -50,8 +40,10 @@ describe('LibroForm - Casos de Borde', () => {
             </MemoryRouter>
         )
 
-        const errorMessage = await screen.findByText(/No tienes permisos para editar este libro/i)
+        const errorMessage = await screen.findByText(/No tenés permisos para modificar este libro./i)
         expect(errorMessage).toBeInTheDocument()
+
+        expect(screen.queryByLabelText(/Título/i)).not.toBeInTheDocument()
     })
 })
 
@@ -127,9 +119,9 @@ describe('LibroForm - Validaciones de Formulario', () => {
         fireEvent.change(screen.getByLabelText(/Descripción/i), { target: { value: 'Cuentos geniales', name: 'descripcion' } })
         
         fireEvent.change(screen.getByLabelText(/Tipo/i), { target: { value: 'COMUN', name: 'tipo' } })
-        fireEvent.change(screen.getByLabelText(/Género/i), { target: { value: 'DRAMA', name: 'genero' } })
-        fireEvent.change(screen.getByLabelText(/Idioma/i), { target: { value: 'ESPANOL', name: 'idioma' } })
-        fireEvent.change(screen.getByLabelText(/Estado/i), { target: { value: 'BUENO', name: 'estado' } })
+        fireEvent.change(screen.getByLabelText(/Género/i), { target: { value: 'Drama', name: 'genero' } })
+        fireEvent.change(screen.getByLabelText(/Idioma/i), { target: { value: 'Español', name: 'idioma' } })
+        fireEvent.change(screen.getByLabelText(/Estado/i), { target: { value: 'Bueno', name: 'estado' } })
         fireEvent.change(screen.getByLabelText(/Editorial/i), { target: { value: 'Emecé', name: 'editorial' } })
         fireEvent.change(screen.getByLabelText(/Fecha Publicación/i), { target: { value: '1945-01-01', name: 'fecha_publicacion' } })
 
