@@ -5,12 +5,10 @@ import ar.edu.unsam.phm.dto.LibroDetalleDTO
 import ar.edu.unsam.phm.repository.LibroRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.stereotype.Service
-import java.time.LocalDate
-import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.helpers.LibroAdapter
-import ar.edu.unsam.phm.exceptions.BadRequestException
+import ar.edu.unsam.phm.exceptions.ForbiddenException
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 
 @Service
@@ -22,16 +20,25 @@ class LibroService(
 ) {
     fun getById(id: Int): Libro = libroRepositorio.getById(id)
 
+    fun getByIdFor(id: Int, idUsuarioLogueado: Int): Libro {
+        val libro = libroRepositorio.getById(id)
+        if (libro.data.dueno.id != idUsuarioLogueado) {
+            throw ForbiddenException("No tenés permisos para modificar este libro.")
+        }
+        return libro
+    }
+
     fun create(libroDto: LibroDetalleDTO) {
-        val duenio = usuarioRepositorio.getById(libroDto.idDueno)
-//        val nuevoLibro = libro.toEntity(duenio)
-        val nuevoLibro = libroMapper.fromDto(libroDto, duenio)
+        val dueno = usuarioRepositorio.getById(libroDto.idDueno)
+        val nuevoLibro = libroMapper.fromDto(libroDto, dueno)
         libroRepositorio.create(nuevoLibro)
     }
 
     fun update(id: Int, libroDto: LibroDetalleDTO) {
-        val libroExistente = libroRepositorio.getById(id)
-        val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.data.dueno)
+        val idUsuarioLogueado = libroDto.idDueno
+        val libroExistenteData = getByIdFor(id, idUsuarioLogueado).data
+
+        val libroActualizado = libroMapper.fromDto(libroDto, libroExistenteData.dueno)
         libroRepositorio.update(libroActualizado)
     }
 
