@@ -63,7 +63,7 @@ class UsuarioControllerSpec(
             librosPrestados = 5
         )
 
-        `when`(usuarioService.getUsuarioById("1")).thenReturn(usuario)
+        `when`(usuarioService.getUsuarioById(1)).thenReturn(usuario)
         `when`(usuarioMapper.toFullDto(usuario)).thenReturn(perfilUsuarioDTO)
 
         mockMvc.perform(get("/usuario/1"))
@@ -85,21 +85,11 @@ class UsuarioControllerSpec(
     @Test
     @DisplayName("Cuando se busca un usuario inexistente por id, devuelve 404")
     fun get_usuario_not_found() {
-        `when`(usuarioService.getUsuarioById("99"))
+        `when`(usuarioService.getUsuarioById(99))
             .thenThrow(NotFoundException("No se encontró el objeto con ID 99."))
 
         mockMvc.perform(get("/usuario/99"))
             .andExpect(status().isNotFound)
-    }
-
-    @Test
-    @DisplayName("Cuando se busca un usuario por un id invalido, devuelve 400")
-    fun get_usuario_invalid_id() {
-        `when`(usuarioService.getUsuarioById("falopa"))
-            .thenThrow(BadRequestException("El ID brindado no es válido"))
-
-        mockMvc.perform(get("/usuario/falopa"))
-            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -117,7 +107,7 @@ class UsuarioControllerSpec(
 
         // No devuelve nada - doNothing()
         doNothing().`when`(usuarioService)
-            .updateUsuario(patchRequest, "1")
+            .updateUsuario(patchRequest, 1)
 
         mockMvc.perform(
             patch("/usuario/1")
@@ -153,7 +143,7 @@ class UsuarioControllerSpec(
 
         doThrow(NotFoundException("No se encontró el objeto con ID 99."))
             .`when`(usuarioService)
-            .updateUsuario(patchRequest, "99")
+            .updateUsuario(patchRequest, 99)
 
         mockMvc.perform(
             patch("/usuarios/99")
@@ -172,41 +162,4 @@ class UsuarioControllerSpec(
         )
             .andExpect(status().isNotFound)
     }
-
-    @Test
-    @DisplayName("Cuando se intenta actualizar un usuario con un id no valido, devuelve 400")
-    fun update_usuario_invalid_id() {
-        val patchRequest = UsuarioPatchRequest(
-            nombreCompleto = "Diego Maradona",
-            descripcion = "Actualizado",
-            email = "diego@maradona.com",
-            telefono = "1166666666",
-            ciudad = "Buenos Aires",
-            imagen = "imagenNueva",
-            tipoUsuario = "Publicador"
-        )
-
-        doThrow(BadRequestException("El ID brindado no es válido"))
-            .`when`(usuarioService)
-            .updateUsuario(patchRequest, "falopa")
-
-        mockMvc.perform(
-            patch("/usuario/falopa")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                    {
-                      "nombreCompleto" : "Diego Maradona",
-                      "descripcion" : "Actualizado",
-                      "email" : "diego@maradona.com",
-                      "telefono" : "1166666666",
-                      "ciudad" : "Buenos Aires",
-                      "imagen" : "imagenNueva",
-                      "tipoUsuario" : "Publicador"
-                    }
-                    """.trimIndent())
-        )
-            .andExpect(status().isBadRequest)
-    }
-
-
 }
