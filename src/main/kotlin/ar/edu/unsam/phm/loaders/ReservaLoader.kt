@@ -2,6 +2,7 @@ package ar.edu.unsam.phm.loaders
 
 import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.repository.LibroRepositorio
+import ar.edu.unsam.phm.repository.ReseniaRepositorio
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.boot.CommandLineRunner
@@ -10,11 +11,12 @@ import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 @Component
-@Order(3)
+@Order(4)
 class ReservaLoader(
     private val reservaRepositorio: ReservaRepositorio,
     private val usuarioRepositorio: UsuarioRepositorio,
-    private val libroRepositorio: LibroRepositorio
+    private val libroRepositorio: LibroRepositorio,
+    private val reseniaRepositorio: ReseniaRepositorio
 ): CommandLineRunner {
     override fun run(vararg args: String?) {
         val usuario = usuarioRepositorio.getById(1)
@@ -36,6 +38,10 @@ class ReservaLoader(
         val libro13 = libroRepositorio.getById(13)
         val libro14 = libroRepositorio.getById(14)
 
+        val resenia1= reseniaRepositorio.getById(1) //del libro 1
+        val resenia2 = reseniaRepositorio.getById(2)//del libro 1
+        val resenia3 = reseniaRepositorio.getById(3)//del libro 2
+
         // maradona u1 = dueno de libro 1 2 3
         // verstappen u2 = dueno de libro 4 5 6 9 10 11 12 13 14
         // u3 = dueno de libro 7 8
@@ -46,12 +52,14 @@ class ReservaLoader(
             fechaDesde = LocalDate.of(2026, 3, 7),
             fechaHasta = LocalDate.of(2026, 3, 14),
         )
+        reserva1.resenia = resenia1
         val reserva2 = Reserva(
             libro = libro2,
             lector = usuario2,
             fechaDesde = LocalDate.of(2026, 3, 3),
             fechaHasta = LocalDate.of(2026, 3, 12),
         )
+        reserva2.resenia = resenia3
         val reserva3 = Reserva(
             libro = libro3,
             lector = usuario2,
@@ -82,15 +90,12 @@ class ReservaLoader(
             fechaDesde = LocalDate.of(2026, 1, 5),
             fechaHasta = LocalDate.of(2026, 1, 10),
         )
-        reserva7.agregarReseña(4, "Libro buenardo")
         val reserva8 = Reserva(
             libro = libro8,
             lector = usuario2,
             fechaDesde = LocalDate.of(2026, 1, 10),
             fechaHasta = LocalDate.of(2026, 1, 12),
         )
-        reserva8.agregarReseña(3, "Lo lei y no lo entendi")
-
         val reserva9 = Reserva(
             libro = libro7,
             lector = usuario,
@@ -115,6 +120,13 @@ class ReservaLoader(
             fechaDesde = LocalDate.of(2026, 2, 24),
             fechaHasta = LocalDate.of(2026, 4, 30)
         )
+        val reserva13 = Reserva(
+            libro = libro1,
+            lector = usuario3,
+            fechaDesde = LocalDate.of(2025, 2, 24),
+            fechaHasta = LocalDate.of(2025, 4, 30)
+        )
+        reserva13.resenia = resenia2
 
         reservaRepositorio.create(reserva1)
         reservaRepositorio.create(reserva2)
@@ -128,6 +140,7 @@ class ReservaLoader(
         reservaRepositorio.create(reserva10)
         reservaRepositorio.create(reserva11)
         reservaRepositorio.create(reserva12)
+        reservaRepositorio.create(reserva13)
 
         println("Reservas cargadas en memoria")
     }
