@@ -45,7 +45,7 @@ class ReservaSpec : DescribeSpec({
         dueno = dueno
     )
 
-    val libroComun = LibroComun(libroData)
+    val libroComun = LibroComun(libroData).apply { id = 1 }
     val libroDedicatoria = LibroDedicatoria(libroData)
     val libroColeccionable = LibroColeccionable(libroData)
 

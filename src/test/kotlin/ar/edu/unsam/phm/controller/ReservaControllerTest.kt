@@ -101,15 +101,6 @@ class ReservaControllerTest {
         libroRepositorio.create(libroPropio)
         libroRepositorio.create(libroDeUsuario2)
         libroRepositorio.create(libro2DeUsuario2)
-
-        reserva1 = Reserva(
-            libro = libroDeUsuario2,
-            lector = usuario,
-            fechaDesde = LocalDate.now(),
-            fechaHasta = LocalDate.now().plusDays(5)
-        )
-
-        reservaRepositorio.create(reserva1)
     }
 
     // region GET /librosDisponibles/{userId}
@@ -477,8 +468,7 @@ class ReservaControllerTest {
 
     // CALIFICAR
     @Test
-    @DisplayName("calificar una reserva finalizada")
-    fun calificarReserva() {
+    fun `calificar una reserva finalizada`() {
         val reserva = Reserva(
             libro = libroDeUsuario2,
             lector = usuario,
@@ -506,8 +496,23 @@ class ReservaControllerTest {
 
     // MIS RESERVAS
     @Test
-    @DisplayName("se pueden obtener mis reservas")
-    fun obtenerReservas() {
+    fun `se pueden obtener mis reservas`() {
+        reserva1 = Reserva(
+            libro = libroDeUsuario2,
+            lector = usuario,
+            fechaDesde = LocalDate.now(),
+            fechaHasta = LocalDate.now().plusDays(5)
+        )
+        reserva2 = Reserva(
+            libro = libroPropio,
+            lector = usuario2,
+            fechaDesde = LocalDate.now(),
+            fechaHasta = LocalDate.now().plusDays(5)
+        )
+
+        reservaRepositorio.create(reserva1)
+        reservaRepositorio.create(reserva2)
+
         val payload = """
         {
           "pageSize": 10,
@@ -531,8 +536,23 @@ class ReservaControllerTest {
     }
 
     @Test
-    @DisplayName("se pueden filtrar mis reservas por titulo")
-    fun filtrarReservas() {
+    fun `se pueden filtrar mis reservas por titulo`() {
+        reserva1 = Reserva(
+            libro = libroDeUsuario2,
+            lector = usuario,
+            fechaDesde = LocalDate.now(),
+            fechaHasta = LocalDate.now().plusDays(5)
+        )
+        reserva2 = Reserva(
+            libro = libroPropio,
+            lector = usuario2,
+            fechaDesde = LocalDate.now(),
+            fechaHasta = LocalDate.now().plusDays(5)
+        )
+
+        reservaRepositorio.create(reserva1)
+        reservaRepositorio.create(reserva2)
+
         val payload = """
         {
           "pageSize": 10,
@@ -554,8 +574,16 @@ class ReservaControllerTest {
     }
 
     @Test
-    @DisplayName("una busqueda sin resultados devuelve lista vacia")
-    fun reservaSinResultados() {
+    fun `una busqueda sin resultados devuelve lista vacia`() {
+        reserva1 = Reserva(
+            libro = libroDeUsuario2,
+            lector = usuario,
+            fechaDesde = LocalDate.now(),
+            fechaHasta = LocalDate.now().plusDays(5)
+        )
+
+        reservaRepositorio.create(reserva1)
+
         val payload = """
         {
           "pageSize": 10,
@@ -598,8 +626,23 @@ class ReservaControllerTest {
     }
 
     @Test
-    @DisplayName("se pueden obtener libros prestados por mi")
-    fun obtenerPrestadosPorMi() {
+    fun `se pueden obtener libros prestados por mi`() {
+        reserva1 = Reserva(
+            libro = libroDeUsuario2,
+            lector = usuario,
+            fechaDesde = LocalDate.now(),
+            fechaHasta = LocalDate.now().plusDays(5)
+        )
+        reserva2 = Reserva(
+            libro = libroPropio,
+            lector = usuario2,
+            fechaDesde = LocalDate.now(),
+            fechaHasta = LocalDate.now().plusDays(5)
+        )
+
+        reservaRepositorio.create(reserva1)
+        reservaRepositorio.create(reserva2)
+
         val payload = """
         {
           "pageSize": 10,
