@@ -130,14 +130,6 @@ export const Home = () => {
           }}
           pageSize={filtros.tamanoPaginado!}
         />
-
-        {/* TEST PARA VISTA DETALLE */}
-        <Link
-          to={`/detalles/8?fechaDesde=2026-03-20&fechaHasta=2026-03-25`}
-          className="block w-full max-w-xs mx-auto text-center px-6 py-2 text-white bg-red-600 rounded-md shadow-sm hover:bg-red-700 transition-colors font-medium"
-        >
-          Ir a Detalles de libro 8
-        </Link>
       </div>
     </main>
   )
