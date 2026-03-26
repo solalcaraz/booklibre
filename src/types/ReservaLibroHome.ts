@@ -1,14 +1,14 @@
-import type { Estado, Genero, Idioma, TipoDeLibro } from "../models/LibroResponseModel"
+import type { Genero } from "../models/LibroResponseModel"
 
 export type ReservaLibroHomeJSON = {
     id: number
     titulo: string
-    genero: Genero
+    genero: string
     autor: string
-    tipo: TipoDeLibro
+    tipo: string
     isbn13: string
-    idioma: Idioma
-    estado: Estado
+    idioma: string
+    estado: string
     dueno: string
     calificacionPromedio: number
     biblioKarmasTotal: number
@@ -29,4 +29,4 @@ export type FiltrosLibro = {
     tamanoPaginado?: number
 }
 
-export type Orden = | 'POPULARIDAD' | 'TITULO_ASC' | 'TITULO_DESC' | 'AUTOR_ASC' | 'DUENO_ASC'
+export type Orden = | 'TITULO_ASC' | 'TITULO_DESC' | 'AUTOR_ASC' | 'DUENO_ASC'

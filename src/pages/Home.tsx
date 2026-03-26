@@ -7,7 +7,7 @@ import { PanelFiltros } from '../components/Home/FiltrosCard'
 import { BarraBusqueda } from '../components/Home/BarraBusqueda'
 import { LibroCard } from '../components/Home/LibroCard'
 import { formatearFecha } from '../utils/formatearFecha'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 const hoy = formatearFecha(new Date())
 
@@ -19,7 +19,7 @@ const filtrosIniciales: FiltrosLibro = {
   fechaHasta: hoy,
   isbn: '',
   usuarioPrestador: '',
-  orden: 'POPULARIDAD',
+  orden: 'TITULO_ASC',
   numeroPagina: 0,
   tamanoPaginado: 3
 }
@@ -29,8 +29,7 @@ export const Home = () => {
   const [filtrosAplicados, setFiltrosAplicados] = useState<FiltrosLibro>(filtrosIniciales)
   const [errores, setErrores] = useState<string[]>([])
 
-  //TODO: cambiar por local storage
-  const userId = 2 //+JSON.parse(localStorage.getItem('user')!).id
+  const userId = +JSON.parse(localStorage.getItem('user')!).id
 
   // metodo para actualizar inputs dinamicamente
   const actualizar = (campo: keyof FiltrosLibro, valor: unknown) => {
@@ -108,7 +107,6 @@ export const Home = () => {
               onChange={handleOrden}
               className="border border-slate-200 rounded-md px-2 py-1 text-slate-700"
             >
-              <option value="POPULARIDAD">Popularidad</option>
               <option value="TITULO_ASC">Título A→Z</option>
               <option value="TITULO_DESC">Título Z→A</option>
               <option value="AUTOR_ASC">Autor A→Z</option>
@@ -132,14 +130,6 @@ export const Home = () => {
           }}
           pageSize={filtros.tamanoPaginado!}
         />
-
-        {/* TEST PARA VISTA DETALLE */}
-        <Link
-          to={`/detalles/8?fechaDesde=2026-03-20&fechaHasta=2026-03-25`}
-          className="block w-full max-w-xs mx-auto text-center px-6 py-2 text-white bg-red-600 rounded-md shadow-sm hover:bg-red-700 transition-colors font-medium"
-        >
-          Ir a Detalles de libro 8
-        </Link>
       </div>
     </main>
   )

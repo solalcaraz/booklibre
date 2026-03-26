@@ -1,7 +1,5 @@
 import { useNavigate } from "react-router"
 import type { ReservaLibroHomeJSON } from "../../types/ReservaLibroHome"
-import { formatEnum } from "../../utils/formateEnumLibros"
-
 
 interface LibroCardProps {
   libro: ReservaLibroHomeJSON
@@ -11,7 +9,8 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
   const navigate = useNavigate()
 
   return (
-    <article onClick={() => navigate(`/libros/detalle/${libro.id}`)} className="bg-white rounded-2xl shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden transition hover:shadow-[0_14px_40px_rgba(15,23,42,0.12)] cursor-pointer">
+    <article onClick={() => navigate(`/libros/detalle/${libro.id}`)} className="bg-white rounded-2xl shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden transition hover:shadow-[0_14px_40px_rgba(15,23,42,0.12)] cursor-pointer"
+    data-testid={`libro-card-${libro.id}`}>
 
       {/* Imagen */}
       <div className="bg-slate-50 p-3 flex justify-center">
@@ -27,16 +26,16 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
 
         {/* género + rating */}
         <div className="flex justify-between items-center text-xs">
-          <span className={`${generoEstilos[libro.genero]} text-sky-600 px-2 py-1 rounded-full font-medium`}>
-            {formatEnum(libro.genero)}
+          <span className={`${generoEstilos[libro.genero]} px-2 py-1 rounded-full font-medium`}>
+            {libro.genero}
           </span>
 
-          <span className="text-amber-500 font-medium">
+          <span className="text-amber-500 font-medium" data-testid="libro-calificacion">
             ⭐ {libro.calificacionPromedio ?? "-"}
           </span>
         </div>
 
-        <h3 className="font-semibold text-slate-800 leading-snug">
+        <h3 className="font-semibold text-slate-800 leading-snug" data-testid="libro-titulo">
           {libro.titulo}
         </h3>
 
@@ -75,7 +74,7 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
         <div className="text-xs">
           <p className="text-slate-400 mb-1">Estado</p>
           <span className={`px-2 py-1 rounded-full text-xs ${estadoEstilos[libro.estado]}`}>
-            {formatEnum(libro.estado)}
+            {libro.estado}
           </span>
         </div>
 
@@ -93,18 +92,18 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
 }
 
 const generoEstilos: Record<string, string> = {
-  CIENCIA_FICCION: "bg-purple-100 text-violet-700",
-  ROMANCE: "bg-rose-100 text-stone-500",
-  DRAMA: "bg-red-100 text-red-700",
-  AUTOAYUDA: "bg-blue-100 text-blue-700",
-  DISENO: "bg-orange-100 text-orange-700",
-  LITERATURA_CLASICA: "bg-yellow-100 text-yellow-700"
+  "Ciencia Ficción": "bg-purple-100 text-violet-700",
+  "Romance": "bg-rose-100 text-rose-900",
+  "Drama": "bg-red-100 text-red-700",
+  "Autoayuda": "bg-blue-100 text-blue-700",
+  "Diseño": "bg-orange-100 text-orange-700",
+  "Literatura Clásica": "bg-yellow-100 text-yellow-700"
 }
 
 const estadoEstilos: Record<string, string> = {
-  EXCELENTE: "bg-green-100 text-green-700",
-  MUY_BUENO: "bg-emerald-100 text-emerald-700",
-  BUENO: "bg-blue-100 text-blue-700",
-  REGULAR: "bg-yellow-100 text-yellow-700",
-  MALO: "bg-red-100 text-red-700"
+  "Excelente": "bg-green-100 text-green-700",
+  "Muy bueno": "bg-lime-100 text-lime-700",
+  "Bueno": "bg-blue-100 text-blue-700",
+  "Regular": "bg-yellow-100 text-yellow-700",
+  "Malo": "bg-red-100 text-red-700"
 }
