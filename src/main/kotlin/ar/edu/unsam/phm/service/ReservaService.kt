@@ -9,13 +9,11 @@ import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.DetalleReservaDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.dto.ReseniaReqDTO
-import ar.edu.unsam.phm.dto.ReservaDTO
 import ar.edu.unsam.phm.dto.ReservaLibroDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
-import ar.edu.unsam.phm.dto.toReservaLibroDTO
 import ar.edu.unsam.phm.exceptions.BadRequestException
+import ar.edu.unsam.phm.dto.toReservaLibroDTO
 import ar.edu.unsam.phm.exceptions.ConflictException
-import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.ReservaAdapter
 import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.repository.LibroRepositorio
@@ -34,11 +32,13 @@ class ReservaService(
     private val reservaAdapter: ReservaAdapter
 ) {
     fun getMisReservas(payload: PaginationReqDTO<ReservaRequestDTO>): PaginationResponseDTO<Reserva> {
-        return reservaRepositorio.getPrestadosAMi(payload.filter!!.usuarioId, payload.pageNumber, payload.pageSize, payload.filter.inputSearch)
+        val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
+        return reservaRepositorio.getPrestadosAMi(usuarioId, payload.pageNumber, payload.pageSize, payload.filter.inputSearch)
     }
 
     fun getPrestadosPorMi(payload: PaginationReqDTO<ReservaRequestDTO>): PaginationResponseDTO<Reserva> {
-        return reservaRepositorio.getPrestadosPorMi(payload.filter!!.usuarioId, payload.pageNumber, payload.pageSize, payload.filter.inputSearch)
+        val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
+        return reservaRepositorio.getPrestadosPorMi(usuarioId, payload.pageNumber, payload.pageSize, payload.filter.inputSearch)
     }
 
     fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): PaginationResponseDTO<ReservaLibroDTO> {
