@@ -13,17 +13,17 @@ const initialFormData: LibroFormData = {
     isbn13: "", descripcion: "", portada: ""
 };
 
-const generoOptions = Object.entries(GENERO_OPTIONS).map(([value, label]) => ({ value, label }));
-const tipoOptions = Object.entries(TIPO_OPTIONS).map(([value, label]) => ({ value, label }));
-const idiomaOptions = Object.entries(IDIOMA_OPTIONS).map(([value, label]) => ({ value, label }));
-const estadoOptions = Object.entries(ESTADO_OPTIONS).map(([value, label]) => ({ value, label }));
+const generoOptions = Object.values(GENERO_OPTIONS).map(label => ({ value: label, label }));
+const idiomaOptions = Object.values(IDIOMA_OPTIONS).map(label => ({ value: label, label }));
+const estadoOptions = Object.values(ESTADO_OPTIONS).map(label => ({ value: label, label }));
+
+const tipoOptions = Object.entries(TIPO_OPTIONS).map(([value, label]) => ({ value, label })); // El back lo manda como Key en el Mapper
 
 export default function LibroForm() {
     const navigate = useNavigate();
     const { id } = useParams();
     const [formData, setFormData] = useState<LibroFormData>(initialFormData);
     const [errors, setErrors] = useState<LibroErrors>({});
-
     //Para el manejo de errores de acceso (editar un libro que no es tuyo/no existe)
     const [accessError, setAccessError] = useState<string | null>(null);
 
@@ -40,6 +40,7 @@ export default function LibroForm() {
         }
 
         setFormData({
+            ...initialFormData,
             titulo: data.titulo,
             tipo: data.tipo,
             genero: data.genero,
@@ -78,7 +79,7 @@ export default function LibroForm() {
         const LibroInstance = new Libro(
             id || null, formData.titulo, formData.tipo, formData.genero, formData.autor,
             formData.idioma, formData.estado, formData.editorial,
-            formData.fecha_publicacion, formData.paginas, formData.isbn13, formData.descripcion, formData.portada, 0, ""
+            formData.fecha_publicacion, formData.paginas, formData.isbn13, formData.descripcion, formData.portada, ""
         );
 
         const validationErrors = LibroInstance.validate();

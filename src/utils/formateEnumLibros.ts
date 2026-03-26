@@ -1,31 +1,38 @@
-import { Genero, Idioma, Estado, TipoDeLibro } from "../models/LibroResponseModel";
+export const TIPO_OPTIONS: Record<string, string> = {
+    COMUN: "Común",
+    DEDICATORIA: "Dedicatoria",
+    COLECCIONABLE: "Coleccionable"
+};
 
-export const TIPO_OPTIONS: Record<TipoDeLibro, string> = {
-    [TipoDeLibro.COMUN]: "Común",
-    [TipoDeLibro.DEDICATORIA]: "Dedicatoria",
-    [TipoDeLibro.COLECCIONABLE]: "Coleccionable"
+// Los labels tienen que coincidir con los del Back
+export const GENERO_OPTIONS: Record<string, string> = {
+    DRAMA: "Drama",
+    CIENCIA_FICCION: "Ciencia Ficción",
+    ROMANCE: "Romance",
+    AUTOAYUDA: "Autoayuda",
+    DISENO: "Diseño",
+    LITERATURA_CLASICA: "Literatura Clásica"
 };
-export const GENERO_OPTIONS: Record<Genero, string> = {
-    [Genero.DRAMA]: "Drama",
-    [Genero.CIENCIA_FICCION]: "Ciencia ficción",
-    [Genero.ROMANCE]: "Romance",
-    [Genero.AUTOAYUDA]: "Autoayuda",
-    [Genero.DISENO]: "Diseño",
-    [Genero.LITERATURA_CLASICA]: "Literatura clásica"
+
+export const IDIOMA_OPTIONS: Record<string, string> = {
+    ESPANOL: "Español",
+    INGLES: "Inglés",
+    FRANCES: "Francés",
+    PORTUGUES: "Portugués"
 };
-export const IDIOMA_OPTIONS: Record<Idioma, string> = {
-    [Idioma.ESPANOL]: "Español",
-    [Idioma.INGLES]: "Inglés",
-    [Idioma.FRANCES]: "Francés",
-    [Idioma.PORTUGUES]: "Portugués"
+
+export const ESTADO_OPTIONS: Record<string, string> = {
+    EXCELENTE: "Excelente",
+    MUY_BUENO: "Muy bueno",
+    BUENO: "Bueno",
+    MALO: "Malo",
+    REGULAR: "Regular"
 };
-export const ESTADO_OPTIONS: Record<Estado, string> = {
-    [Estado.EXCELENTE]: "Excelente",
-    [Estado.MUY_BUENO]: "Muy bueno",
-    [Estado.BUENO]: "Bueno",
-    [Estado.MALO]: "Malo",
-    [Estado.REGULAR]: "Regular"
-};
+
+// Recibe un Label (del back) y devuelve la Key (para el back)
+export const getKeyFromLabel = (options: Record<string, string>, label: string) => {
+    return Object.keys(options).find(key => options[key] === label) || label;
+}
 
 export const formatEnum = (value: string): string => {
     return value
