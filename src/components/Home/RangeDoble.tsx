@@ -12,8 +12,8 @@ export const RangeDoble = ({ min, max, valorMin, valorMax, onChangeMin, onChange
     <div className="mt-4">
       {/* valores */}
       <div className="flex justify-between text-xs text-slate-400 mb-2">
-        <span>{valorMin}</span>
-        <span>{valorMax}</span>
+        <span data-testid="valor-min">{valorMin}</span>
+        <span data-testid="valor-max">{valorMax}</span>
       </div>
       <div className="relative w-full h-6 flex items-center">
         {/* barra base */}
@@ -29,6 +29,7 @@ export const RangeDoble = ({ min, max, valorMin, valorMax, onChangeMin, onChange
         {/* rango minimo */}
         <input
           type="range" min={min} max={max} value={valorMin}
+          data-testid="range-min"
           onChange={e => {
             const v = +e.target.value
             if (v <= valorMax) onChangeMin(v)
@@ -44,6 +45,7 @@ export const RangeDoble = ({ min, max, valorMin, valorMax, onChangeMin, onChange
         {/* range maximo */}
         <input
           type="range" min={min} max={max} value={valorMax}
+          data-testid="range-max"
           onChange={e => {
             const v = +e.target.value
             if (v >= valorMin) onChangeMax(v)

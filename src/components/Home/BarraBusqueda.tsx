@@ -23,10 +23,12 @@ export const BarraBusqueda = ({ busqueda, onChangeBusqueda, onBuscar, onLimpiar 
               if ((e.target as HTMLInputElement).value === '') onLimpiar()
             }}
             className="w-full border border-slate-200 rounded-md px-4 py-3 pr-28 focus:outline-none focus:ring-2 focus:ring-sky-300"
+            data-testid="input-busqueda"
           />
           <button
             type="submit"
             className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-sky-500 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-600 transition cursor-pointer"
+            data-testid="btn-buscar"
           >Buscar</button>
         </div>
       </form>
