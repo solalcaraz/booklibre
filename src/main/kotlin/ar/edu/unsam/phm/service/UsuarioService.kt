@@ -2,14 +2,17 @@ package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.UsuarioPatchRequest
-import ar.edu.unsam.phm.env.Environment
+import ar.edu.unsam.phm.helpers.UsuarioMapper
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
 import org.springframework.stereotype.Service
 
 @Service
-class UsuarioService(private val usuarioRepositorio: UsuarioRepositorio, private val reservaRepositorio: ReservaRepositorio) {
-
+class UsuarioService(
+    private val usuarioRepositorio: UsuarioRepositorio,
+    private val reservaRepositorio: ReservaRepositorio,
+    private val usuarioMapper: UsuarioMapper
+) {
     fun getUsuarioById(id: Int): Usuario {
         val usuario = usuarioRepositorio.getById(id)
 
@@ -23,15 +26,8 @@ class UsuarioService(private val usuarioRepositorio: UsuarioRepositorio, private
     fun updateUsuario(userPatch: UsuarioPatchRequest, id: Int) {
         val usuario = usuarioRepositorio.getById(id)
 
-        usuario.email = userPatch.email
-        usuario.ciudad = userPatch.ciudad
-        usuario.telefono = userPatch.telefono
-        usuario.nombreCompleto = userPatch.nombreCompleto
-        usuario.descripcion = userPatch.descripcion
-        if (userPatch.imagen == "") usuario.imagen = Environment.API_URL + "/imagenes/default_user.png"
-        else usuario.imagen = userPatch.imagen
-        usuario.cambiarTipo(userPatch.tipoUsuario)
+        val usuarioActualizado = usuarioMapper.fromDto(userPatch, usuario)
 
-        return usuarioRepositorio.update(usuario)
+        return usuarioRepositorio.update(usuarioActualizado)
     }
 }
