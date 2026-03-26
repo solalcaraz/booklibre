@@ -532,7 +532,7 @@ class ReservaControllerTest {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.items.length()").value(1))
             .andExpect(jsonPath("$.items[0].libroResumen.titulo").value("Rayuela"))
-            .andExpect(jsonPath("$.items[0].prestadoPor").value("Diego Maradona"))
+            .andExpect(jsonPath("$.items[0].prestadoPor").value("Lionel Messi"))
     }
 
     @Test
