@@ -7,7 +7,7 @@ import { PanelFiltros } from '../components/Home/FiltrosCard'
 import { BarraBusqueda } from '../components/Home/BarraBusqueda'
 import { LibroCard } from '../components/Home/LibroCard'
 import { formatearFecha } from '../utils/formatearFecha'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 const hoy = formatearFecha(new Date())
 

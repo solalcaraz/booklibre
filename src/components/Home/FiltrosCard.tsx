@@ -34,6 +34,7 @@ export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActuali
                   type="checkbox" className="accent-sky-400"
                   checked={filtros.generos?.includes(genero) ?? false}
                   onChange={e => onGenero(genero, e.target.checked)}
+                  data-testid={`checkbox-genero-${genero}`}
                 />
                 {formatEnum(genero)}
               </label>
@@ -65,6 +66,7 @@ export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActuali
                 type="date" min={hoy} value={filtros.fechaDesde ?? hoy}
                 onChange={e => onActualizar('fechaDesde', e.target.value)}
                 className="border border-slate-200 rounded-md px-2 py-1 text-sm"
+                data-testid="input-fecha-desde"
               />
             </div>
             <div className="flex flex-col w-1/2">
@@ -73,6 +75,7 @@ export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActuali
                 type="date" min={filtros.fechaDesde ?? hoy} value={filtros.fechaHasta ?? hoy}
                 onChange={e => onActualizar('fechaHasta', e.target.value)}
                 className="border border-slate-200 rounded-md px-2 py-1 text-sm"
+                data-testid="input-fecha-hasta"
               />
             </div>
           </div>
@@ -89,6 +92,7 @@ export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActuali
               value={filtros.isbn ?? ''}
               onChange={e => onActualizar('isbn', e.target.value)}
               className="border border-slate-200 rounded-md px-3 py-2 text-sm"
+              data-testid="input-isbn"
             />
           </div>
           <div className="flex flex-col gap-2 mt-3">
@@ -98,14 +102,17 @@ export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActuali
               value={filtros.usuarioPrestador ?? ''}
               onChange={e => onActualizar('usuarioPrestador', e.target.value)}
               className="border border-slate-200 rounded-md px-3 py-2 text-sm"
+              data-testid="input-prestador"
             />
           </div>
         </fieldset>
 
-        <button type="submit" className="w-full rounded-lg bg-sky-400 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-500 transition cursor-pointer">
+        <button type="submit" className="w-full rounded-lg bg-sky-400 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-500 transition cursor-pointer"
+        data-testid="btn-aplicar">
           Aplicar Filtros
         </button>
-        <button type="button" onClick={onLimpiar} className="w-full rounded-lg border bg-sky-100 border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer">
+        <button type="button" onClick={onLimpiar} className="w-full rounded-lg border bg-sky-100 border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+        data-testid="btn-limpiar">
           Limpiar Filtros
         </button>
       </form>

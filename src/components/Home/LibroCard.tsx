@@ -9,7 +9,8 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
   const navigate = useNavigate()
 
   return (
-    <article onClick={() => navigate(`/libros/detalle/${libro.id}`)} className="bg-white rounded-2xl shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden transition hover:shadow-[0_14px_40px_rgba(15,23,42,0.12)] cursor-pointer">
+    <article onClick={() => navigate(`/libros/detalle/${libro.id}`)} className="bg-white rounded-2xl shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden transition hover:shadow-[0_14px_40px_rgba(15,23,42,0.12)] cursor-pointer"
+    data-testid={`libro-card-${libro.id}`}>
 
       {/* Imagen */}
       <div className="bg-slate-50 p-3 flex justify-center">
@@ -29,12 +30,12 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
             {libro.genero}
           </span>
 
-          <span className="text-amber-500 font-medium">
+          <span className="text-amber-500 font-medium" data-testid="libro-calificacion">
             ⭐ {libro.calificacionPromedio ?? "-"}
           </span>
         </div>
 
-        <h3 className="font-semibold text-slate-800 leading-snug">
+        <h3 className="font-semibold text-slate-800 leading-snug" data-testid="libro-titulo">
           {libro.titulo}
         </h3>
 
