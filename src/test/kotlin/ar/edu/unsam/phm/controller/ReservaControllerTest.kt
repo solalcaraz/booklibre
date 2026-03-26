@@ -1,22 +1,28 @@
 package ar.edu.unsam.phm.controller
 
-import ar.edu.unsam.phm.domain.Comun
-import ar.edu.unsam.phm.domain.Dedicatoria
 import ar.edu.unsam.phm.domain.Estado
 import ar.edu.unsam.phm.domain.Genero
 import ar.edu.unsam.phm.domain.Idioma
 import ar.edu.unsam.phm.domain.Libro
+import ar.edu.unsam.phm.domain.LibroComun
+import ar.edu.unsam.phm.domain.LibroData
+import ar.edu.unsam.phm.domain.LibroDedicatoria
 import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.domain.Usuario
+import ar.edu.unsam.phm.exceptions.BadRequestException
+import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.repository.LibroRepositorio
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepositorio
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
@@ -28,9 +34,15 @@ import java.time.LocalDate
 class ReservaControllerTest {
     @Autowired
     lateinit var mockMvc: MockMvc
-    @Autowired lateinit var libroRepositorio: LibroRepositorio
-    @Autowired lateinit var usuarioRepositorio: UsuarioRepositorio
-    @Autowired lateinit var reservaRepositorio: ReservaRepositorio
+
+    @Autowired
+    lateinit var libroRepositorio: LibroRepositorio
+
+    @Autowired
+    lateinit var usuarioRepositorio: UsuarioRepositorio
+
+    @Autowired
+    lateinit var reservaRepositorio: ReservaRepositorio
 
     lateinit var usuario: Usuario
     lateinit var usuario2: Usuario
@@ -59,49 +71,31 @@ class ReservaControllerTest {
         usuarioRepositorio.create(usuario)
         usuarioRepositorio.create(usuario2)
 
-        libroPropio = Libro(
-            titulo = "Libro Propio",
-            tipo = Comun,
-            descripcion = "Este libro es del usuario que busca",
-            genero = Genero.DRAMA,
-            autor = "Autor Cualquiera",
-            cantPaginas = 100,
-            isbn13 = "1111111111111",
-            idioma = Idioma.ESPANOL,
-            editorial = "Editorial",
-            fechaPublicacion = LocalDate.of(2000, 1, 1),
-            estado = Estado.BUENO,
-            dueno = usuario
+        libroPropio = LibroComun(
+            LibroData(
+                titulo = "Libro Propio", descripcion = "Este libro es del usuario que busca",
+                genero = Genero.DRAMA, autor = "Autor Cualquiera", cantPaginas = 100,
+                isbn13 = "1111111111111", idioma = Idioma.ESPANOL, editorial = "Editorial",
+                fechaPublicacion = LocalDate.of(2000, 1, 1), estado = Estado.BUENO, dueno = usuario
+            )
         )
 
-        libroDeUsuario2 = Libro(
-            titulo = "Rayuela",
-            tipo = Dedicatoria,
-            descripcion = "Novela experimental",
-            genero = Genero.LITERATURA_CLASICA,
-            autor = "Julio Cortázar",
-            cantPaginas = 736,
-            isbn13 = "9788437604947",
-            idioma = Idioma.ESPANOL,
-            editorial = "Cátedra",
-            fechaPublicacion = LocalDate.of(1963, 1, 1),
-            estado = Estado.BUENO,
-            dueno = usuario2
+        libroDeUsuario2 = LibroDedicatoria(
+            LibroData(
+                titulo = "Rayuela", descripcion = "Novela experimental",
+                genero = Genero.LITERATURA_CLASICA, autor = "Julio Cortázar", cantPaginas = 736,
+                isbn13 = "9788437604947", idioma = Idioma.ESPANOL, editorial = "Cátedra",
+                fechaPublicacion = LocalDate.of(1963, 1, 1), estado = Estado.BUENO, dueno = usuario2
+            )
         )
 
-        libro2DeUsuario2 = Libro(
-            titulo = "1984",
-            tipo = Comun,
-            descripcion = "Distopía",
-            genero = Genero.CIENCIA_FICCION,
-            autor = "George Orwell",
-            cantPaginas = 328,
-            isbn13 = "9780451524935",
-            idioma = Idioma.INGLES,
-            editorial = "Signet",
-            fechaPublicacion = LocalDate.of(1949, 1, 1),
-            estado = Estado.MUY_BUENO,
-            dueno = usuario2
+        libro2DeUsuario2 = LibroComun(
+            LibroData(
+                titulo = "1984", descripcion = "Distopía",
+                genero = Genero.CIENCIA_FICCION, autor = "George Orwell", cantPaginas = 328,
+                isbn13 = "9780451524935", idioma = Idioma.INGLES, editorial = "Signet",
+                fechaPublicacion = LocalDate.of(1949, 1, 1), estado = Estado.MUY_BUENO, dueno = usuario2
+            )
         )
 
         libroRepositorio.create(libroPropio)
@@ -127,7 +121,7 @@ class ReservaControllerTest {
             .andExpect(status().isOk)
             .andExpect(content().contentType("application/json"))
             .andExpect(jsonPath("$.items.length()").value(2))
-            .andExpect(jsonPath("$.items.[0].titulo").value("Rayuela"))
+            .andExpect(jsonPath("$.items.[0].titulo").value("1984"))
     }
 
     @Test
@@ -146,14 +140,14 @@ class ReservaControllerTest {
             Reserva(
                 libro = libroDeUsuario2,
                 lector = usuario,
-                fechaDesde = LocalDate.now(),
+                fechaDesde = LocalDate.now().plusDays(1),
                 fechaHasta = LocalDate.now().plusDays(7)
             )
         )
         mockMvc
             .perform(
                 MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario.id}")
-                    .param("fechaDesde", LocalDate.now().toString())
+                    .param("fechaDesde", LocalDate.now().plusDays(1).toString())
                     .param("fechaHasta", LocalDate.now().plusDays(7).toString())
             )
             .andExpect(status().isOk)
@@ -203,7 +197,7 @@ class ReservaControllerTest {
             .andExpect(status().isNotFound)
     }
 
-// PAGINADO
+    // PAGINADO
     @Test
     fun `la primera pagina devuelve el tamanio correcto`() {
         // agregue otro libro para usuario2 , muestra dos libros
@@ -248,7 +242,7 @@ class ReservaControllerTest {
             .andExpect(jsonPath("$.totalItems").value(2))
     }
 
-// ORDENAMIENTO
+    // ORDENAMIENTO
     @Test
     fun `orden TITULO_ASC devuelve libros ordenados de la A a la Z`() {
         mockMvc
@@ -294,21 +288,16 @@ class ReservaControllerTest {
             password = "admin"
         )
         usuarioRepositorio.create(usuario3)
-        val libroDeUsuario3 = Libro(
-            titulo = "El Aleph",
-            tipo = Comun,
-            descripcion = "Cuentos",
-            genero = Genero.LITERATURA_CLASICA,
-            autor = "Jorge Luis Borges",
-            cantPaginas = 200,
-            isbn13 = "9780142437889",
-            idioma = Idioma.ESPANOL,
-            editorial = "Penguin",
-            fechaPublicacion = LocalDate.of(1949, 1, 1),
-            estado = Estado.BUENO,
-            dueno = usuario3
+        libroRepositorio.create(
+            LibroComun(
+                LibroData(
+                    titulo = "El Aleph", descripcion = "Cuentos",
+                    genero = Genero.LITERATURA_CLASICA, autor = "Jorge Luis Borges", cantPaginas = 200,
+                    isbn13 = "9780142437889", idioma = Idioma.ESPANOL, editorial = "Penguin",
+                    fechaPublicacion = LocalDate.of(1949, 1, 1), estado = Estado.BUENO, dueno = usuario3
+                )
+            )
         )
-        libroRepositorio.create(libroDeUsuario3)
 
         mockMvc
             .perform(
@@ -320,31 +309,170 @@ class ReservaControllerTest {
             .andExpect(jsonPath("$.items[1].dueno").value("Lionel Messi"))
             .andExpect(jsonPath("$.items[2].dueno").value("Lionel Messi"))
     }
+    // endregion
 
+    // region GET /detalles/{libroId}}
     @Test
-    fun `orden POPULARIDAD devuelve primero el libro mas reservado`() {
-        // Rayuela tiene 2 reservas, 1984 no tiene ninguna
-        reservaRepositorio.create(Reserva(
-            libro = libroDeUsuario2,
-            lector = usuario,
-            fechaDesde = LocalDate.of(2025, 1, 1),
-            fechaHasta = LocalDate.of(2025, 1, 10)
-        ))
-        reservaRepositorio.create(Reserva(
-            libro = libroDeUsuario2,
-            lector = usuario,
-            fechaDesde = LocalDate.of(2025, 2, 1),
-            fechaHasta = LocalDate.of(2025, 2, 10)
-        ))
+    fun `se pueden obtener los detalles de simulacion de una reserva`() {
+        val fechaDesde = LocalDate.now().plusDays(10).toString()
+        val fechaHasta = LocalDate.now().plusDays(20).toString()
 
         mockMvc
             .perform(
-                MockMvcRequestBuilders.get("/reserva/librosDisponibles/${usuario.id}")
-                    .param("orden", "POPULARIDAD")
+                MockMvcRequestBuilders.get("/reserva/detalles/${libroDeUsuario2.id}")
+                    .header("userId", usuario.id!!) //Usuario1
+                    .param("fechaDesde", fechaDesde)
+                    .param("fechaHasta", fechaHasta)
             )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.items[0].titulo").value("Rayuela"))
-            .andExpect(jsonPath("$.items[1].titulo").value("1984"))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.calificacionPromedio").value(0.0))
+            .andExpect(jsonPath("$.libroDetalleDTO.titulo").value("Rayuela"))
+            .andExpect(jsonPath("$.libroDetalleDTO.autor").value("Julio Cortázar"))
+    }
+
+    @Test
+    fun `pedir detalles con fecha hasta anterior a desde devuelve 400 Bad Request`() {
+        val fechaDesde = LocalDate.now().plusDays(20).toString()
+        val fechaHasta = LocalDate.now().plusDays(10).toString() // Fechas invertidas
+
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.get("/reserva/detalles/${libroDeUsuario2.id}")
+                    .header("userId", usuario.id!!)
+                    .param("fechaDesde", fechaDesde)
+                    .param("fechaHasta", fechaHasta)
+            )
+            .andExpect(status().isBadRequest)
+            .andExpect { result ->
+                val excepcionLanzada = result.resolvedException
+                assertTrue(excepcionLanzada is BadRequestException)
+                assertEquals(
+                    "La fecha hasta no puede ser anterior a la fecha desde.",
+                    excepcionLanzada?.message
+                )
+            }
+    }
+
+    @Test
+    fun `No puedo reservar mis propios libros`() {
+        val fechaDesde = LocalDate.now().plusDays(10).toString()
+        val fechaHasta = LocalDate.now().plusDays(20).toString()
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/reserva/detalles/${libroDeUsuario2.id}")
+                .header("userId", usuario2.id!!)
+                .param("fechaDesde", fechaDesde)
+                .param("fechaHasta", fechaHasta)
+        )
+            .andExpect(status().isBadRequest)
+            .andExpect { result ->
+                val excepcionLanzada = result.resolvedException
+                assertTrue(excepcionLanzada is BadRequestException)
+                assertEquals(
+                    "No puedo reservar mis propios libros",
+                    excepcionLanzada?.message
+                )
+            }
+    }
+    // endregion
+
+    // region POST /crear
+    @Test
+    fun `se puede crear una reserva correctamente`() {
+        val fechaDesde = LocalDate.now().plusDays(10).toString()
+        val fechaHasta = LocalDate.now().plusDays(15).toString()
+
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.post("/reserva/crear")
+                    .header("userId", usuario.id!!)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{
+                          "libroId": ${libroDeUsuario2.id},
+                          "fechaDesde": "$fechaDesde",
+                          "fechaHasta": "$fechaHasta"
+                        }""".trimIndent())
+            )
+            .andExpect(status().isOk)
+
+        val reservasGuardadas = reservaRepositorio.buscarPorLibro(libroDeUsuario2)
+        assertEquals(1, reservasGuardadas.size)
+    }
+
+    @Test
+    fun `intentar crear una reserva con fechas superpuestas devuelve 409 Conflict`() {
+        val fechaDesde = LocalDate.now().plusDays(10)
+        val fechaHasta = LocalDate.now().plusDays(20)
+
+        reservaRepositorio.create(
+            Reserva(
+                libro = libroDeUsuario2,
+                lector = usuario,
+                fechaDesde = fechaDesde,
+                fechaHasta = fechaHasta
+            )
+        )
+
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.post("/reserva/crear")
+                    .header("userId", usuario.id!!)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {
+                          "libroId": ${libroDeUsuario2.id},
+                          "fechaDesde": "${fechaDesde.plusDays(2)}",
+                          "fechaHasta": "${fechaHasta.plusDays(5)}"
+                        }
+                    """.trimIndent())
+            )
+            .andExpect(status().isConflict)
+            .andExpect { result ->
+                val excepcionLanzada = result.resolvedException
+                assertTrue(excepcionLanzada is ConflictException)
+                assertEquals(
+                    "El libro ya se encuentra reservado en esas fechas.",
+                    excepcionLanzada?.message
+                )
+            }
+    }
+
+    @Test
+    fun `Intenta crear una reserva cuando previamente ya lo hizo`(){
+        val fechaDesde = LocalDate.now().plusDays(10)
+        val fechaHasta = LocalDate.now().plusDays(20)
+
+        reservaRepositorio.create(
+            Reserva(
+                libro = libroDeUsuario2,
+                lector = usuario,
+                fechaDesde = fechaDesde,
+                fechaHasta = fechaHasta
+            )
+        )
+
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.post("/reserva/crear")
+                    .header("userId", usuario.id!!)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {
+                          "libroId": ${libroDeUsuario2.id},
+                          "fechaDesde": "${fechaDesde.plusDays(20)}",
+                          "fechaHasta": "${fechaHasta.plusDays(30)}"
+                        }
+                    """.trimIndent())
+            )
+            .andExpect(status().isConflict)
+            .andExpect { result ->
+                val excepcionLanzada = result.resolvedException
+                assertTrue(excepcionLanzada is ConflictException)
+                assertEquals(
+                    "Ya tenés una reserva activa para este libro. Dejá leer a los demás chimwe",
+                    excepcionLanzada?.message
+                )
+            }
     }
 
     // CALIFICAR

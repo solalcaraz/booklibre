@@ -21,7 +21,8 @@ class ReservaSpec : DescribeSpec({
         email = "lionel@messi.com",
         password = "admin"
     ).apply { id = 2 }
-    val lector2 = Usuario(
+
+    val lectorMuchosBibliokarmas = Usuario(
         nombreCompleto = "Dieguito",
         email = "diego@mail.com",
         password = "admin"
@@ -30,9 +31,8 @@ class ReservaSpec : DescribeSpec({
         bibliokarmas = 2000
     }
 
-    val libroComun = Libro(
+    val libroData = LibroData(
         titulo = "Rayuela",
-        tipo = Comun,
         descripcion = "Novela experimental",
         genero = Genero.LITERATURA_CLASICA,
         autor = "Julio Cortázar",
@@ -44,34 +44,13 @@ class ReservaSpec : DescribeSpec({
         estado = Estado.BUENO,
         dueno = dueno
     )
-    val libroDedicatoria = Libro(
-        titulo = "Rayuela",
-        tipo = Dedicatoria,
-        descripcion = "Novela experimental",
-        genero = Genero.LITERATURA_CLASICA,
-        autor = "Julio Cortázar",
-        cantPaginas = 100,
-        isbn13 = "9788437604948",  // isbn distinto para evitar conflictos
-        idioma = Idioma.ESPANOL,
-        editorial = "Cátedra",
-        fechaPublicacion = LocalDate.of(1963, 1, 1),
-        estado = Estado.BUENO,
-        dueno = dueno
-    )
-    val libroColeccionable = Libro(
-        titulo = "Rayuela",
-        tipo = Coleccionable,
-        descripcion = "Novela experimental",
-        genero = Genero.LITERATURA_CLASICA,
-        autor = "Julio Cortázar",
-        cantPaginas = 100,
-        isbn13 = "9788437604949",  // isbn distinto para evitar conflictos
-        idioma = Idioma.ESPANOL,
-        editorial = "Cátedra",
-        fechaPublicacion = LocalDate.of(1963, 1, 1),
-        estado = Estado.BUENO,
-        dueno = dueno
-    )
+
+    val libroComun = LibroComun(libroData)
+    val libroDedicatoria = LibroDedicatoria(libroData)
+    val libroColeccionable = LibroColeccionable(libroData)
+
+    val desde = LocalDate.now().plusDays(1)
+    val hasta = LocalDate.now().plusDays(11)
 
     describe("Validaciones del init") {
         it("no se puede crear una reserva con fechaHasta anterior a fechaDesde") {
@@ -79,8 +58,8 @@ class ReservaSpec : DescribeSpec({
                 Reserva(
                     libro = libroComun,
                     lector = lector,
-                    fechaDesde = LocalDate.of(2026, 3, 20),
-                    fechaHasta = LocalDate.of(2026, 3, 10)
+                    fechaDesde = hasta,
+                    fechaHasta = desde
                 )
             }
         }
@@ -90,8 +69,8 @@ class ReservaSpec : DescribeSpec({
                 Reserva(
                     libro = libroComun,
                     lector = dueno,
-                    fechaDesde = LocalDate.of(2026, 3, 10),
-                    fechaHasta = LocalDate.of(2026, 3, 20)
+                    fechaDesde = desde,
+                    fechaHasta = hasta
                 )
             }
         }
@@ -101,8 +80,8 @@ class ReservaSpec : DescribeSpec({
                 Reserva(
                     libro = libroComun,
                     lector = lector,
-                    fechaDesde = LocalDate.of(2026, 3, 10),
-                    fechaHasta = LocalDate.of(2026, 3, 20)
+                    fechaDesde = desde,
+                    fechaHasta = hasta
                 )
             }
         }
@@ -113,8 +92,8 @@ class ReservaSpec : DescribeSpec({
             val reservaPasada = Reserva(
                 libro = libroComun,
                 lector = lector,
-                fechaDesde = LocalDate.of(2025, 1, 1),
-                fechaHasta = LocalDate.of(2025, 1, 10)
+                fechaDesde = LocalDate.now().minusDays(10),
+                fechaHasta = LocalDate.now().minusDays(1)
             )
             reservaPasada.estaFinalizada() shouldBe true
         }
@@ -123,90 +102,69 @@ class ReservaSpec : DescribeSpec({
             val reservaFutura = Reserva(
                 libro = libroComun,
                 lector = lector,
-                fechaDesde = LocalDate.now(),
-                fechaHasta = LocalDate.now().plusDays(5)
+                fechaDesde = desde,
+                fechaHasta = hasta
             )
             reservaFutura.estaFinalizada() shouldBe false
         }
     }
 
     describe("validarReseña") {
-        val reserva = Reserva(
+        val reservaFinalizada = Reserva(
             libro = libroComun,
             lector = lector,
-            fechaDesde = LocalDate.of(2025, 1, 1),
-            fechaHasta = LocalDate.of(2025, 1, 10)
+            fechaDesde = LocalDate.now().minusDays(10),
+            fechaHasta = LocalDate.now().minusDays(1)
         )
 
         it("se puede validar una reseña válida") {
             shouldNotThrow<BadRequestException> {
-                reserva.validarReseña(Resenia(libroComun.id!!, lector.nombreCompleto, 4, "Muy buen libro"))
+                reservaFinalizada.validarReseña(Resenia(libroComun.id!!, lector.nombreCompleto, 4, "Muy buen libro"))
             }
         }
 
         it("no se puede validar una reseña con puntaje mayor a 5") {
             shouldThrow<BadRequestException> {
-                reserva.validarReseña(Resenia(libroComun.id!!, lector.nombreCompleto, 6, "Excelente"))
+                reservaFinalizada.validarReseña(Resenia(libroComun.id!!, lector.nombreCompleto, 6, "Excelente"))
             }
         }
 
         it("no se puede validar una reseña con puntaje negativo") {
             shouldThrow<BadRequestException> {
-                reserva.validarReseña(Resenia(libroComun.id!!, lector.nombreCompleto, -1, "Malo"))
+                reservaFinalizada.validarReseña(Resenia(libroComun.id!!, lector.nombreCompleto, -1, "Malo"))
             }
         }
 
         it("no se puede validar una reseña con comentario vacío") {
             shouldThrow<BadRequestException> {
-                reserva.validarReseña(Resenia(libroComun.id!!, lector.nombreCompleto, 3, ""))
+                reservaFinalizada.validarReseña(Resenia(libroComun.id!!, lector.nombreCompleto, 3, ""))
             }
         }
     }
 
     describe("calcularBiblioKarmas") {
-        val reserva = Reserva(
-            libro = libroComun,
-            lector = lector,
-            fechaDesde = LocalDate.of(2026, 3, 10),
-            fechaHasta = LocalDate.of(2026, 3, 20) // 11 dias
-        )
-
         it("libro comun con lector con menos de 1000 bibliokarmas") {
+            val reserva = Reserva(libro = libroComun, lector = lector, fechaDesde = desde, fechaHasta = hasta)
             // 5 * 11 dias + 100 paginas * 5 = 55 + 500 = 555
             reserva.calcularBiblioKarmas(0) shouldBe 555
         }
 
         it("libro comun con lector con mas de 1000 bibliokarmas") {
-            val reservaRico = Reserva(
-                libro = libroComun,
-                lector = lector2,
-                fechaDesde = LocalDate.of(2026, 3, 10),
-                fechaHasta = LocalDate.of(2026, 3, 20)
-            )
+            val reserva = Reserva(libro = libroComun, lector = lectorMuchosBibliokarmas, fechaDesde = desde, fechaHasta = hasta)
             // 5 * 11 dias + 100 paginas * 2 = 55 + 200 = 255
-            reservaRico.calcularBiblioKarmas(0) shouldBe 255
+            reserva.calcularBiblioKarmas(0) shouldBe 255
         }
 
         it("libro dedicatoria suma 200 mas 10 por cada reserva previa") {
-            val reservaDedicatoria = Reserva(
-                libro = libroDedicatoria,
-                lector = lector,
-                fechaDesde = LocalDate.of(2026, 3, 10),
-                fechaHasta = LocalDate.of(2026, 3, 20)
-            )
+            val reserva = Reserva(libro = libroDedicatoria, lector = lector, fechaDesde = desde, fechaHasta = hasta)
             // 5 * 11 dias + 200 + 10 * 3 reservas = 55 + 230 = 285
-            reservaDedicatoria.calcularBiblioKarmas(3) shouldBe 285
+            reserva.calcularBiblioKarmas(3) shouldBe 285
         }
 
         it("libro coleccionable suma quinta parte de bibliokarmas mas paginas") {
-            val reservaColeccionable = Reserva(
-                libro = libroColeccionable,
-                lector = lector2, // 2000 bibliokarmas
-                fechaDesde = LocalDate.of(2026, 3, 10),
-                fechaHasta = LocalDate.of(2026, 3, 20)
-            )
+            val reserva = Reserva(libro = libroColeccionable, lector = lectorMuchosBibliokarmas, fechaDesde = desde, fechaHasta = hasta)
             // 5 * 11 dias + ceil(2000/5) + 100 paginas = 55 + 400 + 100 = 555
-            reservaColeccionable.calcularBiblioKarmas(0) shouldBe 555
+            reserva.calcularBiblioKarmas(0) shouldBe 555
         }
     }
 })

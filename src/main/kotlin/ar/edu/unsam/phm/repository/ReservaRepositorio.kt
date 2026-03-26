@@ -13,9 +13,9 @@ import kotlin.text.isNullOrEmpty
 
 class ReservaSearchStrategy : SearchStrategy<Reserva> {
     override fun matches(obj: Reserva, value: String): Boolean {
-        return obj.libro.titulo.contains(value, ignoreCase = true) ||
+        return obj.libro.data.titulo.contains(value, ignoreCase = true) ||
                 obj.lector.nombreCompleto.contains(value, ignoreCase = true) ||
-                obj.libro.isbn13.contains(value, ignoreCase = true)
+                obj.libro.data.isbn13.contains(value, ignoreCase = true)
     }
 }
 
@@ -46,11 +46,11 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
     /* Cantidad de libros prestados de un usuario = todas las reservas de cuyo libro es dueño */
     fun cantidadPrestadosDe(usuario: Usuario): Int {
         return objetos.values
-            .count { it.libro.dueno.id == usuario.id }
+            .count { it.libro.data.dueno.id == usuario.id }
     }
 
     fun librosPrestadosDe(usuario: Usuario): List<Libro> {
-        return objetos.values.filter { it.libro.dueno.id == usuario.id && it.estaActiva()}.map { it.libro }
+        return objetos.values.filter { it.libro.data.dueno.id == usuario.id && it.estaActiva()}.map { it.libro }
     }
 
     fun buscarMisLibros(usuario: Usuario, librosDelUsuario: List<Libro>, filter: String, sort: String?, page: Int, size: Int): PaginationResponseDTO<MiLibroDTO> {
@@ -58,6 +58,7 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
         val idsPrestados = librosPrestados.map { it.id }.toSet()
 
         val librosFiltrados = when (filter) {
+            /* Los libros disponibles son todos los libros del usuario que no estén prestados */
             "Disponibles" -> librosDelUsuario.filter { it.id !in idsPrestados }
             "Prestados" -> librosPrestados
             else -> librosDelUsuario
@@ -66,30 +67,40 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
         val librosDto = librosFiltrados.map { libro ->
             MiLibroDTO(
                 id = libro.id,
-                titulo = libro.titulo,
-                autor = libro.autor,
-                genero = libro.genero.label,
+                titulo = libro.data.titulo,
+                autor = libro.data.autor,
+                genero = libro.data.genero.label,
                 estadoReserva = if (libro.id in idsPrestados) "PRESTADO" else "DISPONIBLE",
-                agregadoEl = libro.fechaPublicacion,
-                portada = libro.portada
+                agregadoEl = libro.data.fechaPublicacion,
+                portada = libro.data.portada
             )
         }
 
+        /* Antes de ordenarlos yo necesito que ya esten etiquetados con "PRESTADO" o "DISPONIBLE"
+        porque uno de los sorts es por el estado de la reserva, y el otro por fecha de agregado */
+        /* Entiendo que después la base de datos puede agregar una columna con esa etiqueta a la tabla,
+        y no hace falta terminar armando el DTO en el repositorio, delegándolo al controller */
         val librosOrdenados = ordenarLibros(librosDto, sort)
 
         return paginate(librosOrdenados, page, size)
     }
 
-    // Los libros disponibles en un rango de fechas
-    fun libroEstaDisponibleEntre(libro: Libro, desde: LocalDate, hasta: LocalDate): Boolean =
-        buscarPorLibro(libro).none { it.seSuperponeCon(desde, hasta)
-        }
+    // filtra por el id de los libros que estan reservados
+    fun getIdLibrosOcupadosEntre(desde: LocalDate, hasta: LocalDate): Set<Int> =
+        objetos.values
+            .filter { it.seSuperponeCon(desde, hasta) }
+            .mapNotNull { it.libro.id }
+            .toSet()
 
-    fun getPuntacionPromedio(libro:Libro): Double{
-        val resenias = buscarPorLibro(libro).mapNotNull { it.resenia }
-        if( resenias.isEmpty()) return 0.0
-        return resenias.sumOf { it.puntuacion } / resenias.size.toDouble()
-    }
+    // devuelve la cantidad de reservas que tiene un libro
+    fun getCantidadReservasPorLibro(id: Int): Int =
+        objetos.values.count { it.libro.id == id }
+
+    // devuelve una lista de las puntaciones que tiene un libro
+    fun getPuntuacionesByLibro(id: Int): List<Int> =
+        objetos.values
+            .filter { it.libro.id == id }
+            .mapNotNull { it.resenia?.puntuacion }
 
     fun getUltimasReservas(libro:Libro): List<Reserva>{
         return buscarPorLibro(libro)
@@ -104,8 +115,18 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
             .filter { !it.estaFinalizada() }
     }
 
+    fun tieneReservasSuperpuestas(libro: Libro, desde: LocalDate, hasta: LocalDate): Boolean {
+        return getReservasOcupadas(libro).any { it.seSuperponeCon(desde, hasta) }
+    }
+
+    fun usuarioTieneReservaActiva(libro: Libro, usuario: Usuario): Boolean{
+        return buscarPorLibro(libro).any{
+            it.lector.id == usuario.id && !it.estaFinalizada()
+        }
+    }
+
     fun getPrestadosPorMi(usuarioId: String, pageNumber: Int, pageSize: Int, search: String?): PaginationResponseDTO<Reserva>  {
-        var reservas = objetos.values.filter { it.libro.dueno.id.toString() == usuarioId }
+        var reservas = objetos.values.filter { it.libro.data.dueno.id.toString() == usuarioId }
         reservas = filtrarReservas(reservas, search)
         return paginate(reservas, pageNumber, pageSize)
     }
@@ -119,8 +140,8 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
     private fun filtrarReservas(reservas: List<Reserva>, search: String?): List<Reserva> {
         if (!search.isNullOrEmpty()) {
             return reservas.filter {
-                it.libro.titulo.contains(search, ignoreCase = true) ||
-                        it.libro.autor.contains(search, ignoreCase = true)
+                it.libro.data.titulo.contains(search, ignoreCase = true) ||
+                        it.libro.data.autor.contains(search, ignoreCase = true)
             }
         }
         return reservas

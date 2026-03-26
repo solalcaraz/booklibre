@@ -29,9 +29,9 @@ class Reserva(
 ) : EntidadConId {
     init {
         require(!fechaHasta.isBefore(fechaDesde)) { // no puedo reservar mis propios libros ...
-            "La fecha hasta no puede ser anterior a la fecha desde, ni puedo reservar mis propios libros"
+            "La fecha hasta no puede ser anterior a la fecha desde."
         }
-        require(lector.id != libro.dueno.id){
+        require(lector.id != libro.data.dueno.id){
             "No puedo reservar mis propios libros"
         }
     }
@@ -63,7 +63,7 @@ class Reserva(
     fun calcularDias() = ChronoUnit.DAYS.between(fechaDesde, fechaHasta).toInt() + 1
 
     fun calcularBiblioKarmas(cantidadReservas: Int): Int {
-        return 5 * calcularDias() + libro.tipo.plusBiblioKarma(libro, lector, cantidadReservas) // pasar bibliokarmas como int, sirve pasar el objeto usuario completo?
+        return 5 * calcularDias() + libro.plusBiblioKarma(lector.bibliokarmas, cantidadReservas)
     }
 
     fun calcularEstado(): String {
@@ -79,12 +79,4 @@ class Reserva(
     fun puedeCalificar(): Boolean = resenia == null && estaFinalizada()
 }
 
-data class ReservaSimulada(
-    val reserva: Reserva,
-    val cantidadReservasHistoricas: Int,
-    val promedio: Double,
-    val ultimasReservas: List<Reserva>,
-    val reservasOcupadas: List<Reserva>,
-    val bibliokarmas: Int
-)
 

@@ -2,6 +2,7 @@ package ar.edu.unsam.phm.controller
 
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.MiLibroDTO
+import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.LibroAdapter
@@ -39,12 +40,12 @@ class MisLibrosSpec(
     @Test
     @DisplayName("Cuando se elimina un libro existente, devuelve 200")
     fun delete_libro_ok() {
-        doNothing().`when`(libroService).borrarLibro("1")
+        doNothing().`when`(libroService).borrarLibro(1)
 
         mockMvc.perform(delete("/misLibros/1"))
             .andExpect(status().isOk)
 
-        verify(libroService).borrarLibro("1")
+        verify(libroService).borrarLibro(1)
     }
 
     @Test
@@ -52,21 +53,10 @@ class MisLibrosSpec(
     fun delete_libro_not_found() {
         doThrow(NotFoundException("No se encontró el objeto con ID 99."))
             .`when`(libroService)
-            .borrarLibro("99")
+            .borrarLibro(99)
 
         mockMvc.perform(delete("/misLibros/99"))
             .andExpect(status().isNotFound)
-    }
-
-    @Test
-    @DisplayName("Cuando se intenta eliminar un libro mediante un id invalido, devuelve 400")
-    fun delete_libro_invalid_id() {
-        doThrow(BadRequestException("El ID brindado no es válido"))
-            .`when`(libroService)
-            .borrarLibro("falopa")
-
-        mockMvc.perform(delete("/misLibros/falopa"))
-            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -99,8 +89,16 @@ class MisLibrosSpec(
             portada = "portadaMock"
         )
 
-        `when`(usuarioService.getUsuarioById("1")).thenReturn(usuario)
-        `when`(libroService.misLibros(usuario, "Todos")).thenReturn(listOf(libro1, libro2))
+        val paginaMock = PaginationResponseDTO(
+            items = listOf(libro1, libro2),
+            page = 0,
+            size = 3,
+            totalItems = 2,
+            totalPages = 1
+        )
+
+        `when`(usuarioService.getUsuarioById(1)).thenReturn(usuario)
+        `when`(libroService.misLibros(1, "Todos", null, 0, 3)).thenReturn(paginaMock)
 
         mockMvc.perform(
             get("/misLibros/1")
@@ -121,7 +119,7 @@ class MisLibrosSpec(
     @Test
     @DisplayName("Cuando se listan los libros de un usuario no existente, devuelve 404")
     fun listar_mis_libros_usuario_not_found() {
-        `when`(usuarioService.getUsuarioById("99"))
+        `when`(libroService.misLibros(99, "Todos", null, 0, 3))
             .thenThrow(NotFoundException("Usuario no encontrado"))
 
         mockMvc.perform(
@@ -133,18 +131,4 @@ class MisLibrosSpec(
             .andExpect(status().isNotFound)
     }
 
-    @Test
-    @DisplayName("Cuando se listan los libros de un usuario no existente, devuelve 404")
-    fun listar_mis_libros_usuario_invalid_id() {
-        `when`(usuarioService.getUsuarioById("falopa"))
-            .thenThrow(BadRequestException("Usuario con ID invalido"))
-
-        mockMvc.perform(
-            get("/misLibros/falopa")
-                .param("page", "0")
-                .param("size", "3")
-                .param("filter", "Todos")
-        )
-            .andExpect(status().isBadRequest)
-    }
 }

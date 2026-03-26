@@ -31,14 +31,13 @@ class LibroService(
 
     fun update(id: Int, libroDto: LibroDetalleDTO) {
         val libroExistente = libroRepositorio.getById(id)
-        val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.dueno)
+        val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.data.dueno)
         libroRepositorio.update(libroActualizado)
     }
 
-    fun misLibros(userId: String, filter: String, sort: String?, page: Int, size: Int): PaginationResponseDTO<MiLibroDTO> {
+    fun misLibros(userId: Int, filter: String, sort: String?, page: Int, size: Int): PaginationResponseDTO<MiLibroDTO> {
         /* Me traigo el usuario por ID*/
-        val id = userId.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
-        val usuario = usuarioRepositorio.getById(id)
+        val usuario = usuarioRepositorio.getById(userId)
 
         /* Para los disponibles sigo necesitando llamar a todos los libros del usuario, no encuentro otra forma */
         /* Porque puede haber libros que nunca hayan sido reservados */
@@ -47,10 +46,5 @@ class LibroService(
         return reservaRepositorio.buscarMisLibros(usuario, librosDelUsuario, filter, sort, page, size)
     }
 
-    fun borrarLibro(id: String) {
-        val idNumerico = id.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
-
-        libroRepositorio.deleteById(idNumerico)
-    }
-
+    fun borrarLibro(id: Int) = libroRepositorio.deleteById(id)
 }

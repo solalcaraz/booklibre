@@ -14,54 +14,54 @@ interface LibroAdapter {
 class LibroMapper : LibroAdapter {
 
     override fun fromDto(dto: LibroDetalleDTO, usuarioDueno: Usuario): Libro {
-        val tipoDominio = when (dto.tipo) {
-            TipoDeLibroDTO.COMUN -> Comun
-            TipoDeLibroDTO.DEDICATORIA -> Dedicatoria
-            TipoDeLibroDTO.COLECCIONABLE -> Coleccionable
-        }
-
-        val libro = Libro(
-            id = dto.id,
+        val libroData = LibroData(
             titulo = dto.titulo,
-            tipo = tipoDominio,
             descripcion = dto.descripcion,
-            genero = dto.genero,
+            genero = Genero.valueOf(dto.genero),
             autor = dto.autor,
             cantPaginas = dto.paginas,
             isbn13 = dto.isbn13,
-            idioma = dto.idioma,
+            idioma = Idioma.valueOf(dto.idioma),
             editorial = dto.editorial,
             fechaPublicacion = LocalDate.parse(dto.fechaPublicacion),
-            estado = dto.estado,
-            dueno = usuarioDueno
+            estado = Estado.valueOf(dto.estado),
+            dueno = usuarioDueno,
+            portada = dto.portada
         )
-        libro.portada = dto.portada
-        return libro
+
+        return when (dto.tipo) {
+            TipoDeLibroDTO.COMUN -> LibroComun(libroData)
+            TipoDeLibroDTO.DEDICATORIA -> LibroDedicatoria(libroData)
+            TipoDeLibroDTO.COLECCIONABLE -> LibroColeccionable(libroData)
+        }.apply {
+            this.id = dto.id
+        }
     }
 
     override fun toDetalleDto(libro: Libro): LibroDetalleDTO {
-        val tipoDto = when (libro.tipo) {
-            is Comun -> TipoDeLibroDTO.COMUN
-            is Dedicatoria -> TipoDeLibroDTO.DEDICATORIA
-            is Coleccionable -> TipoDeLibroDTO.COLECCIONABLE
-            else -> TipoDeLibroDTO.COMUN // Default seguro
+        val tipoDto = when (libro) {
+            is LibroComun -> TipoDeLibroDTO.COMUN
+            is LibroDedicatoria -> TipoDeLibroDTO.DEDICATORIA
+            is LibroColeccionable -> TipoDeLibroDTO.COLECCIONABLE
+            else -> throw IllegalArgumentException("Tipo de libro desconocido")
         }
 
+        val libroData = libro.data //para achicar los llamados
         return LibroDetalleDTO(
             id = libro.id,
-            titulo = libro.titulo,
+            titulo = libroData.titulo,
             tipo = tipoDto,
-            genero = libro.genero,
-            autor = libro.autor,
-            idioma = libro.idioma,
-            estado = libro.estado,
-            editorial = libro.editorial,
-            fechaPublicacion = libro.fechaPublicacion.toString(),
-            paginas = libro.cantPaginas,
-            isbn13 = libro.isbn13,
-            descripcion = libro.descripcion,
-            portada = libro.portada,
-            idDueno = libro.dueno.id!!
+            genero = libroData.genero.label,
+            autor = libroData.autor,
+            idioma = libroData.idioma.label,
+            estado = libroData.estado.label,
+            editorial = libroData.editorial,
+            fechaPublicacion = libroData.fechaPublicacion.toString(),
+            paginas = libroData.cantPaginas,
+            isbn13 = libroData.isbn13,
+            descripcion = libroData.descripcion,
+            portada = libroData.portada,
+            idDueno = libroData.dueno.id ?: 0
         )
     }
 }

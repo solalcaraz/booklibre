@@ -1,22 +1,33 @@
 package ar.edu.unsam.phm.helpers
 
 import ar.edu.unsam.phm.domain.Reserva
-import ar.edu.unsam.phm.domain.ReservaSimulada
 import ar.edu.unsam.phm.dto.*
 import org.springframework.stereotype.Service
 
 interface ReservaAdapter {
-    fun toDetalleReservaDto(simulacion: ReservaSimulada): DetalleReservaDTO
     fun toDtoReservaPag(page: PaginationResponseDTO<Reserva>, promedioPorLibro: Map<Int, Double>, cantidadDeReservasPorLibro: Map<Int, Int>): PaginationResponseDTO<ReservaDTO>
+    fun toDetalleReservaDto(
+        reserva: Reserva,
+        bibliokarmas: Int,
+        calificacionPromedio: Double,
+        ultimasReservas: List<Reserva>,
+        reservasOcupadas: List<Reserva>
+    ): DetalleReservaDTO
+    fun toDto(reserva: Reserva, puntuacion: Double, cantidadReservas: Int): ReservaDTO
 }
 
 @Service
 class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
-    override fun toDetalleReservaDto(simulacion: ReservaSimulada): DetalleReservaDTO {
+
+    override fun toDetalleReservaDto(reserva: Reserva,
+                                     bibliokarmas: Int,
+                                     calificacionPromedio: Double,
+                                     ultimasReservas: List<Reserva>,
+                                     reservasOcupadas: List<Reserva>): DetalleReservaDTO {
         return DetalleReservaDTO(
-            bibliokarmasTotales = simulacion.bibliokarmas,
-            calificacionPromedio = simulacion.promedio,
-            ultimasResenias = simulacion.ultimasReservas.map { reserva ->
+            bibliokarmasTotales = bibliokarmas,
+            calificacionPromedio = calificacionPromedio,
+            ultimasResenias = ultimasReservas.map { reserva ->
                 val resenia = reserva.resenia!!
                 ReseniaDTO(
                     id = reserva.id,
@@ -25,13 +36,13 @@ class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
                     comentario = resenia.comentario
                 )
             },
-            rangosFechasOcupadas = simulacion.reservasOcupadas.map { reservaOcupada ->
+            rangosFechasOcupadas = reservasOcupadas.map { reservaOcupada ->
                 RangoFechaDTO(
                     fechaDesde = reservaOcupada.fechaDesde,
                     fechaHasta = reservaOcupada.fechaHasta
                 )
             },
-            libroDetalleDTO = libroMapper.toDetalleDto(simulacion.reserva.libro)
+            libroDetalleDTO = libroMapper.toDetalleDto(reserva.libro)
         )
     }
 
@@ -46,8 +57,8 @@ class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
         )
     }
 
-    private fun toDto(reserva: Reserva, puntuacion: Double, cantidadReservas: Int): ReservaDTO {
-        val libroResumen = LibroResumen(reserva.libro.titulo, reserva.libro.autor, puntuacion, reserva.libro.portada)
+    override fun toDto(reserva: Reserva, puntuacion: Double, cantidadReservas: Int): ReservaDTO {
+        val libroResumen = LibroResumen(reserva.libro.data.titulo, reserva.libro.data.autor, puntuacion, reserva.libro.data.portada)
         return ReservaDTO( reserva.id, libroResumen, reserva.lector.nombreCompleto,
             reserva.calcularBiblioKarmas(cantidadReservas), reserva.fechaDesde, reserva.fechaHasta, reserva.calcularEstado(), reserva.puedeCalificar(), reserva.resenia?.puntuacion)
     }
