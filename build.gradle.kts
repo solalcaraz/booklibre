@@ -26,6 +26,9 @@ dependencies {
 
     // básicos de cualquier proyecto Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    runtimeOnly("org.postgresql:postgresql")
+
     implementation("org.springframework.boot:spring-boot-starter-hateoas")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.uqbar-project:geodds-xtend:1.0.3")
@@ -40,6 +43,7 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-framework-engine:$kotestVersion")
     testImplementation("io.mockk:mockk:${mockkVersion}")
+
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

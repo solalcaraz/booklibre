@@ -5,10 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69efba49-111b-44f0-82f5-a8580d624123" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/compose.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Prueba.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/PruebaRepositorio.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/helpers/UsuarioAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/helpers/UsuarioAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/ReservaRepositorio.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/ReservaRepositorio.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/UsuarioService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/UsuarioService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,7 +148,7 @@
         <entry key="SpringBootApplicationConfigurationType">
           <value>
             <map>
-              <entry key="BookLibre" value="STOPPED" />
+              <entry key="BookLibre" value="FAILED" />
             </map>
           </value>
         </entry>
@@ -316,6 +318,7 @@
       <workItem from="1773954963869" duration="16999000" />
       <workItem from="1774491608525" duration="1416000" />
       <workItem from="1774538495950" duration="3455000" />
+      <workItem from="1774995012614" duration="1901000" />
     </task>
     <servers />
   </component>
