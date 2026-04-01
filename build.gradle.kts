@@ -2,7 +2,8 @@ plugins {
     id("org.springframework.boot") version "3.3.1"
     id("io.spring.dependency-management") version "1.1.5"
     kotlin("jvm") version "2.1.10"
-    kotlin("plugin.spring") version "1.9.24"
+    kotlin("plugin.spring") version "2.1.10"
+    kotlin("plugin.jpa") version "2.1.10"
     id("jacoco")
     war
 }
@@ -56,6 +57,10 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
+    jvmArgs("-Duser.timezone=America/Argentina/Buenos_Aires")
 }
 
 tasks.test {
