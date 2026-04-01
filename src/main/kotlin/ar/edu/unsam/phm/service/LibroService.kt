@@ -56,5 +56,9 @@ class LibroService(
         return reservaRepositorio.buscarMisLibros(usuario, librosDelUsuario, filter, sort, page, size)
     }
 
-    fun borrarLibro(id: Int) = libroRepositorio.deleteById(id)
+    fun borrarLibro(id: String){
+        val idNumerico = id.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
+
+        return libroRepositorio.deleteById(idNumerico)
+    }
 }
