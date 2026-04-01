@@ -2,7 +2,8 @@ plugins {
     id("org.springframework.boot") version "3.3.1"
     id("io.spring.dependency-management") version "1.1.5"
     kotlin("jvm") version "2.1.10"
-    kotlin("plugin.spring") version "1.9.24"
+    kotlin("plugin.spring") version "2.1.10"
+    kotlin("plugin.jpa") version "2.1.10"
     id("jacoco")
     war
 }
@@ -26,6 +27,9 @@ dependencies {
 
     // básicos de cualquier proyecto Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    runtimeOnly("org.postgresql:postgresql")
+
     implementation("org.springframework.boot:spring-boot-starter-hateoas")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.uqbar-project:geodds-xtend:1.0.3")
@@ -41,6 +45,7 @@ dependencies {
     testImplementation("io.kotest:kotest-framework-engine:$kotestVersion")
     testImplementation("io.mockk:mockk:${mockkVersion}")
 
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -52,6 +57,10 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
+    jvmArgs("-Duser.timezone=America/Argentina/Buenos_Aires")
 }
 
 tasks.test {

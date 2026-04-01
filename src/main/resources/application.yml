@@ -5,3 +5,19 @@ server:
       enabled: false
     include-message: always
 
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/booklibre
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
