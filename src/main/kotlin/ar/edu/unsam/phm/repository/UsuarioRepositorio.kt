@@ -1,17 +1,9 @@
 package ar.edu.unsam.phm.repository
 
 import ar.edu.unsam.phm.domain.Usuario
-import org.springframework.stereotype.Component
+import org.springframework.data.jpa.repository.JpaRepository
 
-// Si alguna de las condiciones se cumple,
-// devuelve true, que es recibido por el filter y devuelve el array con las coincidencias
-
-class UsuarioSearchStrategy : SearchStrategy<Usuario> {
-    override fun matches(obj: Usuario, value: String): Boolean {
-        return obj.nombreCompleto.contains(value, ignoreCase = true) ||
-                obj.email.contains(value, ignoreCase = true)
-    }
+/* @Component */
+interface UsuarioRepository : JpaRepository<Usuario, Int> {
+    fun findByEmail(email: String): MutableList<Usuario>
 }
-
-@Component
-class UsuarioRepositorio : Repositorio<Usuario>(searchStrategy = UsuarioSearchStrategy())

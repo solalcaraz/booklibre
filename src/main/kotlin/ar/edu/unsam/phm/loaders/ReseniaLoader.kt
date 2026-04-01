@@ -1,8 +1,9 @@
 package ar.edu.unsam.phm.loaders
 
 import ar.edu.unsam.phm.domain.Resenia
+import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.repository.ReseniaRepositorio
-import ar.edu.unsam.phm.repository.UsuarioRepositorio
+import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
@@ -11,11 +12,11 @@ import org.springframework.stereotype.Component
 @Order(3)
 class ReseniaLoader(
     private val reseniaRepositorio: ReseniaRepositorio,
-    private val usuarioRepositorio: UsuarioRepositorio,
+    private val usuarioRepository: UsuarioRepository,
 ): CommandLineRunner {
     override fun run(vararg args: String?) {
-        val usuario3 = usuarioRepositorio.getById(3)
-        val usuario2 = usuarioRepositorio.getById(2)
+        val usuario3 = usuarioRepository.findById(3).orElseThrow { NotFoundException("Usuario no encontrado") }
+        val usuario2 = usuarioRepository.findById(2).orElseThrow { NotFoundException("Usuario no encontrado") }
 
         val resenia1 = Resenia(1, usuario2.nombreCompleto,
             4, "Libro buenardo",)

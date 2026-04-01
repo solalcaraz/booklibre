@@ -22,7 +22,7 @@ class LibroSearchStrategy : SearchStrategy<Libro> {
 class LibroRepositorio : Repositorio<Libro>(LibroSearchStrategy()) {
 
     fun librosDe(usuario: Usuario): List<Libro> {
-        return objetos.values.filter { it.data.dueno == usuario }
+        return objetos.values.filter { it.data.dueno.id == usuario.id }
     }
     /* Este es el contrato de implementación para cuando migremos a DB */
     /*fun librosDisponiblesDe(usuario: Usuario): List<Libro> {}

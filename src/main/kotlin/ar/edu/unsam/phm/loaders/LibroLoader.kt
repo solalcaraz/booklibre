@@ -8,8 +8,9 @@ import ar.edu.unsam.phm.domain.LibroComun
 import ar.edu.unsam.phm.domain.LibroData
 import ar.edu.unsam.phm.domain.LibroDedicatoria
 import ar.edu.unsam.phm.env.Environment
+import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.repository.LibroRepositorio
-import ar.edu.unsam.phm.repository.UsuarioRepositorio
+import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
@@ -17,11 +18,17 @@ import java.time.LocalDate
 
 @Component
 @Order(2)
-class LibroLoader(private val libroRepositorio: LibroRepositorio, private val usuarioRepositorio: UsuarioRepositorio) : CommandLineRunner {
+class LibroLoader(
+    private val libroRepositorio: LibroRepositorio,
+    private val usuarioRepository: UsuarioRepository
+) : CommandLineRunner {
     override fun run(vararg args: String?) {
-        val usuario = usuarioRepositorio.getById(1) // dueno de libro 1 2 3
-        val usuario2 = usuarioRepositorio.getById(2) // dueno de libro 4 5 6 9 10 11 12 13 14
-        val usuario3 = usuarioRepositorio.getById(3) // dueno de libro 7 8
+        val usuario = usuarioRepository.findById(1) // dueno de libro 1 2 3
+            .orElseThrow { NotFoundException("Usuario no encontrado") }
+        val usuario2 = usuarioRepository.findById(2) // dueno de libro 4 5 6 9 10 11 12 13 14
+            .orElseThrow { NotFoundException("Usuario no encontrado") }
+        val usuario3 = usuarioRepository.findById(3) // dueno de libro 7 8
+            .orElseThrow { NotFoundException("Usuario no encontrado") }
 
         val libro1 = LibroColeccionable(
             data = LibroData(
