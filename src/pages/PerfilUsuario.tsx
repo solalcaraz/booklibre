@@ -107,6 +107,7 @@ export const PerfilUsuario = () => {
     })
   }
 
+  /* consultar la separación de los useEffect en MisLibros / PerfilUsuario para optimizar queries a postgres */
   useEffect(() => {
     getUsuario()
     getLibros()
