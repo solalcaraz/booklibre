@@ -1,0 +1,27 @@
+/// <reference types="vitest" />
+/// <reference types="vite/client" />
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: {
+      src: '/src',
+      components: '/src/components'
+    }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    coverage: {
+      reporter: ['lcov', 'json', 'html', 'json-summary'],
+      exclude: ['./src/main.tsx', '**/*.cjs', '**/*.d.ts', 'vite.config.ts']
+    },
+    setupFiles: './src/setupTests.ts',
+    include: ['src/tests/**/*.{test,spec}.{ts,tsx}']
+  }
+})
