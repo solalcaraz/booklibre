@@ -5,7 +5,10 @@ import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.FiltrosLibro
 import ar.edu.unsam.phm.helpers.cumpleFiltros
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Component
+
+interface LibroRepository : JpaRepository<Libro, Int> {}
 
 class LibroSearchStrategy : SearchStrategy<Libro> {
     override fun matches(obj: Libro, value: String): Boolean {
@@ -22,7 +25,7 @@ class LibroSearchStrategy : SearchStrategy<Libro> {
 class LibroRepositorio : Repositorio<Libro>(LibroSearchStrategy()) {
 
     fun librosDe(usuario: Usuario): List<Libro> {
-        return objetos.values.filter { it.data.dueno == usuario }
+        return objetos.values.filter { it.data.dueno.id == usuario.id }
     }
     /* Este es el contrato de implementación para cuando migremos a DB */
     /*fun librosDisponiblesDe(usuario: Usuario): List<Libro> {}

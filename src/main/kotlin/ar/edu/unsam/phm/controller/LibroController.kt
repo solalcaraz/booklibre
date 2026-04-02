@@ -33,16 +33,8 @@ class LibroController(
         @RequestParam(defaultValue = "3") size: Int, // Cambiable por @ModelAttribute
         @RequestParam(defaultValue = "Todos") filter: String,
         @RequestParam(required = false) sort: String?
-    ): PaginationResponseDTO<MiLibroDTO> {
-        val idNumerico = userId.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
-
-        return libroService.misLibros(idNumerico, filter, sort, page, size)
-    }
+    ): PaginationResponseDTO<MiLibroDTO> = libroService.misLibros(userId, filter, sort, page, size)
 
     @DeleteMapping("/misLibros/{bookId}")
-    fun removeLibro(@PathVariable bookId: String) {
-        val idNumerico = bookId.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
-
-        return libroService.borrarLibro(idNumerico)
-    }
+    fun removeLibro(@PathVariable bookId: String) = libroService.borrarLibro(bookId)
 }

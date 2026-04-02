@@ -14,12 +14,13 @@ import ar.edu.unsam.phm.dto.ReservaRequestDTO
 import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.dto.toReservaLibroDTO
 import ar.edu.unsam.phm.exceptions.ConflictException
+import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.ReservaAdapter
 import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.repository.LibroRepositorio
 import ar.edu.unsam.phm.repository.ReseniaRepositorio
 import ar.edu.unsam.phm.repository.ReservaRepositorio
-import ar.edu.unsam.phm.repository.UsuarioRepositorio
+import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
@@ -27,7 +28,7 @@ import java.time.LocalDate
 class ReservaService(
     private val reservaRepositorio: ReservaRepositorio,
     private val libroRepositorio: LibroRepositorio,
-    private val usuarioRepositorio: UsuarioRepositorio,
+    private val usuarioRepository: UsuarioRepository,
     private val reseniaRepositorio: ReseniaRepositorio,
     private val reservaAdapter: ReservaAdapter
 ) {
@@ -43,7 +44,7 @@ class ReservaService(
 
     fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): PaginationResponseDTO<ReservaLibroDTO> {
         // valido que el id del usuario existe y lo asigno
-        val usuario = usuarioRepositorio.getById(usuarioId)
+        val usuario = usuarioRepository.findById(usuarioId).orElseThrow { NotFoundException("Usuario no encontrado") }
 
         /* filtro los id de los libros que estan ocupados en la fecha de filtros (id porque es un dato mas liviano que traer el objeto completo.
             para luego descartarlos en el filtro que hace el repo de libros porque pueden haber libros disponibles pero que nunca se reservaron
@@ -74,7 +75,7 @@ class ReservaService(
 
     fun getDetalleReserva(libroId: Int, userId: Int, fechaDesde: LocalDate, fechaHasta: LocalDate): DetalleReservaDTO {
         val libro = libroRepositorio.getById(libroId)
-        val usuario = usuarioRepositorio.getById(userId)
+        val usuario = usuarioRepository.findById(userId).orElseThrow { NotFoundException("Usuario no encontrado") }
 
         //Reserva simulada con fechas del front
         var reserva: Reserva
@@ -109,7 +110,7 @@ class ReservaService(
     fun crearReserva(userID: Int, reserva: CrearReservaDTO): Pair<Reserva, Int> {
 
         val libro = libroRepositorio.getById(reserva.libroId)
-        val usuario = usuarioRepositorio.getById(userID)
+        val usuario = usuarioRepository.findById(userID).orElseThrow { NotFoundException("Usuario no encontrado") }
 
         var nuevaReserva: Reserva
         try {
@@ -137,7 +138,7 @@ class ReservaService(
         val cantidadReservas = reservaRepositorio.buscarPorLibro(libro).size
         val bibliokarmasGanados = nuevaReserva.calcularBiblioKarmas(cantidadReservas)
         usuario.aumentarBiblioKarmas(bibliokarmasGanados)
-        usuarioRepositorio.update(usuario)
+        usuarioRepository.save(usuario)
         reservaRepositorio.create(nuevaReserva)
         return Pair(nuevaReserva, cantidadReservas)
     }

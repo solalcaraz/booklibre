@@ -2,14 +2,14 @@ package ar.edu.unsam.phm.loaders
 
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.env.Environment
-import ar.edu.unsam.phm.repository.UsuarioRepositorio
+import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
 @Component
 @Order(1)
-class UsuarioLoader(private val usuarioRepositorio: UsuarioRepositorio): CommandLineRunner {
+class UsuarioLoader(private val usuarioRepository: UsuarioRepository): CommandLineRunner {
     override fun run(vararg args: String?) {
         val usuario = Usuario(
             nombreCompleto = "Diego Maradona",
@@ -41,10 +41,10 @@ class UsuarioLoader(private val usuarioRepositorio: UsuarioRepositorio): Command
             password =  "admin"
         )
 
-        usuarioRepositorio.create(usuario)
-        usuarioRepositorio.create(usuario2)
-        usuarioRepositorio.create(usuario3)
+        usuarioRepository.save(usuario)
+        usuarioRepository.save(usuario2)
+        usuarioRepository.save(usuario3)
 
-        println("Usuarios cargados en memoria")
+        println("Usuarios cargados en Postgres")
     }
 }

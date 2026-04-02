@@ -19,16 +19,13 @@ import org.springframework.web.bind.annotation.RestController
 class UsuarioController(val usuarioService: UsuarioService, val usuarioMapper: UsuarioMapper) {
     @GetMapping("/{id}")
     fun getUsuario(@PathVariable id: String): PerfilUsuarioDTO {
-        val idNumerico = id.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
+        val user = usuarioService.getUsuarioById(id)
 
-        val user = usuarioService.getUsuarioById(idNumerico)
         return usuarioMapper.toFullDto(user)
     }
 
     @PatchMapping("/{id}")
     fun updateUsuario(@PathVariable id: String, @RequestBody userPatch: UsuarioPatchRequest) {
-        val idNumerico = id.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
-
-        return usuarioService.updateUsuario(userPatch, idNumerico)
+        return usuarioService.updateUsuario(userPatch, id)
     }
 }

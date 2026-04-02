@@ -1,10 +1,11 @@
 package ar.edu.unsam.phm.loaders
 
 import ar.edu.unsam.phm.domain.Reserva
+import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.repository.LibroRepositorio
 import ar.edu.unsam.phm.repository.ReseniaRepositorio
 import ar.edu.unsam.phm.repository.ReservaRepositorio
-import ar.edu.unsam.phm.repository.UsuarioRepositorio
+import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
@@ -14,14 +15,14 @@ import java.time.LocalDate
 @Order(4)
 class ReservaLoader(
     private val reservaRepositorio: ReservaRepositorio,
-    private val usuarioRepositorio: UsuarioRepositorio,
+    private val usuarioRepository: UsuarioRepository,
     private val libroRepositorio: LibroRepositorio,
     private val reseniaRepositorio: ReseniaRepositorio
 ): CommandLineRunner {
     override fun run(vararg args: String?) {
-        val usuario = usuarioRepositorio.getById(1)
-        val usuario2 = usuarioRepositorio.getById(2)
-        val usuario3 = usuarioRepositorio.getById(3)
+        val usuario = usuarioRepository.findById(1).orElseThrow { NotFoundException("Usuario no encontrado") }
+        val usuario2 = usuarioRepository.findById(2).orElseThrow { NotFoundException("Usuario no encontrado") }
+        val usuario3 = usuarioRepository.findById(3).orElseThrow { NotFoundException("Usuario no encontrado") }
 
         val libro1 = libroRepositorio.getById(1)
         val libro2 = libroRepositorio.getById(2)
