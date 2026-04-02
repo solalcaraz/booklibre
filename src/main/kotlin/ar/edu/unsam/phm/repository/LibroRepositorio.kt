@@ -5,7 +5,10 @@ import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.FiltrosLibro
 import ar.edu.unsam.phm.helpers.cumpleFiltros
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Component
+
+interface LibroRepository : JpaRepository<Libro, Int> {}
 
 class LibroSearchStrategy : SearchStrategy<Libro> {
     override fun matches(obj: Libro, value: String): Boolean {
