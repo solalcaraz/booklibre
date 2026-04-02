@@ -25,6 +25,7 @@ fun Reserva.toReservaLibroDTO(cantidadReservas:Int, puntuaciones: List<Int>): Re
         is LibroComun -> TipoDeLibroDTO.COMUN
         is LibroDedicatoria -> TipoDeLibroDTO.DEDICATORIA
         is LibroColeccionable -> TipoDeLibroDTO.COLECCIONABLE
+        else -> throw IllegalArgumentException("Tipo de libro desconocido")
     }
     val libro = this.libro.data //armo un pequeño objeto libro.data para no tener tantos llamados
 
@@ -38,7 +39,7 @@ fun Reserva.toReservaLibroDTO(cantidadReservas:Int, puntuaciones: List<Int>): Re
         idioma = libro.idioma.label,
         estado = libro.estado.label,
         dueno = libro.dueno.nombreCompleto,
-        calificacionPromedio = this.libro.calcularCalificacionPromedio(puntuaciones),
+        calificacionPromedio = this.libro.calificacionPromedio,
         biblioKarmasTotal = this.calcularBiblioKarmas(cantidadReservas),
         portada = libro.portada
     )
