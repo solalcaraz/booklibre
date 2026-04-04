@@ -7,10 +7,25 @@ import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.helpers.ordenarLibros
 import ar.edu.unsam.phm.helpers.paginate
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Component
 import java.time.LocalDate
-import kotlin.text.isNullOrEmpty
 
+interface ReservaRepository : JpaRepository<Reserva, Int> {
+
+    @Query("SELECT r FROM Reserva r WHERE r.libro.data.dueno.id = :usuarioId AND (LOWER(r.libro.data.titulo) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(r.libro.data.autor) LIKE LOWER(CONCAT('%', :search, '%')))")
+    fun findPrestadosPorMi(@Param("usuarioId") usuarioId: Int, @Param("search") search: String?, pageable: Pageable): Page<Reserva>
+
+    @Query("SELECT r FROM Reserva r WHERE r.lector.id = :usuarioId AND (LOWER(r.libro.data.titulo) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(r.libro.data.autor) LIKE LOWER(CONCAT('%', :search, '%')))")
+    fun findPrestadosAMi(@Param("usuarioId") usuarioId: Int, @Param("search") search: String?, pageable: Pageable): Page<Reserva>
+
+}
+
+// Todo: eliminar todo
 class ReservaSearchStrategy : SearchStrategy<Reserva> {
     override fun matches(obj: Reserva, value: String): Boolean {
         return obj.libro.data.titulo.contains(value, ignoreCase = true) ||
@@ -113,27 +128,5 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
         return buscarPorLibro(libro).any{
             it.lector.id == usuario.id && !it.estaFinalizada()
         }
-    }
-
-    fun getPrestadosPorMi(usuarioId: String, pageNumber: Int, pageSize: Int, search: String?): PaginationResponseDTO<Reserva>  {
-        var reservas = objetos.values.filter { it.libro.data.dueno.id.toString() == usuarioId }
-        reservas = filtrarReservas(reservas, search)
-        return paginate(reservas, pageNumber, pageSize)
-    }
-
-    fun getPrestadosAMi(usuarioId: String, pageNumber: Int, pageSize: Int, search: String?): PaginationResponseDTO<Reserva>  {
-        var reservas = objetos.values.filter { it.lector.id.toString() == usuarioId }
-        reservas = filtrarReservas(reservas, search)
-        return paginate(reservas, pageNumber, pageSize)
-    }
-
-    private fun filtrarReservas(reservas: List<Reserva>, search: String?): List<Reserva> {
-        if (!search.isNullOrEmpty()) {
-            return reservas.filter {
-                it.libro.data.titulo.contains(search, ignoreCase = true) ||
-                        it.libro.data.autor.contains(search, ignoreCase = true)
-            }
-        }
-        return reservas
     }
 }

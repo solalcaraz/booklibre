@@ -38,7 +38,7 @@ class ReservaController (private val reservaService: ReservaService, private val
         @RequestBody payload: PaginationReqDTO<ReservaRequestDTO>
     ): PaginationResponseDTO<ReservaDTO> {
         val page = reservaService.getMisReservas(payload)
-        return mapReservas(page)
+        return reservaMapper.toDtoReservaPag(page)
     }
 
     @PostMapping("/obtenerPrestadosPorMi")
@@ -46,7 +46,7 @@ class ReservaController (private val reservaService: ReservaService, private val
         @RequestBody payload: PaginationReqDTO<ReservaRequestDTO>
     ): PaginationResponseDTO<ReservaDTO> {
         val page = reservaService.getPrestadosPorMi(payload)
-        return mapReservas(page)
+        return reservaMapper.toDtoReservaPag(page)
     }
 
     @GetMapping("/librosDisponibles/{userId}")
@@ -58,7 +58,7 @@ class ReservaController (private val reservaService: ReservaService, private val
 
     @PostMapping("/calificar")
     fun calificar(@RequestBody payload: ReseniaReqDTO) {
-        reservaService.calificar(payload)
+        reseniaService.crearResenia(payload)
     }
 
     @GetMapping("/detalles/{libroId}")
@@ -81,15 +81,7 @@ class ReservaController (private val reservaService: ReservaService, private val
         @RequestHeader("userId") userId: String,
         @RequestBody reserva: CrearReservaDTO
     ): ReservaDTO {
-        val (nuevaReserva, cantidadReservas) = reservaService.crearReserva(userId.toInt(), reserva)
-        val puntuacion: Double = reseniaService.getPromedioPorLibro(reserva.libroId)
-        return reservaMapper.toDto(nuevaReserva, puntuacion, cantidadReservas)
-    }
-
-    private fun mapReservas(page: PaginationResponseDTO<Reserva>): PaginationResponseDTO<ReservaDTO>{
-        val librosId: List<Int> = page.items.mapNotNull { it.libro.id }.distinct()
-        val promedioPorLibro: Map<Int, Double> = reseniaService.getMapaPromedioPorLibro(librosId)
-        val cantidadDeReservasPorLibro: Map<Int, Int> = reservaService.getCantidadDeReservasPorLibro(librosId)
-        return reservaMapper.toDtoReservaPag(page, promedioPorLibro, cantidadDeReservasPorLibro)
+        val nuevaReserva = reservaService.crearReserva(userId.toInt(), reserva)
+        return reservaMapper.toDto(nuevaReserva)
     }
 }
