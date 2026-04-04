@@ -39,7 +39,7 @@ fun Reserva.toReservaLibroDTO(cantidadReservas:Int, puntuaciones: List<Int>): Re
         idioma = libro.idioma.label,
         estado = libro.estado.label,
         dueno = libro.dueno.nombreCompleto,
-        calificacionPromedio = this.libro.calificacionPromedio,
+        calificacionPromedio = this.libro.calcularCalificacionPromedio(),
         biblioKarmasTotal = this.calcularBiblioKarmas(cantidadReservas),
         portada = libro.portada
     )

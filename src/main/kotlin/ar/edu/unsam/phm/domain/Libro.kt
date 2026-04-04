@@ -84,18 +84,28 @@ abstract class Libro(
     override var id: Int? = null
 ) : EntidadConId {
     @Column(nullable = false)
-    var calificacionPromedio: Double = 0.0
+    var sumaPuntajes: Int = 0
+
+    @Column(nullable = false)
+    var cantidadResenias: Int = 0
 
     @Column(nullable = false)
     var cantidadReservas: Int = 0
 
     abstract fun plusBiblioKarma(cantidadBibliokarmas: Int, cantidadReservas: Int): Int
 
-    fun calcularCalificacionPromedio(puntuaciones: List<Int>) {
-        if (puntuaciones.isEmpty()) calificacionPromedio=0.0 else calificacionPromedio=puntuaciones.average()
+    fun calcularCalificacionPromedio(): Double {
+        if (cantidadResenias == 0) return 0.0
+        val promedio = sumaPuntajes.toDouble() / cantidadResenias
+        return String.format("%.1f", promedio).toDouble()
     }
 
     fun aumentarReserva() { cantidadReservas++ }
+
+    fun agregarPuntaje(puntaje: Int) {
+        sumaPuntajes += puntaje
+        cantidadResenias += 1
+    }
 }
 
 /* Decido q sea con un string en vez de 1,2,3 , ademas de la legibilidad y mantenimiento
