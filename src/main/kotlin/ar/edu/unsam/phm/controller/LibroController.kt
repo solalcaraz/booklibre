@@ -26,14 +26,14 @@ class LibroController(
     @PutMapping("/libro/{id}")
     fun actualizarLibro(@PathVariable id: Int, @RequestBody libroDTO: LibroDetalleDTO) { libroService.update(id, libroDTO) }
 
-    @GetMapping("/misLibros/{userId}")
-    fun listarMisLibros(
-        @PathVariable userId: String, // Esto después va a ser un token por headers
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "3") size: Int, // Cambiable por @ModelAttribute
-        @RequestParam(defaultValue = "Todos") filter: String,
-        @RequestParam(required = false) sort: String?
-    ): PaginationResponseDTO<MiLibroDTO> = libroService.misLibros(userId, filter, sort, page, size)
+//    @GetMapping("/misLibros/{userId}")
+//    fun listarMisLibros(
+//        @PathVariable userId: String, // Esto después va a ser un token por headers
+//        @RequestParam(defaultValue = "0") page: Int,
+//        @RequestParam(defaultValue = "3") size: Int, // Cambiable por @ModelAttribute
+//        @RequestParam(defaultValue = "Todos") filter: String,
+//        @RequestParam(required = false) sort: String?
+//    ): PaginationResponseDTO<MiLibroDTO> = libroService.misLibros(userId, filter, sort, page, size)
 
     @DeleteMapping("/misLibros/{bookId}")
     fun removeLibro(@PathVariable bookId: String) = libroService.borrarLibro(bookId)

@@ -26,7 +26,7 @@ import kotlin.math.ceil
 
 @Embeddable
 data class LibroData(
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false)
     var titulo: String,
 
     @Column(nullable = false, columnDefinition = "TEXT")
