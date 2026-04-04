@@ -6,9 +6,19 @@ import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.FiltrosLibro
 import ar.edu.unsam.phm.helpers.cumpleFiltros
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
+import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Component
+import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
-interface LibroRepository : JpaRepository<Libro, Int> {}
+@Repository
+interface LibroRepository : JpaRepository<Libro, Int> {
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE libro SET tipo_libro = :nuevoTipo WHERE id = :id", nativeQuery = true)
+    fun cambiarTipoDeLibro(id: Int, nuevoTipo: String)
+}
 
 class LibroSearchStrategy : SearchStrategy<Libro> {
     override fun matches(obj: Libro, value: String): Boolean {

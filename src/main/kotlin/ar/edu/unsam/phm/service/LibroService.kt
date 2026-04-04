@@ -13,13 +13,16 @@ import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.repository.LibroRepository
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 import ar.edu.unsam.phm.repository.UsuarioRepository
+import jakarta.persistence.EntityManager
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class LibroService(
     val libroRepositorio: LibroRepository,
     val reservaRepositorio: ReservaRepositorio,
     val usuarioRepository: UsuarioRepository,
-    val libroMapper: LibroAdapter
+    val libroMapper: LibroAdapter,
+    val entityManager: EntityManager
 ) {
 //    fun getById(id: Int): Libro = libroRepositorio.getById(id)
 
@@ -36,16 +39,33 @@ class LibroService(
     fun create(libroDto: LibroDetalleDTO) {
         val dueno = usuarioRepository.findById(libroDto.idDueno).orElseThrow { NotFoundException("Usuario no encontrado") }
         val nuevoLibro = libroMapper.fromDto(libroDto, dueno)
-//        libroRepositorio.create(nuevoLibro)
         libroRepositorio.save(nuevoLibro)
     }
 
+    @Transactional
     fun update(id: Int, libroDto: LibroDetalleDTO) {
         val idUsuarioLogueado = libroDto.idDueno
-        val libroExistenteData = getByIdFor(id, idUsuarioLogueado).data
+        val libroExistente = getByIdFor(id, idUsuarioLogueado)
 
-        val libroActualizado = libroMapper.fromDto(libroDto, libroExistenteData.dueno)
-//        libroRepositorio.update(libroActualizado)
+        // Cuando hacés un save() de un objeto con una clase distinta,
+        // Hibernate no puede hacer un UPDATE de la columna discriminadora (tipo_libro).
+        // La única forma de "engañar" a Hibernate sin borrar el registro es
+        // modificar el discriminador manualmente antes de que el Service intente guardar.
+        val tipoNuevo = libroDto.tipo.toString()
+        if (libroExistente.javaClass.simpleName != "Libro${tipoNuevo.lowercase().capitalize()}") {
+            entityManager.detach(libroExistente)
+            libroRepositorio.cambiarTipoDeLibro(id, tipoNuevo)
+        }
+
+        val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.data.dueno)
+
+        // Generamos un libro nuevo en caso de que el tipo de libro sea distinto,
+        // así que tenemos que borrar el existente
+//        if (libroExistente::class != libroActualizado::class) {
+//            libroRepositorio.delete(libroExistente)
+//            libroRepositorio.flush()
+//        }
+
         libroRepositorio.save(libroActualizado)
     }
 
