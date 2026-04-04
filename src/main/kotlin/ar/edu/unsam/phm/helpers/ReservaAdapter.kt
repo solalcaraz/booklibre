@@ -2,10 +2,11 @@ package ar.edu.unsam.phm.helpers
 
 import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.dto.*
+import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 
 interface ReservaAdapter {
-    fun toDtoReservaPag(page: PaginationResponseDTO<Reserva>, promedioPorLibro: Map<Int, Double>, cantidadDeReservasPorLibro: Map<Int, Int>): PaginationResponseDTO<ReservaDTO>
+    fun toDtoReservaPag(page: Page<Reserva>): PaginationResponseDTO<ReservaDTO>
     fun toDetalleReservaDto(
         reserva: Reserva,
         bibliokarmas: Int,
@@ -13,7 +14,7 @@ interface ReservaAdapter {
         ultimasReservas: List<Reserva>,
         reservasOcupadas: List<Reserva>
     ): DetalleReservaDTO
-    fun toDto(reserva: Reserva, puntuacion: Double, cantidadReservas: Int): ReservaDTO
+    fun toDto(reserva: Reserva): ReservaDTO
 }
 
 @Service
@@ -46,20 +47,21 @@ class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
         )
     }
 
-    override fun toDtoReservaPag(page: PaginationResponseDTO<Reserva>, promedioPorLibro: Map<Int, Double>, cantidadDeReservasPorLibro: Map<Int, Int>): PaginationResponseDTO<ReservaDTO> {
-        val reservasDto = page.items.map { this.toDto(it, promedioPorLibro[it.libro.id]!!, cantidadDeReservasPorLibro[it.libro.id]!! ) }
+    override fun toDtoReservaPag(page: Page<Reserva>): PaginationResponseDTO<ReservaDTO> {
+        val reservasDto = page.content.map { this.toDto(it ) }
         return PaginationResponseDTO(
             items = reservasDto,
-            page = page.page,
+            page = page.number,
             size = page.size,
-            totalItems = page.totalItems,
+            totalItems = page.totalElements.toInt(),
             totalPages = page.totalPages
         )
     }
 
-    override fun toDto(reserva: Reserva, puntuacion: Double, cantidadReservas: Int): ReservaDTO {
-        val libroResumen = LibroResumen(reserva.libro.data.titulo, reserva.libro.data.autor, puntuacion, reserva.libro.data.portada)
+    override fun toDto(reserva: Reserva): ReservaDTO {
+        //Todo: implementar logica de bibliokarmas
+        val libroResumen = LibroResumen(reserva.libro.data.titulo, reserva.libro.data.autor, reserva.libro.calcularCalificacionPromedio(), reserva.libro.data.portada)
         return ReservaDTO( reserva.id, libroResumen, reserva.libro.data.dueno.nombreCompleto,
-            reserva.calcularBiblioKarmas(cantidadReservas), reserva.fechaDesde, reserva.fechaHasta, reserva.calcularEstado(), reserva.puedeCalificar(), reserva.resenia?.puntuacion)
+            0, reserva.fechaDesde, reserva.fechaHasta, reserva.calcularEstado(), reserva.puedeCalificar(), reserva.resenia?.puntuacion)
     }
 }

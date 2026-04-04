@@ -10,6 +10,7 @@ import ar.edu.unsam.phm.domain.LibroDedicatoria
 import ar.edu.unsam.phm.env.Environment
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.repository.LibroRepositorio
+import ar.edu.unsam.phm.repository.LibroRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
@@ -20,6 +21,7 @@ import java.time.LocalDate
 @Order(2)
 class LibroLoader(
     private val libroRepositorio: LibroRepositorio,
+    private val libroRepository: LibroRepository,
     private val usuarioRepository: UsuarioRepository
 ) : CommandLineRunner {
     override fun run(vararg args: String?) {
@@ -296,8 +298,22 @@ class LibroLoader(
         libroRepositorio.create(libro12)
         libroRepositorio.create(libro13)
         libroRepositorio.create(libro14)
+        //Todo: eliminar lo otro. Tuve que persistirlo porque me tiraba un error
+        libroRepository.save(libro1)
+        libroRepository.save(libro2)
+        libroRepository.save(libro3)
+        libroRepository.save(libro4)
+        libroRepository.save(libro5)
+        libroRepository.save(libro6)
+        libroRepository.save(libro7)
+        libroRepository.save(libro8)
+        libroRepository.save(libro9)
+        libroRepository.save(libro10)
+        libroRepository.save(libro11)
+        libroRepository.save(libro12)
+        libroRepository.save(libro13)
+        libroRepository.save(libro14)
 
-
-        println("Libros cargados en memoria")
+        println("Libros cargados en memoria y en Postgresql")
     }
 }

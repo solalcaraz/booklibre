@@ -1,6 +1,5 @@
 package ar.edu.unsam.phm.service
 
-import ar.edu.unsam.phm.domain.BusquedaPor
 import ar.edu.unsam.phm.domain.Resenia
 import ar.edu.unsam.phm.helpers.FiltrosLibro
 import ar.edu.unsam.phm.domain.Reserva
@@ -8,7 +7,6 @@ import ar.edu.unsam.phm.dto.PaginationReqDTO
 import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.DetalleReservaDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
-import ar.edu.unsam.phm.dto.ReseniaReqDTO
 import ar.edu.unsam.phm.dto.ReservaLibroDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
 import ar.edu.unsam.phm.exceptions.BadRequestException
@@ -18,28 +16,31 @@ import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.ReservaAdapter
 import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.repository.LibroRepositorio
-import ar.edu.unsam.phm.repository.ReseniaRepositorio
 import ar.edu.unsam.phm.repository.ReservaRepositorio
+import ar.edu.unsam.phm.repository.ReservaRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import kotlin.text.toInt
 
 @Service
 class ReservaService(
     private val reservaRepositorio: ReservaRepositorio,
+    private val reservaRepository: ReservaRepository,
     private val libroRepositorio: LibroRepositorio,
     private val usuarioRepository: UsuarioRepository,
-    private val reseniaRepositorio: ReseniaRepositorio,
     private val reservaAdapter: ReservaAdapter
 ) {
-    fun getMisReservas(payload: PaginationReqDTO<ReservaRequestDTO>): PaginationResponseDTO<Reserva> {
+    fun getMisReservas(payload: PaginationReqDTO<ReservaRequestDTO>): Page<Reserva> {
         val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
-        return reservaRepositorio.getPrestadosAMi(usuarioId, payload.pageNumber, payload.pageSize, payload.filter.inputSearch)
+        return reservaRepository.findPrestadosAMi(usuarioId.toInt(), payload.filter.inputSearch, PageRequest.of(payload.pageNumber, payload.pageSize))
     }
 
-    fun getPrestadosPorMi(payload: PaginationReqDTO<ReservaRequestDTO>): PaginationResponseDTO<Reserva> {
+    fun getPrestadosPorMi(payload: PaginationReqDTO<ReservaRequestDTO>): Page<Reserva> {
         val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
-        return reservaRepositorio.getPrestadosPorMi(usuarioId, payload.pageNumber, payload.pageSize, payload.filter.inputSearch)
+        return reservaRepository.findPrestadosPorMi(usuarioId.toInt(), payload.filter.inputSearch, PageRequest.of(payload.pageNumber, payload.pageSize))
     }
 
     fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): PaginationResponseDTO<ReservaLibroDTO> {
@@ -62,15 +63,6 @@ class ReservaService(
             }
 
         return paginate(reservaDeLibrosDisponibles, filtros.numeroPagina, filtros.tamanoPaginado)
-    }
-
-
-    fun calificar(resenia: ReseniaReqDTO) {
-        val reserva = reservaRepositorio.getById(resenia.reservaId)
-        val nuevaResenia = Resenia(reserva.libro.id!!, reserva.lector.nombreCompleto, resenia.puntuacion, resenia.comentario)
-        reserva.validarReseña(nuevaResenia)
-        reseniaRepositorio.create(nuevaResenia)
-        reserva.resenia = nuevaResenia
     }
 
     fun getDetalleReserva(libroId: Int, userId: Int, fechaDesde: LocalDate, fechaHasta: LocalDate): DetalleReservaDTO {
@@ -107,7 +99,7 @@ class ReservaService(
         )
     }
 
-    fun crearReserva(userID: Int, reserva: CrearReservaDTO): Pair<Reserva, Int> {
+    fun crearReserva(userID: Int, reserva: CrearReservaDTO): Reserva {
 
         val libro = libroRepositorio.getById(reserva.libroId)
         val usuario = usuarioRepository.findById(userID).orElseThrow { NotFoundException("Usuario no encontrado") }
@@ -140,13 +132,6 @@ class ReservaService(
         usuario.aumentarBiblioKarmas(bibliokarmasGanados)
         usuarioRepository.save(usuario)
         reservaRepositorio.create(nuevaReserva)
-        return Pair(nuevaReserva, cantidadReservas)
-    }
-
-    fun getCantidadDeReservasPorLibro(librosIds: List<Int>): Map<Int, Int>  {
-        return librosIds.associateWith { libroId ->
-            val libro = libroRepositorio.getById(libroId)
-            reservaRepositorio.buscarPorLibro(libro).size
-        }
+        return nuevaReserva
     }
 }
