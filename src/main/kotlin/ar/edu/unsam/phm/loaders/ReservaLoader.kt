@@ -3,9 +3,7 @@ package ar.edu.unsam.phm.loaders
 import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.dto.ReseniaReqDTO
 import ar.edu.unsam.phm.exceptions.NotFoundException
-import ar.edu.unsam.phm.repository.LibroRepository
-import ar.edu.unsam.phm.repository.ReservaRepository
-import ar.edu.unsam.phm.repository.UsuarioRepository
+import ar.edu.unsam.phm.repository.*
 import ar.edu.unsam.phm.service.ReseniaService
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
@@ -18,7 +16,7 @@ import kotlin.Int
 class ReservaLoader(
     private val reservaRepository: ReservaRepository,
     private val usuarioRepository: UsuarioRepository,
-    private val libroRepository: LibroRepository,
+    private val libroRepositorio: LibroRepository,
     private val reseniaService: ReseniaService
 ): CommandLineRunner {
     override fun run(vararg args: String?) {
@@ -26,20 +24,20 @@ class ReservaLoader(
         val usuario2 = usuarioRepository.findById(2).orElseThrow { NotFoundException("Usuario no encontrado") }
         val usuario3 = usuarioRepository.findById(3).orElseThrow { NotFoundException("Usuario no encontrado") }
 
-        val libro1 = libroRepository.findById(1).orElseThrow { NotFoundException("Libro no encontrado") }
-        val libro2 = libroRepository.findById(2).orElseThrow { NotFoundException("Libro no encontrado") }
-        val libro3 = libroRepository.findById(3).orElseThrow { NotFoundException("Libro no encontrado") }
-        val libro4 = libroRepository.findById(4).orElseThrow { NotFoundException("Libro no encontrado") }
-        val libro5 = libroRepository.findById(5).orElseThrow { NotFoundException("Libro no encontrado") }
-        val libro6 = libroRepository.findById(6).orElseThrow { NotFoundException("Libro no encontrado") }
-        val libro7 = libroRepository.findById(7).orElseThrow { NotFoundException("Libro no encontrado") }
-        val libro8 = libroRepository.findById(8).orElseThrow { NotFoundException("Libro no encontrado") }
-        val libro9 = libroRepository.findById(9).orElseThrow { NotFoundException("Libro no encontrado") }
-        val libro10 = libroRepository.findById(10).orElseThrow { NotFoundException("Libro no encontrado") }
-        val libro11 = libroRepository.findById(11).orElseThrow { NotFoundException("Libro no encontrado") }
-        val libro12 = libroRepository.findById(12).orElseThrow { NotFoundException("Libro no encontrado") }
-        val libro13 = libroRepository.findById(13).orElseThrow { NotFoundException("Libro no encontrado") }
-        val libro14 = libroRepository.findById(14).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro1 = libroRepositorio.findById(1).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro2 = libroRepositorio.findById(2).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro3 = libroRepositorio.findById(3).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro4 = libroRepositorio.findById(4).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro5 = libroRepositorio.findById(5).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro6 = libroRepositorio.findById(6).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro7 = libroRepositorio.findById(7).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro8 = libroRepositorio.findById(8).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro9 = libroRepositorio.findById(9).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro10 = libroRepositorio.findById(10).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro11 = libroRepositorio.findById(11).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro12 = libroRepositorio.findById(12).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro13 = libroRepositorio.findById(13).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro14 = libroRepositorio.findById(14).orElseThrow { NotFoundException("Libro no encontrado") }
 
         // maradona u1 = dueno de libro 1 2 3
         // verstappen u2 = dueno de libro 4 5 6 9 10 11 12 13 14
@@ -144,21 +142,6 @@ class ReservaLoader(
         reseniaService.crearResenia(ReseniaReqDTO(reserva1.id!!, 4, "Libro buenardo"))
         reseniaService.crearResenia(ReseniaReqDTO(reserva2.id!!, 3, "Lo lei y no lo entendi"))
         reseniaService.crearResenia(ReseniaReqDTO(reserva13.id!!, 5, "Epico"))
-
-        //Todo: eliminar
-//        reservaRepositorio.create(reserva1)
-//        reservaRepositorio.create(reserva2)
-//        reservaRepositorio.create(reserva3)
-//        reservaRepositorio.create(reserva4)
-//        reservaRepositorio.create(reserva5)
-//        reservaRepositorio.create(reserva6)
-//        reservaRepositorio.create(reserva7)
-//        reservaRepositorio.create(reserva8)
-//        reservaRepositorio.create(reserva9)
-//        reservaRepositorio.create(reserva10)
-//        reservaRepositorio.create(reserva11)
-//        reservaRepositorio.create(reserva12)
-//        reservaRepositorio.create(reserva13)
 
         println("Reservas cargadas en Postgresql")
     }

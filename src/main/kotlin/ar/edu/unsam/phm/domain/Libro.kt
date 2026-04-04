@@ -29,7 +29,7 @@ data class LibroData(
     @Column(nullable = false)
     var titulo: String,
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     var descripcion: String,
 
     @Column(nullable = false)
@@ -42,7 +42,7 @@ data class LibroData(
     @Column(nullable = false)
     var cantPaginas: Int,
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     var isbn13: String,
 
     @Column(nullable = false)
@@ -63,7 +63,7 @@ data class LibroData(
     @JoinColumn(name = "id_usuario", nullable = false)
     val dueno: Usuario,
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     var portada: String = Environment.API_URL + "/imagenes/libro-nuevo.jpg"
 )
 @Entity

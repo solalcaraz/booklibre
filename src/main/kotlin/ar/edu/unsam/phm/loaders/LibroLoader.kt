@@ -20,8 +20,7 @@ import java.time.LocalDate
 @Component
 @Order(2)
 class LibroLoader(
-    private val libroRepositorio: LibroRepositorio,
-    private val libroRepository: LibroRepository,
+    private val libroRepositorio: LibroRepository,
     private val usuarioRepository: UsuarioRepository
 ) : CommandLineRunner {
     override fun run(vararg args: String?) {
@@ -284,36 +283,22 @@ class LibroLoader(
             data.portada = "https://images.cdn1.buscalibre.com/fit-in/360x360/57/3d/573d2d38b86840ce6c919c61ac6d217f.jpg"
         }
 
-        libroRepositorio.create(libro1)
-        libroRepositorio.create(libro2)
-        libroRepositorio.create(libro3)
-        libroRepositorio.create(libro4)
-        libroRepositorio.create(libro5)
-        libroRepositorio.create(libro6)
-        libroRepositorio.create(libro7)
-        libroRepositorio.create(libro8)
-        libroRepositorio.create(libro9)
-        libroRepositorio.create(libro10)
-        libroRepositorio.create(libro11)
-        libroRepositorio.create(libro12)
-        libroRepositorio.create(libro13)
-        libroRepositorio.create(libro14)
-        //Todo: eliminar lo otro. Tuve que persistirlo porque me tiraba un error
-        libroRepository.save(libro1)
-        libroRepository.save(libro2)
-        libroRepository.save(libro3)
-        libroRepository.save(libro4)
-        libroRepository.save(libro5)
-        libroRepository.save(libro6)
-        libroRepository.save(libro7)
-        libroRepository.save(libro8)
-        libroRepository.save(libro9)
-        libroRepository.save(libro10)
-        libroRepository.save(libro11)
-        libroRepository.save(libro12)
-        libroRepository.save(libro13)
-        libroRepository.save(libro14)
+        libroRepositorio.save(libro1)
+        libroRepositorio.save(libro2)
+        libroRepositorio.save(libro3)
+        libroRepositorio.save(libro4)
+        libroRepositorio.save(libro5)
+        libroRepositorio.save(libro6)
+        libroRepositorio.save(libro7)
+        libroRepositorio.save(libro8)
+        libroRepositorio.save(libro9)
+        libroRepositorio.save(libro10)
+        libroRepositorio.save(libro11)
+        libroRepositorio.save(libro12)
+        libroRepositorio.save(libro13)
+        libroRepositorio.save(libro14)
 
-        println("Libros cargados en memoria y en Postgresql")
+
+        println("Libros cargados en Postgres")
     }
 }
