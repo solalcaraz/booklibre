@@ -40,11 +40,11 @@ class Reserva(
 
 ) : EntidadConId {
     init {
-        require(!fechaHasta.isBefore(fechaDesde)) { // no puedo reservar mis propios libros ...
-            "La fecha hasta no puede ser anterior a la fecha desde."
+        if (fechaHasta.isBefore(fechaDesde)) {
+            throw BadRequestException("La fecha hasta no puede ser anterior a la fecha desde.")
         }
-        require(lector.id != libro.data.dueno.id){
-            "No puedo reservar mis propios libros"
+        if (lector.id == libro.data.dueno.id) {
+            throw BadRequestException("No puedo reservar mis propios libros.")
         }
     }
 
