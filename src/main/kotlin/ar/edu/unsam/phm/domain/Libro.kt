@@ -22,6 +22,7 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.Check
 import java.time.LocalDate
+import java.util.Locale
 import kotlin.math.ceil
 
 @Embeddable
@@ -97,7 +98,8 @@ abstract class Libro(
     fun calcularCalificacionPromedio(): Double {
         if (cantidadResenias == 0) return 0.0
         val promedio = sumaPuntajes.toDouble() / cantidadResenias
-        return String.format("%.1f", promedio).toDouble()
+        return String.format(Locale.US, "%.1f", promedio).toDouble()
+        //Para que sea 4.5 y no 4,5.
     }
 
     fun aumentarReserva() { cantidadReservas++ }
