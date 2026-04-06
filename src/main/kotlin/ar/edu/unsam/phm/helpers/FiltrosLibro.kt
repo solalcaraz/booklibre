@@ -1,7 +1,7 @@
 package ar.edu.unsam.phm.helpers
 
 import ar.edu.unsam.phm.domain.Genero
-import ar.edu.unsam.phm.domain.Libro
+import org.springframework.data.domain.Sort
 import java.time.LocalDate
 
 data class FiltrosLibro (
@@ -27,24 +27,16 @@ data class FiltrosLibro (
     }
 }
 
-fun Libro.cumpleFiltros(filtros: FiltrosLibro): Boolean =
-    (filtros.generos.isEmpty() || data.genero in filtros.generos) &&
-    (filtros.cantPaginasMin?.let { data.cantPaginas >= it } ?: true) &&
-    (filtros.cantPaginasMax?.let { data.cantPaginas <= it } ?: true) &&
-    (filtros.isbn?.let { data.isbn13.contains(it) } ?: true) &&
-    (filtros.usuarioPrestador?.let { data.dueno.nombreCompleto.contains(it, ignoreCase = true) } ?: true)
-
-
 enum class Ordenamiento {
     TITULO_ASC,
     TITULO_DESC,
     AUTOR_ASC,
     DUENO_ASC;
 
-    fun criterio(): Comparator<Libro> = when (this) {
-        TITULO_ASC -> compareBy { it.data.titulo.lowercase() }
-        TITULO_DESC -> compareByDescending { it.data.titulo.lowercase() }
-        AUTOR_ASC -> compareBy { it.data.autor.lowercase() }
-        DUENO_ASC -> compareBy { it.data.dueno.nombreCompleto.lowercase() }
+    fun toSort(): Sort = when (this) {
+        TITULO_ASC -> Sort.by(Sort.Direction.ASC, "data.titulo")
+        TITULO_DESC -> Sort.by(Sort.Direction.DESC, "data.titulo")
+        AUTOR_ASC -> Sort.by(Sort.Direction.ASC, "data.autor")
+        DUENO_ASC -> Sort.by(Sort.Direction.ASC, "data.dueno.nombreCompleto")
     }
 }

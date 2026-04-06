@@ -1,6 +1,5 @@
 package ar.edu.unsam.phm.service
 
-import ar.edu.unsam.phm.domain.Resenia
 import ar.edu.unsam.phm.helpers.FiltrosLibro
 import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.dto.PaginationReqDTO
@@ -15,13 +14,16 @@ import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.ReservaAdapter
 import ar.edu.unsam.phm.helpers.paginate
-import ar.edu.unsam.phm.repository.LibroRepositorio
+import ar.edu.unsam.phm.repository.LibroRepository
+import ar.edu.unsam.phm.repository.LibroSpecifications
 import ar.edu.unsam.phm.repository.ReservaRepositorio
 import ar.edu.unsam.phm.repository.ReservaRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import kotlin.text.toInt
 
@@ -29,7 +31,7 @@ import kotlin.text.toInt
 class ReservaService(
     private val reservaRepositorio: ReservaRepositorio,
     private val reservaRepository: ReservaRepository,
-    private val libroRepositorio: LibroRepositorio,
+    private val libroRepositorio: LibroRepository,
     private val usuarioRepository: UsuarioRepository,
     private val reservaAdapter: ReservaAdapter
 ) {
@@ -43,26 +45,33 @@ class ReservaService(
         return reservaRepository.findPrestadosPorMi(usuarioId.toInt(), payload.filter.inputSearch, PageRequest.of(payload.pageNumber, payload.pageSize))
     }
 
-    fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): PaginationResponseDTO<ReservaLibroDTO> {
-        // valido que el id del usuario existe y lo asigno
+    @Transactional(readOnly = true)
+    fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): Page<Reserva> {
         val usuario = usuarioRepository.findById(usuarioId).orElseThrow { NotFoundException("Usuario no encontrado") }
 
-        /* filtro los id de los libros que estan ocupados en la fecha de filtros (id porque es un dato mas liviano que traer el objeto completo.
-            para luego descartarlos en el filtro que hace el repo de libros porque pueden haber libros disponibles pero que nunca se reservaron
-         */
         val idLibrosOcupados = reservaRepositorio.getIdLibrosOcupadosEntre(filtros.fechaDesde, filtros.fechaHasta)
 
-        // trae la pre reserva de los libros filtrados y ordenados
-        val reservaDeLibrosDisponibles =
-            libroRepositorio.getLibrosDisponibles(filtros, usuario.id!!, idLibrosOcupados).map { libro ->
-                val cantidadReservas = reservaRepositorio.getCantidadReservasPorLibro(libro.id!!)
-                val puntuaciones = reservaRepositorio.getPuntuacionesByLibro(libro.id!!)
-                Reserva(
-                    libro = libro, lector = usuario, fechaDesde = filtros.fechaDesde, fechaHasta = filtros.fechaHasta
-                ).toReservaLibroDTO(cantidadReservas, puntuaciones)
-            }
+        // se arma la specification combinando todos los filtros (DEBERIA SER UN HELPER PRIVADO?)
+        val spec = Specification.where(LibroSpecifications.noEsDelUsuario(usuarioId))
+            .and(LibroSpecifications.noEstaOcupado(idLibrosOcupados))
+            .and(LibroSpecifications.conGeneros(filtros.generos))
+            .and(LibroSpecifications.conPaginasMin(filtros.cantPaginasMin))
+            .and(LibroSpecifications.conPaginasMax(filtros.cantPaginasMax))
+            .and(LibroSpecifications.conIsbn(filtros.isbn))
+            .and(LibroSpecifications.conUsuarioPrestador(filtros.usuarioPrestador))
+            .and(LibroSpecifications.conBusqueda(filtros.busqueda))
 
-        return paginate(reservaDeLibrosDisponibles, filtros.numeroPagina, filtros.tamanoPaginado)
+        // se obtiene la pagina a mostrar
+        val pageable = PageRequest.of(filtros.numeroPagina, filtros.tamanoPaginado, filtros.orden.toSort())
+
+        // se transforma Page<Libro> en Page<Reserva>
+        return libroRepositorio.findAll(spec, pageable).map { libro ->
+            Reserva(
+                libro = libro,
+                lector = usuario,
+                fechaDesde = filtros.fechaDesde,
+                fechaHasta = filtros.fechaHasta)
+        }
     }
 
     fun getDetalleReserva(libroId: Int, userId: Int, fechaDesde: LocalDate, fechaHasta: LocalDate): DetalleReservaDTO {
@@ -83,7 +92,7 @@ class ReservaService(
         }
 
         val cantidadReservas = reservaRepositorio.buscarPorLibro(libro).size
-        val biblioKarmas = reserva.calcularBiblioKarmas(cantidadReservas)
+        val biblioKarmas = reserva.calcularBiblioKarmas()
         val puntuacionesLibro = reservaRepositorio.getPuntuacionesByLibro(libroId)
         val calificacionPromedio =
             if (puntuacionesLibro.isEmpty()) 0.0 else puntuacionesLibro.average() //No tiene ternario :(
@@ -128,7 +137,7 @@ class ReservaService(
         }
 
         val cantidadReservas = reservaRepositorio.buscarPorLibro(libro).size
-        val bibliokarmasGanados = nuevaReserva.calcularBiblioKarmas(cantidadReservas)
+        val bibliokarmasGanados = nuevaReserva.calcularBiblioKarmas()
         usuario.aumentarBiblioKarmas(bibliokarmasGanados)
         usuarioRepository.save(usuario)
         reservaRepositorio.create(nuevaReserva)

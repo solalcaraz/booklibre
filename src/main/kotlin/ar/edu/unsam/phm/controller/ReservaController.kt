@@ -1,6 +1,5 @@
 package ar.edu.unsam.phm.controller
 
-import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.DetalleReservaDTO
 import ar.edu.unsam.phm.helpers.FiltrosLibro
@@ -10,8 +9,8 @@ import ar.edu.unsam.phm.dto.ReseniaReqDTO
 import ar.edu.unsam.phm.dto.ReservaDTO
 import ar.edu.unsam.phm.dto.ReservaLibroDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
+import ar.edu.unsam.phm.dto.toReservaLibroDTO
 import ar.edu.unsam.phm.helpers.ReservaMapper
-import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.service.ReseniaService
 import ar.edu.unsam.phm.service.ReservaService
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -51,10 +50,18 @@ class ReservaController (private val reservaService: ReservaService, private val
 
     @GetMapping("/librosDisponibles/{userId}")
     fun listarLibros(
-        @PathVariable userId: String,
+        @PathVariable userId: Int,
         @ModelAttribute filtros: FiltrosLibro
-    ): PaginationResponseDTO<ReservaLibroDTO> =
-        reservaService.getLibrosDisponiblesParaReserva(userId.toInt(), filtros)
+    ): PaginationResponseDTO<ReservaLibroDTO> {
+        val page = reservaService.getLibrosDisponiblesParaReserva(userId, filtros)
+        return PaginationResponseDTO(
+            items = page.content.map { it.toReservaLibroDTO() },
+            page = page.number,
+            size = page.size,
+            totalItems = page.totalElements.toInt(),
+            totalPages = page.totalPages
+        )
+    }
 
     @PostMapping("/calificar")
     fun calificar(@RequestBody payload: ReseniaReqDTO) {
