@@ -71,8 +71,8 @@ class Reserva(
 
     fun calcularDias() = ChronoUnit.DAYS.between(fechaDesde, fechaHasta).toInt() + 1
 
-    fun calcularBiblioKarmas(cantidadReservas: Int): Int {
-        return 5 * calcularDias() + libro.plusBiblioKarma(lector.bibliokarmas, cantidadReservas)
+    fun calcularBiblioKarmas(): Int {
+        return 5 * calcularDias() + libro.plusBiblioKarma(lector.bibliokarmas)
     }
 
     fun calcularEstado(): String {

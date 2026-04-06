@@ -93,7 +93,7 @@ abstract class Libro(
     @Column(nullable = false)
     var cantidadReservas: Int = 0
 
-    abstract fun plusBiblioKarma(cantidadBibliokarmas: Int, cantidadReservas: Int): Int
+    abstract fun plusBiblioKarma(cantidadBibliokarmas: Int): Int
 
     fun calcularCalificacionPromedio(): Double {
         if (cantidadResenias == 0) return 0.0
@@ -110,30 +110,24 @@ abstract class Libro(
     }
 }
 
-/* Decido q sea con un string en vez de 1,2,3 , ademas de la legibilidad y mantenimiento
-poruqe ya existen validaciones al momento de des/serializar con un when y su error correspondiente
-llegado el momento con un script con flyway (como mencione antes) se hace aplica el constraint para aplicar una validacion sobre la bd tambien
-y por otro lado ya la anotacion @discriminatorValue se maneja con strings, vive ahi
-y por ultimo, si bien me da un poco mas de rapidez porque seria un int, prefiero mantener legibilidad je
- */
 @Entity
 @DiscriminatorValue("COMUN")
 class LibroComun(data: LibroData) : Libro(data) {
-    override fun plusBiblioKarma(cantidadBibliokarmas: Int, cantidadReservas: Int): Int =
+    override fun plusBiblioKarma(cantidadBibliokarmas: Int): Int =
         if (cantidadBibliokarmas < 1000) data.cantPaginas * 5 else data.cantPaginas * 2
 }
 
 @Entity
 @DiscriminatorValue("DEDICATORIA")
 class LibroDedicatoria(data:LibroData) : Libro(data) {
-    override fun plusBiblioKarma(cantidadBibliokarmas: Int, cantidadReservas: Int): Int =
+    override fun plusBiblioKarma(cantidadBibliokarmas: Int): Int =
         200 + 10 * cantidadReservas
 }
 
 @Entity
 @DiscriminatorValue("COLECCIONABLE")
 class LibroColeccionable(data:LibroData) : Libro(data) {
-    override fun plusBiblioKarma(cantidadBibliokarmas: Int, cantidadReservas: Int): Int {
+    override fun plusBiblioKarma(cantidadBibliokarmas: Int,): Int {
         val quintaParte = ceil(cantidadBibliokarmas / 5.0).toInt()
         return quintaParte + data.cantPaginas
     }

@@ -20,7 +20,7 @@ data class ReservaLibroDTO(
     var portada: String
 )
 
-fun Reserva.toReservaLibroDTO(cantidadReservas:Int, puntuaciones: List<Int>): ReservaLibroDTO {
+fun Reserva.toReservaLibroDTO(): ReservaLibroDTO {
     val tipoDTO = when (this.libro) {
         is LibroComun -> TipoDeLibroDTO.COMUN
         is LibroDedicatoria -> TipoDeLibroDTO.DEDICATORIA
@@ -40,7 +40,7 @@ fun Reserva.toReservaLibroDTO(cantidadReservas:Int, puntuaciones: List<Int>): Re
         estado = libro.estado.label,
         dueno = libro.dueno.nombreCompleto,
         calificacionPromedio = this.libro.calcularCalificacionPromedio(),
-        biblioKarmasTotal = this.calcularBiblioKarmas(cantidadReservas),
+        biblioKarmasTotal = this.calcularBiblioKarmas(),
         portada = libro.portada
     )
 }
