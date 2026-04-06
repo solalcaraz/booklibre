@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import kotlin.text.toInt
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ReservaService(
@@ -37,12 +38,20 @@ class ReservaService(
 ) {
     fun getMisReservas(payload: PaginationReqDTO<ReservaRequestDTO>): Page<Reserva> {
         val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
-        return reservaRepository.findPrestadosAMi(usuarioId.toInt(), payload.filter.inputSearch, PageRequest.of(payload.pageNumber, payload.pageSize))
+        return reservaRepository.findPrestadosAMi(
+            usuarioId.toInt(),
+            payload.filter.inputSearch,
+            PageRequest.of(payload.pageNumber, payload.pageSize)
+        )
     }
 
     fun getPrestadosPorMi(payload: PaginationReqDTO<ReservaRequestDTO>): Page<Reserva> {
         val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
-        return reservaRepository.findPrestadosPorMi(usuarioId.toInt(), payload.filter.inputSearch, PageRequest.of(payload.pageNumber, payload.pageSize))
+        return reservaRepository.findPrestadosPorMi(
+            usuarioId.toInt(),
+            payload.filter.inputSearch,
+            PageRequest.of(payload.pageNumber, payload.pageSize)
+        )
     }
 
     @Transactional(readOnly = true)
@@ -74,30 +83,23 @@ class ReservaService(
         }
     }
 
+    @Transactional(readOnly = true)
     fun getDetalleReserva(libroId: Int, userId: Int, fechaDesde: LocalDate, fechaHasta: LocalDate): DetalleReservaDTO {
-        val libro = libroRepositorio.getById(libroId)
+        val libro = libroRepository.findById(libroId).orElseThrow { NotFoundException("Libro no encontrado") }
         val usuario = usuarioRepository.findById(userId).orElseThrow { NotFoundException("Usuario no encontrado") }
 
         //Reserva simulada con fechas del front
-        var reserva: Reserva
-        try {
-            reserva = Reserva(
-                libro = libro,
-                lector = usuario,
-                fechaDesde = fechaDesde,
-                fechaHasta = fechaHasta,
-            )
-        } catch (e: IllegalArgumentException) {
-            throw BadRequestException(e.message ?: "Fechas invalidas para la reserva")
-        }
+        var reserva = Reserva(
+            libro = libro,
+            lector = usuario,
+            fechaDesde = fechaDesde,
+            fechaHasta = fechaHasta,
+        )
 
-        val cantidadReservas = reservaRepositorio.buscarPorLibro(libro).size
         val biblioKarmas = reserva.calcularBiblioKarmas()
-        val puntuacionesLibro = reservaRepositorio.getPuntuacionesByLibro(libroId)
-        val calificacionPromedio =
-            if (puntuacionesLibro.isEmpty()) 0.0 else puntuacionesLibro.average() //No tiene ternario :(
-        val ultimasReservas = reservaRepositorio.getUltimasReservas(libro)
-        val reservasOcupadas = reservaRepositorio.getReservasOcupadas(libro)
+        val calificacionPromedio = libro.calcularCalificacionPromedio()
+        val ultimasReservas = reservaRepository.findTop2UltimasReservas(libroId)
+        val reservasOcupadas = reservaRepository.findReservasOcupadas(libroId)
 
         return reservaAdapter.toDetalleReservaDto(
             reserva = reserva,
@@ -108,39 +110,30 @@ class ReservaService(
         )
     }
 
+    @Transactional(readOnly = false)
     fun crearReserva(userID: Int, reserva: CrearReservaDTO): Reserva {
 
-        val libro = libroRepositorio.getById(reserva.libroId)
+        val libro = libroRepository.findById(reserva.libroId).orElseThrow { NotFoundException("Libro no encontrado") }
         val usuario = usuarioRepository.findById(userID).orElseThrow { NotFoundException("Usuario no encontrado") }
 
-        var nuevaReserva: Reserva
-        try {
-            nuevaReserva = Reserva(
-                libro = libro,
-                lector = usuario,
-                fechaDesde = reserva.fechaDesde,
-                fechaHasta = reserva.fechaHasta,
-            )
-        } catch (e: IllegalArgumentException) {
-            throw BadRequestException(e.message ?: "Fechas inválidas para la reserva")
-        }
+        var nuevaReserva = Reserva(
+            libro = libro,
+            lector = usuario,
+            fechaDesde = reserva.fechaDesde,
+            fechaHasta = reserva.fechaHasta,
+        )
 
-        val seSuperpone = reservaRepositorio.tieneReservasSuperpuestas(libro, reserva.fechaDesde, reserva.fechaHasta)
+        val seSuperpone = reservaRepository.existReservaSuperpuesta(libro.id!!, reserva.fechaDesde, reserva.fechaHasta)
         if (seSuperpone) {
             throw ConflictException("El libro ya se encuentra reservado en esas fechas.") //otra exception, el usuario la pifio
         }
 
-        //Validacion para que el usuario no reserve mas de una vez.
-        val usuarioYaLoReservo = reservaRepositorio.usuarioTieneReservaActiva(libro, usuario)
-        if( usuarioYaLoReservo ) {
-            throw ConflictException("Ya tenés una reserva activa para este libro. Dejá leer a los demás chimwe")
-        }
-
-        val cantidadReservas = reservaRepositorio.buscarPorLibro(libro).size
-        val bibliokarmasGanados = nuevaReserva.calcularBiblioKarmas()
+        val cantidadReservas = libro.cantidadReservas
+        val bibliokarmasGanados = nuevaReserva.calcularBiblioKarmas(cantidadReservas)
         usuario.aumentarBiblioKarmas(bibliokarmasGanados)
         usuarioRepository.save(usuario)
-        reservaRepositorio.create(nuevaReserva)
+        reservaRepository.save(nuevaReserva)
+        libro.aumentarReserva()
         return nuevaReserva
     }
 }
