@@ -25,14 +25,13 @@ class LibroMapper : LibroAdapter {
             editorial = dto.editorial,
             fechaPublicacion = LocalDate.parse(dto.fechaPublicacion),
             estado = Estado.valueOf(dto.estado),
-            dueno = usuarioDueno,
             portada = dto.portada
         )
 
         return when (dto.tipo) {
-            TipoDeLibroDTO.COMUN -> LibroComun(libroData)
-            TipoDeLibroDTO.DEDICATORIA -> LibroDedicatoria(libroData)
-            TipoDeLibroDTO.COLECCIONABLE -> LibroColeccionable(libroData)
+            TipoDeLibroDTO.COMUN -> LibroComun(libroData, usuarioDueno)
+            TipoDeLibroDTO.DEDICATORIA -> LibroDedicatoria(libroData, usuarioDueno)
+            TipoDeLibroDTO.COLECCIONABLE -> LibroColeccionable(libroData, usuarioDueno)
         }.apply {
             this.id = dto.id
         }
@@ -61,7 +60,7 @@ class LibroMapper : LibroAdapter {
             isbn13 = libroData.isbn13,
             descripcion = libroData.descripcion,
             portada = libroData.portada,
-            idDueno = libroData.dueno.id ?: 0
+            idDueno = libro.dueno.id ?: 0
         )
     }
 }

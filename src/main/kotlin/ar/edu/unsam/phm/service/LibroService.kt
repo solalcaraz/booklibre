@@ -30,7 +30,7 @@ class LibroService(
         val libro = libroRepositorio.findById(id)
             .orElseThrow { NotFoundException("Libro no encontrado.") }
 //        val libro = libroRepositorio.getById(id)
-        if (libro.data.dueno.id != idUsuarioLogueado) {
+        if (libro.dueno.id != idUsuarioLogueado) {
             throw ForbiddenException("No tenés permisos para modificar este libro.")
         }
         return libro
@@ -57,7 +57,7 @@ class LibroService(
             libroRepositorio.cambiarTipoDeLibro(id, tipoNuevo)
         }
 
-        val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.data.dueno)
+        val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.dueno)
 
         // Generamos un libro nuevo en caso de que el tipo de libro sea distinto,
         // así que tenemos que borrar el existente
