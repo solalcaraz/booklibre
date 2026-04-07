@@ -40,7 +40,7 @@ object LibroSpecifications {
     fun conPaginasMax(max: Int?): Specification<Libro> =
         Specification { root, _, cb ->
             max?.let {
-                cb.greaterThanOrEqualTo(root.get<LibroData>("data").get("cantPaginas"), it)
+                cb.lessThanOrEqualTo(root.get<LibroData>("data").get("cantPaginas"), it)
             } ?: siempreTrue(cb)
         }
 
