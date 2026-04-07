@@ -3,6 +3,10 @@ package ar.edu.unsam.phm.repository
 import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.exceptions.NotFoundException
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.Specification
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Modifying
@@ -17,6 +21,9 @@ interface LibroRepository : JpaRepository<Libro, Int>, JpaSpecificationExecutor<
     @Transactional
     @Query(value = "UPDATE libro SET tipo_libro = :nuevoTipo WHERE id = :id", nativeQuery = true)
     fun cambiarTipoDeLibro(id: Int, nuevoTipo: String)
+
+    @EntityGraph(attributePaths = ["dueno"])
+    override fun findAll(spec: Specification<Libro>, pageable: Pageable): Page<Libro>
 }
 
 //TODO: borrar cuando se cambien las otras funciones del repo
@@ -28,7 +35,7 @@ class LibroSearchStrategy : SearchStrategy<Libro> {
 class LibroRepositorio : Repositorio<Libro>(LibroSearchStrategy()) {
 
     fun librosDe(usuario: Usuario): List<Libro> {
-        return objetos.values.filter { it.data.dueno.id == usuario.id }
+        return objetos.values.filter { it.dueno.id == usuario.id }
     }
     /* Este es el contrato de implementación para cuando migremos a DB */
     /*fun librosDisponiblesDe(usuario: Usuario): List<Libro> {}
