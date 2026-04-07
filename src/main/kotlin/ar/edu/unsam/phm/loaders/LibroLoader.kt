@@ -10,6 +10,7 @@ import ar.edu.unsam.phm.domain.LibroDedicatoria
 import ar.edu.unsam.phm.env.Environment
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.repository.LibroRepositorio
+import ar.edu.unsam.phm.repository.LibroRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
@@ -19,7 +20,7 @@ import java.time.LocalDate
 @Component
 @Order(2)
 class LibroLoader(
-    private val libroRepositorio: LibroRepositorio,
+    private val libroRepositorio: LibroRepository,
     private val usuarioRepository: UsuarioRepository
 ) : CommandLineRunner {
     override fun run(vararg args: String?) {
@@ -282,22 +283,22 @@ class LibroLoader(
             data.portada = "https://images.cdn1.buscalibre.com/fit-in/360x360/57/3d/573d2d38b86840ce6c919c61ac6d217f.jpg"
         }
 
-        libroRepositorio.create(libro1)
-        libroRepositorio.create(libro2)
-        libroRepositorio.create(libro3)
-        libroRepositorio.create(libro4)
-        libroRepositorio.create(libro5)
-        libroRepositorio.create(libro6)
-        libroRepositorio.create(libro7)
-        libroRepositorio.create(libro8)
-        libroRepositorio.create(libro9)
-        libroRepositorio.create(libro10)
-        libroRepositorio.create(libro11)
-        libroRepositorio.create(libro12)
-        libroRepositorio.create(libro13)
-        libroRepositorio.create(libro14)
+        libroRepositorio.save(libro1)
+        libroRepositorio.save(libro2)
+        libroRepositorio.save(libro3)
+        libroRepositorio.save(libro4)
+        libroRepositorio.save(libro5)
+        libroRepositorio.save(libro6)
+        libroRepositorio.save(libro7)
+        libroRepositorio.save(libro8)
+        libroRepositorio.save(libro9)
+        libroRepositorio.save(libro10)
+        libroRepositorio.save(libro11)
+        libroRepositorio.save(libro12)
+        libroRepositorio.save(libro13)
+        libroRepositorio.save(libro14)
 
 
-        println("Libros cargados en memoria")
+        println("Libros cargados en Postgres")
     }
 }

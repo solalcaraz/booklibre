@@ -1,6 +1,5 @@
 package ar.edu.unsam.phm.controller
 
-import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.DetalleReservaDTO
 import ar.edu.unsam.phm.helpers.FiltrosLibro
@@ -10,8 +9,8 @@ import ar.edu.unsam.phm.dto.ReseniaReqDTO
 import ar.edu.unsam.phm.dto.ReservaDTO
 import ar.edu.unsam.phm.dto.ReservaLibroDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
+import ar.edu.unsam.phm.dto.toReservaLibroDTO
 import ar.edu.unsam.phm.helpers.ReservaMapper
-import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.service.ReseniaService
 import ar.edu.unsam.phm.service.ReservaService
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -38,7 +37,7 @@ class ReservaController (private val reservaService: ReservaService, private val
         @RequestBody payload: PaginationReqDTO<ReservaRequestDTO>
     ): PaginationResponseDTO<ReservaDTO> {
         val page = reservaService.getMisReservas(payload)
-        return mapReservas(page)
+        return reservaMapper.toDtoReservaPag(page)
     }
 
     @PostMapping("/obtenerPrestadosPorMi")
@@ -46,19 +45,27 @@ class ReservaController (private val reservaService: ReservaService, private val
         @RequestBody payload: PaginationReqDTO<ReservaRequestDTO>
     ): PaginationResponseDTO<ReservaDTO> {
         val page = reservaService.getPrestadosPorMi(payload)
-        return mapReservas(page)
+        return reservaMapper.toDtoReservaPag(page)
     }
 
     @GetMapping("/librosDisponibles/{userId}")
     fun listarLibros(
-        @PathVariable userId: String,
+        @PathVariable userId: Int,
         @ModelAttribute filtros: FiltrosLibro
-    ): PaginationResponseDTO<ReservaLibroDTO> =
-        reservaService.getLibrosDisponiblesParaReserva(userId.toInt(), filtros)
+    ): PaginationResponseDTO<ReservaLibroDTO> {
+        val page = reservaService.getLibrosDisponiblesParaReserva(userId, filtros)
+        return PaginationResponseDTO(
+            items = page.content.map { it.toReservaLibroDTO() },
+            page = page.number,
+            size = page.size,
+            totalItems = page.totalElements.toInt(),
+            totalPages = page.totalPages
+        )
+    }
 
     @PostMapping("/calificar")
     fun calificar(@RequestBody payload: ReseniaReqDTO) {
-        reservaService.calificar(payload)
+        reseniaService.crearResenia(payload)
     }
 
     @GetMapping("/detalles/{libroId}")
@@ -81,15 +88,7 @@ class ReservaController (private val reservaService: ReservaService, private val
         @RequestHeader("userId") userId: String,
         @RequestBody reserva: CrearReservaDTO
     ): ReservaDTO {
-        val (nuevaReserva, cantidadReservas) = reservaService.crearReserva(userId.toInt(), reserva)
-        val puntuacion: Double = reseniaService.getPromedioPorLibro(reserva.libroId)
-        return reservaMapper.toDto(nuevaReserva, puntuacion, cantidadReservas)
-    }
-
-    private fun mapReservas(page: PaginationResponseDTO<Reserva>): PaginationResponseDTO<ReservaDTO>{
-        val librosId: List<Int> = page.items.mapNotNull { it.libro.id }.distinct()
-        val promedioPorLibro: Map<Int, Double> = reseniaService.getMapaPromedioPorLibro(librosId)
-        val cantidadDeReservasPorLibro: Map<Int, Int> = reservaService.getCantidadDeReservasPorLibro(librosId)
-        return reservaMapper.toDtoReservaPag(page, promedioPorLibro, cantidadDeReservasPorLibro)
+        val nuevaReserva = reservaService.crearReserva(userId.toInt(), reserva)
+        return reservaMapper.toDto(nuevaReserva)
     }
 }
