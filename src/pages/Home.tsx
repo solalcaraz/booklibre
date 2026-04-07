@@ -21,7 +21,7 @@ const filtrosIniciales: FiltrosLibro = {
   usuarioPrestador: '',
   orden: 'TITULO_ASC',
   numeroPagina: 0,
-  tamanoPaginado: 3
+  tamanoPaginado: 6
 }
 
 export const Home = () => {
