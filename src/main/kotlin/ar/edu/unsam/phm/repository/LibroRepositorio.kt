@@ -2,8 +2,6 @@ package ar.edu.unsam.phm.repository
 
 import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.dto.MiLibroProjection
-import ar.edu.unsam.phm.domain.Usuario
-import ar.edu.unsam.phm.exceptions.NotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
@@ -48,7 +46,7 @@ interface LibroRepository : JpaRepository<Libro, Int>, JpaSpecificationExecutor<
         l.data.portada
     )
     from Libro l
-    where l.data.dueno.id = :usuarioId
+    where l.dueno.id = :usuarioId
     and l.activo = true
     order by
         case 
@@ -82,12 +80,34 @@ interface LibroRepository : JpaRepository<Libro, Int>, JpaSpecificationExecutor<
         pageable: Pageable
     ): Page<MiLibroProjection>
 
-    fun librosDe(usuario: Usuario): List<Libro> {
-        return objetos.values.filter { it.dueno.id == usuario.id }
-    }
-    /* Este es el contrato de implementación para cuando migremos a DB */
-    /*fun librosDisponiblesDe(usuario: Usuario): List<Libro> {}
-    fun librosPrestadosDe(usuario: Usuario): List<Libro> {}*/
+    @Query("""
+    select new ar.edu.unsam.phm.dto.MiLibroProjection(
+        l.id,
+        l.data.titulo,
+        l.data.autor,
+        l.data.genero,
+        'PRESTADO',
+        l.data.fechaPublicacion,
+        l.data.portada
+    )
+    from Libro l
+        where l.dueno.id = :usuarioId
+        and l.activo = true
+        and exists (
+            select 1
+            from Reserva r
+            where r.libro.id = l.id
+            and current_date between r.fechaDesde and r.fechaHasta
+        )
+        order by
+            case when :sort = 'agregado,asc' then l.data.fechaPublicacion end asc,
+            case when :sort = 'agregado,desc' then l.data.fechaPublicacion end desc
+    """)
+    fun librosPrestadosDe(
+        @Param("usuarioId") usuarioId: Int,
+        @Param("sort") sort: String?,
+        pageable: Pageable
+    ): Page<MiLibroProjection>
 
     @Query("""
     select new ar.edu.unsam.phm.dto.MiLibroProjection(
@@ -100,7 +120,7 @@ interface LibroRepository : JpaRepository<Libro, Int>, JpaSpecificationExecutor<
         l.data.portada
     )
     from Libro l
-        where l.data.dueno.id = :usuarioId
+        where l.dueno.id = :usuarioId
         and l.activo = true
         and not exists (
             select 1

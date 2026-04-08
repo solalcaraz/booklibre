@@ -33,7 +33,7 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
     @Query("""
         select count(r)
         from Reserva r
-        where r.libro.data.dueno.id = :usuarioId
+        where r.libro.dueno.id = :usuarioId
     """)
     fun cantidadPrestadosDe(@Param("usuarioId") usuarioId: Int): Int
 
