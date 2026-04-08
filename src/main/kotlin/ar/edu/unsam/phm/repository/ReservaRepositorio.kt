@@ -3,10 +3,10 @@ package ar.edu.unsam.phm.repository
 import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.domain.Usuario
-import ar.edu.unsam.phm.dto.MiLibroDTO
+/*import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.helpers.ordenarLibros
-import ar.edu.unsam.phm.helpers.paginate
+import ar.edu.unsam.phm.helpers.paginate*/
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -16,6 +16,27 @@ import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 interface ReservaRepository : JpaRepository<Reserva, Int> {
+    /*@Modifying
+    @Query("delete from Reserva r where r.libro.id = :libroId")
+    fun deleteByLibroId(@Param("libroId") libroId: Int): Int*/
+
+    /* Cantidad de libros leídos de un usuario = todas sus reservas que ya finalizaron */
+    @Query("""
+        select count(r)
+        from Reserva r
+        where r.lector.id = :usuarioId
+        and r.fechaHasta < current_date
+    """)
+    fun cantidadLeidosDe(@Param("usuarioId") usuarioId: Int): Int
+
+    /* Cantidad de libros prestados de un usuario = todas las reservas de cuyo libro es dueño */
+    @Query("""
+        select count(r)
+        from Reserva r
+        where r.libro.data.dueno.id = :usuarioId
+    """)
+    fun cantidadPrestadosDe(@Param("usuarioId") usuarioId: Int): Int
+
 
     @Query("SELECT r FROM Reserva r WHERE r.libro.dueno.id = :usuarioId AND (LOWER(r.libro.data.titulo) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(r.libro.data.autor) LIKE LOWER(CONCAT('%', :search, '%')))")
     fun findPrestadosPorMi(@Param("usuarioId") usuarioId: Int, @Param("search") search: String?, pageable: Pageable): Page<Reserva>
@@ -75,14 +96,14 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
         return objetos.values.filter { it.libro == libro }
     }
 
-    /* Cantidad de libros leídos de un usuario = todas sus reservas que ya finalizaron */
+
     fun cantidadLeidosDe(usuario: Usuario): Int {
         return objetos.values
             .filter { it.lector.id == usuario.id }
             .count { it.estaFinalizada() }
     }
 
-    /* Cantidad de libros prestados de un usuario = todas las reservas de cuyo libro es dueño */
+
     fun cantidadPrestadosDe(usuario: Usuario): Int {
         return objetos.values
             .count { it.libro.dueno.id == usuario.id }
@@ -92,12 +113,12 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
         return objetos.values.filter { it.libro.dueno.id == usuario.id && it.estaActiva()}.map { it.libro }
     }
 
-    fun buscarMisLibros(usuario: Usuario, librosDelUsuario: List<Libro>, filter: String, sort: String?, page: Int, size: Int): PaginationResponseDTO<MiLibroDTO> {
+    /*fun buscarMisLibros(usuario: Usuario, librosDelUsuario: List<Libro>, filter: String, sort: String?, page: Int, size: Int): PaginationResponseDTO<MiLibroDTO> {
         val librosPrestados = librosPrestadosDe(usuario)
         val idsPrestados = librosPrestados.map { it.id }.toSet()
 
         val librosFiltrados = when (filter) {
-            /* Los libros disponibles son todos los libros del usuario que no estén prestados */
+            *//* Los libros disponibles son todos los libros del usuario que no estén prestados *//*
             "Disponibles" -> librosDelUsuario.filter { it.id !in idsPrestados }
             "Prestados" -> librosPrestados
             else -> librosDelUsuario
@@ -115,14 +136,14 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
             )
         }
 
-        /* Antes de ordenarlos yo necesito que ya estén etiquetados con "PRESTADO" o "DISPONIBLE"
-        porque uno de los sorts es por el estado de la reserva, y el otro por fecha de agregado */
-        /* Entiendo que después la base de datos puede agregar una columna con esa etiqueta a la tabla,
-        y no hace falta terminar armando el DTO en el repositorio, delegándolo al controller */
+         Antes de ordenarlos yo necesito que ya estén etiquetados con "PRESTADO" o "DISPONIBLE"
+        porque uno de los sorts es por el estado de la reserva, y el otro por fecha de agregado
+         Entiendo que después la base de datos puede agregar una columna con esa etiqueta a la tabla,
+        y no hace falta terminar armando el DTO en el repositorio, delegándolo al controller
         val librosOrdenados = ordenarLibros(librosDto, sort)
 
         return paginate(librosOrdenados, page, size)
-    }
+    }*/
 
     // filtra por el id de los libros que estan reservados
     fun getIdLibrosOcupadosEntre(desde: LocalDate, hasta: LocalDate): Set<Int> =

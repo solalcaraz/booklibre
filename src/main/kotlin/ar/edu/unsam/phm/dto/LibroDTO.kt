@@ -1,5 +1,6 @@
 package ar.edu.unsam.phm.dto
 
+import ar.edu.unsam.phm.domain.Genero
 import java.time.LocalDate
 
 enum class TipoDeLibroDTO(val label: String) {
@@ -25,12 +26,22 @@ data class LibroDetalleDTO(
     val idDueno: Int
 )
 
-data class MiLibroDTO(
+/*data class MiLibroDTO(
     val id: Int?,
     val titulo: String,
     val autor: String,
     val estadoReserva: String,
     val genero: String,
+    val agregadoEl: LocalDate,
+    val portada: String
+)*/
+
+data class MiLibroProjection(
+    val id: Int,
+    val titulo: String,
+    val autor: String,
+    val genero: Genero,
+    val estadoReserva: String,
     val agregadoEl: LocalDate,
     val portada: String
 )
