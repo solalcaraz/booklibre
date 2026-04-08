@@ -14,7 +14,7 @@ object LibroSpecifications {
 
     fun noEsDelUsuario(usuarioId: Int): Specification<Libro> =
         Specification { root, _, cb ->
-            cb.notEqual(root.get<LibroData>("data").get<Usuario>("dueno").get<Int>("id"), usuarioId)
+            cb.notEqual(root.get<Usuario>("dueno").get<Int>("id"), usuarioId)
         }
 
     fun noEstaOcupado(idLibrosOcupados: Set<Int>): Specification<Libro> =
@@ -40,7 +40,7 @@ object LibroSpecifications {
     fun conPaginasMax(max: Int?): Specification<Libro> =
         Specification { root, _, cb ->
             max?.let {
-                cb.greaterThanOrEqualTo(root.get<LibroData>("data").get("cantPaginas"), it)
+                cb.lessThanOrEqualTo(root.get<LibroData>("data").get("cantPaginas"), it)
             } ?: siempreTrue(cb)
         }
 
@@ -55,7 +55,7 @@ object LibroSpecifications {
         Specification { root, _, cb ->
             nombre?.takeIf { it.isNotBlank() }?.let {
                 cb.like(
-                    cb.lower(root.get<LibroData>("data").get<Usuario>("dueno").get("nombreCompleto")),
+                    cb.lower(root.get<Usuario>("dueno").get("nombreCompleto")),
                     "%${nombre.lowercase()}%"
                 )
             } ?: siempreTrue(cb)

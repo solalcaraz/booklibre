@@ -38,7 +38,7 @@ fun Reserva.toReservaLibroDTO(): ReservaLibroDTO {
         isbn13 = libro.isbn13,
         idioma = libro.idioma.label,
         estado = libro.estado.label,
-        dueno = libro.dueno.nombreCompleto,
+        dueno = this.libro.dueno.nombreCompleto,
         calificacionPromedio = this.libro.calcularCalificacionPromedio(),
         biblioKarmasTotal = this.calcularBiblioKarmas(),
         portada = libro.portada

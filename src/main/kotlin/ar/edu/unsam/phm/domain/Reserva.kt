@@ -43,7 +43,7 @@ class Reserva(
         if (fechaHasta.isBefore(fechaDesde)) {
             throw BadRequestException("La fecha hasta no puede ser anterior a la fecha desde.")
         }
-        if (lector.id == libro.data.dueno.id) {
+        if (lector.id == libro.dueno.id) {
             throw BadRequestException("No puedo reservar mis propios libros.")
         }
     }
