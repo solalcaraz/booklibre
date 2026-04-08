@@ -6,10 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="69efba49-111b-44f0-82f5-a8580d624123" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/LibroController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/LibroController.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Libro.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Libro.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Reserva.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Reserva.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Usuario.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Usuario.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/LibroDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/LibroDTO.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/helpers/SortLibros.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/loaders/LibroLoader.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/loaders/LibroLoader.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/LibroRepositorio.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/LibroRepositorio.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/ReservaRepositorio.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/ReservaRepositorio.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/ReservaService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/ReservaService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/UsuarioRepositorio.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/UsuarioRepositorio.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/AuthService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/AuthService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/LibroService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/LibroService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/UsuarioService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/UsuarioService.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,6 +114,8 @@
     "Gradle.backend-2026-grupo8 [:ar.edu.phm.MainKt.main()].executor": "Run",
     "Gradle.backend-2026-grupo8 [bootRun].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Notification.DisplayName-DoNotAsk-DatabaseConfigFileWatcher.found": "New/updated database configurations found",
+    "Notification.DoNotAsk-DatabaseConfigFileWatcher.found": "true",
     "RequestMappingsPanelOrder0": "0",
     "RequestMappingsPanelOrder1": "1",
     "RequestMappingsPanelWidth0": "75",
@@ -119,7 +129,7 @@
     "Spring Boot.BookLibre.executor": "Run",
     "Spring Boot.Main.executor": "Run",
     "Spring Boot.ProyectoApplication.executor": "Run",
-    "git-widget-placeholder": "feat-detalleReservaPersis",
+    "git-widget-placeholder": "dev",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Thomas/Desktop/Facultad/PHM/backend-2026-grupo8",
@@ -128,7 +138,7 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "run.configurations.included.in.services": "true",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
+    "settings.editor.selected.configurable": "preferences.editor",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -329,6 +339,8 @@
       <workItem from="1774538495950" duration="3455000" />
       <workItem from="1774995012614" duration="12421000" />
       <workItem from="1775067383590" duration="6081000" />
+      <workItem from="1775608635938" duration="8149000" />
+      <workItem from="1775658291576" duration="16736000" />
     </task>
     <servers />
   </component>

@@ -4,17 +4,18 @@ import ar.edu.unsam.phm.env.Environment
 import ar.edu.unsam.phm.repository.EntidadConId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.time.LocalDate
+import jakarta.persistence.Transient
 
-/* Yo entiendo que el tipo de usuario es un strategy
-Capaz me equivoco y el tipo es fijo y tenemos que usar Herencia simple
-Vemos XD, aún no tiene comportamiento dice el enunciado */
+/* ¿Qué se supone que tiene que hacer cada tipo de usuario? Consultar, viene de la mano con JWT */
 
-/*interface TipoUsuario {
+/* interface TipoUsuario {
     fun nombre(): String
 }
 
@@ -28,7 +29,7 @@ class Publicador : TipoUsuario {
 
 class LectorPublicador : TipoUsuario {
     override fun nombre() = "Lector / Publicador"
-}*/
+} */
 
 enum class TipoUsuario(val label: String) {
     LECTOR("Lector"),
@@ -58,22 +59,24 @@ class Usuario(
     @Column(nullable = false)
     var tipoUsuario: TipoUsuario = TipoUsuario.LECTOR_PUBLICADOR
 
-    @Column()
+    @Column
     var descripcion: String = ""
 
-    @Column()
+    @Column
     var ciudad: String = ""
 
-    @Column()
+    @Column
     var telefono: String = ""
 
     @Column(nullable = false)
     var bibliokarmas: Int = 0
 
-    @Column()
+    @Column
     var imagen: String = Environment.API_URL + "/imagenes/default_user.png"
 
+    @Transient
     var librosLeidos: Int = 0
+    @Transient
     var librosPrestados: Int = 0
 
     fun validarPassword(passwordIngresada: String): Boolean {

@@ -2,6 +2,7 @@ package ar.edu.unsam.phm.domain
 
 import ar.edu.unsam.phm.env.Environment
 import ar.edu.unsam.phm.repository.EntidadConId
+import com.fasterxml.jackson.annotation.JsonValue
 import jakarta.persistence.Column
 import jakarta.persistence.DiscriminatorColumn
 import jakarta.persistence.DiscriminatorType
@@ -93,6 +94,9 @@ abstract class Libro(
     @Column(nullable = false)
     var cantidadReservas: Int = 0
 
+    @Column(nullable = false)
+    var activo = true
+
     abstract fun plusBiblioKarma(cantidadBibliokarmas: Int): Int
 
     fun calcularCalificacionPromedio(): Double {
@@ -139,7 +143,10 @@ enum class Genero(val label: String) {
     ROMANCE("Romance"),
     AUTOAYUDA("Autoayuda"),
     DISENO("Diseño"),
-    LITERATURA_CLASICA("Literatura Clásica"),
+    LITERATURA_CLASICA("Literatura Clásica");
+
+    @JsonValue
+    fun toJson() = label
 }
 
 enum class Idioma(val label: String) {
