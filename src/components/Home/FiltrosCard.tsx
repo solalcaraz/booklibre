@@ -47,9 +47,9 @@ export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActuali
         <fieldset>
           <legend className="text-sm font-semibold text-slate-700">Rango de páginas</legend>
           <RangeDoble
-            min={0} max={1000}
+            min={0} max={2000}
             valorMin={filtros.cantPaginasMin ?? 0}
-            valorMax={filtros.cantPaginasMax ?? 1000}
+            valorMax={filtros.cantPaginasMax ?? 2000}
             onChangeMin={v => onActualizar('cantPaginasMin', v)}
             onChangeMax={v => onActualizar('cantPaginasMax', v)}
           />
