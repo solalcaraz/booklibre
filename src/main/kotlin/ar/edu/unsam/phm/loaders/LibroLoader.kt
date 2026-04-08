@@ -42,8 +42,7 @@ class LibroLoader(
                 editorial = "Penguin",
                 fechaPublicacion = LocalDate.of(1800, 1, 1),
                 estado = Estado.MUY_BUENO,
-                dueno = usuario
-            )
+            ), usuario
         ).apply {
             data.portada = Environment.API_URL + "/imagenes/orgullo.webp"
         }
@@ -60,8 +59,7 @@ class LibroLoader(
                 editorial = "Cátedra",
                 fechaPublicacion = LocalDate.of(1960, 1, 1),
                 estado = Estado.BUENO,
-                dueno = usuario
-            )
+            ), usuario
         ).apply {
             data.portada = Environment.API_URL + "/imagenes/Rayuela.jpg"
         }
@@ -78,8 +76,7 @@ class LibroLoader(
                 editorial = "Signet Classics",
                 fechaPublicacion = LocalDate.of(1900, 1, 1),
                 estado = Estado.MUY_BUENO,
-                dueno = usuario
-            )
+            ), usuario
         ).apply {
             data.portada = Environment.API_URL + "/imagenes/1984.webp"
         }
@@ -96,8 +93,7 @@ class LibroLoader(
                 editorial = "Ace",
                 fechaPublicacion = LocalDate.of(1900, 1, 1),
                 estado = Estado.EXCELENTE,
-                dueno = usuario2
-            )
+            ), usuario2
         ).apply {
             data.portada = Environment.API_URL + "/imagenes/dune.jpg"
         }
@@ -114,8 +110,7 @@ class LibroLoader(
                 editorial = "Sudamericana",
                 fechaPublicacion = LocalDate.of(1900, 1, 1),
                 estado = Estado.MUY_BUENO,
-                dueno = usuario2
-            )
+            ), usuario2
         ).apply {
             data.portada = Environment.API_URL + "/imagenes/100anos.webp"
         }
@@ -132,8 +127,7 @@ class LibroLoader(
                 editorial = "Avery",
                 fechaPublicacion = LocalDate.of(1900, 1, 1),
                 estado = Estado.BUENO,
-                dueno = usuario2
-            )
+            ), usuario2
         ).apply {
             data.portada = Environment.API_URL + "/imagenes/habitos.webp"
         }
@@ -150,8 +144,7 @@ class LibroLoader(
                 editorial = "DAW Books",
                 fechaPublicacion = LocalDate.of(1900, 1, 1),
                 estado = Estado.EXCELENTE,
-                dueno = usuario3
-            )
+            ), usuario3
         ).apply {
             data.portada = Environment.API_URL + "/imagenes/viento.webp"
         }
@@ -168,8 +161,7 @@ class LibroLoader(
                 editorial = "Scribner",
                 fechaPublicacion = LocalDate.of(1900, 1, 1),
                 estado = Estado.BUENO,
-                dueno = usuario3
-            )
+            ), usuario3
         ). apply {
             /*data.portada = Environment.API_URL + "/imagenes/gatsby.jpg"*/
         }
@@ -186,8 +178,7 @@ class LibroLoader(
                 editorial = "Reynal & Hitchcock",
                 fechaPublicacion = LocalDate.of(1943, 4, 6),
                 estado = Estado.BUENO,
-                dueno = usuario2
-            )
+            ), usuario2
         ).apply {
             data.portada = "https://image.cdn1.buscalibre.com/5b57fc1690f0b5295a8b4567.RS500x500.jpg"
         }
@@ -204,8 +195,7 @@ class LibroLoader(
                 editorial = "Secker & Warburg",
                 fechaPublicacion = LocalDate.of(1949, 6, 8),
                 estado = Estado.BUENO,
-                dueno = usuario2
-            )
+            ), usuario2
         ).apply {
             data.portada = Environment.API_URL + "/imagenes/1984.webp"
         }
@@ -222,8 +212,7 @@ class LibroLoader(
                 editorial = "Prentice Hall",
                 fechaPublicacion = LocalDate.of(2008, 8, 1),
                 estado = Estado.BUENO,
-                dueno = usuario2
-            )
+            ), usuario2
         ).apply {
             data.portada = "https://m.media-amazon.com/images/I/81Rnac2Fq+L._AC_UF1000,1000_QL80_.jpg"
         }
@@ -240,8 +229,7 @@ class LibroLoader(
                 editorial = "Allen & Unwin",
                 fechaPublicacion = LocalDate.of(1954, 7, 29),
                 estado = Estado.BUENO,
-                dueno = usuario2
-            )
+            ), usuario2
         ).apply {
             data.portada = "https://image.cdn0.buscalibre.com/5b5ae93e4463b568748b4567.RS500x500.jpg"
         }
@@ -258,8 +246,7 @@ class LibroLoader(
                 editorial = "Plata Publishing",
                 fechaPublicacion = LocalDate.of(1997, 4, 1),
                 estado = Estado.BUENO,
-                dueno = usuario2
-            )
+            ), usuario2
         ).apply {
             data.portada = "https://www.edicontinente.com.ar/image/titulos/9788466373005.jpg"
         }
@@ -276,8 +263,7 @@ class LibroLoader(
                 editorial = "Harper",
                 fechaPublicacion = LocalDate.of(2011, 1, 1),
                 estado = Estado.BUENO,
-                dueno = usuario2
-            )
+            ), usuario2
         ).apply {
             data.portada = "https://images.cdn1.buscalibre.com/fit-in/360x360/57/3d/573d2d38b86840ce6c919c61ac6d217f.jpg"
         }
