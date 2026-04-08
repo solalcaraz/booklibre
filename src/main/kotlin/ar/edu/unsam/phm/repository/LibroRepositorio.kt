@@ -16,13 +16,10 @@ import org.springframework.data.repository.query.Param
 
 @Repository
 interface LibroRepository : JpaRepository<Libro, Int>, JpaSpecificationExecutor<Libro> {
-    @EntityGraph(attributePaths = ["data.dueno"])
+    @EntityGraph(attributePaths = ["dueno"])
     override fun findById(id: Int): Optional<Libro>
     //en Kotlin preferimos el manejo de nulos nativo (Libro?), pero como estamos sobreescribiendo
     //el método de la interfaz de Spring para agregar @EntityGraph, estamos obligados a mantener Optional
-
-    @EntityGraph(attributePaths = ["data.dueno"])
-    override fun findAll(): List<Libro>
 
     @Modifying
     @Query(value = "UPDATE libro SET tipo_libro = :nuevoTipo WHERE id = :id", nativeQuery = true)
