@@ -2,6 +2,7 @@ package ar.edu.unsam.phm.domain
 
 import ar.edu.unsam.phm.env.Environment
 import ar.edu.unsam.phm.repository.EntidadConId
+import com.fasterxml.jackson.annotation.JsonValue
 import jakarta.persistence.Column
 import jakarta.persistence.DiscriminatorColumn
 import jakarta.persistence.DiscriminatorType
@@ -60,10 +61,6 @@ data class LibroData(
     @Enumerated(EnumType.STRING)
     var estado: Estado,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_usuario", nullable = false)
-    val dueno: Usuario,
-
     @Column(nullable = false, length = 500)
     var portada: String = Environment.API_URL + "/imagenes/libro-nuevo.jpg"
 )
@@ -80,6 +77,9 @@ por el momento, cada vez que se genera el ddl, se lee la anotacion CHECK y se ag
 abstract class Libro(
     @Embedded
     var data: LibroData,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", nullable = false)
+    val dueno: Usuario,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     override var id: Int? = null
@@ -92,6 +92,9 @@ abstract class Libro(
 
     @Column(nullable = false)
     var cantidadReservas: Int = 0
+
+    @Column(nullable = false)
+    var activo = true
 
     abstract fun plusBiblioKarma(cantidadBibliokarmas: Int): Int
 
@@ -112,21 +115,21 @@ abstract class Libro(
 
 @Entity
 @DiscriminatorValue("COMUN")
-class LibroComun(data: LibroData) : Libro(data) {
+class LibroComun(data: LibroData, usuario: Usuario) : Libro(data, usuario) {
     override fun plusBiblioKarma(cantidadBibliokarmas: Int): Int =
         if (cantidadBibliokarmas < 1000) data.cantPaginas * 5 else data.cantPaginas * 2
 }
 
 @Entity
 @DiscriminatorValue("DEDICATORIA")
-class LibroDedicatoria(data:LibroData) : Libro(data) {
+class LibroDedicatoria(data:LibroData, usuario: Usuario) : Libro(data, usuario) {
     override fun plusBiblioKarma(cantidadBibliokarmas: Int): Int =
         200 + 10 * cantidadReservas
 }
 
 @Entity
 @DiscriminatorValue("COLECCIONABLE")
-class LibroColeccionable(data:LibroData) : Libro(data) {
+class LibroColeccionable(data:LibroData, usuario: Usuario) : Libro(data, usuario) {
     override fun plusBiblioKarma(cantidadBibliokarmas: Int,): Int {
         val quintaParte = ceil(cantidadBibliokarmas / 5.0).toInt()
         return quintaParte + data.cantPaginas
@@ -139,7 +142,10 @@ enum class Genero(val label: String) {
     ROMANCE("Romance"),
     AUTOAYUDA("Autoayuda"),
     DISENO("Diseño"),
-    LITERATURA_CLASICA("Literatura Clásica"),
+    LITERATURA_CLASICA("Literatura Clásica");
+
+    @JsonValue
+    fun toJson() = label
 }
 
 enum class Idioma(val label: String) {

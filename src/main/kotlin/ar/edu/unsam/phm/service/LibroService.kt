@@ -3,31 +3,32 @@ package ar.edu.unsam.phm.service
 import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.dto.LibroDetalleDTO
 import org.springframework.stereotype.Service
-import ar.edu.unsam.phm.dto.MiLibroDTO
+import ar.edu.unsam.phm.dto.MiLibroProjection
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.helpers.LibroAdapter
 import ar.edu.unsam.phm.exceptions.ForbiddenException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.repository.LibroRepository
-import ar.edu.unsam.phm.repository.ReservaRepositorio
+import ar.edu.unsam.phm.repository.ReservaRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import jakarta.persistence.EntityManager
+import org.springframework.data.domain.PageRequest
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class LibroService(
-    val libroRepositorio: LibroRepository,
-    val reservaRepositorio: ReservaRepositorio,
+    val libroRepository: LibroRepository,
+    val reservaRepository: ReservaRepository,
     val usuarioRepository: UsuarioRepository,
     val libroMapper: LibroAdapter,
     val entityManager: EntityManager
 ) {
     @Transactional(readOnly = true)
     fun getByIdFor(id: Int, idUsuarioLogueado: Int): Libro {
-        val libro = libroRepositorio.findById(id)
+        val libro = libroRepository.findById(id)
             .orElseThrow { NotFoundException("Libro no encontrado.") }
-        if (libro.data.dueno.id != idUsuarioLogueado) {
+        if (libro.dueno.id != idUsuarioLogueado) {
             throw ForbiddenException("No tenés permisos para modificar este libro.")
         }
         return libro
@@ -37,7 +38,7 @@ class LibroService(
     fun create(libroDto: LibroDetalleDTO) {
         val dueno = usuarioRepository.findById(libroDto.idDueno).orElseThrow { NotFoundException("Usuario no encontrado") }
         val nuevoLibro = libroMapper.fromDto(libroDto, dueno)
-        libroRepositorio.save(nuevoLibro)
+        libroRepository.save(nuevoLibro)
     }
 
     @Transactional
@@ -52,32 +53,53 @@ class LibroService(
         val tipoNuevo = libroDto.tipo.toString()
         if (libroExistente.javaClass.simpleName != "Libro${tipoNuevo.lowercase().capitalize()}") {
             entityManager.detach(libroExistente)
-            libroRepositorio.cambiarTipoDeLibro(id, tipoNuevo)
+            libroRepository.cambiarTipoDeLibro(id, tipoNuevo)
         }
 
-        val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.data.dueno)
+        val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.dueno)
 
-        libroRepositorio.save(libroActualizado) //Si fuera un simple update, no habría que explicitar el save
+        libroRepository.save(libroActualizado) //Si fuera un simple update, no habría que explicitar el save
         //Pero como se genera una instancia nueva, para poder cambiar el tipo de libro, entonces es necesario,
         //porque literalmente crea uno nuevo. Si se convierte el tipo de libro en un dato ineditable, hay que cambiarlo
     }
 
-//    fun misLibros(userId: String, filter: String, sort: String?, page: Int, size: Int): PaginationResponseDTO<MiLibroDTO> {
-//        val idNumerico = userId.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
-//        /* Me traigo el usuario por ID*/
-//        val usuario = usuarioRepository.findById(idNumerico).orElseThrow { NotFoundException("Usuario no encontrado") }
-//
-//        /* Para los disponibles sigo necesitando llamar a todos los libros del usuario, no encuentro otra forma */
-//        /* Porque puede haber libros que nunca hayan sido reservados */
-//        val librosDelUsuario = libroRepositorio.librosDe(usuario)
-//
-//        return reservaRepositorio.buscarMisLibros(usuario, librosDelUsuario, filter, sort, page, size)
-//    }
+    fun buscarMisLibros(
+        userId: String,
+        filter: String,
+        sort: String?,
+        page: Int,
+        size: Int
+    ): PaginationResponseDTO<MiLibroProjection> {
+        val id = userId.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
+        /* Si no existe el usuario, lanza not found y corta el flujo de ejecución */
+        usuarioRepository.findById(id).orElseThrow { NotFoundException("Usuario no encontrado") }
+
+        val paginado = PageRequest.of(page, size)
+
+        val librosPage = when (filter) {
+            "Disponibles" -> libroRepository.librosDisponiblesDe(id, sort, paginado)
+            "Prestados" -> libroRepository.librosPrestadosDe(id, sort, paginado)
+            else -> libroRepository.todosLibrosDe(id, sort, paginado)
+        }
+
+        /* Esto lo puedo mover al controller, sería serializar el DTO final */
+        return PaginationResponseDTO(
+            items = librosPage.content,
+            page = librosPage.number,
+            size = librosPage.size,
+            totalItems = librosPage.totalElements.toInt(),
+            totalPages = librosPage.totalPages
+        )
+    }
 
     @Transactional
-    fun borrarLibro(id: String){
+    fun despublicarLibro(id: String){
         val idNumerico = id.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
+        val libro = libroRepository.findById(idNumerico)
+            .orElseThrow { NotFoundException("Libro no encontrado") }
 
-        return libroRepositorio.deleteById(idNumerico)
+        libro.activo = false
+
+        libroRepository.save(libro)
     }
 }
