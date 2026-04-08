@@ -2,7 +2,6 @@ package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.dto.LibroDetalleDTO
-import ar.edu.unsam.phm.repository.LibroRepositorio
 import org.springframework.stereotype.Service
 import ar.edu.unsam.phm.dto.MiLibroDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
@@ -24,18 +23,17 @@ class LibroService(
     val libroMapper: LibroAdapter,
     val entityManager: EntityManager
 ) {
-//    fun getById(id: Int): Libro = libroRepositorio.getById(id)
-
+    @Transactional(readOnly = true)
     fun getByIdFor(id: Int, idUsuarioLogueado: Int): Libro {
         val libro = libroRepositorio.findById(id)
             .orElseThrow { NotFoundException("Libro no encontrado.") }
-//        val libro = libroRepositorio.getById(id)
         if (libro.data.dueno.id != idUsuarioLogueado) {
             throw ForbiddenException("No tenés permisos para modificar este libro.")
         }
         return libro
     }
 
+    @Transactional
     fun create(libroDto: LibroDetalleDTO) {
         val dueno = usuarioRepository.findById(libroDto.idDueno).orElseThrow { NotFoundException("Usuario no encontrado") }
         val nuevoLibro = libroMapper.fromDto(libroDto, dueno)
@@ -59,14 +57,9 @@ class LibroService(
 
         val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.data.dueno)
 
-        // Generamos un libro nuevo en caso de que el tipo de libro sea distinto,
-        // así que tenemos que borrar el existente
-//        if (libroExistente::class != libroActualizado::class) {
-//            libroRepositorio.delete(libroExistente)
-//            libroRepositorio.flush()
-//        }
-
-        libroRepositorio.save(libroActualizado)
+        libroRepositorio.save(libroActualizado) //Si fuera un simple update, no habría que explicitar el save
+        //Pero como se genera una instancia nueva, para poder cambiar el tipo de libro, entonces es necesario,
+        //porque literalmente crea uno nuevo. Si se convierte el tipo de libro en un dato ineditable, hay que cambiarlo
     }
 
 //    fun misLibros(userId: String, filter: String, sort: String?, page: Int, size: Int): PaginationResponseDTO<MiLibroDTO> {
@@ -81,6 +74,7 @@ class LibroService(
 //        return reservaRepositorio.buscarMisLibros(usuario, librosDelUsuario, filter, sort, page, size)
 //    }
 
+    @Transactional
     fun borrarLibro(id: String){
         val idNumerico = id.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
 
