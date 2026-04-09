@@ -8,10 +8,13 @@ import { Home } from './pages/Home'
 import LibroForm from './pages/LibroForm'
 import './App.css'
 import { DetalleReservaPage } from './pages/DetalleReservaPage'
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <BrowserRouter>
+      <Toaster position="top-right" reverseOrder={false} />
+
       <Routes>
         <Route path="/auth/:mode" element={<AuthForm />} />
 

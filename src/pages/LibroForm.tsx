@@ -5,6 +5,7 @@ import { BaseInput } from "../components/BaseInput";
 import { Libro, type LibroFormData, type LibroErrors } from "../classes/Libro";
 import { GENERO_OPTIONS, TIPO_OPTIONS, IDIOMA_OPTIONS, ESTADO_OPTIONS } from "../utils/formateEnumLibros";
 import { useOnInit } from "../utils/hooks";
+import toast from "react-hot-toast";
 
 const initialFormData: LibroFormData = {
     titulo: "", tipo: "", genero: "", autor: "", idioma: "",
@@ -25,6 +26,7 @@ export default function LibroForm() {
     const [errors, setErrors] = useState<LibroErrors>({});
     //Para el manejo de errores de acceso (editar un libro que no es tuyo/no existe)
     const [accessError, setAccessError] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const loadLibro = async () => {
     if (!id) return;
@@ -84,20 +86,29 @@ export default function LibroForm() {
         const validationErrors = LibroInstance.validate();
         setErrors(validationErrors);
 
-        if (Libro.hasErrors(validationErrors)) return;
+        if (Libro.hasErrors(validationErrors)) {
+            toast.error("Por favor, revisá los errores en el formulario");
+            return;
+        }
 
+        setIsSubmitting(true);
         try {
             if (id) {
                 await libroService.update(id, formData);
-                navigate(0); //Refresh forzado
+                toast.success("¡Libro actualizado con éxito!");
+                //navigate(0); //Refresh forzado
                 // navigate(`/libros/editar/${id}`) //Para usar con toasts
             } else {
                 await libroService.create(formData);
+                toast.success("¡Libro creado con éxito!");
                 navigate('/profile');
             }
         } catch (error: any) {
             const mensajeBack = error.response?.data?.message;
-            alert(mensajeBack || "¡Error al guardar el libro! No se pudo conectar con el servidor. Intente de nuevo más tarde.");
+            toast.error(mensajeBack || "Hubo un problema al guardar el libro");
+            //alert(mensajeBack || "¡Error al guardar el libro! No se pudo conectar con el servidor. Intente de nuevo más tarde.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -175,8 +186,12 @@ export default function LibroForm() {
 
                         {/* Botones de acción */}
                         <div className="md:col-span-2 flex gap-4 mt-4">
-                            <button type="submit" className="flex-1 rounded-lg bg-[#7bedac] py-3 font-bold text-slate-800 hover:brightness-95 transition cursor-pointer">
-                                {id ? "Guardar Cambios" : "Añadir Libro"}
+                            <button 
+                                type="submit" 
+                                disabled={isSubmitting}
+                                className={`flex-1 rounded-lg py-3 font-bold text-slate-800 transition cursor-pointer ${isSubmitting ? 'bg-slate-300' : 'bg-[#7bedac] hover:brightness-95'}`}
+                            >
+                                {isSubmitting ? "Guardando..." : (id ? "Guardar Cambios" : "Añadir Libro")}
                             </button>
                             <button type="button" onClick={() => navigate(-1)} className="flex-1 rounded-lg bg-slate-100 py-3 font-bold text-slate-500 hover:bg-slate-200 transition cursor-pointer">
                                 Cancelar
