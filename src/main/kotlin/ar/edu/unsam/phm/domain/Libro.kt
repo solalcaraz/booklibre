@@ -22,6 +22,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.Check
+import org.hibernate.annotations.SQLRestriction
 import java.time.LocalDate
 import java.util.Locale
 import kotlin.math.ceil
@@ -73,7 +74,7 @@ por el momento, cada vez que se genera el ddl, se lee la anotacion CHECK y se ag
 @Check(constraints = "tipo_libro IN ('COMUN', 'DEDICATORIA', 'COLECCIONABLE')")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_libro", discriminatorType = DiscriminatorType.STRING)
-
+@SQLRestriction("activo = true")
 abstract class Libro(
     @Embedded
     var data: LibroData,
@@ -93,8 +94,9 @@ abstract class Libro(
     @Column(nullable = false)
     var cantidadReservas: Int = 0
 
+
     @Column(nullable = false)
-    var activo = true
+    var activo: Boolean = true
 
     abstract fun plusBiblioKarma(cantidadBibliokarmas: Int): Int
 
