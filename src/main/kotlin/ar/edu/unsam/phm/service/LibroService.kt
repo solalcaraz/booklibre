@@ -24,12 +24,10 @@ class LibroService(
     val libroMapper: LibroAdapter,
     val entityManager: EntityManager
 ) {
-//    fun getById(id: Int): Libro = libroRepositorio.getById(id)
-
+    @Transactional(readOnly = true)
     fun getByIdFor(id: Int, idUsuarioLogueado: Int): Libro {
         val libro = libroRepository.findById(id)
             .orElseThrow { NotFoundException("Libro no encontrado.") }
-//        val libro = libroRepositorio.getById(id)
         if (libro.dueno.id != idUsuarioLogueado) {
             throw ForbiddenException("No tenés permisos para modificar este libro.")
         }
@@ -60,14 +58,9 @@ class LibroService(
 
         val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.dueno)
 
-        // Generamos un libro nuevo en caso de que el tipo de libro sea distinto,
-        // así que tenemos que borrar el existente
-//        if (libroExistente::class != libroActualizado::class) {
-//            libroRepositorio.delete(libroExistente)
-//            libroRepositorio.flush()
-//        }
-
-        libroRepository.save(libroActualizado)
+        libroRepository.save(libroActualizado) //Si fuera un simple update, no habría que explicitar el save
+        //Pero como se genera una instancia nueva, para poder cambiar el tipo de libro, entonces es necesario,
+        //porque literalmente crea uno nuevo. Si se convierte el tipo de libro en un dato ineditable, hay que cambiarlo
     }
 
     fun buscarMisLibros(

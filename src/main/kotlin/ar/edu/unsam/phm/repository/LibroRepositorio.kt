@@ -1,6 +1,8 @@
 package ar.edu.unsam.phm.repository
 
 import ar.edu.unsam.phm.domain.Libro
+import org.springframework.stereotype.Repository
+import java.util.*
 import ar.edu.unsam.phm.dto.MiLibroProjection
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -11,10 +13,14 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
-import org.springframework.stereotype.Repository
 
 @Repository
 interface LibroRepository : JpaRepository<Libro, Int>, JpaSpecificationExecutor<Libro> {
+    @EntityGraph(attributePaths = ["dueno"])
+    override fun findById(id: Int): Optional<Libro>
+    //en Kotlin preferimos el manejo de nulos nativo (Libro?), pero como estamos sobreescribiendo
+    //el método de la interfaz de Spring para agregar @EntityGraph, estamos obligados a mantener Optional
+
     @Modifying
     @Query(value = "UPDATE libro SET tipo_libro = :nuevoTipo WHERE id = :id", nativeQuery = true)
     fun cambiarTipoDeLibro(id: Int, nuevoTipo: String)
