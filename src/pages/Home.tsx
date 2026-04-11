@@ -14,7 +14,7 @@ const hoy = formatearFecha(new Date())
 const filtrosIniciales: FiltrosLibro = {
   generos: [],
   cantPaginasMin: 0,
-  cantPaginasMax: 1000,
+  cantPaginasMax: 2000,
   fechaDesde: hoy,
   fechaHasta: hoy,
   isbn: '',
