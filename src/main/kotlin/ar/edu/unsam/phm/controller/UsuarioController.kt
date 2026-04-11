@@ -28,4 +28,9 @@ class UsuarioController(val usuarioService: UsuarioService, val usuarioMapper: U
     fun updateUsuario(@PathVariable id: String, @RequestBody userPatch: UsuarioPatchRequest) {
         return usuarioService.updateUsuario(userPatch, id)
     }
+
+    @GetMapping("/bibliokarmas/{id}")
+    fun getBibliokarma(@PathVariable id: String): Int {
+        return usuarioService.getBibliokarma(id)
+    }
 }
