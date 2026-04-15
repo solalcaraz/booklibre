@@ -167,7 +167,7 @@ export default function LibroForm() {
                             <BaseInput label="Título" type="text" name="titulo" value={formData.titulo} onChange={handleChange} error={errors.titulo} />
                         </div>
 
-                        <BaseInput label="Tipo" type="select" name="tipo" value={formData.tipo} onChange={handleChange} options={tipoOptions} error={errors.tipo} />
+                        <BaseInput label="Tipo" type="select" name="tipo" value={formData.tipo} onChange={handleChange} options={tipoOptions} error={errors.tipo} disabled={!!id} />
                         <BaseInput label="Género" type="select" name="genero" value={formData.genero} onChange={handleChange} options={generoOptions} error={errors.genero} />
 
                         <BaseInput label="Autor" type="text" name="autor" value={formData.autor} onChange={handleChange} error={errors.autor} />
