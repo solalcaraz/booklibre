@@ -93,14 +93,15 @@ class ReservaService(
 
         val biblioKarmas = reserva.calcularBiblioKarmas()
         val calificacionPromedio = libro.calcularCalificacionPromedio()
-        val ultimasReservas = reservaRepository.findTop2UltimasReservas(libroId)
+        val ultimasResenias = libro.getUltimasDosResenias()
+        
         val reservasOcupadas = reservaRepository.findReservasOcupadas(libroId)
 
         return reservaAdapter.toDetalleReservaDto(
             reserva = reserva,
             bibliokarmas = biblioKarmas,
             calificacionPromedio = calificacionPromedio,
-            ultimasReservas = ultimasReservas,
+            ultimasResenias = ultimasResenias,
             reservasOcupadas = reservasOcupadas
         )
     }

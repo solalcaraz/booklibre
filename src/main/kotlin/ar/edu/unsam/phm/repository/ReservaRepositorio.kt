@@ -51,11 +51,11 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
     fun findPuntuacionesByLibroId(@Param("libroId") libroId: Int): List<Int>
 
     //Ultimas dos reservas
-    @Query("SELECT r FROM Reserva r WHERE r.libro.id = :libroId AND r.fechaHasta < :hoy AND r.resenia IS NOT NULL ORDER BY r.fechaHasta DESC")
-    fun findTop2UltimasReservas(
-        @Param("libroId") libroId: Int,
-        @Param("hoy") hoy: LocalDate = LocalDate.now()
-    ): List<Reserva>
+//    @Query("SELECT r FROM Reserva r WHERE r.libro.id = :libroId AND r.fechaHasta < :hoy AND r.resenia IS NOT NULL ORDER BY r.fechaHasta DESC")
+//    fun findTop2UltimasReservas(
+//        @Param("libroId") libroId: Int,
+//        @Param("hoy") hoy: LocalDate = LocalDate.now()
+//    ): List<Reserva>
 
     // Trae las reservas de un libro que aún no finalizaron (fechaHasta >= HOY)
     @Query("SELECT r FROM Reserva r WHERE r.libro.id = :libroId AND r.fechaHasta >= CURRENT_DATE")
@@ -157,18 +157,18 @@ class ReservaRepositorio : Repositorio<Reserva>(searchStrategy = ReservaSearchSt
         objetos.values.count { it.libro.id == id }
 
     // devuelve una lista de las puntaciones que tiene un libro
-    fun getPuntuacionesByLibro(id: Int): List<Int> =
-        objetos.values
-            .filter { it.libro.id == id }
-            .mapNotNull { it.resenia?.puntuacion }
-
-    fun getUltimasReservas(libro:Libro): List<Reserva>{
-        return buscarPorLibro(libro)
-            .filter { it.estaFinalizada() }
-            .filter { it.resenia != null }
-            .sortedByDescending { it.fechaHasta }
-            .take(2)
-    }
+//    fun getPuntuacionesByLibro(id: Int): List<Int> =
+//        objetos.values
+//            .filter { it.libro.id == id }
+//            .mapNotNull { it.resenia?.puntuacion }
+//
+//    fun getUltimasReservas(libro:Libro): List<Reserva>{
+//        return buscarPorLibro(libro)
+//            .filter { it.estaFinalizada() }
+//            .filter { it.resenia != null }
+//            .sortedByDescending { it.fechaHasta }
+//            .take(2)
+//    }
 
     fun getReservasOcupadas(libro:Libro): List<Reserva>{
         return buscarPorLibro(libro)

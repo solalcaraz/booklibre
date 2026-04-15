@@ -11,7 +11,6 @@ data class ReservaDTO(
     val fechaHasta: LocalDate,
     val estado: String,
     val puedeCalificar: Boolean,
-    val reseniaPuntuacion: Int?
 )
 
 data class ReservaRequestDTO(

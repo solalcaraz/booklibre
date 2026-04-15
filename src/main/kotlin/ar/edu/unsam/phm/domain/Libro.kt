@@ -20,6 +20,8 @@ import jakarta.persistence.Inheritance
 import jakarta.persistence.InheritanceType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Table
 import org.hibernate.annotations.Check
 import org.hibernate.annotations.SQLRestriction
@@ -86,14 +88,10 @@ abstract class Libro(
     override var id: Int? = null
 ) : EntidadConId {
     @Column(nullable = false)
-    var sumaPuntajes: Int = 0
-
-    @Column(nullable = false)
-    var cantidadResenias: Int = 0
-
-    @Column(nullable = false)
     var cantidadReservas: Int = 0
 
+    @OneToMany(mappedBy = "libro", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    private val resenias: MutableList<Resenia> = mutableListOf()
 
     @Column(nullable = false)
     var activo: Boolean = true
@@ -101,17 +99,21 @@ abstract class Libro(
     abstract fun plusBiblioKarma(cantidadBibliokarmas: Int): Int
 
     fun calcularCalificacionPromedio(): Double {
-        if (cantidadResenias == 0) return 0.0
-        val promedio = sumaPuntajes.toDouble() / cantidadResenias
+        if (resenias.isEmpty()) return 0.0
+        val sumaPuntajes = resenias.map { it.puntuacion }.sum()
+        val promedio = sumaPuntajes.toDouble() / resenias.size
         return String.format(Locale.US, "%.1f", promedio).toDouble()
         //Para que sea 4.5 y no 4,5.
     }
 
     fun aumentarReserva() { cantidadReservas++ }
 
-    fun agregarPuntaje(puntaje: Int) {
-        sumaPuntajes += puntaje
-        cantidadResenias += 1
+    fun agregarResenia(resenia: Resenia) {
+        resenias.add(resenia)
+    }
+
+    fun getUltimasDosResenias(): List<Resenia> {
+        return resenias.sortedByDescending { it.fecha }.take(2)
     }
 }
 

@@ -31,14 +31,12 @@ class Reserva(
     val fechaDesde: LocalDate,
 
     @Column(name = "fecha_hasta", nullable = false)
-    val fechaHasta: LocalDate,
-
-    //Una reseña no existe sin reserva, un usuario puede comentar sobre un libro que reservo.
-    @OneToOne(mappedBy = "reserva", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    var resenia: Resenia? = null,
-    //Cascade all porque resenia depende de reserva, mismo ciclo de vida
+    val fechaHasta: LocalDate
 
 ) : EntidadConId {
+    @Column(nullable = false)
+    private var yaResenio: Boolean = false
+
     init {
         if (fechaHasta.isBefore(fechaDesde)) {
             throw BadRequestException("La fecha hasta no puede ser anterior a la fecha desde.")
@@ -60,15 +58,6 @@ class Reserva(
         return LocalDate.now().isAfter(this.fechaHasta)
     }
 
-    fun validarReseña(resenia: Resenia) {
-        if (resenia.puntuacion !in 0..5) {
-            throw BadRequestException("El puntaje debe estar entre 0 y 5")
-        }
-        if (resenia.comentario.isBlank()) {
-            throw BadRequestException("El comentario no puede estar vacio")
-        }
-    }
-
     fun calcularDias() = ChronoUnit.DAYS.between(fechaDesde, fechaHasta).toInt() + 1
 
     fun calcularBiblioKarmas(): Int {
@@ -85,5 +74,9 @@ class Reserva(
         return EstadoReserva.ACTIVO.value
     }
 
-    fun puedeCalificar(): Boolean = resenia == null && estaFinalizada()
+    fun calificar() {
+        yaResenio = true
+    }
+
+    fun puedeCalificar(): Boolean = yaResenio == false && estaFinalizada()
 }
