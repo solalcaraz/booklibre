@@ -1,9 +1,8 @@
 package ar.edu.unsam.phm.controller
 
 import ar.edu.unsam.phm.dto.LibroDetalleDTO
-import ar.edu.unsam.phm.dto.MiLibroDTO
+import ar.edu.unsam.phm.dto.MiLibroProjection
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
-import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.helpers.LibroAdapter
 import ar.edu.unsam.phm.service.LibroService
 import org.springframework.web.bind.annotation.*
@@ -26,15 +25,15 @@ class LibroController(
     @PutMapping("/libro/{id}")
     fun actualizarLibro(@PathVariable id: Int, @RequestBody libroDTO: LibroDetalleDTO) { libroService.update(id, libroDTO) }
 
-//    @GetMapping("/misLibros/{userId}")
-//    fun listarMisLibros(
-//        @PathVariable userId: String, // Esto después va a ser un token por headers
-//        @RequestParam(defaultValue = "0") page: Int,
-//        @RequestParam(defaultValue = "3") size: Int, // Cambiable por @ModelAttribute
-//        @RequestParam(defaultValue = "Todos") filter: String,
-//        @RequestParam(required = false) sort: String?
-//    ): PaginationResponseDTO<MiLibroDTO> = libroService.misLibros(userId, filter, sort, page, size)
+    @GetMapping("/misLibros/{userId}")
+    fun listarMisLibros(
+        @PathVariable userId: String, // Esto después va a ser un token por headers
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "3") size: Int, // Cambiable por @ModelAttribute
+        @RequestParam(defaultValue = "Todos") filter: String,
+        @RequestParam(required = false) sort: String? = ""
+    ): PaginationResponseDTO<MiLibroProjection> = libroService.buscarMisLibros(userId, filter, sort, page, size)
 
     @DeleteMapping("/misLibros/{bookId}")
-    fun removeLibro(@PathVariable bookId: String) = libroService.borrarLibro(bookId)
+    fun removeLibro(@PathVariable bookId: String) = libroService.despublicarLibro(bookId)
 }

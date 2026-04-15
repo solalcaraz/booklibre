@@ -61,7 +61,7 @@ class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
     override fun toDto(reserva: Reserva): ReservaDTO {
         //Todo: implementar logica de bibliokarmas
         val libroResumen = LibroResumen(reserva.libro.data.titulo, reserva.libro.data.autor, reserva.libro.calcularCalificacionPromedio(), reserva.libro.data.portada)
-        return ReservaDTO( reserva.id, libroResumen, reserva.libro.data.dueno.nombreCompleto,
+        return ReservaDTO( reserva.id, libroResumen, reserva.libro.dueno.nombreCompleto,
             0, reserva.fechaDesde, reserva.fechaHasta, reserva.calcularEstado(), reserva.puedeCalificar(), reserva.resenia?.puntuacion)
     }
 }

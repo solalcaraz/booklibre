@@ -5,15 +5,11 @@ import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.dto.PaginationReqDTO
 import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.DetalleReservaDTO
-import ar.edu.unsam.phm.dto.PaginationResponseDTO
-import ar.edu.unsam.phm.dto.ReservaLibroDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
 import ar.edu.unsam.phm.exceptions.BadRequestException
-import ar.edu.unsam.phm.dto.toReservaLibroDTO
 import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.ReservaAdapter
-import ar.edu.unsam.phm.helpers.paginate
 import ar.edu.unsam.phm.repository.LibroRepository
 import ar.edu.unsam.phm.repository.LibroSpecifications
 import ar.edu.unsam.phm.repository.ReservaRepositorio
@@ -26,13 +22,12 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import kotlin.text.toInt
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ReservaService(
     private val reservaRepositorio: ReservaRepositorio,
     private val reservaRepository: ReservaRepository,
-    private val libroRepositorio: LibroRepository,
+    private val libroRepository: LibroRepository,
     private val usuarioRepository: UsuarioRepository,
     private val reservaAdapter: ReservaAdapter
 ) {
@@ -74,7 +69,7 @@ class ReservaService(
         val pageable = PageRequest.of(filtros.numeroPagina, filtros.tamanoPaginado, filtros.orden.toSort())
 
         // se transforma Page<Libro> en Page<Reserva>
-        return libroRepositorio.findAll(spec, pageable).map { libro ->
+        return libroRepository.findAll(spec, pageable).map { libro ->
             Reserva(
                 libro = libro,
                 lector = usuario,
@@ -128,8 +123,7 @@ class ReservaService(
             throw ConflictException("El libro ya se encuentra reservado en esas fechas.") //otra exception, el usuario la pifio
         }
 
-        val cantidadReservas = libro.cantidadReservas
-        val bibliokarmasGanados = nuevaReserva.calcularBiblioKarmas(cantidadReservas)
+        val bibliokarmasGanados = nuevaReserva.calcularBiblioKarmas()
         usuario.aumentarBiblioKarmas(bibliokarmasGanados)
         usuarioRepository.save(usuario)
         reservaRepository.save(nuevaReserva)
