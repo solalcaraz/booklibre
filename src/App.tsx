@@ -9,11 +9,14 @@ import LibroForm from './pages/LibroForm'
 import './App.css'
 import { DetalleReservaPage } from './pages/DetalleReservaPage'
 import { UserProvider } from './contexts/UserContext'
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <UserProvider>
       <BrowserRouter>
+        <Toaster position="top-right" reverseOrder={false} />
+        
         <Routes>
           <Route path="/auth/:mode" element={<AuthForm />} />
 

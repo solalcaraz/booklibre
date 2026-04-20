@@ -14,14 +14,14 @@ const hoy = formatearFecha(new Date())
 const filtrosIniciales: FiltrosLibro = {
   generos: [],
   cantPaginasMin: 0,
-  cantPaginasMax: 1000,
+  cantPaginasMax: 2000,
   fechaDesde: hoy,
   fechaHasta: hoy,
   isbn: '',
   usuarioPrestador: '',
   orden: 'TITULO_ASC',
   numeroPagina: 0,
-  tamanoPaginado: 3
+  tamanoPaginado: 6
 }
 
 export const Home = () => {
