@@ -13,9 +13,6 @@ class LibroController(
     val libroService: LibroService,
     val libroAdapter: LibroAdapter
 ){
-//    @GetMapping("/libro/{id}")
-//    fun obtenerLibro(@PathVariable id: Int): LibroDetalleDTO = libroAdapter.toDetalleDto(libroService.getById(id))
-
     @GetMapping("/libro/{id}")
     fun obtenerLibroPara(@PathVariable id: Int, @RequestHeader("X-User-Id") idUsuarioLogueado: Int): LibroDetalleDTO = libroAdapter.toDetalleDto(libroService.getByIdFor(id, idUsuarioLogueado))
 
