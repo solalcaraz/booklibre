@@ -1,8 +1,10 @@
 import logoImg from '../assets/icons/logo.png'
 import bibliokarmaIcon from '../assets/icons/bibliokarma.png'
+import logoutIcon from '../assets/icons/logout-icon.svg'
 import defaultUser from '../assets/images/user.png'
-import { useState } from 'react';
-import { NavLink } from 'react-router-dom'
+import { useUser } from '../contexts/UserContext'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
 
 interface NavItemProps {
   to: string
@@ -23,13 +25,34 @@ export const NavItem = ({ to, label }: NavItemProps) => {
 }
 
 export default function Navbar() {
-  const [bibliokarma, setBibliokarma] = useState<number>(0)
+  const { user, logout } = useUser()
+  const [showDropdwn, setShowDropdwn] = useState(false)
+  const bibliokarma = user?.bibliokarmas || 0
+  const navigate = useNavigate()
 
   const items: NavItemProps[] = [
     { to: '/home', label: 'Inicio' },
     { to: `/prestamos`, label: 'Mis Préstamos' },
     { to: '/profile', label: 'Perfil' }
   ]
+
+  const handleLogout = () => {
+    logout()
+    navigate('/auth/login')
+  }
+
+  // cerrar dropdown de logout cuando hace click fuera 
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setShowDropdwn(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   return (
     <nav className="w-full bg-white">
@@ -62,11 +85,26 @@ export default function Navbar() {
               </span>
             </div>
 
-            <img
-              src={defaultUser}
-              alt=""
-              className="w-10 h-10 rounded-full object-cover"
-            />
+            <div className="relative" ref={ref}>
+              <img
+                src={user?.imagen || defaultUser}
+                alt=""
+                onClick={() => setShowDropdwn(!showDropdwn)}
+                className="w-10 h-10 rounded-full object-cover"
+              />
+
+              {showDropdwn && (
+                <div className="absolute right-0 mt-2 w-40 bg-white overflow-hidden cursor-pointer rounded-lg shadow-md">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left flex justify-between px-4 py-2 hover:bg-gray-100"
+                  >
+                    Cerrar sesion
+                  <img src={logoutIcon} alt="" className="w-6 h-6" />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

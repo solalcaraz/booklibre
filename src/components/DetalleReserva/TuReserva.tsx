@@ -5,6 +5,8 @@ import { reservaService } from '../../services/ReservaService'
 import { getMensajeError, type ErrorCustom } from '../../utils/errorHandler'
 import { useNavigate, type ErrorResponse } from 'react-router-dom'
 import { ErrorCard } from '../ErrorCard'
+import { usuarioService } from '../../services/UsuarioService'
+import { useUser } from '../../contexts/UserContext'
 
 interface Props {
   libroId: number
@@ -46,6 +48,7 @@ export const TuReserva = ({
   const [error, setError] = useState<ErrorCustom | null>(null)
   const [exito, setExito] = useState<boolean>(false)
   const navigate = useNavigate()
+  const { updateUser } = useUser()
 
   const nuevaReserva = new Reserva(libroId.toString(), fechaDesde, fechaHasta, fechasOcupadas)
   const btnClassName = `${btnBase} ${exito ? btnExito : btnNormal}`
@@ -57,6 +60,10 @@ export const TuReserva = ({
     try {
       const reservaJSON = nuevaReserva.toJSON()
       await reservaService.crearReserva(reservaJSON)
+
+      const bibliokarmas = await usuarioService.getBibliokarmas()
+      updateUser({ bibliokarmas })
+      
       setExito(true)
       setTimeout(() => {
         navigate('/prestamos')
