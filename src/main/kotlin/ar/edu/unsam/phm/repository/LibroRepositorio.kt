@@ -21,7 +21,11 @@ interface LibroRepository : JpaRepository<Libro, Int>, JpaSpecificationExecutor<
     //en Kotlin preferimos el manejo de nulos nativo (Libro?), pero como estamos sobreescribiendo
     //el método de la interfaz de Spring para agregar @EntityGraph, estamos obligados a mantener Optional
 
-    @EntityGraph(attributePaths = ["dueno"])
+    @Modifying
+    @Query(value = "UPDATE libro SET tipo_libro = :nuevoTipo WHERE id = :id", nativeQuery = true)
+    fun cambiarTipoDeLibro(id: Int, nuevoTipo: String)
+
+    @EntityGraph(attributePaths = ["dueno", "resenias"])
     override fun findAll(spec: Specification<Libro>, pageable: Pageable): Page<Libro>
 
     /* Traigo todos los libros de un usuario y los etiqueto en una projection */
