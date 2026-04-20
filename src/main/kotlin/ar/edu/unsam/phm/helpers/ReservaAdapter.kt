@@ -15,7 +15,7 @@ interface ReservaAdapter {
         ultimasResenias: List<Resenia>,
         reservasOcupadas: List<Reserva>
     ): DetalleReservaDTO
-    fun toDto(reserva: Reserva): ReservaDTO
+    fun toDto(reserva: Reserva, calificacionPromedio: Double): ReservaDTO
 }
 
 @Service
@@ -48,7 +48,7 @@ class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
     }
 
     override fun toDtoReservaPag(page: Page<Reserva>): PaginationResponseDTO<ReservaDTO> {
-        val reservasDto = page.content.map { this.toDto(it ) }
+        val reservasDto = page.content.map { this.toDto(it, it.libro.calcularCalificacionPromedio()) }
         return PaginationResponseDTO(
             items = reservasDto,
             page = page.number,
@@ -58,10 +58,9 @@ class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
         )
     }
 
-    override fun toDto(reserva: Reserva): ReservaDTO {
-        //Todo: implementar logica de bibliokarmas
-        val libroResumen = LibroResumen(reserva.libro.data.titulo, reserva.libro.data.autor, reserva.libro.calcularCalificacionPromedio(), reserva.libro.data.portada)
+    override fun toDto(reserva: Reserva, calificacionPromedio: Double): ReservaDTO {
+        val libroResumen = LibroResumen(reserva.libro.data.titulo, reserva.libro.data.autor, calificacionPromedio, reserva.libro.data.portada)
         return ReservaDTO( reserva.id, libroResumen, reserva.libro.dueno.nombreCompleto,
-            0, reserva.fechaDesde, reserva.fechaHasta, reserva.calcularEstado(), reserva.puedeCalificar())
+            reserva.calcularBiblioKarmas(), reserva.fechaDesde, reserva.fechaHasta, reserva.calcularEstado(), reserva.puedeCalificar())
     }
 }

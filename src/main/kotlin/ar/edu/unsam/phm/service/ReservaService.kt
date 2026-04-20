@@ -6,6 +6,8 @@ import ar.edu.unsam.phm.dto.PaginationReqDTO
 import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.DetalleReservaDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
+import ar.edu.unsam.phm.dto.ReservaDTO
+import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
@@ -31,13 +33,16 @@ class ReservaService(
     private val usuarioRepository: UsuarioRepository,
     private val reservaAdapter: ReservaAdapter
 ) {
-    fun getMisReservas(payload: PaginationReqDTO<ReservaRequestDTO>): Page<Reserva> {
+    //Todo: consultar que forma es mejor
+    @Transactional(readOnly = true)
+    fun getMisReservas(payload: PaginationReqDTO<ReservaRequestDTO>): PaginationResponseDTO<ReservaDTO> {
         val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
-        return reservaRepository.findPrestadosAMi(
+        val page = reservaRepository.findPrestadosAMi(
             usuarioId.toInt(),
             payload.filter.inputSearch,
             PageRequest.of(payload.pageNumber, payload.pageSize)
         )
+        return reservaAdapter.toDtoReservaPag(page)
     }
 
     fun getPrestadosPorMi(payload: PaginationReqDTO<ReservaRequestDTO>): Page<Reserva> {
@@ -107,7 +112,7 @@ class ReservaService(
     }
 
     @Transactional(readOnly = false)
-    fun crearReserva(userID: Int, reserva: CrearReservaDTO): Reserva {
+    fun crearReserva(userID: Int, reserva: CrearReservaDTO): ReservaDTO {
 
         val libro = libroRepository.findById(reserva.libroId).orElseThrow { NotFoundException("Libro no encontrado") }
         val usuario = usuarioRepository.findById(userID).orElseThrow { NotFoundException("Usuario no encontrado") }
@@ -129,6 +134,10 @@ class ReservaService(
         usuarioRepository.save(usuario)
         reservaRepository.save(nuevaReserva)
         libro.aumentarReserva()
-        return nuevaReserva
+        
+        // Calcular la calificación y el dto dentro de la transacción para evitar el bug de lazy loading
+        val calificacionPromedio = libro.calcularCalificacionPromedio()
+        
+        return reservaAdapter.toDto(nuevaReserva, calificacionPromedio)
     }
 }

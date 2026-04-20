@@ -36,8 +36,7 @@ class ReservaController (private val reservaService: ReservaService, private val
     fun obtenerReservas(
         @RequestBody payload: PaginationReqDTO<ReservaRequestDTO>
     ): PaginationResponseDTO<ReservaDTO> {
-        val page = reservaService.getMisReservas(payload)
-        return reservaMapper.toDtoReservaPag(page)
+        return reservaService.getMisReservas(payload)
     }
 
     @PostMapping("/obtenerPrestadosPorMi")
@@ -88,7 +87,6 @@ class ReservaController (private val reservaService: ReservaService, private val
         @RequestHeader("userId") userId: String,
         @RequestBody reserva: CrearReservaDTO
     ): ReservaDTO {
-        val nuevaReserva = reservaService.crearReserva(userId.toInt(), reserva)
-        return reservaMapper.toDto(nuevaReserva)
+        return reservaService.crearReserva(userId.toInt(), reserva)
     }
 }
