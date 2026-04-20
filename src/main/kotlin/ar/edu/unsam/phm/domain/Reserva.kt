@@ -78,5 +78,5 @@ class Reserva(
         yaResenio = true
     }
 
-    fun puedeCalificar(): Boolean = yaResenio == false && estaFinalizada()
+    fun puedeCalificar(): Boolean = !yaResenio && estaFinalizada()
 }

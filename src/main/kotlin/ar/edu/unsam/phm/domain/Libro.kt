@@ -100,7 +100,7 @@ abstract class Libro(
 
     fun calcularCalificacionPromedio(): Double {
         if (resenias.isEmpty()) return 0.0
-        val sumaPuntajes = resenias.map { it.puntuacion }.sum()
+        val sumaPuntajes = resenias.sumOf { it.puntuacion }
         val promedio = sumaPuntajes.toDouble() / resenias.size
         return String.format(Locale.US, "%.1f", promedio).toDouble()
         //Para que sea 4.5 y no 4,5.
