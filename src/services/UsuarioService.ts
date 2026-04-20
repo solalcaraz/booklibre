@@ -80,6 +80,13 @@ class UsuarioService {
 
     return response.data
   }
+
+  async getBibliokarmas(): Promise<number> {
+    const user = authService.userDeStorage()
+    const response = await axios.get<number>(API_URL + `/usuario/bibliokarmas/${user.id}`)
+
+    return response.data
+  }
 }
 
 export const usuarioService = new UsuarioService()

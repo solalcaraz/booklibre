@@ -6,6 +6,7 @@ import { FormInput } from '../components/FormInput'
 import { type AuthErrors, type AuthFormData, Auth } from '../classes/Auth'
 import { useOnInit } from '../utils/hooks'
 import { authService } from '../services/AuthService'
+import { useUser } from '../contexts/UserContext'
 import { getMensajeError, type ErrorCustom, type ErrorResponse } from '../utils/errorHandler'
 
 const initialFormData: AuthFormData = {
@@ -21,6 +22,7 @@ export const AuthForm = () => {
   const [responseErrors, setResponseErrors] = useState<ErrorCustom | null>(null)
   const navigate = useNavigate()
   const { mode } = useParams()
+  const { updateUser } = useUser()
 
   const isValidMode = mode === 'login' || mode === 'register'
   const isLogin = mode === 'login'
@@ -93,7 +95,7 @@ export const AuthForm = () => {
         const user = await authService.login(loginData)
 
         if (user.id) {
-          window.localStorage.setItem('user', JSON.stringify(user))
+          updateUser(user)
         }
 
         navigate('/home')
@@ -104,7 +106,7 @@ export const AuthForm = () => {
       const user = await authService.register(registerData)
 
       if (user.id) {
-        window.localStorage.setItem('user', JSON.stringify(user))
+        updateUser(user)
       }
 
       navigate('/home')
