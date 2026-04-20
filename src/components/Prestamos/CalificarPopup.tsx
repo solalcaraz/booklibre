@@ -3,6 +3,7 @@ import type { ReseniaReq } from '../../models/ReseniaModel'
 import type { ReservaResponseModel } from '../../models/ReservaModel'
 import { reservaService } from '../../services/ReservaService'
 import { getMensajeError, type ErrorResponse } from '../../utils/errorHandler'
+import toast from 'react-hot-toast'
 
 interface Props {
   open: boolean | null
@@ -15,14 +16,11 @@ export function CalificarPopup({ open, onClose, reserva }: Props) {
   const [hover, setHover] = useState(0)
   const [comentario, setComentario] = useState('')
   const [mostrarError, setMostrarError] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   if (!open) return null
 
   const submit = async () => {
-    setErrorMessage(null)
-
     if (puntaje === 0 || comentario.length === 0) {
       setMostrarError(true)
       return
@@ -39,10 +37,11 @@ export function CalificarPopup({ open, onClose, reserva }: Props) {
 
     try {
       await reservaService.calificar(payload)
+      toast.success('Calificaste exitosamente!')
       onClose(true)
     } catch (error: unknown) {
       const { message } = getMensajeError(error as ErrorResponse)
-      setErrorMessage(message)
+      toast.error(message)
       console.error(error)
     } finally {
       setLoading(false)
@@ -59,12 +58,6 @@ export function CalificarPopup({ open, onClose, reserva }: Props) {
             Debe completar puntuacion y comentario
           </div> )
         }
-
-        {errorMessage && (
-          <div className='text-red-500 mb-3'>
-            {errorMessage}
-          </div>
-        )}
 
         {/* ⭐ puntaje */}
         <div className="flex justify-center gap-2 mb-4">
