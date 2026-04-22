@@ -1,6 +1,5 @@
 package ar.edu.unsam.phm.controller
 
-import ar.edu.unsam.phm.dto.AuthenticationResponse
 import ar.edu.unsam.phm.dto.LoginRequest
 import ar.edu.unsam.phm.dto.LoginResponseDTO
 import ar.edu.unsam.phm.dto.RegisterRequest

@@ -3,7 +3,6 @@ package ar.edu.unsam.phm.security
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
 import java.util.Date
 
@@ -19,13 +18,13 @@ class TokenHelper(
     )
 
     fun generate(
-        userDetails: UserDetails,
+        userId: Int,
         expirationDate: Date,
         additionalClaims: Map<String, Any> = emptyMap()
     ): String =
         Jwts.builder()
             .claims()
-            .subject(userDetails.username)
+            .subject(userId.toString())
             .issuedAt(Date(System.currentTimeMillis()))
             .expiration(expirationDate)
             .add(additionalClaims)
@@ -33,17 +32,16 @@ class TokenHelper(
             .signWith(secretKey)
             .compact()
 
-    fun extractEmail(token: String): String? =
-        getAllClaims(token)
-            .subject
+    fun extractUserId(token: String): Int? =
+        getAllClaims(token).subject.toIntOrNull()
 
     fun isExpired(token: String) : Boolean =
         getAllClaims(token).expiration.before(Date(System.currentTimeMillis()))
 
-    fun isValid(token: String, userDetails: UserDetails) : Boolean {
-        val email = extractEmail(token)
+    fun isValid(token: String, userId: Int): Boolean {
+        val tokenUserId = extractUserId(token)
 
-        return userDetails.username == email && !isExpired(token)
+        return tokenUserId == userId && !isExpired(token)
     }
 
     private fun getAllClaims(token: String): Claims {

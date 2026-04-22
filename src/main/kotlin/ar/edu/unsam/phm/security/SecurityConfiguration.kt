@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.DefaultSecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository
 import org.springframework.security.web.csrf.CsrfToken
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler
 import org.springframework.security.web.csrf.CsrfTokenRequestHandler
@@ -35,26 +34,26 @@ class SecurityConfiguration(
         jwtAuthenticationFilter: JwtAuthenticationFilter
     ): DefaultSecurityFilterChain =
         http
-        .cors(Customizer.withDefaults())
+        .cors{ cors -> cors.configurationSource(corsConfigurationSource()) }
         .csrf {
-            it.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            it.disable()
+            /*it.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
             it.csrfTokenRequestHandler(SpaCsrfTokenRequestHandler())
-            it.ignoringRequestMatchers("/auth/login", "/auth/register", "/error")
+            it.ignoringRequestMatchers("/auth/login", "/auth/register", "/error")*/
         }
         .authorizeHttpRequests {
             // Queremos que cualquier persona se pueda loguear y mostrar errores
             // Importante: no definirlo solo para el method POST
             // porque CORS requiere que también puedas mandar el OPTIONS para hacer el pre-flight
-            it.requestMatchers("/auth/register", "/auth/login", "/error") // agregar refresh token endpoint
+            it.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .requestMatchers("/auth/register", "/auth/login", "/error") // agregar refresh token endpoint
             .permitAll()
-            it.requestMatchers(HttpMethod.OPTIONS).permitAll()
             // Permisos de admin para modificar
             //---------------------------
             // Default: que se autentique para poder ver información
             .anyRequest()
             .authenticated()
         }
-        .httpBasic(Customizer.withDefaults())
         .sessionManagement {
             it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         }

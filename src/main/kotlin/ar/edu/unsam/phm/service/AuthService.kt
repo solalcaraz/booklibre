@@ -1,10 +1,11 @@
 package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.Usuario
-import ar.edu.unsam.phm.dto.AuthenticationResponse
 import ar.edu.unsam.phm.dto.LoginRequest
 import ar.edu.unsam.phm.dto.RegisterRequest
 import ar.edu.unsam.phm.exceptions.ConflictException
+import ar.edu.unsam.phm.exceptions.NotFoundException
+import ar.edu.unsam.phm.exceptions.UnauthorizedException
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import ar.edu.unsam.phm.security.CustomUserDetailsService
 import ar.edu.unsam.phm.security.JwtProperties
@@ -21,28 +22,28 @@ class AuthService(
     private val usuarioRepository: UsuarioRepository,
     private val encoder: PasswordEncoder,
     private val authManager: AuthenticationManager,
-    private val userDetailsService: CustomUserDetailsService,
     private val tokenHelper: TokenHelper,
     private val jwtProperties: JwtProperties
 ) {
     fun login(usuario: LoginRequest): String {
-        /* Busco el primer usuario que matchee con el email y si no devuelvo null y por
-        lo tanto NotFoundException */
-
-        authManager.authenticate(
-            UsernamePasswordAuthenticationToken(
-                usuario.email,
-                usuario.password
+        try {
+            authManager.authenticate(
+                UsernamePasswordAuthenticationToken(
+                    usuario.email,
+                    usuario.password
+                )
             )
-        )
+        } catch (e: Exception) {
+            throw UnauthorizedException("El usuario o la contraseña son inválidos")
+        }
 
-        val user = userDetailsService.loadUserByUsername(usuario.email)
-        val accessToken = tokenHelper.generate(
-            userDetails = user,
+        val foundUser = usuarioRepository.findByEmail(usuario.email)
+            ?: throw NotFoundException("Usuario no encontrado")
+
+        return tokenHelper.generate(
+            userId = foundUser.id!!,
             expirationDate = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration)
         )
-
-        return accessToken
     }
 
     @Transactional
@@ -56,8 +57,6 @@ class AuthService(
             password = encoder.encode(usuario.password)
         )
 
-        /* ¿Armar un DTO register response para no mandar la entidad? */
         return usuarioRepository.save(nuevoUsuario)
     }
-
 }
