@@ -25,7 +25,7 @@ class AuthService(
     private val tokenHelper: TokenHelper,
     private val jwtProperties: JwtProperties
 ) {
-    fun login(usuario: LoginRequest): AuthenticationResponse {
+    fun login(usuario: LoginRequest): String {
         /* Busco el primer usuario que matchee con el email y si no devuelvo null y por
         lo tanto NotFoundException */
 
@@ -42,9 +42,7 @@ class AuthService(
             expirationDate = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration)
         )
 
-        return AuthenticationResponse(
-            accessToken = accessToken
-        )
+        return accessToken
     }
 
     @Transactional

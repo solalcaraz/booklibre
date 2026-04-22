@@ -1,5 +1,6 @@
 package ar.edu.unsam.phm.security
 
+import io.jsonwebtoken.ExpiredJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -10,9 +11,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
-/* Esto sería como un middleware de node? Establece como tiene que actuar el security filter
-y delega al siguiente eslabón de la filter chain. Por qué chequea que el context este null?
-Como funciona el updateContext()? */
+/* Esto sería como un middleware de node. Establece como tiene que actuar el security filter
+y delega al siguiente eslabón de la filter chain. */
 
 @Component
 class JwtAuthenticationFilter(
@@ -25,25 +25,44 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val authHeader: String? = request.getHeader("Authorization")
+        try {
+            val jwtToken = request.extractTokenFromCookie()
 
-        if (authHeader.doesNotContainBearerToken()) {
-            filterChain.doFilter(request, response)
+            if (jwtToken == null) {
+                filterChain.doFilter(request, response)
+                return
+            }
+
+            val email = tokenHelper.extractEmail(jwtToken)
+
+            if (email != null && SecurityContextHolder.getContext().authentication == null) {
+                val foundUser = userDetailsService.loadUserByUsername(email)
+
+                if (tokenHelper.isValid(jwtToken, foundUser)) {
+                    updateContext(foundUser, request)
+                }
+
+                filterChain.doFilter(request, response)
+            }
+        } catch (e: ExpiredJwtException) {
+            // Captura la excepción de token expirado y devuelve el status code adecuado (401-Unauthorized)
+            logger.warn(e.message)
+            response.status = HttpServletResponse.SC_UNAUTHORIZED
+            response.setHeader("WWW-Authenticate", "Bearer error=\"invalid_token\", error_description=\"The access token expired\"")
+            response.contentType = "application/json"
+            response.writer.write("{\"error\":\"Token expired\",\"message\":\"${e.message}\"}")
+
+            // Importante: NO llamar a filterChain.doFilter() después de manejar el error
             return
         }
 
-        val jwtToken = authHeader!!.extractTokenValue()
-        val email = tokenHelper.extractEmail(jwtToken)
+    }
 
-        if (email != null && SecurityContextHolder.getContext().authentication == null) {
-            val foundUser = userDetailsService.loadUserByUsername(email)
-
-            if (tokenHelper.isValid(jwtToken, foundUser)) {
-                updateContext(foundUser, request)
-            }
-
-            filterChain.doFilter(request, response)
-        }
+    /* Si el token expira, debería poder loguear de nuevo y no recibir 401, por eso salto el filter
+    tanto para login como register como /refresh más adelante */
+    override fun shouldNotFilter(request: HttpServletRequest): Boolean {
+        val path = request.servletPath
+        return path.startsWith("/auth/")
     }
 
     private fun updateContext(foundUser: UserDetails, request: HttpServletRequest) {
@@ -57,4 +76,7 @@ class JwtAuthenticationFilter(
 
     private fun String.extractTokenValue(): String =
         this.substringAfter("Bearer ")
+
+    private fun HttpServletRequest.extractTokenFromCookie(): String? =
+        this.cookies?.firstOrNull { it.name == "ACCESS_TOKEN" }?.value
 }
