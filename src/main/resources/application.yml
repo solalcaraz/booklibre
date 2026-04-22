@@ -21,3 +21,9 @@ spring:
         format_sql: true
     open-in-view: false
 
+security:
+  key: ${JWT_SECRET_KEY}
+  access-token-expiration: 3600000
+  refresh-token-expiration: 86400000
+
+

@@ -28,10 +28,12 @@ interface LibroRepository : JpaRepository<Libro, Int>, JpaSpecificationExecutor<
     @EntityGraph(attributePaths = ["dueno", "resenias"])
     override fun findAll(spec: Specification<Libro>, pageable: Pageable): Page<Libro>
 
+
+
     /* Traigo todos los libros de un usuario y los etiqueto en una projection */
     /* Para no hacer una projection que actúa como DTO se me ocurrió agregar una columna
-    calculada en Libro que sea estadoReserva, seguir trabajando con objetos de dominio Libro,
-    y luego serializar a MiLibroDTO, pero no sé qué tan dañino puede ser */
+    calculada en Libro que sea estadoReserva, seguir trabajando con objetos Libro,
+    y luego serializar a MiLibroDTO, pero no sé qué tan feo puede ser */
 
     @Query("""
     select new ar.edu.unsam.phm.dto.MiLibroProjection(

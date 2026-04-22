@@ -76,6 +76,8 @@ por el momento, cada vez que se genera el ddl, se lee la anotacion CHECK y se ag
 @Check(constraints = "tipo_libro IN ('COMUN', 'DEDICATORIA', 'COLECCIONABLE')")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_libro", discriminatorType = DiscriminatorType.STRING)
+/* Esta restriction hace que cuando doy baja logica de un libro, se ignoren también las reservas del mismo */
+/* Haciendo que los libros prestados del usuario se reduzca, no debería ocurrir */
 @SQLRestriction("activo = true")
 abstract class Libro(
     @Embedded

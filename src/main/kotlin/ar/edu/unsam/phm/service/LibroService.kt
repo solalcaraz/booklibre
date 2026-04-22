@@ -14,6 +14,7 @@ import ar.edu.unsam.phm.repository.ReservaRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import jakarta.persistence.EntityManager
 import org.springframework.data.domain.PageRequest
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.transaction.annotation.Transactional
 
 @Service
@@ -57,22 +58,20 @@ class LibroService(
     }
 
     fun buscarMisLibros(
-        userId: String,
+        userId: Int,
         filter: String,
         sort: String?,
         page: Int,
         size: Int
     ): PaginationResponseDTO<MiLibroProjection> {
-        val id = userId.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
-        /* Si no existe el usuario, lanza not found y corta el flujo de ejecución */
-        usuarioRepository.findById(id).orElseThrow { NotFoundException("Usuario no encontrado") }
 
+        val usuario = usuarioRepository.findById(userId).orElseThrow { NotFoundException("Usuario no encontrado") }
         val paginado = PageRequest.of(page, size)
 
         val librosPage = when (filter) {
-            "Disponibles" -> libroRepository.librosDisponiblesDe(id, sort, paginado)
-            "Prestados" -> libroRepository.librosPrestadosDe(id, sort, paginado)
-            else -> libroRepository.todosLibrosDe(id, sort, paginado)
+            "Disponibles" -> libroRepository.librosDisponiblesDe(usuario.id!!, sort, paginado)
+            "Prestados" -> libroRepository.librosPrestadosDe(usuario.id!!, sort, paginado)
+            else -> libroRepository.todosLibrosDe(usuario.id!!, sort, paginado)
         }
 
         /* Esto lo puedo mover al controller, sería serializar el DTO final */
@@ -90,6 +89,12 @@ class LibroService(
         val idNumerico = id.toIntOrNull() ?: throw BadRequestException("El ID brindado no es válido")
         val libro = libroRepository.findById(idNumerico)
             .orElseThrow { NotFoundException("Libro no encontrado") }
+
+        val idAutenticado = SecurityContextHolder.getContext().authentication.name
+
+        if (libro.dueno.id != idAutenticado.toInt()) {
+            throw ForbiddenException("No podés despublicar un libro que no es tuyo")
+        }
 
         libro.activo = false
 

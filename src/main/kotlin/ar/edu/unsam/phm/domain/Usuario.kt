@@ -13,24 +13,6 @@ import jakarta.persistence.Table
 import java.time.LocalDate
 import jakarta.persistence.Transient
 
-/* ¿Qué se supone que tiene que hacer cada tipo de usuario? Consultar, viene de la mano con JWT */
-
-/* interface TipoUsuario {
-    fun nombre(): String
-}
-
-class Lector : TipoUsuario {
-    override fun nombre() = "Lector"
-}
-
-class Publicador : TipoUsuario {
-    override fun nombre() = "Publicador"
-}
-
-class LectorPublicador : TipoUsuario {
-    override fun nombre() = "Lector / Publicador"
-} */
-
 enum class TipoUsuario(val label: String) {
     LECTOR("Lector"),
     PUBLICADOR("Publicador"),
@@ -51,7 +33,7 @@ class Usuario(
     var email: String,
 
     @Column(nullable = false)
-    private var password: String,
+    var password: String,
 
     @Column(nullable = false)
     val anoUnido: Int = LocalDate.now().year,

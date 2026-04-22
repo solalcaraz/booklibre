@@ -5,16 +5,20 @@ import ar.edu.unsam.phm.env.Environment
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 
 @Component
 @Order(1)
-class UsuarioLoader(private val usuarioRepository: UsuarioRepository): CommandLineRunner {
+class UsuarioLoader(
+    private val usuarioRepository: UsuarioRepository,
+    private val encoder: PasswordEncoder
+): CommandLineRunner {
     override fun run(vararg args: String?) {
         val usuario = Usuario(
             nombreCompleto = "Diego Maradona",
             email = "diego@maradona.com",
-            password =  "admin"
+            password =  encoder.encode("admin")
         ).apply {
             descripcion = "La Mano de Dios"
             ciudad = "Lanús, BA"
@@ -26,7 +30,7 @@ class UsuarioLoader(private val usuarioRepository: UsuarioRepository): CommandLi
         val usuario2 = Usuario(
             nombreCompleto = "Max Verstappen",
             email = "max@verstappen.com",
-            password =  "admin"
+            password =  encoder.encode("admin")
         ).apply {
             descripcion = "The Flying Dutchman"
             ciudad = "Maaseik, Bélgica"
@@ -38,7 +42,7 @@ class UsuarioLoader(private val usuarioRepository: UsuarioRepository): CommandLi
         val usuario3 = Usuario(
             nombreCompleto = "Ye west",
             email = "yewest@bully.com",
-            password =  "admin"
+            password =  encoder.encode("admin")
         )
 
         usuarioRepository.save(usuario)

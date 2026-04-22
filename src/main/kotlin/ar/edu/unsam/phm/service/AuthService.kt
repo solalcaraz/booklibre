@@ -7,24 +7,43 @@ import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.exceptions.UnauthorizedException
 import ar.edu.unsam.phm.repository.UsuarioRepository
+import ar.edu.unsam.phm.security.CustomUserDetailsService
+import ar.edu.unsam.phm.security.JwtProperties
+import ar.edu.unsam.phm.security.TokenHelper
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.Date
 
 @Service
-class AuthService(private val usuarioRepository: UsuarioRepository) {
-
-    fun login(usuario: LoginRequest): Usuario {
-        /* Busco el primer usuario que matchee con el email y si no devuelvo null y por
-        lo tanto NotFoundException */
-
-        val userReal = usuarioRepository.findByEmail(usuario.email) ?:
-            throw NotFoundException("Usuario no registrado.")
-
-        if (!userReal.validarPassword(usuario.password) ) {
-            throw UnauthorizedException("Usuario o contraseña incorrecto.")
+class AuthService(
+    private val usuarioRepository: UsuarioRepository,
+    private val encoder: PasswordEncoder,
+    private val authManager: AuthenticationManager,
+    private val tokenHelper: TokenHelper,
+    private val jwtProperties: JwtProperties
+) {
+    fun login(usuario: LoginRequest): String {
+        try {
+            authManager.authenticate(
+                UsernamePasswordAuthenticationToken(
+                    usuario.email,
+                    usuario.password
+                )
+            )
+        } catch (e: Exception) {
+            throw UnauthorizedException("El usuario o la contraseña son inválidos")
         }
 
-        return userReal
+        val foundUser = usuarioRepository.findByEmail(usuario.email)
+            ?: throw NotFoundException("Usuario no encontrado")
+
+        return tokenHelper.generate(
+            userId = foundUser.id!!,
+            expirationDate = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration)
+        )
     }
 
     @Transactional
@@ -35,15 +54,9 @@ class AuthService(private val usuarioRepository: UsuarioRepository) {
         val nuevoUsuario = Usuario(
             nombreCompleto = usuario.nombreCompleto,
             email = usuario.email,
-            password = usuario.password
+            password = encoder.encode(usuario.password)
         )
 
-        usuarioRepository.save(nuevoUsuario)
-
-        /* nuevoUsuario no tiene ID asignado, solo después de create se le asigna,
-        por eso lo busco de nuevo */
-
-        return usuarioRepository.findByEmail(nuevoUsuario.email)!!
+        return usuarioRepository.save(nuevoUsuario)
     }
-
 }
