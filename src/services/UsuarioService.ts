@@ -48,8 +48,9 @@ export type LibroSort = {
 
 class UsuarioService {
   async getUsuario(): Promise<UsuarioResponse> {
-    const user = authService.userDeStorage()
-    const response = await axios.get<UsuarioResponse>(API_URL + `/usuario/${user.id}`)
+    const response = await axios.get<UsuarioResponse>(`${API_URL}/usuario/me`, {
+      withCredentials: true
+    })
 
     return response.data
   }
@@ -59,24 +60,28 @@ class UsuarioService {
     filter: FiltroLibros = 'Todos',
     sort?: LibroSort
   ): Promise<PagResModel<LibroUsuario>> {
-    const user = authService.userDeStorage()
     const response = await axios.get<PagResModel<LibroUsuario>>(
-      API_URL +
-        `/misLibros/${user.id}?page=${page}&size=3&filter=${filter}${sort ? `&sort=${sort.field},${sort.direction}` : ''}`
+      `${API_URL}/misLibros/me?page=${page}&size=3&filter=${filter}${sort ? `&sort=${sort.field},${sort.direction}` : ''}`,
+      {
+        withCredentials: true
+      }
     )
 
     return response.data
   }
 
   async patchUsuario(userPatch: EditProfileData) {
-    const user = authService.userDeStorage()
-    const response = await axios.patch(API_URL + `/usuario/${user.id}`, userPatch)
+    const response = await axios.patch(API_URL + `/usuario/me`, userPatch, {
+      withCredentials: true
+    })
 
     return response.data
   }
 
   async deleteLibro(id: number) {
-    const response = await axios.delete(API_URL + `/misLibros/${id}`)
+    const response = await axios.delete(API_URL + `/misLibros/${id}`, {
+      withCredentials: true
+    })
 
     return response.data
   }

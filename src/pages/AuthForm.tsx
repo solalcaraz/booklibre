@@ -6,7 +6,8 @@ import { FormInput } from '../components/FormInput'
 import { type AuthErrors, type AuthFormData, Auth } from '../classes/Auth'
 import { useOnInit } from '../utils/hooks'
 import { authService } from '../services/AuthService'
-import { useUser } from '../contexts/UserContext'
+import { usuarioService } from '../services/UsuarioService'
+/* import { useUser } from '../contexts/UserContext' */
 import { getMensajeError, type ErrorCustom, type ErrorResponse } from '../utils/errorHandler'
 
 const initialFormData: AuthFormData = {
@@ -22,16 +23,23 @@ export const AuthForm = () => {
   const [responseErrors, setResponseErrors] = useState<ErrorCustom | null>(null)
   const navigate = useNavigate()
   const { mode } = useParams()
-  const { updateUser } = useUser()
+  /* const { updateUser } = useUser() */
 
   const isValidMode = mode === 'login' || mode === 'register'
   const isLogin = mode === 'login'
 
+  const checkSession = async () => {
+    try {
+      await usuarioService.getUsuario()
+      navigate('/home')
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   useOnInit(() => {
     /* Si estoy logeado me manda al home */
-    if (authService.estaAutenticado()) {
-      navigate('/home')
-    }
+    checkSession()
     /* Si quiero entrar a una subruta invalida de auth me redirecciona al login */
     if (!isValidMode) {
       navigate('/auth/login')
@@ -92,24 +100,24 @@ export const AuthForm = () => {
     try {
       if (isLogin) {
         const loginData = auth.toLoginData()
-        const user = await authService.login(loginData)
+        /* const user = */ await authService.login(loginData)
 
-        if (user.id) {
+        /* if (user.id) {
           updateUser(user)
-        }
+        } */
 
         navigate('/home')
         return
       }
 
       const registerData = auth.toRegisterData()
-      const user = await authService.register(registerData)
+      /* const user = */ await authService.register(registerData)
 
-      if (user.id) {
+      /* if (user.id) {
         updateUser(user)
-      }
+      } */
 
-      navigate('/home')
+      navigate('/auth/login')
     } catch (error) {
       setResponseErrors(getMensajeError(error as ErrorResponse))
       console.log(error)
@@ -178,7 +186,6 @@ export const AuthForm = () => {
                 <input
                   type="checkbox"
                   name="rememberMe"
-                  /* checked={formData.rememberMe} */
                   onChange={handleChange}
                   className="h-4 w-4 rounded border-slate-300 text-emerald-400 focus:ring-emerald-300"
                 />
