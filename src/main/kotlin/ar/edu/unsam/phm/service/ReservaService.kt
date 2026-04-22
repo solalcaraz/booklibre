@@ -27,7 +27,6 @@ import kotlin.text.toInt
 
 @Service
 class ReservaService(
-    private val reservaRepositorio: ReservaRepositorio,
     private val reservaRepository: ReservaRepository,
     private val libroRepository: LibroRepository,
     private val usuarioRepository: UsuarioRepository,
@@ -58,7 +57,7 @@ class ReservaService(
     fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): Page<Reserva> {
         val usuario = usuarioRepository.findById(usuarioId).orElseThrow { NotFoundException("Usuario no encontrado") }
 
-        val idLibrosOcupados = reservaRepositorio.getIdLibrosOcupadosEntre(filtros.fechaDesde, filtros.fechaHasta)
+        val idLibrosOcupados = reservaRepository.getIdLibrosOcupadosEntre(filtros.fechaDesde, filtros.fechaHasta)
 
         // se arma la specification combinando todos los filtros (DEBERIA SER UN HELPER PRIVADO?)
         val spec = Specification.where(LibroSpecifications.noEsDelUsuario(usuarioId))
