@@ -41,4 +41,10 @@ class UsuarioService(
 
         return
     }
+
+    fun getBibliokarma(id: String): Int {
+        val idNumerico = id.toIntOrNull() ?: throw BadRequestException("Id incorrecto")
+        val usuario = usuarioRepository.findById(idNumerico).orElseThrow { NotFoundException("Usuario no encontrado") }
+        return usuario.bibliokarmas
+    }
 }

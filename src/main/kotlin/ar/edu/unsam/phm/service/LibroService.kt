@@ -41,26 +41,19 @@ class LibroService(
         libroRepository.save(nuevoLibro)
     }
 
+
+    // Cuando hacés un save() de un objeto con una clase distinta,
+    // Hibernate no puede hacer un UPDATE de la columna discriminadora (tipo_libro).
+    // La única forma de "engañar" a Hibernate sin borrar y rear de nuevo el registro es
+    // modificar el discriminador manualmente antes de que el Service intente guardar.
+    // Al final, optamos por hacer inmodificable el tipo para ser coherentes con respecto al enunciado,
+    // y de este modo no es necesario hacer nada explícito en el código.
     @Transactional
     fun update(id: Int, libroDto: LibroDetalleDTO) {
         val idUsuarioLogueado = libroDto.idDueno
         val libroExistente = getByIdFor(id, idUsuarioLogueado)
-
-        // Cuando hacés un save() de un objeto con una clase distinta,
-        // Hibernate no puede hacer un UPDATE de la columna discriminadora (tipo_libro).
-        // La única forma de "engañar" a Hibernate sin borrar el registro es
-        // modificar el discriminador manualmente antes de que el Service intente guardar.
-        val tipoNuevo = libroDto.tipo.toString()
-        if (libroExistente.javaClass.simpleName != "Libro${tipoNuevo.lowercase().capitalize()}") {
-            entityManager.detach(libroExistente)
-            libroRepository.cambiarTipoDeLibro(id, tipoNuevo)
-        }
-
         val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.dueno)
-
-        libroRepository.save(libroActualizado) //Si fuera un simple update, no habría que explicitar el save
-        //Pero como se genera una instancia nueva, para poder cambiar el tipo de libro, entonces es necesario,
-        //porque literalmente crea uno nuevo. Si se convierte el tipo de libro en un dato ineditable, hay que cambiarlo
+        libroRepository.save(libroActualizado)
     }
 
     fun buscarMisLibros(

@@ -9,7 +9,6 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 import java.time.LocalDate
-import kotlin.Int
 
 @Component
 @Order(3)
