@@ -27,24 +27,32 @@ dependencies {
 
     // básicos de cualquier proyecto Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    runtimeOnly("org.postgresql:postgresql")
-
     implementation("org.springframework.boot:spring-boot-starter-hateoas")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.uqbar-project:geodds-xtend:1.0.3")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2")
+
+    // conexión a la base de datos
+    runtimeOnly("org.postgresql:postgresql")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    // seguridad y autenticación
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.bouncycastle:bcprov-jdk18on:1.83")
+    val jwtVersion = "0.13.0"
+    implementation("io.jsonwebtoken:jjwt-api:$jwtVersion")
+    implementation("io.jsonwebtoken:jjwt-impl:$jwtVersion")
+    implementation("io.jsonwebtoken:jjwt-jackson:$jwtVersion")
 
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 
     // testing
+    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-framework-engine:$kotestVersion")
     testImplementation("io.mockk:mockk:${mockkVersion}")
-
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

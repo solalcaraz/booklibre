@@ -5,9 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69efba49-111b-44f0-82f5-a8580d624123" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/security/CustomUserDetailsService.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/security/JwtAuthenticationFilter.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/security/JwtProperties.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/security/SecurityConfiguration.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/security/SpringSecurityConfiguration.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/security/TokenHelper.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/AuthController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/AuthController.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Usuario.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Usuario.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/LibroDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/LibroDTO.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/UsuarioDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/UsuarioDTO.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/loaders/UsuarioLoader.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/loaders/UsuarioLoader.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/LibroRepositorio.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/LibroRepositorio.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/ReservaRepositorio.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/ReservaRepositorio.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/AuthService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/AuthService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/UsuarioService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/UsuarioService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,7 +80,7 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GradleScriptDefinitionsStorage" workingDir="$PROJECT_DIR$" gradleHome="C:\Users\luis\.gradle\wrapper\dists\gradle-8.8-bin\dl7vupf4psengwqhwktix4v1\gradle-8.8" javaHome="C:\Users\luis\.jdks\temurin-21.0.10" gradleVersion="8.8" />
+  <component name="GradleScriptDefinitionsStorage" workingDir="$PROJECT_DIR$" gradleHome="C:\Users\Thomas\.gradle\wrapper\dists\gradle-8.8-bin\dl7vupf4psengwqhwktix4v1\gradle-8.8" javaHome="C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot" gradleVersion="8.8" />
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
@@ -144,6 +159,9 @@
     <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
       <recent name="ar.edu.unsam.phm.exceptions" />
     </key>
+    <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="ar.edu.unsam.phm.security" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="configurationTypes">
@@ -159,7 +177,7 @@
         <entry key="SpringBootApplicationConfigurationType">
           <value>
             <map>
-              <entry key="BookLibre" value="FAILED" />
+              <entry key="BookLibre" value="STOPPED" />
             </map>
           </value>
         </entry>
@@ -272,6 +290,9 @@
       <method v="2" />
     </configuration>
     <configuration name="BookLibre" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <envs>
+        <env name="JWT_SECRET_KEY" value="mi_super_secret_key_para_jwt_2026_muy_larga" />
+      </envs>
       <module name="backend-2026-grupo8.main" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="ar.edu.unsam.phm.BookLibre" />
       <extension name="coverage">
@@ -284,6 +305,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Gradle.AuthSpec" />
+      <item itemvalue="Gradle.backend-2026-grupo8 [bootRun]" />
+      <item itemvalue="Gradle.MisLibrosSpec" />
+      <item itemvalue="Gradle.Tests in 'backend-2026-grupo8.test'" />
+      <item itemvalue="Spring Boot.BookLibre" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Spring Boot.BookLibre" />
@@ -331,6 +359,13 @@
       <workItem from="1775067383590" duration="6081000" />
       <workItem from="1775608635938" duration="8149000" />
       <workItem from="1775658291576" duration="16736000" />
+      <workItem from="1775946390277" duration="4891000" />
+      <workItem from="1776377100107" duration="1315000" />
+      <workItem from="1776458805543" duration="2732000" />
+      <workItem from="1776636200735" duration="6547000" />
+      <workItem from="1776702453392" duration="630000" />
+      <workItem from="1776732834528" duration="9415000" />
+      <workItem from="1776784200167" duration="16514000" />
     </task>
     <servers />
   </component>

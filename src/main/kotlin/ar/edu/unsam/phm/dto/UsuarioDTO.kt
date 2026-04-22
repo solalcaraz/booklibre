@@ -18,6 +18,10 @@ data class LoginResponseDTO(
     val bibliokarmas: Int
 )
 
+data class AuthenticationResponse(
+    val accessToken: String
+)
+
 data class PerfilUsuarioDTO(
     val nombreCompleto: String,
     val email: String,

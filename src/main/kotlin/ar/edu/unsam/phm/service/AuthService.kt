@@ -1,30 +1,50 @@
 package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.Usuario
+import ar.edu.unsam.phm.dto.AuthenticationResponse
 import ar.edu.unsam.phm.dto.LoginRequest
 import ar.edu.unsam.phm.dto.RegisterRequest
 import ar.edu.unsam.phm.exceptions.ConflictException
-import ar.edu.unsam.phm.exceptions.NotFoundException
-import ar.edu.unsam.phm.exceptions.UnauthorizedException
 import ar.edu.unsam.phm.repository.UsuarioRepository
+import ar.edu.unsam.phm.security.CustomUserDetailsService
+import ar.edu.unsam.phm.security.JwtProperties
+import ar.edu.unsam.phm.security.TokenHelper
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.Date
 
 @Service
-class AuthService(private val usuarioRepository: UsuarioRepository) {
-
-    fun login(usuario: LoginRequest): Usuario {
+class AuthService(
+    private val usuarioRepository: UsuarioRepository,
+    private val encoder: PasswordEncoder,
+    private val authManager: AuthenticationManager,
+    private val userDetailsService: CustomUserDetailsService,
+    private val tokenHelper: TokenHelper,
+    private val jwtProperties: JwtProperties
+) {
+    fun login(usuario: LoginRequest): AuthenticationResponse {
         /* Busco el primer usuario que matchee con el email y si no devuelvo null y por
         lo tanto NotFoundException */
 
-        val userReal = usuarioRepository.findByEmail(usuario.email) ?:
-            throw NotFoundException("Usuario no registrado.")
+        authManager.authenticate(
+            UsernamePasswordAuthenticationToken(
+                usuario.email,
+                usuario.password
+            )
+        )
 
-        if (!userReal.validarPassword(usuario.password) ) {
-            throw UnauthorizedException("Usuario o contraseña incorrecto.")
-        }
+        val user = userDetailsService.loadUserByUsername(usuario.email)
+        val accessToken = tokenHelper.generate(
+            userDetails = user,
+            expirationDate = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration)
+        )
 
-        return userReal
+        return AuthenticationResponse(
+            accessToken = accessToken
+        )
     }
 
     @Transactional
@@ -35,15 +55,11 @@ class AuthService(private val usuarioRepository: UsuarioRepository) {
         val nuevoUsuario = Usuario(
             nombreCompleto = usuario.nombreCompleto,
             email = usuario.email,
-            password = usuario.password
+            password = encoder.encode(usuario.password)
         )
 
-        usuarioRepository.save(nuevoUsuario)
-
-        /* nuevoUsuario no tiene ID asignado, solo después de create se le asigna,
-        por eso lo busco de nuevo */
-
-        return usuarioRepository.findByEmail(nuevoUsuario.email)!!
+        /* ¿Armar un DTO register response para no mandar la entidad? */
+        return usuarioRepository.save(nuevoUsuario)
     }
 
 }

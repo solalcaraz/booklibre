@@ -1,5 +1,6 @@
 package ar.edu.unsam.phm.controller
 
+import ar.edu.unsam.phm.dto.AuthenticationResponse
 import ar.edu.unsam.phm.dto.LoginRequest
 import ar.edu.unsam.phm.dto.LoginResponseDTO
 import ar.edu.unsam.phm.dto.RegisterRequest
@@ -14,11 +15,13 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/auth")
-class AuthController(val authService: AuthService, val usuarioMapper: UsuarioMapper) {
+class AuthController(
+    val authService: AuthService,
+    val usuarioMapper: UsuarioMapper
+) {
     @PostMapping("/login")
-    fun login(@RequestBody usuario: LoginRequest): LoginResponseDTO {
-        val usuario = authService.login(usuario) 
-        return usuarioMapper.toDto(usuario)
+    fun login(@RequestBody usuario: LoginRequest): AuthenticationResponse {
+        return authService.login(usuario)
     }
 
     @PostMapping("/register")
