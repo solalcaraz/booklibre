@@ -1,5 +1,6 @@
 package ar.edu.unsam.phm.loaders
 
+import ar.edu.unsam.phm.domain.TipoUsuario
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.env.Environment
 import ar.edu.unsam.phm.repository.UsuarioRepository
@@ -43,7 +44,7 @@ class UsuarioLoader(
             nombreCompleto = "Ye west",
             email = "yewest@bully.com",
             password =  encoder.encode("admin")
-        )
+        ).apply { tipoUsuario = TipoUsuario.PUBLICADOR }
 
         usuarioRepository.save(usuario)
         usuarioRepository.save(usuario2)
