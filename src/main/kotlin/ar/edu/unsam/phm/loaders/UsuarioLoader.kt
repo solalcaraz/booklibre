@@ -1,5 +1,6 @@
 package ar.edu.unsam.phm.loaders
 
+import ar.edu.unsam.phm.domain.TipoUsuario
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.env.Environment
 import ar.edu.unsam.phm.repository.UsuarioRepository

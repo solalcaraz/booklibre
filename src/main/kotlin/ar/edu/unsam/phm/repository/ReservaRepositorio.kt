@@ -21,6 +21,15 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
     @Query("delete from Reserva r where r.libro.id = :libroId")
     fun deleteByLibroId(@Param("libroId") libroId: Int): Int*/
 
+    /* Parte 2. 1. Conocer los Libros que reservó un determinado usuario en el corriente año. */
+    @EntityGraph(attributePaths = ["libro"])
+    @Query("""
+        SELECT r FROM Reserva r 
+        WHERE r.lector.id = :usuarioId 
+        AND YEAR(r.fechaDesde) = YEAR(CURRENT_DATE)
+    """)
+        fun findReservasDeUsuarioEnAnioActual(@Param("usuarioId") usuarioId: Int): List<Reserva>
+
     /* Cantidad de libros leídos de un usuario = todas sus reservas que ya finalizaron */
     @Query("""
         select count(r)
