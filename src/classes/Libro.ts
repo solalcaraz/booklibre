@@ -29,8 +29,7 @@ export class Libro {
         public paginas: string,
         public isbn13: string,
         public descripcion: string,
-        public portada: string,
-        public dueno: string
+        public portada: string
     ) {}
 
     validate() {

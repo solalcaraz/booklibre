@@ -31,7 +31,7 @@ export default function LibroForm() {
     const loadLibro = async () => {
     if (!id) return;
     try {
-        const data = await libroService.getByIdFor(id);
+        const data = await libroService.getByIdForUser(id);
 
         setFormData({
             ...initialFormData,
@@ -80,7 +80,7 @@ export default function LibroForm() {
         const LibroInstance = new Libro(
             id || null, formData.titulo, formData.tipo, formData.genero, formData.autor,
             formData.idioma, formData.estado, formData.editorial,
-            formData.fecha_publicacion, formData.paginas, formData.isbn13, formData.descripcion, formData.portada, ""
+            formData.fecha_publicacion, formData.paginas, formData.isbn13, formData.descripcion, formData.portada
         );
 
         const validationErrors = LibroInstance.validate();
