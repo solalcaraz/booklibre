@@ -46,9 +46,16 @@ class UsuarioLoader(
             password =  encoder.encode("admin")
         ).apply { tipoUsuario = TipoUsuario.PUBLICADOR }
 
+        val usuario4 = Usuario(
+            nombreCompleto = "Yiya Murano",
+            email = "yiyi@killer.com",
+            password =  encoder.encode("admin")
+        ).apply { tipoUsuario = TipoUsuario.LECTOR }
+
         usuarioRepository.save(usuario)
         usuarioRepository.save(usuario2)
         usuarioRepository.save(usuario3)
+        usuarioRepository.save(usuario4)
 
         println("Usuarios cargados en Postgres")
     }
