@@ -7,7 +7,6 @@ import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.exceptions.UnauthorizedException
 import ar.edu.unsam.phm.repository.UsuarioRepository
-import ar.edu.unsam.phm.security.CustomUserDetailsService
 import ar.edu.unsam.phm.security.JwtProperties
 import ar.edu.unsam.phm.security.TokenHelper
 import org.springframework.security.authentication.AuthenticationManager
@@ -33,7 +32,7 @@ class AuthService(
                     usuario.password
                 )
             )
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             throw UnauthorizedException("El usuario o la contraseña son inválidos")
         }
 

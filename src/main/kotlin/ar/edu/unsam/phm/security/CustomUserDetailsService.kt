@@ -27,8 +27,10 @@ class CustomUserDetailsService(
 
     private fun Usuario.mapToUserDetails(): UserDetails =
         User.builder()
+            // usamos el id como username interno para que authentication.name sea el id
+            // aunque la búsqueda inicial se haga por email en loadUserByUsername(...)
             .username(this.id.toString())
             .password(this.password)
-            .roles(this.tipoUsuario.label)
+            .roles(this.tipoUsuario.name)
             .build()
 }
