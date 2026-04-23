@@ -50,6 +50,8 @@ class SecurityConfiguration(
             .permitAll()
             // Permisos de admin para modificar
             //---------------------------
+            .requestMatchers(HttpMethod.POST, "/libro/nuevo")
+                .hasAnyRole("Publicador", "Lector / Publicador")
             // Default: que se autentique para poder ver información
             .anyRequest()
             .authenticated()
