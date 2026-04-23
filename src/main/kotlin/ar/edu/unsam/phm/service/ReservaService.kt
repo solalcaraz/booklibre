@@ -140,11 +140,4 @@ class ReservaService(
         
         return reservaAdapter.toDto(nuevaReserva, calificacionPromedio)
     }
-
-    /* Parte 2. 1. Conocer los Libros que reservó un determinado usuario en el corriente año. */
-    @Transactional(readOnly = true)
-    fun getLibrosReservadosPorUsuarioEnAnioActual(usuarioId: Int): List<ReservaDTO> {
-        val reservas = reservaRepository.findReservasDeUsuarioEnAnioActual(usuarioId)
-        return reservas.map { reservaAdapter.toDto(it, it.libro.calcularCalificacionPromedio()) }
-    }
 }
