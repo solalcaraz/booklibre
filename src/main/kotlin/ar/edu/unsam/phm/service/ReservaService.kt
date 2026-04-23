@@ -14,7 +14,6 @@ import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.ReservaAdapter
 import ar.edu.unsam.phm.repository.LibroRepository
 import ar.edu.unsam.phm.repository.LibroSpecifications
-import ar.edu.unsam.phm.repository.ReservaRepositorio
 import ar.edu.unsam.phm.repository.ReservaRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.data.domain.Page
@@ -27,7 +26,6 @@ import kotlin.text.toInt
 
 @Service
 class ReservaService(
-    private val reservaRepositorio: ReservaRepositorio,
     private val reservaRepository: ReservaRepository,
     private val libroRepository: LibroRepository,
     private val usuarioRepository: UsuarioRepository,
@@ -58,11 +56,9 @@ class ReservaService(
     fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): Page<Reserva> {
         val usuario = usuarioRepository.findById(usuarioId).orElseThrow { NotFoundException("Usuario no encontrado") }
 
-        val idLibrosOcupados = reservaRepositorio.getIdLibrosOcupadosEntre(filtros.fechaDesde, filtros.fechaHasta)
-
-        // se arma la specification combinando todos los filtros (DEBERIA SER UN HELPER PRIVADO?)
+        // se arma la specification combinando todos los filtros
         val spec = Specification.where(LibroSpecifications.noEsDelUsuario(usuarioId))
-            .and(LibroSpecifications.noEstaOcupado(idLibrosOcupados))
+            .and(LibroSpecifications.noEstaOcupado(filtros.fechaDesde, filtros.fechaHasta))
             .and(LibroSpecifications.conGeneros(filtros.generos))
             .and(LibroSpecifications.conPaginasMin(filtros.cantPaginasMin))
             .and(LibroSpecifications.conPaginasMax(filtros.cantPaginasMax))

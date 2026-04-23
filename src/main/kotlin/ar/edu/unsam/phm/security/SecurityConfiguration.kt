@@ -49,6 +49,9 @@ class SecurityConfiguration(
             .requestMatchers("/auth/register", "/auth/login", "/error") // agregar refresh token endpoint
             .permitAll()
             // Permisos de admin para modificar
+            // Solo los que pueden reservar (lector) acceden a este endpoint
+            .requestMatchers(HttpMethod.GET, "/reserva/librosDisponibles/**")
+                .hasAnyRole("Lector", "Lector / Publicador")
             //---------------------------
             // Default: que se autentique para poder ver información
             .anyRequest()

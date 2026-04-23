@@ -3,9 +3,11 @@ package ar.edu.unsam.phm.repository
 import ar.edu.unsam.phm.domain.Genero
 import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.domain.LibroData
+import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.domain.Usuario
 import jakarta.persistence.criteria.CriteriaBuilder
 import org.springframework.data.jpa.domain.Specification
+import java.time.LocalDate
 
 object LibroSpecifications {
 
@@ -17,10 +19,19 @@ object LibroSpecifications {
             cb.notEqual(root.get<Usuario>("dueno").get<Int>("id"), usuarioId)
         }
 
-    fun noEstaOcupado(idLibrosOcupados: Set<Int>): Specification<Libro> =
-        Specification { root, _, cb ->
-            if (idLibrosOcupados.isEmpty()) siempreTrue(cb)
-            else root.get<Int>("id").`in`(idLibrosOcupados).not()
+    fun noEstaOcupado(desde: LocalDate, hasta: LocalDate): Specification<Libro> =
+        Specification { root, query, cb ->
+            // Subquery: existe alguna reserva vigente que se superponga con el rango pedido
+            val sub = query.subquery(Long::class.java)
+            val reserva = sub.from(Reserva::class.java)
+            sub.select(cb.literal(1L))
+                .where(
+                    cb.equal(reserva.get<Libro>("libro"), root),
+                    cb.lessThanOrEqualTo(reserva.get("fechaDesde"), hasta),
+                    cb.greaterThanOrEqualTo(reserva.get("fechaHasta"), desde),
+                    cb.greaterThanOrEqualTo(reserva.get<LocalDate>("fechaHasta"), LocalDate.now())
+                )
+            cb.not(cb.exists(sub))
         }
 
     fun conGeneros(generos: List<Genero>): Specification<Libro> =

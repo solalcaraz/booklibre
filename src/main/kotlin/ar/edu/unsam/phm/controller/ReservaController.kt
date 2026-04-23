@@ -13,6 +13,7 @@ import ar.edu.unsam.phm.dto.toReservaLibroDTO
 import ar.edu.unsam.phm.helpers.ReservaMapper
 import ar.edu.unsam.phm.service.ReseniaService
 import ar.edu.unsam.phm.service.ReservaService
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -47,11 +48,16 @@ class ReservaController (private val reservaService: ReservaService, private val
         return reservaMapper.toDtoReservaPag(page)
     }
 
-    @GetMapping("/librosDisponibles/{userId}")
+    @GetMapping("/librosDisponibles")
     fun listarLibros(
-        @PathVariable userId: Int,
         @ModelAttribute filtros: FiltrosLibro
     ): PaginationResponseDTO<ReservaLibroDTO> {
+        val userId = SecurityContextHolder
+            .getContext()
+            .authentication
+            .name
+            .toInt()
+
         val page = reservaService.getLibrosDisponiblesParaReserva(userId, filtros)
         return PaginationResponseDTO(
             items = page.content.map { it.toReservaLibroDTO() },
