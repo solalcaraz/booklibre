@@ -26,7 +26,8 @@ class LibroService(
     val entityManager: EntityManager
 ) {
     @Transactional(readOnly = true)
-    fun getByIdFor(id: Int, idUsuarioLogueado: Int): Libro {
+    fun getByIdForUser(id: Int): Libro {
+        val idUsuarioLogueado = SecurityContextHolder.getContext().authentication.name.toInt()
         val libro = libroRepository.findById(id)
             .orElseThrow { NotFoundException("Libro no encontrado.") }
         if (libro.dueno.id != idUsuarioLogueado) {
@@ -51,8 +52,7 @@ class LibroService(
     // y de este modo no es necesario hacer nada explícito en el código.
     @Transactional
     fun update(id: Int, libroDto: LibroDetalleDTO) {
-        val idUsuarioLogueado = libroDto.idDueno
-        val libroExistente = getByIdFor(id, idUsuarioLogueado)
+        val libroExistente = getByIdForUser(id)
         val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.dueno)
         libroRepository.save(libroActualizado)
     }
