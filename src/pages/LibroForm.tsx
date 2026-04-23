@@ -6,6 +6,7 @@ import { Libro, type LibroFormData, type LibroErrors } from "../classes/Libro";
 import { GENERO_OPTIONS, TIPO_OPTIONS, IDIOMA_OPTIONS, ESTADO_OPTIONS } from "../utils/formateEnumLibros";
 import { useOnInit } from "../utils/hooks";
 import toast from "react-hot-toast";
+import { usuarioService } from "../services/UsuarioService";
 
 const initialFormData: LibroFormData = {
     titulo: "", tipo: "", genero: "", autor: "", idioma: "",
@@ -27,6 +28,19 @@ export default function LibroForm() {
     //Para el manejo de errores de acceso (editar un libro que no es tuyo/no existe)
     const [accessError, setAccessError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const checkPermisos = async () => {
+        try {
+            const user = await usuarioService.getUsuario();
+            const tienePermiso = user.tipoUsuario === 'Publicador' || user.tipoUsuario === 'Lector / Publicador';
+            
+            if (!tienePermiso) {
+                setAccessError("No tenés permisos para publicar libros.");
+            }
+        } catch (error) {
+            setAccessError("Error de acceso al usuario: " + error)
+        }
+    }
 
     const loadLibro = async () => {
     if (!id) return;
@@ -66,6 +80,7 @@ export default function LibroForm() {
 };
 
     useOnInit(() => {
+        checkPermisos();
         loadLibro();
     });
 
