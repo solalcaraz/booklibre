@@ -54,7 +54,7 @@ class SecurityConfiguration(
                 .hasAnyRole("LECTOR", "LECTOR_PUBLICADOR")
             //---------------------------
             .requestMatchers(HttpMethod.POST, "/libro/nuevo")
-                .hasAnyRole("Publicador", "Lector / Publicador")
+                .hasAnyRole("PUBLICADOR", "LECTOR_PUBLICADOR")
             // Default: que se autentique para poder ver información
             .anyRequest()
             .authenticated()
