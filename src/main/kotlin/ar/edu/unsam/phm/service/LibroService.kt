@@ -38,7 +38,8 @@ class LibroService(
 
     @Transactional
     fun create(libroDto: LibroDetalleDTO) {
-        val dueno = usuarioRepository.findById(libroDto.idDueno).orElseThrow { NotFoundException("Usuario no encontrado") }
+        val idUsuarioLogueado = SecurityContextHolder.getContext().authentication.name.toInt()
+        val dueno = usuarioRepository.findById(idUsuarioLogueado).orElseThrow { NotFoundException("Usuario no encontrado") }
         val nuevoLibro = libroMapper.fromDto(libroDto, dueno)
         libroRepository.save(nuevoLibro)
     }
