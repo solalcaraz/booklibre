@@ -29,8 +29,6 @@ export const Home = () => {
   const [filtrosAplicados, setFiltrosAplicados] = useState<FiltrosLibro>(filtrosIniciales)
   const [errores, setErrores] = useState<string[]>([])
 
-  const userId = +JSON.parse(localStorage.getItem('user')!).id
-
   // metodo para actualizar inputs dinamicamente
   const actualizar = (campo: keyof FiltrosLibro, valor: unknown) => {
     setFiltros((prev) => ({ ...prev, [campo]: valor }))
@@ -117,7 +115,7 @@ export const Home = () => {
 
         {/* Lista del resultado de libros con paginado */}
         <DataGrid<ReservaLibroHomeJSON, FiltrosLibro>
-          fetchFunction={(req) => reservaService.getLibrosDisponiblesReserva(userId, req)}
+          fetchFunction={(req) => reservaService.getLibrosDisponiblesReserva(req)}
           filter={filtrosAplicados}
           renderItem={(libro) => {
             return (

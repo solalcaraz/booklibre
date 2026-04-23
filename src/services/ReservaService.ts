@@ -26,16 +26,16 @@ class ReservaService {
   }
 
   async getLibrosDisponiblesReserva(
-    userId: number,
     req: PagReqModel<FiltrosLibro>
   ): Promise<PagResModel<ReservaLibroHomeJSON>> {
     const filtros = req.filter ?? {}
     const params = { ...filtros, numeroPagina: req.pageNumber, tamanoPaginado: req.pageSize }
     const queryLibros = () =>
       customAxios.get(
-        `/reserva/librosDisponibles/${userId}`,{ params })
+        '/reserva/librosDisponibles',{ params })
     return await getAxiosData(queryLibros)
   }
+
   async getDetalleLibroByID(
     libroId: string,
     fechaDesde: string,
