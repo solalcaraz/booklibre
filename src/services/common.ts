@@ -9,6 +9,7 @@ export const getAxiosData = async <T>(query: () => Promise<AxiosResponse<T>>): P
 
 export const customAxios = axios.create({
     baseURL: API_URL,
+    withCredentials: true,
     paramsSerializer: (params) => {
         const urlParams = new URLSearchParams()
 
