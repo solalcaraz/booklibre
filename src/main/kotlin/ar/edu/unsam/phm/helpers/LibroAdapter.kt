@@ -59,8 +59,7 @@ class LibroMapper : LibroAdapter {
             paginas = libroData.cantPaginas,
             isbn13 = libroData.isbn13,
             descripcion = libroData.descripcion,
-            portada = libroData.portada,
-            idDueno = libro.dueno.id ?: 0
+            portada = libroData.portada
         )
     }
 }

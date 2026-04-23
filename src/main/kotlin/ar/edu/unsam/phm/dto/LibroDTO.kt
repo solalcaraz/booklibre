@@ -22,8 +22,7 @@ data class LibroDetalleDTO(
     val paginas: Int,
     val isbn13: String,
     val descripcion: String,
-    val portada: String,
-    val idDueno: Int
+    val portada: String
 )
 
 data class MiLibroProjection(
