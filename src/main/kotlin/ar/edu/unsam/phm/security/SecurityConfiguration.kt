@@ -51,7 +51,7 @@ class SecurityConfiguration(
             // Permisos de admin para modificar
             // Solo los que pueden reservar (lector) acceden a este endpoint
             .requestMatchers(HttpMethod.GET, "/reserva/librosDisponibles/**")
-                .hasAnyRole("Lector", "Lector / Publicador")
+                .hasAnyRole("LECTOR", "LECTOR_PUBLICADOR")
             //---------------------------
             // Default: que se autentique para poder ver información
             .anyRequest()

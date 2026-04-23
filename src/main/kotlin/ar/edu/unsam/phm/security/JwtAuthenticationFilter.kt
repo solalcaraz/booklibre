@@ -75,8 +75,6 @@ class JwtAuthenticationFilter(
         return path.startsWith("/auth/")
     }
 
-
-
     private fun HttpServletRequest.extractTokenFromCookie(): String? =
         this.cookies?.firstOrNull { it.name == "ACCESS_TOKEN" }?.value
 }
