@@ -3,7 +3,10 @@ package ar.edu.unsam.phm.controller
 import ar.edu.unsam.phm.dto.AuthenticationResponse
 import ar.edu.unsam.phm.dto.LoginRequest
 import ar.edu.unsam.phm.dto.LoginResponseDTO
+import ar.edu.unsam.phm.dto.RefreshTokenRequest
+import ar.edu.unsam.phm.dto.RefreshTokenResponse
 import ar.edu.unsam.phm.dto.RegisterRequest
+import ar.edu.unsam.phm.exceptions.ForbiddenException
 import ar.edu.unsam.phm.helpers.UsuarioMapper
 import ar.edu.unsam.phm.service.AuthService
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -30,4 +33,13 @@ class AuthController(
         val usuario = authService.register(usuarioRegister)
         return usuarioMapper.toDto(usuario)
     }
+
+    @PostMapping("/refresh")
+    fun refresh(@RequestBody request: RefreshTokenRequest): RefreshTokenResponse {
+        println(request)
+        return authService.refreshToken(request.token)?.maptoTokenResponse()?: throw ForbiddenException("Refresh token invalido")
+    }
+
+    private fun String.maptoTokenResponse(): RefreshTokenResponse =
+        RefreshTokenResponse(token = this)
 }

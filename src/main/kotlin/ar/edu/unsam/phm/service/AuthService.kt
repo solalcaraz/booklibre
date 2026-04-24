@@ -3,6 +3,7 @@ package ar.edu.unsam.phm.service
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.AuthenticationResponse
 import ar.edu.unsam.phm.dto.LoginRequest
+import ar.edu.unsam.phm.dto.RefreshTokenResponse
 import ar.edu.unsam.phm.dto.RegisterRequest
 import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
@@ -40,17 +41,42 @@ class AuthService(
         val foundUser = usuarioRepository.findByEmail(usuario.email)
             ?: throw NotFoundException("Usuario no encontrado")
 
-        val accessToken = tokenHelper.generate(
-            userId = foundUser.id!!,
-            expirationDate = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration),
-            additionalClaims = mapOf(
-                "role" to foundUser.tipoUsuario.name
-            )
+        val accessToken = tokenHelper.generateAccessToken(
+            foundUser,
+            expirationDate = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration)
+        )
+
+        val refreshToken = tokenHelper.generateRefreshToken(
+            foundUser,
+            expirationDate = Date(System.currentTimeMillis() + jwtProperties.refreshTokenExpiration)
         )
 
         return AuthenticationResponse(
-            accessToken = accessToken
+            accessToken = accessToken,
+            refreshToken = refreshToken,
         )
+    }
+
+    fun refreshToken(token: String): String? {
+        val userId = tokenHelper.extractUserId(token)
+            ?: throw UnauthorizedException("Refresh token inválido")
+
+        if (tokenHelper.isExpired(token)) {
+            throw UnauthorizedException("Refresh token expirado")
+        }
+
+        if (tokenHelper.extractType(token) != "refresh") {
+            throw UnauthorizedException("Token inválido")
+        }
+
+        val usuario = usuarioRepository.findById(userId)
+            .orElseThrow { UnauthorizedException("Usuario no encontrado") }
+
+        val newAccessToken = tokenHelper.generateAccessToken(usuario,
+            Date(System.currentTimeMillis() + jwtProperties.refreshTokenExpiration)
+        )
+
+        return newAccessToken
     }
 
     @Transactional

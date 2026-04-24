@@ -50,16 +50,19 @@ class UsuarioService(
 
         /* Si cambia el rol del usuario tengo que actualizar el token en esta request, o bien mandar al usuario
         a que inicie sesion de nuevo pero destroza la UX */
-        val accessToken = tokenHelper.generate(
-            userId = usuarioActualizado.id!!,
-            expirationDate = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration),
-            additionalClaims = mapOf(
-                "role" to usuarioActualizado.tipoUsuario.name
-            )
+        val accessToken = tokenHelper.generateAccessToken(
+            usuarioActualizado,
+            expirationDate = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration)
+        )
+
+        val refreshToken = tokenHelper.generateRefreshToken(
+            usuarioActualizado,
+            expirationDate = Date(System.currentTimeMillis() + jwtProperties.refreshTokenExpiration)
         )
 
         return AuthenticationResponse(
-            accessToken = accessToken
+            accessToken = accessToken,
+            refreshToken = refreshToken
         )
     }
 

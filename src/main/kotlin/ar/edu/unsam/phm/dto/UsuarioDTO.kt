@@ -18,8 +18,17 @@ data class LoginResponseDTO(
     val bibliokarmas: Int
 )
 
+data class RefreshTokenRequest(
+    val token: String
+)
+
+data class RefreshTokenResponse(
+    val token: String,
+)
+
 data class AuthenticationResponse(
-    val accessToken: String
+    val accessToken: String,
+    val refreshToken: String
 )
 
 data class PerfilUsuarioDTO(

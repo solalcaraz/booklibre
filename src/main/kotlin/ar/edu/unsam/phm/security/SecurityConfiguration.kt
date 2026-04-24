@@ -49,7 +49,7 @@ class SecurityConfiguration(
             // Importante: no definirlo solo para el method POST
             // porque CORS requiere que también puedas mandar el OPTIONS para hacer el pre-flight
             it.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .requestMatchers("/auth/register", "/auth/login", "/error").permitAll() // agregar refresh token endpoint
+            .requestMatchers("/auth/register", "/auth/login", "/error", "/auth/refresh").permitAll() // agregar refresh token endpoint
             .requestMatchers("/imagenes/**").permitAll()
             // Permisos de admin para modificar
             // Solo los que pueden reservar (lector) acceden a este endpoint
