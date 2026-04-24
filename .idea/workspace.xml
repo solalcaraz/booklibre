@@ -6,14 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="69efba49-111b-44f0-82f5-a8580d624123" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/AuthController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/AuthController.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/UsuarioDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/UsuarioDTO.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/security/SecurityConfiguration.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/security/SecurityConfiguration.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/security/TokenHelper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/security/TokenHelper.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/AuthService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/AuthService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/UsuarioService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/UsuarioService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -360,7 +352,7 @@
       <workItem from="1776871150581" duration="17771000" />
       <workItem from="1776906550656" duration="3068000" />
       <workItem from="1776962070725" duration="9180000" />
-      <workItem from="1777040351024" duration="14412000" />
+      <workItem from="1777040351024" duration="17430000" />
     </task>
     <servers />
   </component>

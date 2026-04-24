@@ -73,7 +73,7 @@ class AuthService(
             .orElseThrow { UnauthorizedException("Usuario no encontrado") }
 
         val newAccessToken = tokenHelper.generateAccessToken(usuario,
-            Date(System.currentTimeMillis() + jwtProperties.refreshTokenExpiration)
+            Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration)
         )
 
         return newAccessToken
