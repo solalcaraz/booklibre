@@ -9,11 +9,13 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationProvider
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.DefaultSecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+/*import org.springframework.security.web.csrf.CookieCsrfTokenRepository*/
 import org.springframework.security.web.csrf.CsrfToken
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler
 import org.springframework.security.web.csrf.CsrfTokenRequestHandler
@@ -25,6 +27,7 @@ import java.util.function.Supplier
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 class SecurityConfiguration(
     private val authenticationProvider: AuthenticationProvider
 ) {
@@ -34,20 +37,20 @@ class SecurityConfiguration(
         jwtAuthenticationFilter: JwtAuthenticationFilter
     ): DefaultSecurityFilterChain =
         http
-        .cors{ cors -> cors.configurationSource(corsConfigurationSource()) }
         .csrf {
             it.disable()
             /*it.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
             it.csrfTokenRequestHandler(SpaCsrfTokenRequestHandler())
             it.ignoringRequestMatchers("/auth/login", "/auth/register", "/error")*/
         }
+        /*.cors{ cors -> cors.configurationSource(corsConfigurationSource()) }*/
         .authorizeHttpRequests {
             // Queremos que cualquier persona se pueda loguear y mostrar errores
             // Importante: no definirlo solo para el method POST
             // porque CORS requiere que también puedas mandar el OPTIONS para hacer el pre-flight
             it.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .requestMatchers("/auth/register", "/auth/login", "/error") // agregar refresh token endpoint
-            .permitAll()
+            .requestMatchers("/auth/register", "/auth/login", "/error").permitAll() // agregar refresh token endpoint
+            .requestMatchers("/imagenes/**").permitAll()
             // Permisos de admin para modificar
             // Solo los que pueden reservar (lector) acceden a este endpoint
             .requestMatchers(HttpMethod.GET, "/reserva/librosDisponibles/**")

@@ -35,16 +35,19 @@ class ReservaService(
     @Transactional(readOnly = true)
     fun getMisReservas(payload: PaginationReqDTO<ReservaRequestDTO>): PaginationResponseDTO<ReservaDTO> {
         val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
+
         val page = reservaRepository.findPrestadosAMi(
             usuarioId.toInt(),
             payload.filter.inputSearch,
             PageRequest.of(payload.pageNumber, payload.pageSize)
         )
+
         return reservaAdapter.toDtoReservaPag(page)
     }
 
     fun getPrestadosPorMi(payload: PaginationReqDTO<ReservaRequestDTO>): Page<Reserva> {
         val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
+
         return reservaRepository.findPrestadosPorMi(
             usuarioId.toInt(),
             payload.filter.inputSearch,

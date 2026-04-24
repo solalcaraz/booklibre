@@ -1,6 +1,7 @@
 package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.Usuario
+import ar.edu.unsam.phm.dto.AuthenticationResponse
 import ar.edu.unsam.phm.dto.LoginRequest
 import ar.edu.unsam.phm.dto.RegisterRequest
 import ar.edu.unsam.phm.exceptions.ConflictException
@@ -24,7 +25,7 @@ class AuthService(
     private val tokenHelper: TokenHelper,
     private val jwtProperties: JwtProperties
 ) {
-    fun login(usuario: LoginRequest): String {
+    fun login(usuario: LoginRequest): AuthenticationResponse {
         try {
             authManager.authenticate(
                 UsernamePasswordAuthenticationToken(
@@ -39,9 +40,16 @@ class AuthService(
         val foundUser = usuarioRepository.findByEmail(usuario.email)
             ?: throw NotFoundException("Usuario no encontrado")
 
-        return tokenHelper.generate(
+        val accessToken = tokenHelper.generate(
             userId = foundUser.id!!,
-            expirationDate = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration)
+            expirationDate = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration),
+            additionalClaims = mapOf(
+                "role" to foundUser.tipoUsuario.name
+            )
+        )
+
+        return AuthenticationResponse(
+            accessToken = accessToken
         )
     }
 

@@ -5,6 +5,7 @@ import ar.edu.unsam.phm.dto.MiLibroProjection
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.helpers.LibroAdapter
 import ar.edu.unsam.phm.service.LibroService
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
@@ -25,6 +26,7 @@ class LibroController(
     @PutMapping("/libro/{id}")
     fun actualizarLibro(@PathVariable id: Int, @RequestBody libroDTO: LibroDetalleDTO) { libroService.update(id, libroDTO) }
 
+    @PreAuthorize("hasRole('PUBLICADOR') or hasRole('LECTOR_PUBLICADOR')")
     @GetMapping("/misLibros/me")
     fun listarMisLibros(
         @RequestParam(defaultValue = "0") page: Int,
@@ -41,6 +43,7 @@ class LibroController(
         return libroService.buscarMisLibros(userId, filter, sort, page, size)
     }
 
+    @PreAuthorize("hasRole('PUBLICADOR') or hasRole('LECTOR_PUBLICADOR')")
     @DeleteMapping("/misLibros/{bookId}")
     fun removeLibro(@PathVariable bookId: String) = libroService.despublicarLibro(bookId)
 }

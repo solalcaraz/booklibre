@@ -1,5 +1,6 @@
 package ar.edu.unsam.phm.controller
 
+import ar.edu.unsam.phm.dto.AuthenticationResponse
 import ar.edu.unsam.phm.dto.PerfilUsuarioDTO
 import ar.edu.unsam.phm.dto.UsuarioPatchRequest
 import ar.edu.unsam.phm.helpers.UsuarioMapper
@@ -31,7 +32,7 @@ class UsuarioController(val usuarioService: UsuarioService, val usuarioMapper: U
     }
 
     @PatchMapping("/me")
-    fun updateUsuario(@RequestBody userPatch: UsuarioPatchRequest) {
+    fun updateUsuario(@RequestBody userPatch: UsuarioPatchRequest): AuthenticationResponse {
         val userId = SecurityContextHolder
             .getContext()
             .authentication
