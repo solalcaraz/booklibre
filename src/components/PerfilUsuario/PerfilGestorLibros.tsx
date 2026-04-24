@@ -10,6 +10,7 @@ import type { LibroUsuario, FiltroLibros } from '../../services/UsuarioService'
 import type { PaginationState } from '../../models/PaginationModel'
 import { PerfilLibro } from './PerfilLibro'
 import { PerfilTab } from './PerfilTab'
+import { authService } from '../../services/AuthService'
 
 type GestorLibrosProps = {
   libros: LibroUsuario[]
@@ -61,16 +62,17 @@ export const PerfilGestorLibros = ({
         <h2 className="text-3xl font-extrabold tracking-tight text-slate-800 mb-3">
           Gestión de Mis Libros
         </h2>
-
-        <Link
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-pink-100 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-pink-200 cursor-pointer"
-          to="/libro/nuevo"
-        >
-          <span>
-            <PlusCircleIcon size={20} />
-          </span>
-          Agregar Nuevo Libro
-        </Link>
+        {authService.puedePublicar() && (
+          <Link
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-pink-100 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-pink-200 cursor-pointer"
+            to="/libro/nuevo"
+          >
+            <span>
+              <PlusCircleIcon size={20} />
+            </span>
+            Agregar Nuevo Libro
+          </Link>
+        )}
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -120,11 +122,15 @@ export const PerfilGestorLibros = ({
             </thead>
 
             <tbody>
-              {libros.map((libro) => (
-                <PerfilLibro key={libro.id} libro={libro} onDelete={onDelete} />
-              ))}
+              {authService.puedePublicar() &&
+                libros.map((libro) => (
+                  <PerfilLibro key={libro.id} libro={libro} onDelete={onDelete} />
+                ))}
             </tbody>
           </table>
+          {!authService.puedePublicar() && (
+            <div className="p-4">Si queres publicar tenes que tener rol de publicador</div>
+          )}
         </div>
 
         <div className="flex items-center justify-between border-t border-slate-200 px-5 py-4 text-sm text-slate-500">

@@ -1,21 +1,14 @@
 import { Outlet, useNavigate } from 'react-router-dom'
 import { useOnInit } from '../utils/hooks'
-import { usuarioService } from '../services/UsuarioService'
+import { authService } from '../services/AuthService'
 
 export const AuthLayout = () => {
-  const checkSession = async () => {
-    try {
-      await usuarioService.getUsuario()
-    } catch (e) {
-      console.log(e)
-      navigate('/auth/login')
-    }
-  }
-
   const navigate = useNavigate()
 
   useOnInit(() => {
-    checkSession()
+    if (!authService.estaAutenticado()) {
+      navigate('/auth/login')
+    }
   })
 
   return <Outlet />

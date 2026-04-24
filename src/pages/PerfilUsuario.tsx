@@ -16,6 +16,8 @@ import { PerfilStats } from '../components/PerfilUsuario/PerfilStats'
 import { PerfilGestorLibros } from '../components/PerfilUsuario/PerfilGestorLibros'
 import { Spinner } from '../components/Spinner'
 import { ErrorCard } from '../components/ErrorCard'
+import toast from 'react-hot-toast'
+import { authService } from '../services/AuthService'
 
 export const PerfilUsuario = () => {
   const [usuario, setUsuario] = useState<UsuarioResponse>()
@@ -33,6 +35,7 @@ export const PerfilUsuario = () => {
   const navigate = useNavigate()
 
   const getLibros = async () => {
+    if (!authService.puedePublicar()) return
     try {
       const libros = await usuarioService.getLibros(pagination.page, filter, sort)
       setLibros(libros.items)
@@ -66,9 +69,9 @@ export const PerfilUsuario = () => {
     try {
       await usuarioService.patchUsuario(userPatch)
       getUsuario()
+      getLibros()
     } catch (error: unknown) {
-      setError(getMensajeError(error as ErrorResponse))
-      console.log(error)
+      toast.error(getMensajeError(error as ErrorResponse).message)
     }
   }
 
