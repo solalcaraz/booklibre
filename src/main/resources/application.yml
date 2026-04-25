@@ -23,7 +23,7 @@ spring:
 
 security:
   key: ${JWT_SECRET_KEY}
-  access-token-expiration: 300000
+  access-token-expiration: 60000
   refresh-token-expiration: 604800000
 
 
