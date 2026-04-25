@@ -15,14 +15,17 @@ class LibroController(
     val libroService: LibroService,
     val libroAdapter: LibroAdapter
 ){
+    @PreAuthorize("hasRole('PUBLICADOR') or hasRole('LECTOR_PUBLICADOR')")
     @GetMapping("/libro/{id}")
     fun obtenerLibroParaUsuario(@PathVariable id: Int): LibroDetalleDTO {
         return libroAdapter.toDetalleDto(libroService.getByIdForUser(id))
     }
 
+    @PreAuthorize("hasRole('PUBLICADOR') or hasRole('LECTOR_PUBLICADOR')")
     @PostMapping("/libro/nuevo")
     fun crearLibro(@RequestBody libroDTO : LibroDetalleDTO) = libroService.create(libroDTO)
 
+    @PreAuthorize("hasRole('PUBLICADOR') or hasRole('LECTOR_PUBLICADOR')")
     @PutMapping("/libro/{id}")
     fun actualizarLibro(@PathVariable id: Int, @RequestBody libroDTO: LibroDetalleDTO) { libroService.update(id, libroDTO) }
 
