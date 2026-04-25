@@ -1,5 +1,6 @@
 package ar.edu.unsam.phm.security
 
+import ar.edu.unsam.phm.domain.Usuario
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
@@ -16,6 +17,29 @@ class TokenHelper(
     private val secretKey = Keys.hmacShaKeyFor(
         jwtProperties.key.toByteArray(),
     )
+
+    fun generateAccessToken(usuario: Usuario, expirationDate: Date): String =
+        generate(
+            userId = usuario.id!!,
+            expirationDate = expirationDate,
+            additionalClaims = mapOf(
+                "role" to usuario.tipoUsuario.name,
+                "type" to "access"
+            )
+        )
+
+    fun generateRefreshToken(usuario: Usuario, expirationDate: Date): String =
+        generate(
+            userId = usuario.id!!,
+            expirationDate = expirationDate,
+            additionalClaims = mapOf(
+                "type" to "refresh"
+            )
+        )
+
+    fun extractType(token: String): String? =
+        getAllClaims(token)["type"] as? String
+
 
     fun generate(
         userId: Int,
@@ -51,4 +75,6 @@ class TokenHelper(
 
         return parser.parseSignedClaims(token).payload
     }
+
+
 }

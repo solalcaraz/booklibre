@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="69efba49-111b-44f0-82f5-a8580d624123" name="Changes" comment="" />
+    <list default="true" id="69efba49-111b-44f0-82f5-a8580d624123" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/db/functions.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -87,6 +93,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Database Script.functions.sql.executor": "Run",
     "Gradle.AuthSpec.executor": "Run",
     "Gradle.AuthSpec.login_ok.executor": "Run",
     "Gradle.Build backend-2026-grupo8.executor": "Run",
@@ -115,7 +122,7 @@
     "Spring Boot.BookLibre.executor": "Run",
     "Spring Boot.Main.executor": "Run",
     "Spring Boot.ProyectoApplication.executor": "Run",
-    "git-widget-placeholder": "security",
+    "git-widget-placeholder": "security2",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Thomas/Desktop/Facultad/PHM/backend-2026-grupo8",
@@ -126,6 +133,14 @@
     "run.configurations.included.in.services": "true",
     "settings.editor.selected.configurable": "preferences.editor",
     "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
+    ],
+    "RunConfigurationTargetLRU": [
+      "5bf20bba-f9de-45d5-89a0-6e844dae9f5e"
+    ]
   }
 }]]></component>
   <component name="RecentsManager">
@@ -153,33 +168,23 @@
         <option value="SpringBootApplicationConfigurationType" />
       </set>
     </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="SpringBootApplicationConfigurationType">
+          <value>
+            <map>
+              <entry key="BookLibre" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="RunManager" selected="Spring Boot.BookLibre">
-    <configuration name="AuthSpec" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;ar.edu.unsam.phm.controller.AuthSpec&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <GradleProfilingDisabled>false</GradleProfilingDisabled>
-      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+    <configuration name="functions.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
+      <script-file value="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/db/functions.sql" />
+      <script-mode>FILE</script-mode>
+      <data-source id="5bf20bba-f9de-45d5-89a0-6e844dae9f5e" />
       <method v="2" />
     </configuration>
     <configuration name="MisLibrosSpec" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -276,7 +281,7 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Gradle.AuthSpec" />
+      <item itemvalue="Database Script.functions.sql" />
       <item itemvalue="Gradle.backend-2026-grupo8 [bootRun]" />
       <item itemvalue="Gradle.MisLibrosSpec" />
       <item itemvalue="Gradle.Tests in 'backend-2026-grupo8.test'" />
@@ -285,10 +290,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Spring Boot.BookLibre" />
+        <item itemvalue="Database Script.functions.sql" />
         <item itemvalue="Gradle.backend-2026-grupo8 [bootRun]" />
         <item itemvalue="Gradle.Tests in 'backend-2026-grupo8.test'" />
         <item itemvalue="Gradle.MisLibrosSpec" />
-        <item itemvalue="Gradle.AuthSpec" />
       </list>
     </recent_temporary>
   </component>
@@ -339,6 +344,7 @@
       <workItem from="1776871150581" duration="17771000" />
       <workItem from="1776906550656" duration="3068000" />
       <workItem from="1776962070725" duration="9180000" />
+      <workItem from="1777040351024" duration="21488000" />
     </task>
     <servers />
   </component>
