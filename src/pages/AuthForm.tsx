@@ -6,7 +6,6 @@ import { FormInput } from '../components/FormInput'
 import { type AuthErrors, type AuthFormData, Auth } from '../classes/Auth'
 import { useOnInit } from '../utils/hooks'
 import { authService } from '../services/AuthService'
-import { usuarioService } from '../services/UsuarioService'
 /* import { useUser } from '../contexts/UserContext' */
 import { getMensajeError, type ErrorCustom, type ErrorResponse } from '../utils/errorHandler'
 
@@ -28,18 +27,11 @@ export const AuthForm = () => {
   const isValidMode = mode === 'login' || mode === 'register'
   const isLogin = mode === 'login'
 
-  const checkSession = async () => {
-    try {
-      await usuarioService.getUsuario()
-      navigate('/home')
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
   useOnInit(() => {
     /* Si estoy logeado me manda al home */
-    checkSession()
+    if (authService.estaAutenticado()) {
+      navigate('/home')
+    }
     /* Si quiero entrar a una subruta invalida de auth me redirecciona al login */
     if (!isValidMode) {
       navigate('/auth/login')

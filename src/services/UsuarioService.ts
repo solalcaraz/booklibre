@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { API_URL } from '../env'
-import { authService } from './AuthService'
+import { authService, type AuthResponse } from './AuthService'
 import type { PagResModel } from '../models/PaginationModel'
+import { api } from '../api/api'
 
 export type FiltroLibros = 'Todos' | 'Disponibles' | 'Prestados'
 
@@ -48,8 +49,12 @@ export type LibroSort = {
 
 class UsuarioService {
   async getUsuario(): Promise<UsuarioResponse> {
-    const response = await axios.get<UsuarioResponse>(`${API_URL}/usuario/me`, {
-      withCredentials: true
+    const token = authService.tokenDeStorage()
+
+    const response = await api.get<UsuarioResponse>(`${API_URL}/usuario/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
 
     return response.data
@@ -60,27 +65,42 @@ class UsuarioService {
     filter: FiltroLibros = 'Todos',
     sort?: LibroSort
   ): Promise<PagResModel<LibroUsuario>> {
-    const response = await axios.get<PagResModel<LibroUsuario>>(
+    const token = authService.tokenDeStorage()
+
+    const response = await api.get<PagResModel<LibroUsuario>>(
       `${API_URL}/misLibros/me?page=${page}&size=3&filter=${filter}${sort ? `&sort=${sort.field},${sort.direction}` : ''}`,
       {
-        withCredentials: true
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       }
     )
 
     return response.data
   }
 
-  async patchUsuario(userPatch: EditProfileData) {
-    const response = await axios.patch(API_URL + `/usuario/me`, userPatch, {
-      withCredentials: true
+  async patchUsuario(userPatch: EditProfileData): Promise<AuthResponse> {
+    const token = authService.tokenDeStorage()
+
+    const response = await api.patch(API_URL + `/usuario/me`, userPatch, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
+
+    window.localStorage.setItem('accessToken', response.data.accessToken)
+    /* Aca no renuevo el refresh token! */
 
     return response.data
   }
 
   async deleteLibro(id: number) {
-    const response = await axios.delete(API_URL + `/misLibros/${id}`, {
-      withCredentials: true
+    const token = authService.tokenDeStorage()
+
+    const response = await api.delete(API_URL + `/misLibros/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
 
     return response.data
@@ -88,7 +108,7 @@ class UsuarioService {
 
   async getBibliokarmas(): Promise<number> {
     const user = authService.userDeStorage()
-    const response = await axios.get<number>(API_URL + `/usuario/bibliokarmas/${user.id}`)
+    const response = await axios.get<number>(API_URL + `/usuario/bibliokarmas/${user.sub}`)
 
     return response.data
   }
