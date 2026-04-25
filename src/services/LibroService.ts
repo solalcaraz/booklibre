@@ -1,26 +1,36 @@
-import axios from "axios";
 import { API_URL } from "../env";
 import type { LibroFormData } from "../classes/Libro";
 import type { LibroDetalleResponse } from "../models/LibroResponseModel";
 import { GENERO_OPTIONS, IDIOMA_OPTIONS, ESTADO_OPTIONS, getKeyFromLabel } from "../utils/formateEnumLibros";
+import { api } from "../api/api";
+import { authService } from "./AuthService";
 
 class LibroService {
   async getByIdForUser(id: string): Promise<LibroDetalleResponse> {
-    const response = await axios.get<LibroDetalleResponse>(`${API_URL}/libro/${id}`, {
-      withCredentials: true
-    })
+    const token = authService.tokenDeStorage()
+    const response = await api.get<LibroDetalleResponse>(`${API_URL}/libro/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     return response.data
   }
 
   async create(libroData: LibroFormData): Promise<void> {
-    await axios.post(`${API_URL}/libro/nuevo`, this.mapToDTO(libroData), {
-      withCredentials: true
+    const token = authService.tokenDeStorage()
+    await api.post(`${API_URL}/libro/nuevo`, this.mapToDTO(libroData), {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
   }
 
   async update(id: string, libroData: LibroFormData): Promise<void> {
-    await axios.put(`${API_URL}/libro/${id}`, this.mapToDTO(libroData, id), {
-      withCredentials: true
+    const token = authService.tokenDeStorage()
+    await api.put(`${API_URL}/libro/${id}`, this.mapToDTO(libroData, id), {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
   }
 

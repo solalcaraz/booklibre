@@ -6,7 +6,7 @@ import { Libro, type LibroFormData, type LibroErrors } from "../classes/Libro";
 import { GENERO_OPTIONS, TIPO_OPTIONS, IDIOMA_OPTIONS, ESTADO_OPTIONS } from "../utils/formateEnumLibros";
 import { useOnInit } from "../utils/hooks";
 import toast from "react-hot-toast";
-import { usuarioService } from "../services/UsuarioService";
+import { authService } from "../services/AuthService";
 
 const initialFormData: LibroFormData = {
     titulo: "", tipo: "", genero: "", autor: "", idioma: "",
@@ -30,11 +30,8 @@ export default function LibroForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const checkPermisos = async () => {
-        try {
-            const user = await usuarioService.getUsuario();
-            const tienePermiso = user.tipoUsuario === 'Publicador' || user.tipoUsuario === 'Lector / Publicador';
-            
-            if (!tienePermiso) {
+        try {      
+            if (!authService.puedePublicar()) {
                 setAccessError("No tenés permisos para publicar libros.");
             }
         } catch (error) {
