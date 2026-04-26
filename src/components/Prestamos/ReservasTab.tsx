@@ -15,7 +15,7 @@ export const ReservasTab = ({ tab, fetchFunction }: Props) => {
   const [loading, setLoading] = useState(false);
   const [filtro, setFiltro] = useState<ReservaRequestModel>({
     inputSearch: '',
-    usuarioId: authService.userDeStorage().id
+    usuarioId: authService.userDeStorage().sub
   })
 
   const filtrar = (e?: any) => {
