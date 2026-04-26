@@ -59,6 +59,13 @@ class SecurityConfiguration(
             .requestMatchers(HttpMethod.POST, "/libro/nuevo")
                 .hasAnyRole("PUBLICADOR", "LECTOR_PUBLICADOR")
             // Default: que se autentique para poder ver información
+                // ---------------------------
+            .requestMatchers(HttpMethod.POST, "/reserva/obtenerMisReservas")
+            .hasAnyRole("LECTOR", "LECTOR_PUBLICADOR")
+            .requestMatchers(HttpMethod.POST, "/reserva/obtenerPrestadosPorMi")
+            .hasAnyRole("PUBLICADOR", "LECTOR_PUBLICADOR")
+            .requestMatchers(HttpMethod.POST, "/reserva/calificar")
+            .hasAnyRole("LECTOR", "LECTOR_PUBLICADOR")
             .anyRequest()
             .authenticated()
         }
