@@ -37,7 +37,8 @@ class ReservaController (private val reservaService: ReservaService, private val
     fun obtenerReservas(
         @RequestBody payload: PaginationReqDTO<ReservaRequestDTO>
     ): PaginationResponseDTO<ReservaDTO> {
-        return reservaService.getMisReservas(payload)
+        val page = reservaService.getMisReservas(payload)
+        return reservaMapper.toDtoReservaPag(page)
     }
 
     @PostMapping("/obtenerPrestadosPorMi")
