@@ -91,9 +91,12 @@ export const AuthForm = () => {
       if (isLogin) {
         const loginData = auth.toLoginData()
         await authService.login(loginData)
-        window.location.reload()
+        if(authService.puedeReservar()){
+          navigate('/home')
+        } else {
+          navigate('/profile')
+        }
 
-        navigate('/home')
         return
       }
 

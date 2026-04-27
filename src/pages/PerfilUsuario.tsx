@@ -48,8 +48,8 @@ export const PerfilUsuario = () => {
     } catch (error: unknown) {
       setError(getMensajeError(error as ErrorResponse))
       console.log(error)
-    } finally {
-      setLoading(false)
+    // } finally {
+    //   setLoading(false)
     }
   }
 
@@ -60,9 +60,9 @@ export const PerfilUsuario = () => {
     } catch (error: unknown) {
       setError(getMensajeError(error as ErrorResponse))
       console.log(error)
-    } finally {
-      setLoading(false)
-    }
+    // } finally {
+    //   setLoading(false)
+  }
   }
 
   const handleActualizarUsuario = async (userPatch: EditProfileData) => {
@@ -112,8 +112,12 @@ export const PerfilUsuario = () => {
 
   /* consultar la separación de los useEffect en MisLibros / PerfilUsuario para optimizar queries a postgres */
   useEffect(() => {
-    getUsuario()
-    getLibros()
+    const cargarDatos = async () => {
+      setLoading(true)
+      await Promise.all([getUsuario(), getLibros()])
+      setLoading(false)
+    }
+    cargarDatos()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination.page, filter, sort])
 

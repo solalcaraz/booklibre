@@ -10,6 +10,15 @@ import './App.css'
 import { DetalleReservaPage } from './pages/DetalleReservaPage'
 import { UserProvider } from './contexts/UserContext'
 import { Toaster } from 'react-hot-toast';
+import { authService } from './services/AuthService'
+import type { JSX } from 'react'
+
+const RutaProtegida = ({ children }: { children: JSX.Element }) => {
+  if (!authService.puedeReservar()) {
+    return <Navigate to="/profile" replace />
+  }
+  return children
+}
 
 function App() {
   return (
@@ -24,12 +33,20 @@ function App() {
             <Route path="/" element={<Navigate to="/auth/login" />} />
             <Route />
             <Route element={<MainLayout />}>
-              <Route path="/home" element={<Home />} />
+              <Route path="/home" element={
+                <RutaProtegida>
+                  <Home />
+                </RutaProtegida>
+              } />
               <Route path="/prestamos" element={<Prestamos />} />
               <Route path="/profile" element={<PerfilUsuario />} />
               <Route path="/libro/nuevo" element={<LibroForm />} />
               <Route path="/libros/editar/:id" element={<LibroForm />} />
-              <Route path="/detalles/:id" element={<DetalleReservaPage />} />
+              <Route path="/detalles/:id" element={
+                <RutaProtegida>
+                  <DetalleReservaPage />
+                </RutaProtegida>
+              } />
             </Route>
           </Route>
         </Routes>

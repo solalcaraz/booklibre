@@ -5,6 +5,7 @@ import defaultUser from '../assets/images/user.png'
 import { useUser } from '../contexts/UserContext'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
+import { authService } from '../services/AuthService'
 
 interface NavItemProps {
   to: string
@@ -31,7 +32,7 @@ export default function Navbar() {
   const navigate = useNavigate()
 
   const items: NavItemProps[] = [
-    { to: '/home', label: 'Inicio' },
+    ...(authService.puedeReservar() ? [{ to: '/home', label: 'Inicio' }] : []),
     { to: `/prestamos`, label: 'Mis Préstamos' },
     { to: '/profile', label: 'Perfil' }
   ]
