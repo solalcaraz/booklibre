@@ -69,16 +69,10 @@ data class LibroData(
     var portada: String = Environment.API_URL + "/imagenes/libro-nuevo.jpg"
 )
 @Entity
-@Table(name = "libro")
-/* CHECK a modo documentacion
-cuando se agregue el script con flyway, esta linea seria redundante
-por el momento, cada vez que se genera el ddl, se lee la anotacion CHECK y se agrega como validacion
- */
-@Check(constraints = "tipo_libro IN ('COMUN', 'DEDICATORIA', 'COLECCIONABLE')")
+@Table(name = "libros")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_libro", discriminatorType = DiscriminatorType.STRING)
 /* Esta restriction hace que cuando doy baja logica de un libro, se ignoren también las reservas del mismo */
-/* Haciendo que los libros prestados del usuario se reduzca, no debería ocurrir */
 @SQLRestriction("activo = true")
 abstract class Libro(
     @Embedded
@@ -101,7 +95,7 @@ abstract class Libro(
     private val resenias: MutableList<Resenia> = mutableListOf()
 
     @Column(nullable = false)
-    var activo: Boolean = true
+    open var activo: Boolean = true
 
     abstract fun plusBiblioKarma(cantidadBibliokarmas: Int): Int
 

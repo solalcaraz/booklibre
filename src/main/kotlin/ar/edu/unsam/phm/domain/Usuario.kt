@@ -39,6 +39,7 @@ class Usuario(
     val anoUnido: Int = LocalDate.now().year,
 ) : EntidadConId {
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     var tipoUsuario: TipoUsuario = TipoUsuario.LECTOR_PUBLICADOR
 
     @Column
