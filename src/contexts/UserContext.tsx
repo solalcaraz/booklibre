@@ -11,6 +11,7 @@ interface UserContextType {
   user: navbarUser | null;
   updateUser: (updates: Partial<navbarUser>) => void;
   logout: () => void;
+  fetchUser: () => Promise<void>
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined)
@@ -74,7 +75,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   }
 
   return (
-    <UserContext.Provider value={{ user, updateUser, logout }}>
+    <UserContext.Provider value={{ user, updateUser, logout, fetchUser }}>
       {children}
     </UserContext.Provider>
   )
