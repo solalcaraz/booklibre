@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin(origins = ["http://localhost:5173"], allowCredentials = "true")
 @RequestMapping("/reserva")
 class ReservaController (private val reservaService: ReservaService, private val reservaMapper: ReservaMapper,
     private val reseniaService: ReseniaService) {
