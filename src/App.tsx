@@ -8,12 +8,12 @@ import { Home } from './pages/Home'
 import LibroForm from './pages/LibroForm'
 import './App.css'
 import { DetalleReservaPage } from './pages/DetalleReservaPage'
-/* import { UserProvider } from './contexts/UserContext' */
+import { UserProvider } from './contexts/UserContext'
 import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
-    /* <UserProvider> */
+    <UserProvider>
       <BrowserRouter>
         <Toaster position="top-right" reverseOrder={false} />
         
@@ -34,7 +34,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-    /* </UserProvider> */
+    </UserProvider>
   )
 }
 

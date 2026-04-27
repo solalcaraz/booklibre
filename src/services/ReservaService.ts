@@ -13,9 +13,15 @@ class ReservaService {
   async buscarPrestadosAmi(
     request: PagReqModel<ReservaRequestModel>
   ): Promise<PagResModel<ReservaResponseModel>> {
+    const token = authService.tokenDeStorage()
     const response = await axios.post<PagResModel<ReservaResponseModel>>(
       API_URL + '/reserva/obtenerMisReservas',
-      request
+      request,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
     )
     return response.data
   }
@@ -23,15 +29,27 @@ class ReservaService {
   async buscarPrestadosPorMi(
     request: PagReqModel<ReservaRequestModel>
   ): Promise<PagResModel<ReservaResponseModel>> {
+    const token = authService.tokenDeStorage()
     const response = await axios.post<PagResModel<ReservaResponseModel>>(
       API_URL + '/reserva/obtenerPrestadosPorMi',
-      request
+      request,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
     )
+
     return response.data
   }
 
   async calificar(request: ReseniaReq): Promise<string> {
-    const response = await axios.post<string>(API_URL + '/reserva/calificar', request)
+    const token = authService.tokenDeStorage()
+    const response = await axios.post<string>(API_URL + '/reserva/calificar', request, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     return response.data
   }
 
