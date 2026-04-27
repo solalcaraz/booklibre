@@ -49,13 +49,11 @@ class ReservaService {
     fechaDesde: string,
     fechaHasta: string
   ): Promise<DetalleReserva> {
-    // Obtenemos el token directamente del storage
     const token = authService.tokenDeStorage()
     const url = `${API_URL}/reserva/detalles/${libroId}`
 
     const response = await axios.get<DetalleReserva>(url, {
       headers: {
-        // Reemplazamos 'userId' por el header estándar de JWT
         Authorization: `Bearer ${token}`
       },
       params: {
