@@ -56,9 +56,10 @@ class ReservaService {
   async getLibrosDisponiblesReserva(
     req: PagReqModel<FiltrosLibro>
   ): Promise<PagResModel<ReservaLibroHomeJSON>> {
+    const token = authService.tokenDeStorage()
     const filtros = req.filter ?? {}
     const params = { ...filtros, numeroPagina: req.pageNumber, tamanoPaginado: req.pageSize }
-    const queryLibros = () => customAxios.get('/reserva/librosDisponibles', { params })
+    const queryLibros = () => customAxios.get('/reserva/librosDisponibles', { params, headers: { Authorization: `Bearer ${token}` } })
     return await getAxiosData(queryLibros)
   }
 
