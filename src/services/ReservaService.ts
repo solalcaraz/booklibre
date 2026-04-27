@@ -10,13 +10,23 @@ import { authService } from './AuthService'
 import type { CrearReservaJSON } from '../classes/Reserva'
 
 class ReservaService {
-  async buscarPrestadosAmi(request: PagReqModel<ReservaRequestModel>): Promise<PagResModel<ReservaResponseModel>> {
-    const response = await axios.post<PagResModel<ReservaResponseModel>>( API_URL + '/reserva/obtenerMisReservas', request )
+  async buscarPrestadosAmi(
+    request: PagReqModel<ReservaRequestModel>
+  ): Promise<PagResModel<ReservaResponseModel>> {
+    const response = await axios.post<PagResModel<ReservaResponseModel>>(
+      API_URL + '/reserva/obtenerMisReservas',
+      request
+    )
     return response.data
   }
 
-  async buscarPrestadosPorMi(request: PagReqModel<ReservaRequestModel>): Promise<PagResModel<ReservaResponseModel>> {
-    const response = await axios.post<PagResModel<ReservaResponseModel>>( API_URL + '/reserva/obtenerPrestadosPorMi', request )
+  async buscarPrestadosPorMi(
+    request: PagReqModel<ReservaRequestModel>
+  ): Promise<PagResModel<ReservaResponseModel>> {
+    const response = await axios.post<PagResModel<ReservaResponseModel>>(
+      API_URL + '/reserva/obtenerPrestadosPorMi',
+      request
+    )
     return response.data
   }
 
@@ -30,9 +40,7 @@ class ReservaService {
   ): Promise<PagResModel<ReservaLibroHomeJSON>> {
     const filtros = req.filter ?? {}
     const params = { ...filtros, numeroPagina: req.pageNumber, tamanoPaginado: req.pageSize }
-    const queryLibros = () =>
-      customAxios.get(
-        '/reserva/librosDisponibles',{ params })
+    const queryLibros = () => customAxios.get('/reserva/librosDisponibles', { params })
     return await getAxiosData(queryLibros)
   }
 
@@ -41,12 +49,14 @@ class ReservaService {
     fechaDesde: string,
     fechaHasta: string
   ): Promise<DetalleReserva> {
-    const user = authService.userDeStorage()
+    // Obtenemos el token directamente del storage
+    const token = authService.tokenDeStorage()
     const url = `${API_URL}/reserva/detalles/${libroId}`
 
     const response = await axios.get<DetalleReserva>(url, {
       headers: {
-        userId: user.id
+        // Reemplazamos 'userId' por el header estándar de JWT
+        Authorization: `Bearer ${token}`
       },
       params: {
         fechaDesde: fechaDesde,
@@ -57,12 +67,12 @@ class ReservaService {
   }
 
   async crearReserva(reserva: CrearReservaJSON) {
-    const user = authService.userDeStorage()
+    const token = authService.tokenDeStorage()
     const url = `${API_URL}/reserva/crear`
 
     return await axios.post<CrearReservaJSON>(url, reserva, {
       headers: {
-        userId: user.id
+        Authorization: `Bearer ${token}`
       }
     })
   }
