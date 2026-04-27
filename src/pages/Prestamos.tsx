@@ -3,15 +3,20 @@ import { Tabs, type Tab } from "../components/Tabs"
 import { ReservasTab } from "../components/Prestamos/ReservasTab"
 import { TAB_PRESTADOS_A_MI, TAB_PRESTADOS_POR_MI } from "../constants/ReservasConstants"
 import { reservaService } from "../services/ReservaService"
+import { authService } from "../services/AuthService"
 
 export const Prestamos = () => {
-  const [activeTab, setActiveTab] = useState(TAB_PRESTADOS_A_MI)
-
+  const puedeVerPrestadosAMi = authService.puedeReservar()
+  const puedeVerPrestadosPorMi = authService.puedePublicar()
+  
   const prestamosTabs: Tab[] = [
-    { id: TAB_PRESTADOS_A_MI, label: 'Prestados a mí' },
-    { id: TAB_PRESTADOS_POR_MI, label: 'Prestados por mí' }
-  ]
+    puedeVerPrestadosAMi && { id: TAB_PRESTADOS_A_MI, label: 'Prestados a mí' },
+    puedeVerPrestadosPorMi && { id: TAB_PRESTADOS_POR_MI, label: 'Prestados por mí' }
+  ].filter(Boolean) as Tab[]
 
+  const [activeTab, setActiveTab] = useState(prestamosTabs[0].id)
+  
+  
   const handleTabChange = (tab: string) => {
     setActiveTab(tab)
   }
@@ -25,12 +30,12 @@ export const Prestamos = () => {
 
       <Tabs tabs={prestamosTabs} active={activeTab} onChange={handleTabChange} />
 
-      {activeTab === TAB_PRESTADOS_A_MI && (
+      {activeTab === TAB_PRESTADOS_A_MI && puedeVerPrestadosAMi && (
         <div className="flex flex-col gap-6 px-4 my-7">
           <ReservasTab tab={activeTab} fetchFunction={reservaService.buscarPrestadosAmi}/>
         </div>
       )}
-      {activeTab === TAB_PRESTADOS_POR_MI && (
+      {activeTab === TAB_PRESTADOS_POR_MI && puedeVerPrestadosPorMi && (
         <div className="flex flex-col gap-6 px-4 my-7">
           <ReservasTab tab={activeTab} fetchFunction={reservaService.buscarPrestadosPorMi}/>
         </div>

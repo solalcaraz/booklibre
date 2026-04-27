@@ -1,10 +1,15 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authService, type AuthResponse } from '../services/AuthService';
+import { authService } from '../services/AuthService';
 import { usuarioService } from '../services/UsuarioService';
 
+export type navbarUser = {
+  bibliokarmas: number;
+  img: string;
+}
+
 interface UserContextType {
-  user: AuthResponse | null;
-  updateUser: (updates: Partial<AuthResponse>) => void;
+  user: navbarUser | null;
+  updateUser: (updates: Partial<navbarUser>) => void;
   logout: () => void;
 }
 
@@ -23,37 +28,41 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<AuthResponse | null>(null)
+  const [user, setUser] = useState<navbarUser | null>(() => {
+    const stored = localStorage.getItem('user')
+    return stored ? JSON.parse(stored) : null
+  })
 
-  // Cargar el usuario desde el localStorage al montar el componente
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchData = async () => {
-      try {
-        if (!authService.estaAutenticado()) return
-
-        const storedUser = authService.userDeStorage()
-        const bibliokarmas = await usuarioService.getBibliokarmas()
-
-        if (isMounted) {
-          setUser({ ...storedUser, bibliokarmas })
-        }
-      } catch (error) {
-        console.error("Error cargando usuario en el navbar:", error)
+  const fetchUser = async () => {
+    try {
+      if (!authService.estaAutenticado()) {
+        setUser(null)
+        localStorage.removeItem('user')
+        return
       }
-    };
-
-    fetchData()
-
-    return () => {
-      isMounted = false
+      
+      const user = await usuarioService.getUsuario()
+      
+      const mappedUser = {
+        img: user.imagen,
+        bibliokarmas: user.bibliokarmas
+      }
+      
+      setUser(mappedUser)
+      localStorage.setItem('user', JSON.stringify(mappedUser))
+    } catch (error) {
+      console.error("Error cargando usuario:", error)
     }
-    }, [])
+  }
+  
+  // Cargar el usuario al montar el componente
+  useEffect(() => {
+    fetchUser()
+  }, [])
 
-  const updateUser = (usuario: Partial<AuthResponse>) => {
+  const updateUser = (usuario: Partial<navbarUser>) => {
     setUser((prev) => {
-      const actualizado = prev ? { ...prev, ...usuario } : ({ ...usuario } as AuthResponse)
+      const actualizado = prev ? { ...prev, ...usuario } : ({ ...usuario } as navbarUser)
       window.localStorage.setItem('user', JSON.stringify(actualizado))
       return actualizado
     })

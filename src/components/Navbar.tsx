@@ -87,7 +87,7 @@ export default function Navbar() {
 
             <div className="relative" ref={ref}>
               <img
-                src={user?.imagen || defaultUser}
+                src={user?.img || defaultUser}
                 alt=""
                 onClick={() => setShowDropdwn(!showDropdwn)}
                 className="w-10 h-10 rounded-full object-cover"
