@@ -108,8 +108,13 @@ class UsuarioService {
 
   async getBibliokarmas(): Promise<number> {
     const user = authService.userDeStorage()
-    const response = await axios.get<number>(API_URL + `/usuario/bibliokarmas/${user.sub}`)
+    const token = authService.tokenDeStorage()
 
+    const response = await axios.get<number>(API_URL + `/usuario/bibliokarmas/${user.sub}`, {
+      headers: {
+        Authorization: `Bearer ${token}` 
+      }
+    })
     return response.data
   }
 }
