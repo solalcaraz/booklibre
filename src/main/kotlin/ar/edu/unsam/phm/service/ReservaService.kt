@@ -14,6 +14,7 @@ import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.ReservaAdapter
 import ar.edu.unsam.phm.repository.LibroRepository
 import ar.edu.unsam.phm.repository.LibroSpecifications
+import ar.edu.unsam.phm.repository.ReseniaRepository
 import ar.edu.unsam.phm.repository.ReservaRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.data.domain.Page
@@ -29,7 +30,8 @@ class ReservaService(
     private val reservaRepository: ReservaRepository,
     private val libroRepository: LibroRepository,
     private val usuarioRepository: UsuarioRepository,
-    private val reservaAdapter: ReservaAdapter
+    private val reservaAdapter: ReservaAdapter,
+    private val reseniaRepository: ReseniaRepository
 ) {
     @Transactional(readOnly = true)
     fun getMisReservas(payload: PaginationReqDTO<ReservaRequestDTO>): Page<Reserva>  {
@@ -81,7 +83,7 @@ class ReservaService(
 
     @Transactional(readOnly = true)
     fun getDetalleReserva(libroId: Int, userId: Int, fechaDesde: LocalDate, fechaHasta: LocalDate): DetalleReservaDTO {
-        val libro = libroRepository.findById(libroId).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro = libroRepository.findConDuenoById(libroId).orElseThrow { NotFoundException("Libro no encontrado") }
         val usuario = usuarioRepository.findById(userId).orElseThrow { NotFoundException("Usuario no encontrado") }
 
         //Reserva simulada con fechas del front
@@ -93,9 +95,8 @@ class ReservaService(
         )
 
         val biblioKarmas = reserva.calcularBiblioKarmas()
-        val calificacionPromedio = libro.calcularCalificacionPromedio()
-        val ultimasResenias = libro.getUltimasDosResenias()
-        
+        val calificacionPromedio = libro.getCalificacionPromedio()
+        val ultimasResenias = reseniaRepository.findTop2ByLibroIdOrderByFechaDesc(libroId);
         val reservasOcupadas = reservaRepository.findReservasOcupadas(libroId)
 
         return reservaAdapter.toDetalleReservaDto(
@@ -110,7 +111,7 @@ class ReservaService(
     @Transactional(readOnly = false)
     fun crearReserva(userID: Int, reserva: CrearReservaDTO): ReservaDTO {
 
-        val libro = libroRepository.findById(reserva.libroId).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro = libroRepository.findConDuenoById(reserva.libroId).orElseThrow { NotFoundException("Libro no encontrado") }
         val usuario = usuarioRepository.findById(userID).orElseThrow { NotFoundException("Usuario no encontrado") }
 
         var nuevaReserva = Reserva(
@@ -129,10 +130,8 @@ class ReservaService(
         usuario.aumentarBiblioKarmas(bibliokarmasGanados)
         usuarioRepository.save(usuario)
         reservaRepository.save(nuevaReserva)
-        libro.aumentarReserva()
-        
-        // Calcular la calificación y el dto dentro de la transacción para evitar el bug de lazy loading
-        val calificacionPromedio = libro.calcularCalificacionPromedio()
+
+        val calificacionPromedio = libro.getCalificacionPromedio()
         
         return reservaAdapter.toDto(nuevaReserva, calificacionPromedio)
     }
