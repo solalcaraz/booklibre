@@ -8,10 +8,8 @@ vi.mock('axios')
 const mockedAxios = vi.mocked(axios, true)
 
 const USUARIO_MOCK: AuthResponse = {
-  id: 1,
-  nombreCompleto: 'Diego Maradona',
-  imagen: 'imagenMock',
-  bibliokarmas: 1986
+  accessToken: "accessToken",
+  refreshToken: "refreshToken"
 }
 
 describe('AuthService', () => {
@@ -74,8 +72,8 @@ describe('AuthService', () => {
     ).rejects.toThrow()
   })
 
-  it('estaAutenticado retorna true cuando hay user en localStorage', () => {
-    window.localStorage.setItem('user', '123')
+  it('estaAutenticado retorna true cuando hay token en localStorage', () => {
+    window.localStorage.setItem('accessToken', '123')
 
     const result = authService.estaAutenticado()
 
