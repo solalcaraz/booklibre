@@ -38,12 +38,11 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
     """)
     fun cantidadPrestadosDe(@Param("usuarioId") usuarioId: Int): Int
 
-    //Todo: consultar que forma es mejor
     @EntityGraph(attributePaths = ["libro", "libro.resenias"])
     @Query("SELECT r FROM Reserva r WHERE r.libro.dueno.id = :usuarioId AND (LOWER(r.libro.data.titulo) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(r.libro.data.autor) LIKE LOWER(CONCAT('%', :search, '%')))")
     fun findPrestadosPorMi(@Param("usuarioId") usuarioId: Int, @Param("search") search: String?, pageable: Pageable): Page<Reserva>
 
-    @EntityGraph(attributePaths = ["libro"])
+    @EntityGraph(attributePaths = ["libro", "libro.resenias"])
     @Query("SELECT r FROM Reserva r WHERE r.lector.id = :usuarioId AND (LOWER(r.libro.data.titulo) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(r.libro.data.autor) LIKE LOWER(CONCAT('%', :search, '%')))")
     fun findPrestadosAMi(@Param("usuarioId") usuarioId: Int, @Param("search") search: String?, pageable: Pageable): Page<Reserva>
 

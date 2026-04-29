@@ -24,6 +24,7 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Table
 import org.hibernate.annotations.Check
+import org.hibernate.annotations.Formula
 import org.hibernate.annotations.SQLRestriction
 import java.time.LocalDate
 import java.util.Locale
@@ -89,8 +90,12 @@ abstract class Libro(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     override var id: Int? = null
 ) : EntidadConId {
-    @Column(nullable = false)
-    var cantidadReservas: Int = 0
+    //Delego este calculo a la DB.
+    @Formula("(SELECT COUNT(r.id) FROM reservas r WHERE r.id_libro = id)")
+    val cantidadReservas: Int = 0
+
+    @Formula("(SELECT COALESCE(AVG(r.puntuacion), 0.0) FROM resenias r WHERE r.id_libro = id)")
+    private val calificacionPromedioDb: Double = 0.0
 
     @OneToMany(mappedBy = "libro", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     private val resenias: MutableList<Resenia> = mutableListOf()
@@ -108,15 +113,19 @@ abstract class Libro(
         //Para que sea 4.5 y no 4,5.
     }
 
-    fun aumentarReserva() { cantidadReservas++ }
+    fun getCalificacionPromedio(): Double{
+        return String.format(Locale.US, "%.1f", calificacionPromedioDb).toDouble()
+    }
 
     fun agregarResenia(resenia: Resenia) {
         resenias.add(resenia)
     }
 
-    fun getUltimasDosResenias(): List<Resenia> {
+    //Delego esto al repo para no cargar toda la lista.
+    /*fun getUltimasDosResenias(): List<Resenia> {
         return resenias.sortedByDescending { it.fecha }.take(2)
     }
+     */
 }
 
 @Entity

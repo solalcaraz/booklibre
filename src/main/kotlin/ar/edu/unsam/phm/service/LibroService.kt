@@ -10,9 +10,7 @@ import ar.edu.unsam.phm.helpers.LibroAdapter
 import ar.edu.unsam.phm.exceptions.ForbiddenException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.repository.LibroRepository
-import ar.edu.unsam.phm.repository.ReservaRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
-import jakarta.persistence.EntityManager
 import org.springframework.data.domain.PageRequest
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.transaction.annotation.Transactional
@@ -42,13 +40,6 @@ class LibroService(
         libroRepository.save(nuevoLibro)
     }
 
-
-    // Cuando hacés un save() de un objeto con una clase distinta,
-    // Hibernate no puede hacer un UPDATE de la columna discriminadora (tipo_libro).
-    // La única forma de "engañar" a Hibernate sin borrar y rear de nuevo el registro es
-    // modificar el discriminador manualmente antes de que el Service intente guardar.
-    // Al final, optamos por hacer inmodificable el tipo para ser coherentes con respecto al enunciado,
-    // y de este modo no es necesario hacer nada explícito en el código.
     @Transactional
     fun update(id: Int, libroDto: LibroDetalleDTO) {
         val libroExistente = getByIdForUser(id)

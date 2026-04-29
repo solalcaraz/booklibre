@@ -5,22 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69efba49-111b-44f0-82f5-a8580d624123" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/db/functions.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/AuthController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/AuthController.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/UsuarioController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/UsuarioController.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/UsuarioDTO.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/UsuarioDTO.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/helpers/UsuarioAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/helpers/UsuarioAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/security/SecurityConfiguration.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/security/SecurityConfiguration.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/AuthService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/AuthService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/LibroService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/LibroService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/AuthSpec.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/AuthSpec.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/FiltroLibroSpec.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/FiltroLibroSpec.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/LibroControllerSpec.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/LibroControllerSpec.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/LibroSpec.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/LibroSpec.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/MisLibrosSpec.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/MisLibrosSpec.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/ReservaControllerTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/ReservaControllerTest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/ReservaSpec.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/ReservaSpec.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/UsuarioControllerSpec.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ar/edu/unsam/phm/controller/UsuarioControllerSpec.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,26 +96,14 @@
     "Database Script.functions.sql.executor": "Run",
     "Gradle.AuthSpec.executor": "Run",
     "Gradle.AuthSpec.login_ok.executor": "Run",
-    "Gradle.AuthSpec.register_ok.executor": "Run",
     "Gradle.Build backend-2026-grupo8.executor": "Run",
     "Gradle.Download Sources.executor": "Run",
-    "Gradle.LibroControllerSpec.borrar_libro_ok.executor": "Run",
-    "Gradle.MisLibrosSpec.delete_libro_not_found.executor": "Run",
-    "Gradle.MisLibrosSpec.delete_libro_ok.executor": "Run",
     "Gradle.MisLibrosSpec.executor": "Run",
-    "Gradle.MisLibrosSpec.listar_mis_libros_forbidden_for_user_role.executor": "Run",
-    "Gradle.MisLibrosSpec.listar_mis_libros_ok.executor": "Run",
-    "Gradle.MisLibrosSpec.listar_mis_libros_usuario_not_found.executor": "Run",
     "Gradle.RecetaControllerTest.executor": "Run",
     "Gradle.ReservaControllerTest.una pagina fuera de rango devuelve items vacio.executor": "Run",
     "Gradle.Tests in 'ar.edu.unsam.phm.controller'.executor": "Run",
     "Gradle.Tests in 'backend-2026-grupo8.test'.executor": "Run",
     "Gradle.UsuarioControllerSpec.executor": "Run",
-    "Gradle.UsuarioControllerSpec.get_usuario_not_found.executor": "Run",
-    "Gradle.UsuarioControllerSpec.get_usuario_ok.executor": "Run",
-    "Gradle.UsuarioControllerSpec.update_usuario_not_found.executor": "Run",
-    "Gradle.UsuarioControllerSpec.update_usuario_ok.executor": "Run",
-    "Gradle.UsuarioControllerSpec.update_usuario_sin_autenticar.executor": "Run",
     "Gradle.backend-2026-grupo8 [:ar.edu.phm.MainKt.main()].executor": "Run",
     "Gradle.backend-2026-grupo8 [bootRun].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
@@ -191,8 +168,25 @@
         <option value="SpringBootApplicationConfigurationType" />
       </set>
     </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="SpringBootApplicationConfigurationType">
+          <value>
+            <map>
+              <entry key="BookLibre" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
-  <component name="RunManager" selected="Gradle.Tests in 'backend-2026-grupo8.test'">
+  <component name="RunManager" selected="Spring Boot.BookLibre">
+    <configuration name="functions.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
+      <script-file value="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/db/functions.sql" />
+      <script-mode>FILE</script-mode>
+      <data-source id="5bf20bba-f9de-45d5-89a0-6e844dae9f5e" />
+      <method v="2" />
+    </configuration>
     <configuration name="MisLibrosSpec" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -207,87 +201,6 @@
             <option value=":test" />
             <option value="--tests" />
             <option value="&quot;ar.edu.unsam.phm.controller.MisLibrosSpec&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <GradleProfilingDisabled>false</GradleProfilingDisabled>
-      <GradleCoverageDisabled>false</GradleCoverageDisabled>
-      <method v="2" />
-    </configuration>
-    <configuration name="MisLibrosSpec.listar_mis_libros_forbidden_for_user_role" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;ar.edu.unsam.phm.controller.MisLibrosSpec.listar_mis_libros_forbidden_for_user_role&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <GradleProfilingDisabled>false</GradleProfilingDisabled>
-      <GradleCoverageDisabled>false</GradleCoverageDisabled>
-      <method v="2" />
-    </configuration>
-    <configuration name="MisLibrosSpec.listar_mis_libros_ok" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;ar.edu.unsam.phm.controller.MisLibrosSpec.listar_mis_libros_ok&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <GradleProfilingDisabled>false</GradleProfilingDisabled>
-      <GradleCoverageDisabled>false</GradleCoverageDisabled>
-      <method v="2" />
-    </configuration>
-    <configuration name="MisLibrosSpec.listar_mis_libros_usuario_not_found" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;ar.edu.unsam.phm.controller.MisLibrosSpec.listar_mis_libros_usuario_not_found&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -326,20 +239,61 @@
       <GradleCoverageDisabled>false</GradleCoverageDisabled>
       <method v="2" />
     </configuration>
+    <configuration name="backend-2026-grupo8 [bootRun]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="bootRun" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="BookLibre" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <envs>
+        <env name="JWT_SECRET_KEY" value="mi_super_secret_key_para_jwt_2026_muy_larga" />
+      </envs>
+      <module name="backend-2026-grupo8.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="ar.edu.unsam.phm.BookLibre" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="ar.edu.unsam.phm.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
-      <item itemvalue="Gradle.MisLibrosSpec.listar_mis_libros_forbidden_for_user_role" />
-      <item itemvalue="Gradle.MisLibrosSpec.listar_mis_libros_ok" />
-      <item itemvalue="Gradle.MisLibrosSpec.listar_mis_libros_usuario_not_found" />
+      <item itemvalue="Database Script.functions.sql" />
+      <item itemvalue="Gradle.backend-2026-grupo8 [bootRun]" />
       <item itemvalue="Gradle.MisLibrosSpec" />
       <item itemvalue="Gradle.Tests in 'backend-2026-grupo8.test'" />
+      <item itemvalue="Spring Boot.BookLibre" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Spring Boot.BookLibre" />
+        <item itemvalue="Database Script.functions.sql" />
+        <item itemvalue="Gradle.backend-2026-grupo8 [bootRun]" />
         <item itemvalue="Gradle.Tests in 'backend-2026-grupo8.test'" />
         <item itemvalue="Gradle.MisLibrosSpec" />
-        <item itemvalue="Gradle.MisLibrosSpec.listar_mis_libros_forbidden_for_user_role" />
-        <item itemvalue="Gradle.MisLibrosSpec.listar_mis_libros_ok" />
-        <item itemvalue="Gradle.MisLibrosSpec.listar_mis_libros_usuario_not_found" />
       </list>
     </recent_temporary>
   </component>
@@ -390,8 +344,7 @@
       <workItem from="1776871150581" duration="17771000" />
       <workItem from="1776906550656" duration="3068000" />
       <workItem from="1776962070725" duration="9180000" />
-      <workItem from="1777040351024" duration="21658000" />
-      <workItem from="1777409938890" duration="16360000" />
+      <workItem from="1777040351024" duration="21488000" />
     </task>
     <servers />
   </component>
