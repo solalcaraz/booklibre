@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { PerfilUsuario } from '../../pages/PerfilUsuario'
 import {
@@ -7,6 +8,7 @@ import {
   type LibroUsuario,
   type UsuarioResponse
 } from '../../services/UsuarioService'
+import { authService } from '../../services/AuthService'
 import type { PagResModel } from '../../models/PaginationModel'
 
 /* Mockeo useNavigate */
@@ -29,6 +31,12 @@ vi.mock('../../services/UsuarioService', () => ({
     getLibros: vi.fn(),
     patchUsuario: vi.fn(),
     deleteLibro: vi.fn()
+  }
+}))
+
+vi.mock('../../services/AuthService', () => ({
+  authService: {
+    puedePublicar: vi.fn()
   }
 }))
 
@@ -78,6 +86,7 @@ describe('PerfilUsuario', () => {
 
     vi.mocked(usuarioService.getUsuario).mockResolvedValue(USUARIO_COMPLETO_MOCK)
     vi.mocked(usuarioService.getLibros).mockResolvedValue(MIS_LIBROS_MOCK)
+    vi.mocked(authService.puedePublicar).mockReturnValue(true)
 
     /* Mockeo window.location.reload */
     Object.defineProperty(window, 'location', {
@@ -115,6 +124,29 @@ describe('PerfilUsuario', () => {
     expect(usuarioService.getLibros).toHaveBeenCalledTimes(1)
   })
 
+  it('no muestra el boton de agregar libro cuando el usuario no puede publicar', async () => {
+    vi.mocked(authService.puedePublicar).mockReturnValue(false)
+
+    renderComponent()
+
+    expect(await screen.findByTestId('perfil-gestor-libros')).toBeInTheDocument()
+
+    expect(screen.queryByRole('link', { name: /agregar nuevo libro/i })).not.toBeInTheDocument()
+  })
+
+  it('no pide ni muestra los libros de mis libros cuando el usuario no puede publicar', async () => {
+    vi.mocked(authService.puedePublicar).mockReturnValue(false)
+
+    renderComponent()
+
+    expect(await screen.findByTestId('perfil-gestor-libros')).toBeInTheDocument()
+
+    expect(usuarioService.getUsuario).toHaveBeenCalledTimes(1)
+    expect(usuarioService.getLibros).not.toHaveBeenCalled()
+    expect(screen.queryByText('Clean Code')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('delete-libro')).not.toBeInTheDocument()
+  })
+
   it('muestra ErrorCard si falla la carga inicial', async () => {
     vi.mocked(usuarioService.getUsuario).mockRejectedValueOnce(new Error('boom'))
 
@@ -124,17 +156,22 @@ describe('PerfilUsuario', () => {
   })
 
   it('actualiza usuario y vuelve a pedir getUsuario', async () => {
-    vi.mocked(usuarioService.patchUsuario).mockResolvedValue({ ok: true })
+    const user = userEvent.setup()
+
+    vi.mocked(usuarioService.patchUsuario).mockResolvedValue({
+      accessToken: 'accessToken',
+      refreshToken: 'refreshToken'
+    })
 
     renderComponent()
 
     expect(await screen.findByTestId('perfil-header')).toBeInTheDocument()
 
-    screen.getByTestId('editar-perfil').click()
+    await user.click(screen.getByTestId('editar-perfil'))
 
     expect(await screen.findByTestId('patch-usuario')).toBeInTheDocument()
 
-    screen.getByTestId('patch-usuario').click()
+    await user.click(screen.getByTestId('patch-usuario'))
 
     await waitFor(() => {
       expect(usuarioService.patchUsuario).toHaveBeenCalledTimes(1)
@@ -146,13 +183,15 @@ describe('PerfilUsuario', () => {
   })
 
   it('elimina libro y vuelve a pedir getLibros', async () => {
+    const user = userEvent.setup()
+
     vi.mocked(usuarioService.deleteLibro).mockResolvedValue({})
 
     renderComponent()
 
     expect(await screen.findByTestId('perfil-gestor-libros')).toBeInTheDocument()
 
-    screen.getByTestId('delete-libro').click()
+    await user.click(screen.getByTestId('delete-libro'))
 
     await waitFor(() => {
       expect(usuarioService.deleteLibro).toHaveBeenCalledWith(1)
@@ -170,10 +209,10 @@ describe('PerfilUsuario', () => {
 
     expect(await screen.findByTestId('error-card')).toBeInTheDocument()
 
-    screen.getByTestId('reintentar-button').click()
+    await userEvent.click(screen.getByTestId('reintentar-button'))
     expect(mockReload).toHaveBeenCalled()
 
-    screen.getByTestId('volver-button').click()
+    await userEvent.click(screen.getByTestId('volver-button'))
     expect(mockNavigate).toHaveBeenCalledWith(-1)
   })
 })

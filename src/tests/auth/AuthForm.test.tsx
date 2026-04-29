@@ -192,15 +192,6 @@ describe('AuthForm', () => {
       password: '123456'
     })
 
-    const fakeUser = {
-      id: 1,
-      nombreCompleto: 'Thomas',
-      imagen: 'imagenMock',
-      bibliokarmas: 1986
-    }
-
-    vi.mocked(authService.login).mockResolvedValue(fakeUser)
-
     renderComponent()
 
     await user.type(screen.getByLabelText(/correo electrónico/i), 'test@mail.com')
@@ -214,7 +205,11 @@ describe('AuthForm', () => {
       })
     })
 
-    expect(localStorage.setItem).toHaveBeenCalledWith('user', JSON.stringify(fakeUser))
+    expect(authService.login).toHaveBeenCalledWith({
+      email: 'test@mail.com',
+      password: '123456'
+    })
+
     expect(mockNavigate).toHaveBeenCalledWith('/home')
   })
 
@@ -228,15 +223,6 @@ describe('AuthForm', () => {
       password: '123456',
       confirmPassword: '123456'
     })
-
-    const fakeUser = {
-      id: 1,
-      nombreCompleto: 'Thomas',
-      imagen: 'imagenMock',
-      bibliokarmas: 1986
-    }
-
-    vi.mocked(authService.register).mockResolvedValue(fakeUser)
 
     renderComponent()
 
@@ -255,8 +241,7 @@ describe('AuthForm', () => {
       })
     })
 
-    expect(localStorage.setItem).toHaveBeenCalledWith('user', JSON.stringify(fakeUser))
-    expect(mockNavigate).toHaveBeenCalledWith('/home')
+    expect(mockNavigate).toHaveBeenCalledWith('/auth/login')
   })
 
   it('limpia el error del campo al escribir nuevamente', async () => {
