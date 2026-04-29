@@ -11,13 +11,6 @@ data class RegisterRequest(
     val password: String
 )
 
-data class LoginResponseDTO(
-    val id: Int,
-    val nombreCompleto: String,
-    val imagen: String,
-    val bibliokarmas: Int
-)
-
 data class RefreshTokenRequest(
     val token: String
 )

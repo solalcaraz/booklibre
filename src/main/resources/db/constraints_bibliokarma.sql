@@ -1,0 +1,17 @@
+-- Punto 4 - Evitar que los bibliokarmas de un usuario tomen un valor nulo en la base (por fuera de la interfaz de usuario).
+
+-- si ya existen usuarios con bibliokarma null los modifico
+UPDATE usuarios
+SET bibliokarmas = 0
+WHERE bibliokarmas IS NULL;
+
+-- restricciones
+ALTER TABLE usuarios
+ALTER COLUMN bibliokarmas SET NOT NULL;
+
+ALTER TABLE usuarios
+ALTER COLUMN bibliokarmas SET DEFAULT 0;
+
+ALTER TABLE usuarios
+ADD CONSTRAINT bibliokarmas_no_negativo
+CHECK (bibliokarmas >= 0);

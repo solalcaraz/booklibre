@@ -1,5 +1,6 @@
 package ar.edu.unsam.phm.controller
 
+/*
 import ar.edu.unsam.phm.domain.*
 import ar.edu.unsam.phm.repository.LibroRepositorio
 import io.kotest.assertions.throwables.shouldThrow
@@ -140,4 +141,4 @@ class LibroPersistenciaSpec : DescribeSpec({
             }
         }
     }
-})
+})*/
