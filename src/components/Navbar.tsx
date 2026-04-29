@@ -77,14 +77,16 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 text-gray-600">
-              <span className="text-xl">
-                <img src={bibliokarmaIcon} alt="" className="w-6 h-6" />
-              </span>
-              <span className="font-medium">
-                Bibliokarma {bibliokarma}
-              </span>
-            </div>
+            {authService.puedeReservar() && (
+              <div className="flex items-center gap-2 text-gray-600">
+                <span className="text-xl">
+                  <img src={bibliokarmaIcon} alt="" className="w-6 h-6" />
+                </span>
+                <span className="font-medium">
+                  Bibliokarma {bibliokarma}
+                </span>
+              </div>
+            )}
 
             <div className="relative" ref={ref}>
               <img

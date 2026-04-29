@@ -7,6 +7,7 @@ import { type AuthErrors, type AuthFormData, Auth } from '../classes/Auth'
 import { useOnInit } from '../utils/hooks'
 import { authService } from '../services/AuthService'
 import { getMensajeError, type ErrorCustom, type ErrorResponse } from '../utils/errorHandler'
+import { useUser } from '../contexts/UserContext'
 
 const initialFormData: AuthFormData = {
   fullName: '',
@@ -21,6 +22,7 @@ export const AuthForm = () => {
   const [responseErrors, setResponseErrors] = useState<ErrorCustom | null>(null)
   const navigate = useNavigate()
   const { mode } = useParams()
+  const { fetchUser } = useUser()
 
   const isValidMode = mode === 'login' || mode === 'register'
   const isLogin = mode === 'login'
@@ -91,6 +93,8 @@ export const AuthForm = () => {
       if (isLogin) {
         const loginData = auth.toLoginData()
         await authService.login(loginData)
+        await fetchUser()
+
         if(authService.puedeReservar()){
           navigate('/home')
         } else {
