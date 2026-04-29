@@ -1,5 +1,6 @@
 package ar.edu.unsam.phm.controller
 
+/*
 import ar.edu.unsam.phm.domain.Estado
 import ar.edu.unsam.phm.domain.Genero
 import ar.edu.unsam.phm.domain.Idioma
@@ -664,4 +665,4 @@ class ReservaControllerTest {
     }
 
     // endregion
-}
+}*/

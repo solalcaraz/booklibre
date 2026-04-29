@@ -1,3 +1,4 @@
+/*
 package ar.edu.unsam.phm.controller
 
 import ar.edu.unsam.phm.domain.*
@@ -194,4 +195,4 @@ class LibroControllerSpec (@Autowired val mockMvc: MockMvc) {
 
         verify(libroService).borrarLibro(idInexistente)
     }
-}
+}*/

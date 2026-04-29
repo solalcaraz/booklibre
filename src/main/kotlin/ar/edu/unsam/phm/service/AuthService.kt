@@ -3,7 +3,6 @@ package ar.edu.unsam.phm.service
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.AuthenticationResponse
 import ar.edu.unsam.phm.dto.LoginRequest
-import ar.edu.unsam.phm.dto.RefreshTokenResponse
 import ar.edu.unsam.phm.dto.RegisterRequest
 import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
@@ -80,7 +79,7 @@ class AuthService(
     }
 
     @Transactional
-    fun register(usuario: RegisterRequest): Usuario {
+    fun register(usuario: RegisterRequest) {
         val existe = usuarioRepository.findByEmail(usuario.email)
         if (existe != null) throw ConflictException("Este usuario ya está registrado")
 
@@ -90,6 +89,8 @@ class AuthService(
             password = encoder.encode(usuario.password)
         )
 
-        return usuarioRepository.save(nuevoUsuario)
+        usuarioRepository.save(nuevoUsuario)
+
+        return
     }
 }

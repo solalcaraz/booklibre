@@ -5,6 +5,8 @@ import ar.edu.unsam.phm.dto.PerfilUsuarioDTO
 import ar.edu.unsam.phm.dto.UsuarioPatchRequest
 import ar.edu.unsam.phm.helpers.UsuarioMapper
 import ar.edu.unsam.phm.service.UsuarioService
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/usuario")
 class UsuarioController(val usuarioService: UsuarioService, val usuarioMapper: UsuarioMapper) {
     @GetMapping("/me")
-    fun getUsuario(): PerfilUsuarioDTO {
+    fun getUsuario(): ResponseEntity<PerfilUsuarioDTO> {
         val userId = SecurityContextHolder
             .getContext()
             .authentication
@@ -28,7 +30,7 @@ class UsuarioController(val usuarioService: UsuarioService, val usuarioMapper: U
 
         val user = usuarioService.getUsuarioById(userId)
 
-        return usuarioMapper.toFullDto(user)
+        return ResponseEntity.ok(usuarioMapper.toFullDto(user))
     }
 
     @PatchMapping("/me")
