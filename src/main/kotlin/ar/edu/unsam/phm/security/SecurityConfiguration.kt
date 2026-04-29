@@ -37,45 +37,50 @@ class SecurityConfiguration(
         jwtAuthenticationFilter: JwtAuthenticationFilter
     ): DefaultSecurityFilterChain =
         http
-        .csrf {
-            it.disable()
-            /*it.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            it.csrfTokenRequestHandler(SpaCsrfTokenRequestHandler())
-            it.ignoringRequestMatchers("/auth/login", "/auth/register", "/error")*/
-        }
-        /*.cors{ cors -> cors.configurationSource(corsConfigurationSource()) }*/
-        .authorizeHttpRequests {
-            // Queremos que cualquier persona se pueda loguear y mostrar errores
-            // Importante: no definirlo solo para el method POST
-            // porque CORS requiere que también puedas mandar el OPTIONS para hacer el pre-flight
-            it.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .requestMatchers("/auth/register", "/auth/login", "/error", "/auth/refresh").permitAll() // agregar refresh token endpoint
-            .requestMatchers("/imagenes/**").permitAll()
-            // Permisos de admin para modificar
-            // Solo los que pueden reservar (lector) acceden a este endpoint
-            .requestMatchers(HttpMethod.GET, "/reserva/librosDisponibles/**")
-                .hasAnyRole("LECTOR", "LECTOR_PUBLICADOR")
-            //---------------------------
-            .requestMatchers(HttpMethod.POST, "/libro/nuevo")
-                .hasAnyRole("PUBLICADOR", "LECTOR_PUBLICADOR")
-            // Default: que se autentique para poder ver información
-                // ---------------------------
-            .requestMatchers(HttpMethod.POST, "/reserva/obtenerMisReservas")
-            .hasAnyRole("LECTOR", "LECTOR_PUBLICADOR")
-            .requestMatchers(HttpMethod.POST, "/reserva/obtenerPrestadosPorMi")
-            .hasAnyRole("PUBLICADOR", "LECTOR_PUBLICADOR")
-            .requestMatchers(HttpMethod.POST, "/reserva/calificar")
-            .hasAnyRole("LECTOR", "LECTOR_PUBLICADOR")
-            .anyRequest()
-            .authenticated()
-        }
-        .sessionManagement {
-            it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        }
-        .authenticationProvider(authenticationProvider)
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
-        .exceptionHandling(Customizer.withDefaults())
-        .build()
+            .csrf {
+                it.disable()
+                /*it.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                it.csrfTokenRequestHandler(SpaCsrfTokenRequestHandler())
+                it.ignoringRequestMatchers("/auth/login", "/auth/register", "/error")*/
+            }
+            /*.cors{ cors -> cors.configurationSource(corsConfigurationSource()) }*/
+            .authorizeHttpRequests {
+                // Queremos que cualquier persona se pueda loguear y mostrar errores
+                // Importante: no definirlo solo para el method POST
+                // porque CORS requiere que también puedas mandar el OPTIONS para hacer el pre-flight
+                it.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .requestMatchers("/auth/register", "/auth/login", "/error", "/auth/refresh")
+                    .permitAll() // agregar refresh token endpoint
+                    .requestMatchers("/imagenes/**").permitAll()
+                    // Permisos de admin para modificar
+                    // Solo los que pueden reservar (lector) acceden a este endpoint
+                    .requestMatchers(HttpMethod.GET, "/reserva/librosDisponibles/**")
+                    .hasAnyRole("LECTOR", "LECTOR_PUBLICADOR")
+                    //---------------------------
+                    .requestMatchers(HttpMethod.POST, "/libro/nuevo")
+                    .hasAnyRole("PUBLICADOR", "LECTOR_PUBLICADOR")
+                    // Default: que se autentique para poder ver información
+                    // ---------------------------
+                    .requestMatchers(HttpMethod.GET, "/reserva/detalles/**")
+                    .hasAnyRole("LECTOR", "LECTOR_PUBLICADOR")
+                    .requestMatchers(HttpMethod.POST, "/reserva/crear")
+                    .hasAnyRole("LECTOR", "LECTOR_PUBLICADOR")
+                    .requestMatchers(HttpMethod.POST, "/reserva/obtenerMisReservas")
+                    .hasAnyRole("LECTOR", "LECTOR_PUBLICADOR")
+                    .requestMatchers(HttpMethod.POST, "/reserva/obtenerPrestadosPorMi")
+                    .hasAnyRole("PUBLICADOR", "LECTOR_PUBLICADOR")
+                    .requestMatchers(HttpMethod.POST, "/reserva/calificar")
+                    .hasAnyRole("LECTOR", "LECTOR_PUBLICADOR")
+                    .anyRequest()
+                    .authenticated()
+            }
+            .sessionManagement {
+                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .exceptionHandling(Customizer.withDefaults())
+            .build()
 }
 
 /* Este HandlerCSRF es el que hizo Fer para el ejemplo de las heladerías, aparentemente

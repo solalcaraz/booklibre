@@ -145,4 +145,8 @@ interface LibroRepository : JpaRepository<Libro, Int>, JpaSpecificationExecutor<
         @Param("sort") sort: String?,
         pageable: Pageable
     ): Page<MiLibroProjection>
+
+    //Lo uso en reserva para el DTO (evito query + 1)
+    @EntityGraph(attributePaths = ["dueno"])
+    fun findConDuenoById(id:Int): Optional<Libro>
 }
