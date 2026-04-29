@@ -20,10 +20,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class LibroService(
     val libroRepository: LibroRepository,
-    val reservaRepository: ReservaRepository,
     val usuarioRepository: UsuarioRepository,
-    val libroMapper: LibroAdapter,
-    val entityManager: EntityManager
+    val libroMapper: LibroAdapter
 ) {
     @Transactional(readOnly = true)
     fun getByIdForUser(id: Int): Libro {

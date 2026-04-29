@@ -1,18 +1,22 @@
 package ar.edu.unsam.phm.controller
 
-import ar.edu.unsam.phm.domain.Usuario
+import ar.edu.unsam.phm.dto.AuthenticationResponse
 import ar.edu.unsam.phm.dto.LoginRequest
-import ar.edu.unsam.phm.dto.LoginResponseDTO
 import ar.edu.unsam.phm.dto.RegisterRequest
 import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.exceptions.UnauthorizedException
 import ar.edu.unsam.phm.helpers.UsuarioMapper
+import ar.edu.unsam.phm.security.CustomUserDetailsService
+import ar.edu.unsam.phm.security.JwtAuthenticationFilter
+import ar.edu.unsam.phm.security.TokenHelper
 import ar.edu.unsam.phm.service.AuthService
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -23,37 +27,27 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(AuthController::class)
-@DisplayName("Dado un AuthController")
+@AutoConfigureMockMvc(addFilters = false)
 class AuthSpec(
     @Autowired val mockMvc: MockMvc
 ) {
     @MockBean lateinit var authService: AuthService
     @MockBean lateinit var usuarioMapper: UsuarioMapper
+    @MockBean lateinit var customUserDetailsService: CustomUserDetailsService
+    @MockBean lateinit var tokenHelper: TokenHelper
+    @MockBean lateinit var jwtAuthenticationFilter: JwtAuthenticationFilter
 
     @Test
-    @DisplayName("Cuando un usuario se logea con los datos correctos, devuelve 200 con el DTO esperado")
+    @DisplayName("Cuando un usuario se logea con los datos correctos, devuelve 200 con los tokens")
     fun login_ok() {
-        val usuarioReal = Usuario(
-            id = 1,
-            nombreCompleto = "Diego Maradona",
-            email = "diego@maradona.com",
-            password = "admin"
-        ).apply {
-            bibliokarmas = 1986
-            imagen = "imagenMock"
-        }
-
         val loginRequest = LoginRequest(email = "diego@maradona.com", password = "admin")
 
-        val loginResponseDTO = LoginResponseDTO(
-            id = 1,
-            nombreCompleto = "Diego Maradona",
-            imagen = "imagenMock",
-            bibliokarmas = 1986
+        val loginResponseDTO = AuthenticationResponse(
+            accessToken = "accessToken",
+            refreshToken = "refreshToken"
         )
 
-        `when`(authService.login(loginRequest)).thenReturn(usuarioReal)
-        `when`(usuarioMapper.toDto(usuarioReal)).thenReturn(loginResponseDTO)
+        `when`(authService.login(loginRequest)).thenReturn(loginResponseDTO)
 
         mockMvc.perform(
             post("/auth/login")
@@ -69,8 +63,8 @@ class AuthSpec(
         )
             .andExpect(status().isOk)
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.nombreCompleto").value("Diego Maradona"))
-            .andExpect(jsonPath("$.bibliokarmas").value(1986))
+            .andExpect(jsonPath("$.accessToken").value("accessToken"))
+            .andExpect(jsonPath("$.refreshToken").value("refreshToken"))
     }
 
     @Test
@@ -100,7 +94,7 @@ class AuthSpec(
     }
 
     @Test
-    @DisplayName("Cuando un usuario intenta logearse con un email inexistente, devuelve 404")
+    @DisplayName("Cuando un usuario intenta loguearse con un email inexistente, devuelve 404")
     fun login_not_found() {
         val loginRequest = LoginRequest(
             email = "noexiste@maradona.com",
@@ -124,33 +118,15 @@ class AuthSpec(
     }
 
     @Test
-    @DisplayName("Cuando un usuario se registra con los datos correctos, devuelve 200 con el DTO esperado")
+    @DisplayName("Cuando un usuario se registra con los datos correctos, devuelve 200")
     fun register_ok() {
-        val usuarioReal = Usuario(
-            id = 1,
-            nombreCompleto = "Diego Maradona",
-            email = "diego@maradona.com",
-            password = "admin"
-        ).apply {
-            bibliokarmas = 1986
-            imagen = "imagenMock"
-        }
-
         val registerRequest = RegisterRequest(
-            email = "diego@maradona.com",
-            nombreCompleto = "Diego Maradona",
+            email = "jorge@maradona.com",
+            nombreCompleto = "Jorge Maradona",
             password = "admin"
         )
 
-        val registerResponseDTO = LoginResponseDTO(
-            id = 1,
-            nombreCompleto = "Diego Maradona",
-            imagen = "imagenMock",
-            bibliokarmas = 1986
-        )
-
-        `when`(authService.register(registerRequest)).thenReturn(usuarioReal)
-        `when`(usuarioMapper.toDto(usuarioReal)).thenReturn(registerResponseDTO)
+        doNothing().`when`(authService).register(registerRequest)
 
         mockMvc.perform(
             post("/auth/register")
@@ -158,17 +134,14 @@ class AuthSpec(
                 .content(
                     """
                     {
-                      "nombreCompleto": "Diego Maradona",
-                      "email": "diego@maradona.com",
+                      "nombreCompleto": "Jorge Maradona",
+                      "email": "jorge@maradona.com",
                       "password": "admin"
                     }
                     """.trimIndent()
                 )
         )
             .andExpect(status().isOk)
-            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.nombreCompleto").value("Diego Maradona"))
-            .andExpect(jsonPath("$.bibliokarmas").value(1986))
     }
 
     @Test
