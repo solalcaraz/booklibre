@@ -2,16 +2,16 @@
 CREATE TABLE usuarios (
 -- CREATE TABLE IF NOT EXISTS public.usuarios(
     id               SERIAL PRIMARY KEY,
-    nombre_completo  VARCHAR(255) NOT NULL,
+    nombre_completo  VARCHAR(100) NOT NULL,
     email            VARCHAR(255) NOT NULL UNIQUE,
     password         VARCHAR(255) NOT NULL,
     ano_unido        INTEGER      NOT NULL,
     tipo_usuario     VARCHAR(50)  NOT NULL DEFAULT 'LECTOR_PUBLICADOR',
-    descripcion      VARCHAR(255)          DEFAULT '',
-    ciudad           VARCHAR(255)          DEFAULT '',
-    telefono         VARCHAR(255)          DEFAULT '',
+    descripcion      TEXT          DEFAULT '',
+    ciudad           VARCHAR(100)          DEFAULT '',
+    telefono         VARCHAR(20)          DEFAULT '',
     bibliokarmas     INTEGER      NOT NULL DEFAULT 0,
-    imagen           VARCHAR(255)          DEFAULT ''
+    imagen           VARCHAR(500)          DEFAULT ''
 );
 
 -- Tabla de libros (SINGLE_TABLE)
@@ -25,11 +25,11 @@ CREATE TABLE libros (
     titulo            VARCHAR(255) NOT NULL,
     descripcion       TEXT         NOT NULL,
     genero            VARCHAR(50)  NOT NULL,
-    autor             VARCHAR(255) NOT NULL,
+    autor             VARCHAR(150) NOT NULL,
     cant_paginas      INTEGER      NOT NULL,
     isbn13            VARCHAR(20)  NOT NULL,
     idioma            VARCHAR(50)  NOT NULL,
-    editorial         VARCHAR(255) NOT NULL,
+    editorial         VARCHAR(150) NOT NULL,
     fecha_publicacion DATE         NOT NULL,
     estado            VARCHAR(50)  NOT NULL,
     portada           VARCHAR(500) NOT NULL DEFAULT '',
@@ -54,9 +54,9 @@ CREATE TABLE reservas (
 CREATE TABLE resenias (
 -- CREATE TABLE IF NOT EXISTS public.resenias (
     id             SERIAL       PRIMARY KEY,
-    nombre_usuario VARCHAR(255) NOT NULL,
+    nombre_usuario VARCHAR(100) NOT NULL,
     puntuacion     INTEGER      NOT NULL,
-    comentario     VARCHAR(255) NOT NULL,
+    comentario     TEXT NOT NULL,
     id_libro       INTEGER      NOT NULL REFERENCES libros(id),
     fecha          TIMESTAMP    NOT NULL DEFAULT NOW()
 );

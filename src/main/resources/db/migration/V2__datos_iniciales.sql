@@ -1,6 +1,5 @@
--- Nota sobre los hashes: BCrypt con cost 10 para la contraseña "admin"
--- Hash fijo generado previamente (válido para BCrypt, cualquier implementación lo acepta)
--- $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy
+-- Hash fijo generado previamente que traducido es "admin"
+-- $2a$10$FJ8PeifnHjsBhGI5CAPn/uQwzCrSyybEtsa6Owz9HOWH.zfMRfRTi
 
 -- ============================================================
 -- USUARIOS
@@ -11,20 +10,20 @@ VALUES
     (
         'Diego Maradona',
         'diego@maradona.com',
-        '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+        '$2a$10$FJ8PeifnHjsBhGI5CAPn/uQwzCrSyybEtsa6Owz9HOWH.zfMRfRTi',
         EXTRACT(YEAR FROM NOW()),
         'LECTOR_PUBLICADOR',
         'La Mano de Dios',
         'Lanús, BA',
         '+54 (11) 123-4567',
         1986,
-        'http://localhost:8080/imagenes/diego.jpg'
+        'http://localhost:9000/imagenes/diego.jpg'
     ),
     -- id = 2 : Max Verstappen
     (
         'Max Verstappen',
         'max@verstappen.com',
-        '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+        '$2a$10$FJ8PeifnHjsBhGI5CAPn/uQwzCrSyybEtsa6Owz9HOWH.zfMRfRTi',
         EXTRACT(YEAR FROM NOW()),
         'LECTOR_PUBLICADOR',
         'The Flying Dutchman',
@@ -37,27 +36,27 @@ VALUES
     (
         'Ye West',
         'yewest@bully.com',
-        '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+        '$2a$10$FJ8PeifnHjsBhGI5CAPn/uQwzCrSyybEtsa6Owz9HOWH.zfMRfRTi',
         EXTRACT(YEAR FROM NOW()),
         'PUBLICADOR',
         '',
         '',
         '',
         0,
-        'http://localhost:8080/imagenes/default_user.png'
+        'http://localhost:9000/imagenes/default_user.png'
     ),
     -- id = 4 : Yiya Murano
     (
         'Yiya Murano',
         'yiyi@killer.com',
-        '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+        '$2a$10$FJ8PeifnHjsBhGI5CAPn/uQwzCrSyybEtsa6Owz9HOWH.zfMRfRTi',
         EXTRACT(YEAR FROM NOW()),
         'LECTOR',
         '',
         '',
         '',
         0,
-        'http://localhost:8080/imagenes/default_user.png'
+        'http://localhost:9000/imagenes/default_user.png'
     );
 
 -- ============================================================
@@ -70,34 +69,34 @@ INSERT INTO libros (tipo_libro, id_usuario, titulo, descripcion, genero, autor, 
 VALUES
     -- 1
     ('COLECCIONABLE', 1, 'Orgullo y Prejuicio',    'Novela romántica clásica',
-     'ROMANCE',           'Jane Austen',            300,  '9780141439518', 'INGLES',   'Penguin',           '1800-01-01', 'MUY_BUENO',   'http://localhost:8080/imagenes/orgullo.webp',  TRUE),
+     'ROMANCE',           'Jane Austen',            300,  '9780141439518', 'INGLES',   'Penguin',           '1800-01-01', 'MUY_BUENO',   'http://localhost:9000/imagenes/orgullo.webp',  TRUE),
     -- 2
     ('DEDICATORIA',   1, 'Rayuela',                'Novela experimental latinoamericana',
-     'LITERATURA_CLASICA','Julio Cortázar',          736,  '9788437604947', 'ESPANOL',  'Cátedra',           '1960-01-01', 'BUENO',       'http://localhost:8080/imagenes/Rayuela.jpg',   TRUE),
+     'LITERATURA_CLASICA','Julio Cortázar',          736,  '9788437604947', 'ESPANOL',  'Cátedra',           '1960-01-01', 'BUENO',       'http://localhost:9000/imagenes/Rayuela.jpg',   TRUE),
     -- 3
     ('COLECCIONABLE', 1, '1984',                   'Distopía política sobre vigilancia y control social',
-     'CIENCIA_FICCION',   'George Orwell',           328,  '9780451524935', 'INGLES',   'Signet Classics',   '1900-01-01', 'MUY_BUENO',   'http://localhost:8080/imagenes/1984.webp',     TRUE),
+     'CIENCIA_FICCION',   'George Orwell',           328,  '9780451524935', 'INGLES',   'Signet Classics',   '1900-01-01', 'MUY_BUENO',   'http://localhost:9000/imagenes/1984.webp',     TRUE),
     -- 4
     ('COLECCIONABLE', 2, 'Dune',                   'Épica de ciencia ficción sobre política, religión y ecología',
-     'CIENCIA_FICCION',   'Frank Herbert',           688,  '9780441172719', 'INGLES',   'Ace',               '1900-01-01', 'EXCELENTE',   'http://localhost:8080/imagenes/dune.jpg',      TRUE),
+     'CIENCIA_FICCION',   'Frank Herbert',           688,  '9780441172719', 'INGLES',   'Ace',               '1900-01-01', 'EXCELENTE',   'http://localhost:9000/imagenes/dune.jpg',      TRUE),
     -- 5
     ('DEDICATORIA',   2, 'Cien Años de Soledad',   'Obra maestra del realismo mágico latinoamericano',
-     'LITERATURA_CLASICA','Gabriel García Márquez',  417,  '9780307474728', 'ESPANOL',  'Sudamericana',      '1900-01-01', 'MUY_BUENO',   'http://localhost:8080/imagenes/100anos.webp',  TRUE),
+     'LITERATURA_CLASICA','Gabriel García Márquez',  417,  '9780307474728', 'ESPANOL',  'Sudamericana',      '1900-01-01', 'MUY_BUENO',   'http://localhost:9000/imagenes/100anos.webp',  TRUE),
     -- 6
     ('COMUN',         2, 'Hábitos Atómicos',       'Guía práctica para construir buenos hábitos y eliminar los malos',
-     'AUTOAYUDA',         'James Clear',             320,  '9780735211292', 'INGLES',   'Avery',             '1900-01-01', 'BUENO',       'http://localhost:8080/imagenes/habitos.webp',  TRUE),
+     'AUTOAYUDA',         'James Clear',             320,  '9780735211292', 'INGLES',   'Avery',             '1900-01-01', 'BUENO',       'http://localhost:9000/imagenes/habitos.webp',  TRUE),
     -- 7
     ('COLECCIONABLE', 3, 'El Nombre del Viento',   'Primera parte de la Crónica del Asesino de Reyes',
-     'CIENCIA_FICCION',   'Patrick Rothfuss',        662,  '9780756404741', 'INGLES',   'DAW Books',         '1900-01-01', 'EXCELENTE',   'http://localhost:8080/imagenes/viento.webp',   TRUE),
+     'CIENCIA_FICCION',   'Patrick Rothfuss',        662,  '9780756404741', 'INGLES',   'DAW Books',         '1900-01-01', 'EXCELENTE',   'http://localhost:9000/imagenes/viento.webp',   TRUE),
     -- 8
     ('DEDICATORIA',   3, 'El Gran Gatsby',         'Retrato de la alta sociedad estadounidense en los años 20',
-     'LITERATURA_CLASICA','F. Scott Fitzgerald',     180,  '9780743273565', 'INGLES',   'Scribner',          '1900-01-01', 'BUENO',       'http://localhost:8080/imagenes/libro-nuevo.jpg', TRUE),
+     'LITERATURA_CLASICA','F. Scott Fitzgerald',     180,  '9780743273565', 'INGLES',   'Scribner',          '1900-01-01', 'BUENO',       'http://localhost:9000/imagenes/libro-nuevo.jpg', TRUE),
     -- 9
     ('COMUN',         2, 'El Principito',          'Clásico de la literatura sobre la amistad y la vida',
      'CIENCIA_FICCION',   'Antoine de Saint-Exupéry', 96, '9780156013987', 'FRANCES',  'Reynal & Hitchcock','1943-04-06', 'BUENO',       'https://image.cdn1.buscalibre.com/5b57fc1690f0b5295a8b4567.RS500x500.jpg', TRUE),
     -- 10
     ('COMUN',         2, '1984',                   'Distopía sobre un régimen totalitario',
-     'CIENCIA_FICCION',   'George Orwell',           328,  '9780451524935', 'INGLES',   'Secker & Warburg',  '1949-06-08', 'BUENO',       'http://localhost:8080/imagenes/1984.webp',     TRUE),
+     'CIENCIA_FICCION',   'George Orwell',           328,  '9780451524935', 'INGLES',   'Secker & Warburg',  '1949-06-08', 'BUENO',       'http://localhost:9000/imagenes/1984.webp',     TRUE),
     -- 11
     ('COMUN',         2, 'Clean Code',             'Buenas prácticas para escribir código limpio',
      'DISENO',            'Robert C. Martin',        464,  '9780132350884', 'INGLES',   'Prentice Hall',     '2008-08-01', 'BUENO',       'https://m.media-amazon.com/images/I/81Rnac2Fq+L._AC_UF1000,1000_QL80_.jpg', TRUE),
@@ -145,12 +144,9 @@ VALUES
 
 -- ============================================================
 -- RESEÑAS
--- Corresponden a las llamadas a reseniaService.crearResenia() del loader
 -- reserva 1  → 4 estrellas  "Libro buenardo"       (lector = Verstappen, libro = Orgullo y Prejuicio)
 -- reserva 2  → 3 estrellas  "Lo lei y no lo entendi"
 -- reserva 13 → 5 estrellas  "Epico"                (lector = Ye West,    libro = Orgullo y Prejuicio)
--- El nombre_usuario se toma del nombreCompleto del lector
--- Las reservas 1 y 2 ya reseñaron → actualizamos ya_resenio
 -- ============================================================
 INSERT INTO resenias (nombre_usuario, puntuacion, comentario, id_libro, fecha)
 VALUES
