@@ -1,40 +1,22 @@
-/*
 package ar.edu.unsam.phm.controller
 
-import ar.edu.unsam.phm.domain.*
+import ar.edu.unsam.phm.domain.Genero
 import ar.edu.unsam.phm.helpers.FiltrosLibro
-import ar.edu.unsam.phm.helpers.cumpleFiltros
+import ar.edu.unsam.phm.helpers.Ordenamiento
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import java.time.LocalDate
 
+/*
+Ya no hay logica, entonces solo se cubren las validaciones del init
+y el comportamiento del enum Ordenamiento
+ */
 class FiltrosLibroSpec : DescribeSpec({
 
-    val dueno = Usuario(
-        nombreCompleto = "Julio Cortázar",
-        email = "julio@cortazar.com",
-        password = "admin"
-    ).apply { id = 1 }
+    describe("Validaciones del init de FiltrosLibro") {
 
-    val libroBase = LibroComun(
-        data = LibroData(
-            titulo = "Rayuela",
-            descripcion = "Novela experimental",
-            genero = Genero.LITERATURA_CLASICA,
-            autor = "Julio Cortázar",
-            cantPaginas = 300,
-            isbn13 = "9788437604947",
-            idioma = Idioma.ESPANOL,
-            editorial = "Cátedra",
-            fechaPublicacion = LocalDate.of(1963, 1, 1),
-            estado = Estado.BUENO,
-            dueno = dueno
-        )
-    )
-
-    describe("Validaciones del init") {
         it("no se puede crear un filtro con fechaDesde en el pasado") {
             shouldThrow<IllegalArgumentException> {
                 FiltrosLibro(fechaDesde = LocalDate.now().minusDays(1))
@@ -56,84 +38,105 @@ class FiltrosLibroSpec : DescribeSpec({
             }
         }
 
-        it("se puede crear un filtro valido sin parametros") {
+        it("se puede crear un filtro válido sin parámetros opcionales") {
             shouldNotThrow<IllegalArgumentException> {
                 FiltrosLibro()
             }
         }
 
-        it("se puede crear un filtro con rango de paginas valido") {
+        it("se puede crear un filtro con rango de páginas válido") {
             shouldNotThrow<IllegalArgumentException> {
                 FiltrosLibro(cantPaginasMin = 100, cantPaginasMax = 500)
             }
         }
-    }
 
-    describe("cumpleGenero") {
-        it("sin generos filtrando acepta cualquier libro") {
-            libroBase.cumpleFiltros(FiltrosLibro()) shouldBe true
+        it("se puede crear un filtro con cantPaginasMin igual a cantPaginasMax") {
+            shouldNotThrow<IllegalArgumentException> {
+                FiltrosLibro(cantPaginasMin = 300, cantPaginasMax = 300)
+            }
         }
 
-        it("acepta el libro si su genero está en la lista") {
-            libroBase.cumpleFiltros(FiltrosLibro(generos = listOf(Genero.LITERATURA_CLASICA))) shouldBe true
+        it("se puede crear un filtro con fechaDesde igual a hoy") {
+            shouldNotThrow<IllegalArgumentException> {
+                FiltrosLibro(fechaDesde = LocalDate.now())
+            }
         }
 
-        it("rechaza el libro si su genero no está en la lista") {
-            libroBase.cumpleFiltros(FiltrosLibro(generos = listOf(Genero.ROMANCE))) shouldBe false
-        }
-    }
-
-    describe("cumpleCantPaginas") {
-        it("acepta el libro si está dentro del rango") {
-            libroBase.cumpleFiltros(FiltrosLibro(cantPaginasMin = 100, cantPaginasMax = 500)) shouldBe true
+        it("se puede crear un filtro con fechaDesde igual a fechaHasta") {
+            val fecha = LocalDate.now().plusDays(3)
+            shouldNotThrow<IllegalArgumentException> {
+                FiltrosLibro(fechaDesde = fecha, fechaHasta = fecha)
+            }
         }
 
-        it("acepta el libro si tiene exactamente el minimo de paginas") {
-            libroBase.cumpleFiltros(FiltrosLibro(cantPaginasMin = 300)) shouldBe true
+        it("se puede crear un filtro con géneros") {
+            shouldNotThrow<IllegalArgumentException> {
+                FiltrosLibro(generos = listOf(Genero.ROMANCE, Genero.DRAMA))
+            }
         }
 
-        it("acepta el libro si tiene exactamente el maximo de paginas") {
-            libroBase.cumpleFiltros(FiltrosLibro(cantPaginasMax = 300)) shouldBe true
+        it("se puede crear un filtro con isbn") {
+            shouldNotThrow<IllegalArgumentException> {
+                FiltrosLibro(isbn = "9788437604947")
+            }
         }
 
-        it("rechaza el libro si tiene menos paginas que el minimo") {
-            libroBase.cumpleFiltros(FiltrosLibro(cantPaginasMin = 400)) shouldBe false
-        }
-
-        it("rechaza el libro si tiene mas paginas que el maximo") {
-            libroBase.cumpleFiltros(FiltrosLibro(cantPaginasMax = 200)) shouldBe false
-        }
-    }
-
-    describe("cumpleIsbn") {
-        it("sin isbn filtrando acepta cualquier libro") {
-            libroBase.cumpleFiltros(FiltrosLibro()) shouldBe true
-        }
-
-        it("acepta el libro si el isbn coincide exactamente") {
-            libroBase.cumpleFiltros(FiltrosLibro(isbn = "9788437604947")) shouldBe true
-        }
-
-        it("rechaza el libro si el isbn no coincide") {
-            libroBase.cumpleFiltros(FiltrosLibro(isbn = "0000000000000")) shouldBe false
+        it("se puede crear un filtro con usuario prestador") {
+            shouldNotThrow<IllegalArgumentException> {
+                FiltrosLibro(usuarioPrestador = "Cortázar")
+            }
         }
     }
 
-    describe("cumpleUsuario") {
-        it("sin usuarioPrestador filtrando acepta cualquier libro") {
-            libroBase.cumpleFiltros(FiltrosLibro()) shouldBe true
+    describe("Valores por defecto de FiltrosLibro") {
+
+        it("el orden por defecto es TITULO_ASC") {
+            FiltrosLibro().orden shouldBe Ordenamiento.TITULO_ASC
         }
 
-        it("acepta el libro si el nombre del dueno contiene el texto buscado") {
-            libroBase.cumpleFiltros(FiltrosLibro(usuarioPrestador = "Cortázar")) shouldBe true
+        it("la página por defecto es 0") {
+            FiltrosLibro().numeroPagina shouldBe 0
         }
 
-        it("la busqueda por dueno es case insensitive") {
-            libroBase.cumpleFiltros(FiltrosLibro(usuarioPrestador = "cortázar")) shouldBe true
+        it("el tamaño de página por defecto es 6") {
+            FiltrosLibro().tamanoPaginado shouldBe 6
         }
 
-        it("rechaza el libro si el nombre del dueno no contiene el texto buscado") {
-            libroBase.cumpleFiltros(FiltrosLibro(usuarioPrestador = "Borges")) shouldBe false
+        it("los géneros por defecto son una lista vacía") {
+            FiltrosLibro().generos shouldBe emptyList()
+        }
+
+        it("cantPaginasMin y cantPaginasMax por defecto son null") {
+            val filtros = FiltrosLibro()
+            filtros.cantPaginasMin shouldBe null
+            filtros.cantPaginasMax shouldBe null
         }
     }
-})*/
+
+    describe("Ordenamiento.toSort()") {
+
+        it("TITULO_ASC genera un sort ascendente por data.titulo") {
+            val sort = Ordenamiento.TITULO_ASC.toSort()
+            sort.isSorted shouldBe true
+            sort.getOrderFor("data.titulo")?.isAscending shouldBe true
+        }
+
+        it("TITULO_DESC genera un sort descendente por data.titulo") {
+            val sort = Ordenamiento.TITULO_DESC.toSort()
+            sort.isSorted shouldBe true
+            sort.getOrderFor("data.titulo")?.isDescending shouldBe true
+        }
+
+        it("AUTOR_ASC genera un sort ascendente por data.autor") {
+            val sort = Ordenamiento.AUTOR_ASC.toSort()
+            sort.isSorted shouldBe true
+            sort.getOrderFor("data.autor")?.isAscending shouldBe true
+        }
+
+        it("DUENO_ASC genera un sort ascendente por data.dueno.nombreCompleto") {
+            val sort = Ordenamiento.DUENO_ASC.toSort()
+            sort.isSorted shouldBe true
+            sort.getOrderFor("data.dueno.nombreCompleto")?.isAscending shouldBe true
+        }
+    }
+})
