@@ -1,4 +1,3 @@
-/*
 package ar.edu.unsam.phm.controller
 
 import ar.edu.unsam.phm.domain.*
@@ -136,4 +135,4 @@ class FiltrosLibroSpec : DescribeSpec({
             libroBase.cumpleFiltros(FiltrosLibro(usuarioPrestador = "Borges")) shouldBe false
         }
     }
-})*/
+})

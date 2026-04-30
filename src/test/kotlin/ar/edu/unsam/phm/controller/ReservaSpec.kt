@@ -1,4 +1,3 @@
-/*
 package ar.edu.unsam.phm.controller
 
 import ar.edu.unsam.phm.domain.*
@@ -168,4 +167,4 @@ class ReservaSpec : DescribeSpec({
             reserva.calcularBiblioKarmas(0) shouldBe 555
         }
     }
-})*/
+})

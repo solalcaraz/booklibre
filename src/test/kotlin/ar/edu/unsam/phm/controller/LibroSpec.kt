@@ -1,8 +1,6 @@
 package ar.edu.unsam.phm.controller
 
-/*
 import ar.edu.unsam.phm.domain.*
-import ar.edu.unsam.phm.repository.LibroRepositorio
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import java.time.LocalDate
@@ -76,7 +74,8 @@ class LibroSpec : DescribeSpec({
     }
 })
 
-// Repositorio Libro
+/*
+// Repositorio Libro - COMENTADO: La nueva arquitectura usa Spring Data JPA en lugar de repositorios en memoria
 class LibroPersistenciaSpec : DescribeSpec({
 
     val libroRepo = LibroRepositorio()
@@ -141,4 +140,5 @@ class LibroPersistenciaSpec : DescribeSpec({
             }
         }
     }
-})*/
+})
+*/
