@@ -14,12 +14,18 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate   # Flyway crea las tablas, Hibernate solo verifica
     show-sql: true
     properties:
       hibernate:
         format_sql: true
     open-in-view: false
+
+  flyway:
+    enabled: true
+    out-of-order: true
+    create-schemas: false
+    locations: classpath:db/migration
 
 security:
   key: ${JWT_SECRET_KEY}

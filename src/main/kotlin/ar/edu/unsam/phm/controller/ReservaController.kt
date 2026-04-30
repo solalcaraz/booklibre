@@ -53,11 +53,7 @@ class ReservaController (private val reservaService: ReservaService, private val
     fun listarLibros(
         @ModelAttribute filtros: FiltrosLibro
     ): PaginationResponseDTO<ReservaLibroDTO> {
-        val userId = SecurityContextHolder
-            .getContext()
-            .authentication
-            .name
-            .toInt()
+        val userId = SecurityContextHolder.getContext().authentication.name.toInt()
 
         val page = reservaService.getLibrosDisponiblesParaReserva(userId, filtros)
         return PaginationResponseDTO(
