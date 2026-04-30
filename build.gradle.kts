@@ -57,6 +57,7 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-framework-engine:$kotestVersion")
     testImplementation("io.mockk:mockk:${mockkVersion}")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

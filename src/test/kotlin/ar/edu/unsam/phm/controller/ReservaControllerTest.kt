@@ -1,60 +1,115 @@
 package ar.edu.unsam.phm.controller
 
+import ar.edu.unsam.phm.domain.Estado
+import ar.edu.unsam.phm.domain.Genero
+import ar.edu.unsam.phm.domain.Idioma
+import ar.edu.unsam.phm.domain.LibroComun
+import ar.edu.unsam.phm.domain.LibroData
+import ar.edu.unsam.phm.domain.Reserva
+import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.DetalleReservaDTO
+import ar.edu.unsam.phm.dto.LibroDetalleDTO
+import ar.edu.unsam.phm.dto.LibroResumen
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.dto.ReservaDTO
-import ar.edu.unsam.phm.dto.ReservaLibroDTO
+import ar.edu.unsam.phm.dto.TipoDeLibroDTO
 import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.helpers.ReservaMapper
-import ar.edu.unsam.phm.service.ReseniaService
-import ar.edu.unsam.phm.service.ReservaService
+import ar.edu.unsam.phm.repository.UsuarioRepository
 import ar.edu.unsam.phm.security.CustomUserDetailsService
 import ar.edu.unsam.phm.security.TokenHelper
+import ar.edu.unsam.phm.service.ReseniaService
+import ar.edu.unsam.phm.service.ReservaService
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
+import org.mockito.kotlin.any
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.LocalDate
 
+/*
+Patrón de autenticación:
+  - @WithMockUser(username = "1")  →  simula un JWT donde el subject es el userId "1"
+  - SecurityContextHolder.getContext().authentication.name devuelve "1"
+  - Los endpoints protegidos sin esta anotación deben retornar 401.
+
+CSRF:
+  El slice @WebMvcTest activa CSRF por defecto aunque en producción esté deshabilitado.
+  Para métodos mutantes (POST/PATCH/DELETE) hay que agregar .with(csrf()).
+*/
 @WebMvcTest(ReservaController::class)
 @AutoConfigureMockMvc
+@DisplayName("Dado un controller de pre reservas disponibles")
 class ReservaControllerTest(
     @Autowired val mockMvc: MockMvc
 ) {
-    @MockBean lateinit var reservaService: ReservaService
-    @MockBean lateinit var reservaMapper: ReservaMapper
-    @MockBean lateinit var reseniaService: ReseniaService
-    @MockBean lateinit var customUserDetailsService: CustomUserDetailsService
-    @MockBean lateinit var tokenHelper: TokenHelper
+    @MockBean
+    lateinit var reservaService: ReservaService
+    @MockBean
+    lateinit var reservaMapper: ReservaMapper
+    @MockBean
+    lateinit var reseniaService: ReseniaService
+    @MockBean lateinit var usuarioRepository: UsuarioRepository
+    @MockBean
+    lateinit var customUserDetailsService: CustomUserDetailsService
+    @MockBean
+    lateinit var tokenHelper: TokenHelper
 
+    private val dueno = Usuario(
+        nombreCompleto = "Lionel Messi",
+        email = "lionel@messi.com",
+        password = "admin"
+    ).apply { id = 2 }
+
+    private val lector = Usuario(
+        nombreCompleto = "Diego Maradona",
+        email = "diego@maradona.com",
+        password = "admin"
+    ).apply { id = 1 }
+
+    private val libroData = LibroData(
+        titulo = "1984",
+        descripcion = "Distopía",
+        genero = Genero.CIENCIA_FICCION,
+        autor = "George Orwell",
+        cantPaginas = 300,
+        isbn13 = "9780451524935",
+        idioma = Idioma.INGLES,
+        editorial = "Secker & Warburg",
+        fechaPublicacion = LocalDate.of(1949, 6, 8),
+        estado = Estado.BUENO
+    )
+
+    private val libroMock = LibroComun(libroData, dueno).apply { id = 10 }
+
+    private val reservaMock = Reserva(
+        libro = libroMock,
+        lector = lector,
+        fechaDesde = LocalDate.now().plusDays(10),
+        fechaHasta = LocalDate.now().plusDays(15)
+    ).apply { id = 1 }
+
+    // region GET /librosDisponibles/{userId}
     @Test
     @WithMockUser(username = "1")
-    @DisplayName("Cuando se buscan libros disponibles para un usuario autenticado, devuelve 200")
+    @DisplayName("GET /librosDisponibles - autenticado devuelve 200 con la página")
     fun obtener_libros_disponibles_ok() {
-        val libroDTO = ReservaLibroDTO(
-            id = 1,
-            titulo = "1984",
-            autor = "George Orwell",
-            genero = "CIENCIA_FICCION",
-            dueno = "Lionel Messi"
-        )
-
-        val page = PageImpl(listOf(libroDTO), org.springframework.data.domain.PageRequest.of(0, 10), 1)
-        
-        `when`(reservaService.getLibrosDisponiblesParaReserva(1, any())).thenReturn(page)
+        val pageDeReservas = PageImpl(listOf(reservaMock), PageRequest.of(0, 6), 1)
+        `when`(reservaService.getLibrosDisponiblesParaReserva(any(), any())).thenReturn(pageDeReservas)
 
         mockMvc.perform(get("/reserva/librosDisponibles"))
             .andDo(print())
@@ -62,30 +117,51 @@ class ReservaControllerTest(
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.items.length()").value(1))
             .andExpect(jsonPath("$.items[0].titulo").value("1984"))
+            .andExpect(jsonPath("$.items[0].autor").value("George Orwell"))
+            .andExpect(jsonPath("$.items[0].dueno").value("Lionel Messi"))
+            .andExpect(jsonPath("$.totalItems").value(1))
     }
 
     @Test
-    @DisplayName("Cuando se buscan libros disponibles sin autenticarse, devuelve 401")
+    @DisplayName("GET /librosDisponibles - sin autenticar devuelve 401")
     fun obtener_libros_disponibles_sin_autenticar() {
         mockMvc.perform(get("/reserva/librosDisponibles"))
             .andExpect(status().isUnauthorized)
     }
+    // endregion
 
+    // region GET /detalles/{libroId}}
     @Test
     @WithMockUser(username = "1")
-    @DisplayName("Cuando se obtienen detalles de una reserva existente, devuelve 200")
+    @DisplayName("GET /detalles/{libroId} - autenticado con fechas válidas devuelve 200")
     fun obtener_detalles_reserva_ok() {
-        val detalleDTO = DetalleReservaDTO(
-            calificacionPromedio = 4.5,
-            libroDetalleDTO = null,
-            cantidadResenias = 1
-        )
-
-        `when`(reservaService.getDetalleReserva(1, 1, LocalDate.now().plusDays(10), LocalDate.now().plusDays(20)))
-            .thenReturn(detalleDTO)
-
         val fechaDesde = LocalDate.now().plusDays(10)
         val fechaHasta = LocalDate.now().plusDays(20)
+
+        val detalleDTO = DetalleReservaDTO(
+            libroDetalleDTO = LibroDetalleDTO(
+                id = 1,
+                titulo = "Rayuela",
+                tipo = TipoDeLibroDTO.COMUN,
+                genero = "Literatura Clásica",
+                autor = "Julio Cortázar",
+                idioma = "Español",
+                estado = "Bueno",
+                editorial = "Cátedra",
+                fechaPublicacion = LocalDate.of(1963, 1, 1).toString(),
+                paginas = 300,
+                isbn13 = "9788437604947",
+                descripcion = "Novela experimental",
+                portada = "http://localhost:8080/imagenes/libro-nuevo.jpg"
+            ),
+            bibliokarmasTotales = 400,
+            calificacionPromedio = 4.5,
+            ultimasResenias = emptyList(),
+            rangosFechasOcupadas = emptyList()
+        )
+
+        `when`(reservaService.getDetalleReserva(1, 1, fechaDesde, fechaHasta))
+            .thenReturn(detalleDTO)
 
         mockMvc.perform(
             get("/reserva/detalles/1")
@@ -95,12 +171,25 @@ class ReservaControllerTest(
             .andExpect(status().isOk)
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.calificacionPromedio").value(4.5))
+            .andExpect(jsonPath("$.bibliokarmasTotales").value(400))
+            .andExpect(jsonPath("$.libroDetalleDTO.titulo").value("Rayuela"))
+    }
+
+    @Test
+    @DisplayName("GET /detalles/{libroId} - sin autenticar devuelve 401")
+    fun obtener_detalles_sin_autenticar() {
+        mockMvc.perform(
+            get("/reserva/detalles/1")
+                .param("fechaDesde", LocalDate.now().plusDays(1).toString())
+                .param("fechaHasta", LocalDate.now().plusDays(5).toString())
+        )
+            .andExpect(status().isUnauthorized)
     }
 
     @Test
     @WithMockUser(username = "1")
-    @DisplayName("Cuando intenta crear una reserva con fechas invertidas, devuelve 400")
-    fun crear_reserva_fechas_invertidas() {
+    @DisplayName("GET /detalles/{libroId} - fechas invertidas el service lanza BadRequest y devuelve 400")
+    fun obtener_detalles_fechas_invertidas() {
         val fechaDesde = LocalDate.now().plusDays(20)
         val fechaHasta = LocalDate.now().plusDays(10)
 
@@ -114,14 +203,21 @@ class ReservaControllerTest(
         )
             .andExpect(status().isBadRequest)
     }
+    // endregion
 
+    // region POST /crear
     @Test
     @WithMockUser(username = "1")
-    @DisplayName("Cuando se crea una reserva correctamente, devuelve 200")
+    @DisplayName("POST /crear - autenticado con datos válidos devuelve 200")
     fun crear_reserva_ok() {
         val reservaDTO = ReservaDTO(
             id = 1,
-            libroResumen = null,
+            libroResumen = LibroResumen(
+                titulo = "1984",
+                autor = "George Orwell",
+                puntuacion = 3.0,
+                imgUrl = "http://localhost:8080/imagenes/libro-nuevo.jpg"
+            ),
             prestadoPor = "Lionel Messi",
             bibliokarma = 250,
             fechaDesde = LocalDate.now().plusDays(10),
@@ -130,7 +226,7 @@ class ReservaControllerTest(
             puedeCalificar = false
         )
 
-        `when`(reservaService.crearReserva(1, any())).thenReturn(reservaDTO)
+        `when`(reservaService.crearReserva(any(), any())).thenReturn(reservaDTO)
 
         mockMvc.perform(
             post("/reserva/crear")
@@ -148,14 +244,34 @@ class ReservaControllerTest(
         )
             .andExpect(status().isOk)
 
-        verify(reservaService).crearReserva(1, any())
+        verify(reservaService).crearReserva(any(), any())
+    }
+
+    @Test
+    @DisplayName("POST /crear - sin autenticar devuelve 401")
+    fun crear_reserva_sin_autenticar() {
+        mockMvc.perform(
+            post("/reserva/crear")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "libroId": 1,
+                      "fechaDesde": "${LocalDate.now().plusDays(10)}",
+                      "fechaHasta": "${LocalDate.now().plusDays(15)}"
+                    }
+                    """.trimIndent()
+                )
+        )
+            .andExpect(status().isUnauthorized)
     }
 
     @Test
     @WithMockUser(username = "1")
-    @DisplayName("Cuando intenta crear una reserva con fechas superpuestas, devuelve 409")
+    @DisplayName("POST /crear - fechas superpuestas el service lanza ConflictException y devuelve 409")
     fun crear_reserva_fechas_superpuestas() {
-        `when`(reservaService.crearReserva(1, any()))
+        `when`(reservaService.crearReserva(any(), any()))
             .thenThrow(ConflictException("El libro ya se encuentra reservado en esas fechas."))
 
         mockMvc.perform(
@@ -177,7 +293,34 @@ class ReservaControllerTest(
 
     @Test
     @WithMockUser(username = "1")
-    @DisplayName("Cuando se califican una reserva finalizada, devuelve 200")
+    @DisplayName("POST /crear - ya tiene reserva activa del mismo libro devuelve 409")
+    fun crear_reserva_ya_existe_activa() {
+        `when`(reservaService.crearReserva(any(), any()))
+            .thenThrow(ConflictException("Ya tenés una reserva activa para este libro. Dejá leer a los demás chimwe"))
+
+        mockMvc.perform(
+            post("/reserva/crear")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "libroId": 1,
+                      "fechaDesde": "${LocalDate.now().plusDays(30)}",
+                      "fechaHasta": "${LocalDate.now().plusDays(40)}"
+                    }
+                    """.trimIndent()
+                )
+        )
+            .andExpect(status().isConflict)
+    }
+    // endregion
+
+    // POST /calificar
+    // CALIFICAR
+    @Test
+    @WithMockUser(username = "1")
+    @DisplayName("POST /calificar - autenticado con datos válidos devuelve 200")
     fun calificar_reserva_ok() {
         mockMvc.perform(
             post("/reserva/calificar")
@@ -199,23 +342,53 @@ class ReservaControllerTest(
     }
 
     @Test
+    @DisplayName("POST /calificar - sin autenticar devuelve 401")
+    fun calificar_reserva_sin_autenticar() {
+        mockMvc.perform(
+            post("/reserva/calificar")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "reservaId": 1,
+                      "puntuacion": 4,
+                      "comentario": "Muy buen libro"
+                    }
+                    """.trimIndent()
+                )
+        )
+            .andExpect(status().isUnauthorized)
+    }
+
+    // MIS RESERVAS
+    // POST /obtenerMisReservas
+    @Test
     @WithMockUser(username = "1")
-    @DisplayName("Cuando se obtienen mis reservas, devuelve 200 con la lista paginada")
+    @DisplayName("POST /obtenerMisReservas - autenticado devuelve 200 con lista paginada")
     fun obtener_mis_reservas_ok() {
+        // El service devuelve Page<Reserva>; el mapper lo convierte a PaginationResponseDTO<ReservaDTO>
+        val pageDeReservas = PageImpl(listOf(reservaMock), PageRequest.of(0, 10), 1)
+
+        val libroResumen = LibroResumen(
+            titulo = "1984",
+            autor = "George Orwell",
+            puntuacion = 3,
+            imgUrl = "http://localhost:8080/imagenes/libro-nuevo.jpg"
+        )
         val reservaDTO = ReservaDTO(
             id = 1,
-            libroResumen = null,
+            libroResumen = libroResumen,
             prestadoPor = "Lionel Messi",
             bibliokarma = 250,
-            fechaDesde = LocalDate.now(),
-            fechaHasta = LocalDate.now().plusDays(5),
+            fechaDesde = LocalDate.now().plusDays(10),
+            fechaHasta = LocalDate.now().plusDays(15),
             estado = "ACTIVO",
             puedeCalificar = false
         )
 
-        val page = PageImpl(listOf(reservaDTO), org.springframework.data.domain.PageRequest.of(0, 10), 1)
-        `when`(reservaService.getMisReservas(any())).thenReturn(page)
-        `when`(reservaMapper.toDtoReservaPag(page)).thenReturn(
+        `when`(reservaService.getMisReservas(any())).thenReturn(pageDeReservas)
+        `when`(reservaMapper.toDtoReservaPag(pageDeReservas)).thenReturn(
             PaginationResponseDTO(
                 items = listOf(reservaDTO),
                 page = 0,
@@ -244,15 +417,69 @@ class ReservaControllerTest(
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.items.length()").value(1))
+            .andExpect(jsonPath("$.items[0].prestadoPor").value("Lionel Messi"))
+            .andExpect(jsonPath("$.items[0].libroResumen.titulo").value("1984"))
+    }
+
+    @Test
+    @DisplayName("POST /obtenerMisReservas - sin autenticar devuelve 401")
+    fun obtener_mis_reservas_sin_autenticar() {
+        mockMvc.perform(
+            post("/reserva/obtenerMisReservas")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "pageSize": 10,
+                      "pageNumber": 0,
+                      "filter": {
+                        "usuarioId": "1",
+                        "inputSearch": ""
+                      }
+                    }
+                    """.trimIndent()
+                )
+        )
+            .andExpect(status().isUnauthorized)
     }
 
     @Test
     @WithMockUser(username = "1")
-    @DisplayName("Cuando se obtienen libros prestados por mí, devuelve 200")
+    @DisplayName("POST /obtenerMisReservas - falta usuarioId el service lanza BadRequest y devuelve 400")
+    fun obtener_mis_reservas_sin_usuario_id() {
+        `when`(reservaService.getMisReservas(any()))
+            .thenThrow(BadRequestException("Falta el ID del usuario en el payload"))
+
+        mockMvc.perform(
+            post("/reserva/obtenerMisReservas")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "pageSize": 10,
+                      "pageNumber": 0,
+                      "filter": {
+                        "inputSearch": ""
+                      }
+                    }
+                    """.trimIndent()
+                )
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    // POST /obtenerPrestadosPorMi
+    @Test
+    @WithMockUser(username = "1")
+    @DisplayName("POST /obtenerPrestadosPorMi - autenticado devuelve 200")
     fun obtener_prestados_por_mi_ok() {
-        val page = PageImpl(listOf<ReservaDTO>(), org.springframework.data.domain.PageRequest.of(0, 10), 0)
-        `when`(reservaService.getPrestadosPorMi(any())).thenReturn(page)
-        `when`(reservaMapper.toDtoReservaPag(page)).thenReturn(
+        // Page<Reserva> vacía — el controller/mapper la convierte a lista vacía de DTOs
+        val pageVacia = PageImpl(listOf<Reserva>(), PageRequest.of(0, 10), 0)
+
+        `when`(reservaService.getPrestadosPorMi(any())).thenReturn(pageVacia)
+        `when`(reservaMapper.toDtoReservaPag(pageVacia)).thenReturn(
             PaginationResponseDTO(
                 items = emptyList(),
                 page = 0,
@@ -280,13 +507,14 @@ class ReservaControllerTest(
                 )
         )
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$.items.length()").value(0))
     }
 
     @Test
-    @DisplayName("Cuando intenta obtener mis reservas sin autenticarse, devuelve 401")
-    fun obtener_mis_reservas_sin_autenticar() {
+    @DisplayName("POST /obtenerPrestadosPorMi - sin autenticar devuelve 401")
+    fun obtener_prestados_por_mi_sin_autenticar() {
         mockMvc.perform(
-            post("/reserva/obtenerMisReservas")
+            post("/reserva/obtenerPrestadosPorMi")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
@@ -305,204 +533,8 @@ class ReservaControllerTest(
             .andExpect(status().isUnauthorized)
     }
 }
-            .andExpect(jsonPath("$.items[1].dueno").value("Lionel Messi"))
-            .andExpect(jsonPath("$.items[2].dueno").value("Lionel Messi"))
-    }
-    // endregion
 
-    // region GET /detalles/{libroId}}
-    @Test
-    fun `se pueden obtener los detalles de simulacion de una reserva`() {
-        val fechaDesde = LocalDate.now().plusDays(10).toString()
-        val fechaHasta = LocalDate.now().plusDays(20).toString()
-
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.get("/reserva/detalles/${libroDeUsuario2.id}")
-                    .header("userId", usuario.id!!) //Usuario1
-                    .param("fechaDesde", fechaDesde)
-                    .param("fechaHasta", fechaHasta)
-            )
-            .andExpect(status().isOk)
-            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.calificacionPromedio").value(0.0))
-            .andExpect(jsonPath("$.libroDetalleDTO.titulo").value("Rayuela"))
-            .andExpect(jsonPath("$.libroDetalleDTO.autor").value("Julio Cortázar"))
-    }
-
-    @Test
-    fun `pedir detalles con fecha hasta anterior a desde devuelve 400 Bad Request`() {
-        val fechaDesde = LocalDate.now().plusDays(20).toString()
-        val fechaHasta = LocalDate.now().plusDays(10).toString() // Fechas invertidas
-
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.get("/reserva/detalles/${libroDeUsuario2.id}")
-                    .header("userId", usuario.id!!)
-                    .param("fechaDesde", fechaDesde)
-                    .param("fechaHasta", fechaHasta)
-            )
-            .andExpect(status().isBadRequest)
-            .andExpect { result ->
-                val excepcionLanzada = result.resolvedException
-                assertTrue(excepcionLanzada is BadRequestException)
-                assertEquals(
-                    "La fecha hasta no puede ser anterior a la fecha desde.",
-                    excepcionLanzada?.message
-                )
-            }
-    }
-
-    @Test
-    fun `No puedo reservar mis propios libros`() {
-        val fechaDesde = LocalDate.now().plusDays(10).toString()
-        val fechaHasta = LocalDate.now().plusDays(20).toString()
-        mockMvc.perform(
-            MockMvcRequestBuilders.get("/reserva/detalles/${libroDeUsuario2.id}")
-                .header("userId", usuario2.id!!)
-                .param("fechaDesde", fechaDesde)
-                .param("fechaHasta", fechaHasta)
-        )
-            .andExpect(status().isBadRequest)
-            .andExpect { result ->
-                val excepcionLanzada = result.resolvedException
-                assertTrue(excepcionLanzada is BadRequestException)
-                assertEquals(
-                    "No puedo reservar mis propios libros",
-                    excepcionLanzada?.message
-                )
-            }
-    }
-    // endregion
-
-    // region POST /crear
-    @Test
-    fun `se puede crear una reserva correctamente`() {
-        val fechaDesde = LocalDate.now().plusDays(10).toString()
-        val fechaHasta = LocalDate.now().plusDays(15).toString()
-
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.post("/reserva/crear")
-                    .header("userId", usuario.id!!)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content("""{
-                          "libroId": ${libroDeUsuario2.id},
-                          "fechaDesde": "$fechaDesde",
-                          "fechaHasta": "$fechaHasta"
-                        }""".trimIndent())
-            )
-            .andExpect(status().isOk)
-
-        val reservasGuardadas = reservaRepositorio.buscarPorLibro(libroDeUsuario2)
-        assertEquals(1, reservasGuardadas.size)
-    }
-
-    @Test
-    fun `intentar crear una reserva con fechas superpuestas devuelve 409 Conflict`() {
-        val fechaDesde = LocalDate.now().plusDays(10)
-        val fechaHasta = LocalDate.now().plusDays(20)
-
-        reservaRepositorio.create(
-            Reserva(
-                libro = libroDeUsuario2,
-                lector = usuario,
-                fechaDesde = fechaDesde,
-                fechaHasta = fechaHasta
-            )
-        )
-
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.post("/reserva/crear")
-                    .header("userId", usuario.id!!)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content("""
-                        {
-                          "libroId": ${libroDeUsuario2.id},
-                          "fechaDesde": "${fechaDesde.plusDays(2)}",
-                          "fechaHasta": "${fechaHasta.plusDays(5)}"
-                        }
-                    """.trimIndent())
-            )
-            .andExpect(status().isConflict)
-            .andExpect { result ->
-                val excepcionLanzada = result.resolvedException
-                assertTrue(excepcionLanzada is ConflictException)
-                assertEquals(
-                    "El libro ya se encuentra reservado en esas fechas.",
-                    excepcionLanzada?.message
-                )
-            }
-    }
-
-    @Test
-    fun `Intenta crear una reserva cuando previamente ya lo hizo`(){
-        val fechaDesde = LocalDate.now().plusDays(10)
-        val fechaHasta = LocalDate.now().plusDays(20)
-
-        reservaRepositorio.create(
-            Reserva(
-                libro = libroDeUsuario2,
-                lector = usuario,
-                fechaDesde = fechaDesde,
-                fechaHasta = fechaHasta
-            )
-        )
-
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.post("/reserva/crear")
-                    .header("userId", usuario.id!!)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content("""
-                        {
-                          "libroId": ${libroDeUsuario2.id},
-                          "fechaDesde": "${fechaDesde.plusDays(20)}",
-                          "fechaHasta": "${fechaHasta.plusDays(30)}"
-                        }
-                    """.trimIndent())
-            )
-            .andExpect(status().isConflict)
-            .andExpect { result ->
-                val excepcionLanzada = result.resolvedException
-                assertTrue(excepcionLanzada is ConflictException)
-                assertEquals(
-                    "Ya tenés una reserva activa para este libro. Dejá leer a los demás chimwe",
-                    excepcionLanzada?.message
-                )
-            }
-    }
-
-    // CALIFICAR
-    @Test
-    fun `calificar una reserva finalizada`() {
-        val reserva = Reserva(
-            libro = libroDeUsuario2,
-            lector = usuario,
-            fechaDesde = LocalDate.of(2025, 1, 1),
-            fechaHasta = LocalDate.of(2025, 1, 10)
-        )
-        reservaRepositorio.create(reserva)
-
-        val reseniaJson = """
-            {
-                "reservaId": ${reserva.id},
-                "puntuacion": 4,
-                "comentario": "Muy buen libro"
-            }
-        """.trimIndent()
-
-        mockMvc
-            .perform(
-                MockMvcRequestBuilders.post("/reserva/calificar")
-                    .contentType("application/json")
-                    .content(reseniaJson)
-            )
-            .andExpect(status().isOk)
-    }
-
-    // MIS RESERVAS
+/*
     @Test
     fun `se pueden obtener mis reservas`() {
         reserva1 = Reserva(
@@ -672,13 +704,4 @@ class ReservaControllerTest(
     }
 
     // endregion
-}
-
-/*
-NOTA: Los tests anteriores han sido convertidos al nuevo patrón usando @WebMvcTest con MockMvc.
-La arquitectura anterior con @SpringBootTest y repositorios en memoria ha sido reemplazada por:
-- Spring Data JPA con PostgreSQL
-- JWT para autenticación
-- MockMvc con @WithMockUser para simular usuarios autenticados
-- @MockBean para mockar servicios en lugar de usar repositorios directamente
-*/
+}*/
