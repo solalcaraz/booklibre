@@ -38,3 +38,30 @@ CREATE TRIGGER tg_auditar_puntaje_libro
     AFTER INSERT ON resenias
     FOR EACH ROW
 EXECUTE FUNCTION fn_auditar_puntaje_libro();
+
+-- function para ver el historial completo de un libro
+CREATE OR REPLACE FUNCTION fn_historial_puntaje_libro(p_id_libro INTEGER)
+    RETURNS TABLE (
+                      id_libro            INTEGER,
+                      titulo              VARCHAR,
+                      veces_actualizado   BIGINT,
+                      fecha_actualizacion TIMESTAMP,
+                      puntaje_anterior    DOUBLE PRECISION,
+                      puntaje_nuevo       DOUBLE PRECISION
+                  )
+AS $$
+BEGIN
+    RETURN QUERY
+        SELECT
+            a.id_libro,
+            l.titulo,
+            COUNT(*) OVER (PARTITION BY a.id_libro),
+            a.fecha_actualizacion,
+            a.puntaje_anterior,
+            a.puntaje_nuevo
+        FROM auditoria_puntaje_libro a
+                 JOIN libros l ON a.id_libro = l.id
+        WHERE a.id_libro = p_id_libro
+        ORDER BY a.fecha_actualizacion;
+END;
+$$ LANGUAGE plpgsql;
