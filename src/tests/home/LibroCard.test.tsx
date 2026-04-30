@@ -1,10 +1,12 @@
-import { render, screen } from '@testing-library/react'
-import { describe, expect, test, vi } from 'vitest'
+﻿import { render, screen } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { LibroCard } from '../../components/Home/LibroCard'
 
+const mockNavigate = vi.fn()
 vi.mock('react-router', () => ({
-  useNavigate: vi.fn(() => vi.fn()),
+  useNavigate: () => mockNavigate,
 }))
 
 const libroMock = {
@@ -23,18 +25,27 @@ const libroMock = {
 }
 
 describe('LibroCard', () => {
-  test('muestra el titulo del libro', () => {
+  it('muestra el titulo del libro', () => {
     render(<MemoryRouter><LibroCard libro={libroMock} /></MemoryRouter>)
     expect(screen.getByTestId('libro-titulo').textContent).toBe('Rayuela')
   })
 
-  test('muestra la calificacion promedio', () => {
+  it('muestra la calificacion promedio', () => {
     render(<MemoryRouter><LibroCard libro={libroMock} /></MemoryRouter>)
     expect(screen.getByTestId('libro-calificacion').textContent).toContain('4.5')
   })
 
-  test('renderiza la card con el id correcto', () => {
+  it('renderiza la card con el id correcto', () => {
     render(<MemoryRouter><LibroCard libro={libroMock} /></MemoryRouter>)
     expect(screen.getByTestId('libro-card-1')).toBeTruthy()
+  })
+
+  it('navega al detalle cuando se hace click en la card', async () => {
+    const user = userEvent.setup()
+    render(<MemoryRouter><LibroCard libro={libroMock} /></MemoryRouter>)
+
+    await user.click(screen.getByTestId('libro-card-1'))
+
+    expect(mockNavigate).toHaveBeenCalledWith('/libros/detalle/1')
   })
 })

@@ -9,9 +9,27 @@ const mockedAxios = vi.mocked(axios, true)
 // Mockeamos el authService para que devuelva un usuario falso
 vi.mock('../../services/AuthService', () => ({
   authService: {
-    userDeStorage: vi.fn()
+    userDeStorage: vi.fn(),
+    tokenDeStorage: vi.fn(() => 'fake-token')
   }
 }))
+
+// Mockeamos common para customAxios
+vi.mock('../../services/common', () => {
+  const customAxios = {
+    get: vi.fn()
+  }
+  return {
+    customAxios,
+    getAxiosData: vi.fn(async (query) => {
+      const response = await query()
+      return response.data
+    })
+  }
+})
+
+import { customAxios } from '../../services/common'
+const mockCustomAxios = vi.mocked(customAxios)
 
 describe('ReservaService', () => {
   beforeEach(() => {
@@ -40,7 +58,7 @@ describe('ReservaService', () => {
     expect(mockedAxios.get).toHaveBeenCalledWith(
       expect.stringContaining('/reserva/detalles/1'),
       expect.objectContaining({
-        headers: { userId: 1 },
+        headers: { Authorization: 'Bearer fake-token' },
         params: { fechaDesde: '2026-01-01', fechaHasta: '2026-01-10' }
       })
     )
@@ -85,7 +103,12 @@ describe('ReservaService', () => {
 
       expect(mockedAxios.post).toHaveBeenCalledWith(
         expect.stringContaining('/reserva/obtenerMisReservas'),
-        request
+        request,
+        {
+          headers: {
+            Authorization: `Bearer fake-token`
+          }
+        }
       )
 
       expect(result).toEqual(mockResponse)
@@ -133,7 +156,12 @@ describe('ReservaService', () => {
 
       expect(mockedAxios.post).toHaveBeenCalledWith(
         expect.stringContaining('/reserva/obtenerPrestadosPorMi'),
-        request
+        request,
+        {
+          headers: {
+            Authorization: `Bearer fake-token`
+          }
+        }
       )
 
       expect(result).toEqual(mockResponse)
@@ -156,7 +184,12 @@ describe('ReservaService', () => {
 
       expect(mockedAxios.post).toHaveBeenCalledWith(
         expect.stringContaining('/reserva/calificar'),
-        request
+        request,
+        {
+          headers: {
+            Authorization: `Bearer fake-token`
+          }
+        }
       )
 
       expect(result).toBe('OK')
@@ -174,6 +207,65 @@ describe('ReservaService', () => {
       await expect(
         reservaService.calificar(request)
       ).rejects.toThrow('Error al calificar')
+    })
+  })
+
+  describe('getLibrosDisponiblesReserva', () => {
+    it('devuelve datos correctamente', async () => {
+      const request = {
+        pageSize: 10,
+        pageNumber: 0,
+        filter: {
+          busqueda: 'Rayuela',
+          generos: [],
+          cantPaginasMin: 0,
+          cantPaginasMax: 1000,
+          fechaDesde: '2026-01-01',
+          fechaHasta: '2026-01-10',
+          isbn: '',
+          usuarioPrestador: '',
+          orden: 'TITULO_ASC'
+        }
+      }
+      const mockResponse = {
+        items: [],
+        page: 0,
+        size: 10,
+        totalItems: 0,
+        totalPages: 0
+      }
+
+      mockCustomAxios.get.mockResolvedValueOnce({ data: mockResponse })
+
+      const result = await reservaService.getLibrosDisponiblesReserva(request)
+
+      expect(mockCustomAxios.get).toHaveBeenCalledWith(
+        '/reserva/librosDisponibles',
+        expect.objectContaining({
+          params: expect.objectContaining({
+            busqueda: 'Rayuela',
+            numeroPagina: 0,
+            tamanoPaginado: 10
+          }),
+          headers: { Authorization: 'Bearer fake-token' }
+        })
+      )
+
+      expect(result).toEqual(mockResponse)
+    })
+
+    it('lanza error si la API falla', async () => {
+      const request = {
+        pageSize: 10,
+        pageNumber: 0,
+        filter: {}
+      }
+
+      mockCustomAxios.get.mockRejectedValueOnce(new Error('Error API'))
+
+      await expect(
+        reservaService.getLibrosDisponiblesReserva(request)
+      ).rejects.toThrow('Error API')
     })
   })
 })
