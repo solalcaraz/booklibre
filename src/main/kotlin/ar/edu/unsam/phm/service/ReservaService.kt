@@ -84,7 +84,7 @@ class ReservaService(
     @Transactional(readOnly = true)
     fun getDetalleReserva(libroId: Int, userId: Int, fechaDesde: LocalDate, fechaHasta: LocalDate): DetalleReservaDTO {
         val libro = libroRepository.findConDuenoById(libroId).orElseThrow { NotFoundException("Libro no encontrado") }
-        val usuario = usuarioRepository.findById(userId).orElseThrow { NotFoundException("Usuario no encontrado") }
+        val usuario = usuarioRepository.findById(userId).orElseThrow{NotFoundException("Usuario no encontrado")}
 
         //Reserva simulada con fechas del front
         var reserva = Reserva(
@@ -132,7 +132,7 @@ class ReservaService(
         reservaRepository.save(nuevaReserva)
 
         val calificacionPromedio = libro.getCalificacionPromedio()
-        
-        return reservaAdapter.toDto(nuevaReserva, calificacionPromedio)
+
+        return reservaAdapter.toDto(nuevaReserva, calificacionPromedio, bibliokarmasGanados)
     }
 }

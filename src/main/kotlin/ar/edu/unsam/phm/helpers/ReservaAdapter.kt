@@ -15,17 +15,19 @@ interface ReservaAdapter {
         ultimasResenias: List<Resenia>,
         reservasOcupadas: List<Reserva>
     ): DetalleReservaDTO
-    fun toDto(reserva: Reserva, calificacionPromedio: Double): ReservaDTO
+    fun toDto(reserva: Reserva, calificacionPromedio: Double, bibliokarmas: Int): ReservaDTO
 }
 
 @Service
 class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
 
-    override fun toDetalleReservaDto(reserva: Reserva,
-                                     bibliokarmas: Int,
-                                     calificacionPromedio: Double,
-                                     ultimasResenias: List<Resenia>,
-                                     reservasOcupadas: List<Reserva>): DetalleReservaDTO {
+    override fun toDetalleReservaDto(
+        reserva: Reserva,
+        bibliokarmas: Int,
+        calificacionPromedio: Double,
+        ultimasResenias: List<Resenia>,
+        reservasOcupadas: List<Reserva>
+    ): DetalleReservaDTO {
         return DetalleReservaDTO(
             bibliokarmasTotales = bibliokarmas,
             calificacionPromedio = calificacionPromedio,
@@ -48,7 +50,9 @@ class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
     }
 
     override fun toDtoReservaPag(page: Page<Reserva>): PaginationResponseDTO<ReservaDTO> {
-        val reservasDto = page.content.map { this.toDto(it, it.libro.calcularCalificacionPromedio()) }
+        val reservasDto = page.content.map {
+            this.toDto(it, it.libro.calcularCalificacionPromedio(), it.calcularBiblioKarmas())
+        }
         return PaginationResponseDTO(
             items = reservasDto,
             page = page.number,
@@ -58,9 +62,22 @@ class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
         )
     }
 
-    override fun toDto(reserva: Reserva, calificacionPromedio: Double): ReservaDTO {
-        val libroResumen = LibroResumen(reserva.libro.data.titulo, reserva.libro.data.autor, calificacionPromedio, reserva.libro.data.portada)
-        return ReservaDTO( reserva.id, libroResumen, reserva.libro.dueno.nombreCompleto,
-            reserva.calcularBiblioKarmas(), reserva.fechaDesde, reserva.fechaHasta, reserva.calcularEstado(), reserva.puedeCalificar())
+    override fun toDto(reserva: Reserva, calificacionPromedio: Double, bibliokarmas: Int): ReservaDTO {
+        val libroResumen = LibroResumen(
+            reserva.libro.data.titulo,
+            reserva.libro.data.autor,
+            calificacionPromedio,
+            reserva.libro.data.portada
+        )
+        return ReservaDTO(
+            reserva.id,
+            libroResumen,
+            reserva.libro.dueno.nombreCompleto,
+            bibliokarmas,           // valor recibido como parámetro, no recalculado
+            reserva.fechaDesde,
+            reserva.fechaHasta,
+            reserva.calcularEstado(),
+            reserva.puedeCalificar()
+        )
     }
 }
