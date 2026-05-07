@@ -6,6 +6,10 @@ server:
     include-message: always
 
 spring:
+  data:
+    mongodb:
+      uri: mongodb://jacob:elgordi@127.0.0.1:27019/booklibre_mongodb?authSource=admin
+
   datasource:
     url: jdbc:postgresql://localhost:5433/booklibre
     username: postgres

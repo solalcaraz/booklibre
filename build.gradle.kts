@@ -34,6 +34,7 @@ dependencies {
     // conexión a la base de datos
     runtimeOnly("org.postgresql:postgresql")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
     // seguridad y autenticación
     implementation("org.springframework.boot:spring-boot-starter-security")

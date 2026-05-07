@@ -62,14 +62,11 @@ class Usuario(
     @Transient
     var librosPrestados: Int = 0
 
-    fun validarPassword(passwordIngresada: String): Boolean {
-        return this.password == passwordIngresada
-    }
-
     fun cambiarTipo(label: String){
         tipoUsuario = TipoUsuario.entries.find { it.label == label }
             ?: throw IllegalArgumentException("Tipo de usuario inválido: $label")
     }
+
     fun aumentarBiblioKarmas(bibliokarmas: Int){
         this.bibliokarmas += bibliokarmas
     }
