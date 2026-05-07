@@ -8,6 +8,7 @@ import { Auth } from '../../classes/Auth'
 
 const mockNavigate = vi.fn()
 const mockUseParams = vi.fn()
+const mockFetchUser = vi.fn()
 
 /* Mockeo react-router-dom */
 vi.mock('react-router-dom', async () => {
@@ -23,9 +24,16 @@ vi.mock('react-router-dom', async () => {
 vi.mock('../../services/AuthService', () => ({
   authService: {
     estaAutenticado: vi.fn(),
+    puedeReservar: vi.fn(),
     login: vi.fn(),
     register: vi.fn()
   }
+}))
+
+vi.mock('../../contexts/UserContext', () => ({
+  useUser: () => ({
+    fetchUser: mockFetchUser
+  })
 }))
 
 /* Mockeo la clase Auth para controlar validaciones */
@@ -68,6 +76,18 @@ const renderComponent = () => {
 describe('AuthForm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockUseParams.mockReturnValue({ mode: 'login' })
+    mockFetchUser.mockResolvedValue(undefined)
+    vi.mocked(authService.estaAutenticado).mockReturnValue(false)
+    vi.mocked(authService.puedeReservar).mockReturnValue(true)
+    vi.mocked(authService.login).mockResolvedValue({
+      accessToken: 'accessToken',
+      refreshToken: 'refreshToken'
+    })
+    vi.mocked(authService.register).mockResolvedValue({
+      accessToken: 'accessToken',
+      refreshToken: 'refreshToken'
+    })
 
     /* Mockeo el metodo estatico en false para que no corte el happy path */
     mockHasErrors.mockReturnValue(false)
