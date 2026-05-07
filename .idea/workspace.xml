@@ -5,10 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69efba49-111b-44f0-82f5-a8580d624123" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/db/functions.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/LibroMongo.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/LibroMongoRepository.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/MongoBootstrap.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/data_source_mapping.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/compose.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/AuthController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/controller/AuthController.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Usuario.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/Usuario.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -94,6 +101,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Database Script.functions.sql.executor": "Run",
+    "Docker.compose.yaml.mongo: Compose Deployment.executor": "Run",
     "Gradle.AuthSpec.executor": "Run",
     "Gradle.AuthSpec.login_ok.executor": "Run",
     "Gradle.Build backend-2026-grupo8.executor": "Run",
@@ -122,7 +130,7 @@
     "Spring Boot.BookLibre.executor": "Run",
     "Spring Boot.Main.executor": "Run",
     "Spring Boot.ProyectoApplication.executor": "Run",
-    "git-widget-placeholder": "security2",
+    "git-widget-placeholder": "dev",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Thomas/Desktop/Facultad/PHM/backend-2026-grupo8",
@@ -185,33 +193,6 @@
       <script-file value="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/db/functions.sql" />
       <script-mode>FILE</script-mode>
       <data-source id="5bf20bba-f9de-45d5-89a0-6e844dae9f5e" />
-      <method v="2" />
-    </configuration>
-    <configuration name="MisLibrosSpec" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;ar.edu.unsam.phm.controller.MisLibrosSpec&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <GradleProfilingDisabled>false</GradleProfilingDisabled>
-      <GradleCoverageDisabled>false</GradleCoverageDisabled>
       <method v="2" />
     </configuration>
     <configuration name="Tests in 'backend-2026-grupo8.test'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -280,20 +261,37 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
+      <deployment type="docker-compose.yml" />
+      <method v="2" />
+    </configuration>
+    <configuration name="compose.yaml.mongo: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="mongo" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="compose.yaml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Database Script.functions.sql" />
+      <item itemvalue="Docker.compose.yaml.mongo: Compose Deployment" />
       <item itemvalue="Gradle.backend-2026-grupo8 [bootRun]" />
-      <item itemvalue="Gradle.MisLibrosSpec" />
       <item itemvalue="Gradle.Tests in 'backend-2026-grupo8.test'" />
       <item itemvalue="Spring Boot.BookLibre" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Spring Boot.BookLibre" />
+        <item itemvalue="Docker.compose.yaml.mongo: Compose Deployment" />
+        <item itemvalue="Gradle.Tests in 'backend-2026-grupo8.test'" />
         <item itemvalue="Database Script.functions.sql" />
         <item itemvalue="Gradle.backend-2026-grupo8 [bootRun]" />
-        <item itemvalue="Gradle.Tests in 'backend-2026-grupo8.test'" />
-        <item itemvalue="Gradle.MisLibrosSpec" />
       </list>
     </recent_temporary>
   </component>
@@ -345,6 +343,9 @@
       <workItem from="1776906550656" duration="3068000" />
       <workItem from="1776962070725" duration="9180000" />
       <workItem from="1777040351024" duration="21488000" />
+      <workItem from="1777610302283" duration="4758000" />
+      <workItem from="1778095809743" duration="2595000" />
+      <workItem from="1778169335868" duration="6203000" />
     </task>
     <servers />
   </component>

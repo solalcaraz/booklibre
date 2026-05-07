@@ -28,6 +28,7 @@ class AuthController(
     @PostMapping("/register")
     fun register(@RequestBody usuarioRegister: RegisterRequest) {
         val usuario = authService.register(usuarioRegister)
+
         return
     }
 
