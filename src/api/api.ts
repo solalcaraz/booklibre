@@ -1,9 +1,19 @@
 import axios from 'axios'
-
-const API_URL = 'http://localhost:9000'
+import { API_URL } from '../env'
+import { authService } from '../services/AuthService'
 
 export const api = axios.create({
   baseURL: API_URL
+})
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('accessToken')
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+
+  return config
 })
 
 api.interceptors.response.use(
@@ -13,27 +23,35 @@ api.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    const refreshToken = localStorage.getItem('refreshToken')
-    if (!refreshToken) {
+    const originalRequest = error.config
+
+    if (originalRequest?._retry) {
+      authService.cerrarSesion()
+      window.location.href = '/auth/login'
+      return Promise.reject(error)
+    }
+
+    originalRequest._retry = true
+
+    if (!authService.tieneRefreshToken()) {
+      authService.cerrarSesion()
+      window.location.href = '/auth/login'
       return Promise.reject(error)
     }
 
     try {
-      const { data } = await axios.post('http://localhost:9000/auth/refresh', {
-        token: refreshToken
-      })
+      const accessToken = await authService.renovarAccessToken()
 
-      localStorage.setItem('accessToken', data.token)
+      if (!accessToken) {
+        window.location.href = '/auth/login'
+        return Promise.reject(error)
+      }
 
-      // Reintentar request original
-      error.config.headers.Authorization = `Bearer ${data.token}`
+      originalRequest.headers.Authorization = `Bearer ${accessToken}`
 
-      return api(error.config)
+      return api(originalRequest)
     } catch (err) {
-      // refresh falló → logout
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
-
+      authService.cerrarSesion()
       window.location.href = '/auth/login'
 
       return Promise.reject(err)

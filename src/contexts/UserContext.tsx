@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import { authService } from '../services/AuthService';
 import { usuarioService } from '../services/UsuarioService';
 
@@ -34,7 +34,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     return stored ? JSON.parse(stored) : null
   })
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       if (!authService.estaAutenticado()) {
         setUser(null)
@@ -54,12 +54,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     } catch (error) {
       console.error("Error cargando usuario:", error)
     }
-  }
+  }, [])
   
   // Cargar el usuario al montar el componente
   useEffect(() => {
     fetchUser()
-  }, [])
+  }, [fetchUser])
 
   const updateUser = (usuario: Partial<navbarUser>) => {
     setUser((prev) => {

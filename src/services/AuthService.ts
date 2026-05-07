@@ -18,6 +18,10 @@ export type AuthResponse = {
   refreshToken: string
 }
 
+type RefreshResponse = {
+  token?: string
+}
+
 export type AuthPayload = {
   sub: string
   role: 'LECTOR' | 'PUBLICADOR' | 'LECTOR_PUBLICADOR'
@@ -47,8 +51,44 @@ class AuthService {
     return token !== null && token !== ''
   }
 
+  tieneRefreshToken(): boolean {
+    const token = window.localStorage.getItem('refreshToken')
+
+    return token !== null && token !== ''
+  }
+
+  async renovarAccessToken(): Promise<string | null> {
+    const refreshToken = window.localStorage.getItem('refreshToken')
+
+    if (!refreshToken) {
+      this.cerrarSesion()
+      return null
+    }
+
+    try {
+      const response = await axios.post<RefreshResponse>(API_URL + '/auth/refresh', {
+        token: refreshToken
+      })
+      const accessToken = response.data.token
+
+      if (!accessToken) {
+        this.cerrarSesion()
+        return null
+      }
+
+      window.localStorage.setItem('accessToken', accessToken)
+
+      return accessToken
+    } catch {
+      this.cerrarSesion()
+      return null
+    }
+  }
+
   cerrarSesion() {
     window.localStorage.removeItem('accessToken')
+    window.localStorage.removeItem('refreshToken')
+    window.localStorage.removeItem('user')
   }
 
   tokenDeStorage(): string {
@@ -57,12 +97,19 @@ class AuthService {
     return token
   }
 
-  userDeStorage(): AuthPayload {
+  userDeStorage(): AuthPayload | null {
     const token = this.tokenDeStorage()
 
-    const payload = jwtDecode<AuthPayload>(token)
+    if (!token) {
+      return null
+    }
 
-    return payload
+    try {
+      return jwtDecode<AuthPayload>(token)
+    } catch {
+      this.cerrarSesion()
+      return null
+    }
   }
 
   puedePublicar(): boolean {

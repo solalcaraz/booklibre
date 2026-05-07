@@ -110,6 +110,10 @@ class UsuarioService {
     const user = authService.userDeStorage()
     const token = authService.tokenDeStorage()
 
+    if (!user) {
+      throw new Error('No hay usuario autenticado')
+    }
+
     const response = await axios.get<number>(API_URL + `/usuario/bibliokarmas/${user.sub}`, {
       headers: {
         Authorization: `Bearer ${token}` 

@@ -11,11 +11,12 @@ interface Props {
 }
 
 export const ReservasTab = ({ tab, fetchFunction }: Props) => {
+  const user = authService.userDeStorage()
   const [input, setInput] = useState<string>('')
   const [loading, setLoading] = useState(false);
   const [filtro, setFiltro] = useState<ReservaRequestModel>({
     inputSearch: '',
-    usuarioId: authService.userDeStorage().sub
+    usuarioId: user?.sub ?? ''
   })
 
   const filtrar = (e?: any) => {
