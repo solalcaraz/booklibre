@@ -1,14 +1,12 @@
 package ar.edu.unsam.phm.security
 
-import ar.edu.unsam.phm.exceptions.NotFoundException
-import ar.edu.unsam.phm.repository.UsuarioRepository
 import io.jsonwebtoken.ExpiredJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -18,9 +16,10 @@ y delega al siguiente eslabón de la filter chain. */
 
 @Component
 class JwtAuthenticationFilter(
-    private val userDetailsService: CustomUserDetailsService,
     private val tokenHelper: TokenHelper,
-    private val usuarioRepository: UsuarioRepository
+    // Se eliminaron userDetailsService y usuarioRepository:
+    // el JWT firmado ya es prueba suficiente de identidad.
+    // No hace falta ir a la DB en cada request.
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -40,17 +39,22 @@ class JwtAuthenticationFilter(
             val userId = tokenHelper.extractUserId(jwtToken)
 
             if (userId != null && SecurityContextHolder.getContext().authentication == null) {
-                val usuario = usuarioRepository.findById(userId)
-                    .orElseThrow { NotFoundException("Usuario no encontrado") }
+                // Validamos solo contra la secret key (sin DB)
+                if (tokenHelper.isValid(jwtToken, userId)) {
+                    val role = tokenHelper.extractRole(jwtToken)
+                    val authorities = listOf(SimpleGrantedAuthority("ROLE_$role"))
 
-                val foundUser = userDetailsService.loadUserByUsername(usuario.email)
-
-                if (tokenHelper.isValid(jwtToken, usuario.id!!)) {
-                    updateContext(foundUser, request)
+                    val authToken = UsernamePasswordAuthenticationToken(
+                        userId.toString(), // authentication.name sigue siendo el id del usuario
+                        null,
+                        authorities
+                    )
+                    authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
+                    SecurityContextHolder.getContext().authentication = authToken
                 }
-
-                filterChain.doFilter(request, response)
             }
+
+            filterChain.doFilter(request, response)
 
         } catch (e: ExpiredJwtException) {
             // Captura la excepción de token expirado y devuelve el status code adecuado (401-Unauthorized)
@@ -59,14 +63,6 @@ class JwtAuthenticationFilter(
             response.contentType = "application/json"
             response.writer.write("{\"error\":\"Token expired\",\"message\":\"${e.message}\"}")
         }
-
-    }
-
-    private fun updateContext(foundUser: UserDetails, request: HttpServletRequest) {
-        val authToken = UsernamePasswordAuthenticationToken(foundUser, null, foundUser.authorities)
-        authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-
-        SecurityContextHolder.getContext().authentication = authToken
     }
 
     /* Si el token expira, debería poder loguear de nuevo y no recibir 401, por eso salto el filter

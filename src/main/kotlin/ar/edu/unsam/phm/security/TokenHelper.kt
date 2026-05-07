@@ -40,6 +40,9 @@ class TokenHelper(
     fun extractType(token: String): String? =
         getAllClaims(token)["type"] as? String
 
+    // Extrae el rol del claim para construir las authorities sin tocar la DB
+    fun extractRole(token: String): String? =
+        getAllClaims(token)["role"] as? String
 
     fun generate(
         userId: Int,
@@ -75,6 +78,4 @@ class TokenHelper(
 
         return parser.parseSignedClaims(token).payload
     }
-
-
 }
