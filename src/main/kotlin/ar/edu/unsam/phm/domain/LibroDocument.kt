@@ -36,6 +36,8 @@ abstract class LibroDocument {
 //    @Transient
 //    private val resenias: MutableList<Resenia> = mutableListOf()
 
+    private var reservasPendientes: MutableList<ReservaPendiente> = mutableListOf()
+
     abstract fun plusBiblioKarma(cantidadBibliokarmas: Int): Int
 
     // Ahora esto se calcularía en el momento de enviar una calificación,
@@ -50,10 +52,20 @@ abstract class LibroDocument {
     fun getCalificacionPromedio(): Double =
         String.format(Locale.US, "%.1f", promedioCalificacion).toDouble()
 
-//    fun agregarResenia(resenia: Resenia) {
-//        resenias.add(resenia)
-//        promedioCalificacion = calcularCalificacionPromedio()
-//    }
+    fun estaDisponible(desde: LocalDate, hasta: LocalDate): Boolean {
+        // Lógica de POO: el objeto sabe responder si está libre
+        return reservasPendientes.none { it.seSuperponeCon(desde, hasta) }
+    }
+}
+
+data class ReservaPendiente(
+    val idReserva: Int,
+    val fechaInicio: LocalDate,
+    val fechaFin: LocalDate
+) {
+    fun seSuperponeCon(desde: LocalDate, hasta: LocalDate): Boolean {
+        return !(hasta.isBefore(fechaInicio) || desde.isAfter(fechaFin))
+    }
 }
 
 @TypeAlias("COMUN")
