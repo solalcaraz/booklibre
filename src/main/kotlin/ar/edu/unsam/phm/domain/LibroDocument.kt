@@ -11,7 +11,7 @@ import java.util.Locale
 import kotlin.math.ceil
 
 @Document(collection = "libros")
-abstract class LibroMongo {
+abstract class LibroDocument {
     @Id
     var id: String? = null
 
@@ -26,47 +26,50 @@ abstract class LibroMongo {
     var fechaPublicacion: LocalDate = LocalDate.now()
     var estado: Estado = Estado.BUENO
     var portada: String = Environment.API_URL + "/imagenes/libro-nuevo.jpg"
-    lateinit var dueno: Usuario
+    var idDueno: Int = 0
+    //lateinit var dueno: Usuario
     var cantidadReservas: Int = 0
     @Field("calificacionPromedio")
     var promedioCalificacion: Double = 0.0
     var activo: Boolean = true
 
-    @Transient
-    private val resenias: MutableList<Resenia> = mutableListOf()
+//    @Transient
+//    private val resenias: MutableList<Resenia> = mutableListOf()
 
     abstract fun plusBiblioKarma(cantidadBibliokarmas: Int): Int
 
-    fun calcularCalificacionPromedio(): Double {
-        if (resenias.isEmpty()) return 0.0
-        val sumaPuntajes = resenias.sumOf { it.puntuacion }
-        val promedio = sumaPuntajes.toDouble() / resenias.size
-        return String.format(Locale.US, "%.1f", promedio).toDouble()
-    }
+    // Ahora esto se calcularía en el momento de enviar una calificación,
+    // directamente en el repo de reseñas, y se dispararía la actualización del valor en el documento
+//    fun calcularCalificacionPromedio(): Double {
+//        if (resenias.isEmpty()) return 0.0
+//        val sumaPuntajes = resenias.sumOf { it.puntuacion }
+//        val promedio = sumaPuntajes.toDouble() / resenias.size
+//        return String.format(Locale.US, "%.1f", promedio).toDouble()
+//    }
 
     fun getCalificacionPromedio(): Double =
         String.format(Locale.US, "%.1f", promedioCalificacion).toDouble()
 
-    fun agregarResenia(resenia: Resenia) {
-        resenias.add(resenia)
-        promedioCalificacion = calcularCalificacionPromedio()
-    }
+//    fun agregarResenia(resenia: Resenia) {
+//        resenias.add(resenia)
+//        promedioCalificacion = calcularCalificacionPromedio()
+//    }
 }
 
 @TypeAlias("COMUN")
-class LibroComunMongo : LibroMongo() {
+class LibroComunDocument : LibroDocument() {
     override fun plusBiblioKarma(cantidadBibliokarmas: Int): Int =
         if (cantidadBibliokarmas < 1000) cantPaginas * 5 else cantPaginas * 2
 }
 
 @TypeAlias("DEDICATORIA")
-class LibroDedicatoriaMongo : LibroMongo() {
+class LibroDedicatoriaDocument : LibroDocument() {
     override fun plusBiblioKarma(cantidadBibliokarmas: Int): Int =
         200 + 10 * cantidadReservas
 }
 
 @TypeAlias("COLECCIONABLE")
-class LibroColeccionableMongo : LibroMongo() {
+class LibroColeccionableDocument : LibroDocument() {
     override fun plusBiblioKarma(cantidadBibliokarmas: Int): Int {
         val quintaParte = ceil(cantidadBibliokarmas / 5.0).toInt()
         return quintaParte + cantPaginas
