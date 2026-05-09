@@ -36,12 +36,13 @@ abstract class LibroDocument {
 //    @Transient
 //    private val resenias: MutableList<Resenia> = mutableListOf()
 
-    private var reservasPendientes: MutableList<ReservaPendiente> = mutableListOf()
+    var reservasPendientes: MutableList<ReservaPendiente> = mutableListOf()
 
     abstract fun plusBiblioKarma(cantidadBibliokarmas: Int): Int
 
     // Ahora esto se calcularía en el momento de enviar una calificación,
-    // directamente en el repo de reseñas, y se dispararía la actualización del valor en el documento
+    // directamente en el repo de reseñas, y se dispararía la actualización
+    // del valor en el documento
 //    fun calcularCalificacionPromedio(): Double {
 //        if (resenias.isEmpty()) return 0.0
 //        val sumaPuntajes = resenias.sumOf { it.puntuacion }
@@ -53,8 +54,22 @@ abstract class LibroDocument {
         String.format(Locale.US, "%.1f", promedioCalificacion).toDouble()
 
     fun estaDisponible(desde: LocalDate, hasta: LocalDate): Boolean {
-        // Lógica de POO: el objeto sabe responder si está libre
+        limpiarReservasVencidas()
         return reservasPendientes.none { it.seSuperponeCon(desde, hasta) }
+    }
+
+    private fun limpiarReservasVencidas() {
+        val hoy = LocalDate.now()
+        reservasPendientes.removeIf { it.fechaFin.isBefore(hoy) }
+    }
+
+    fun sumarReserva() { cantidadReservas++ }
+
+    fun agregarReserva(reservaPendiente: ReservaPendiente) {
+        reservasPendientes.add(reservaPendiente)
+        sumarReserva()
+        // sumamos en vez de hacer reservasPendientes.size porque las reservas
+        // vencidas ya no van a estar acá
     }
 }
 
