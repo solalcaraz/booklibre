@@ -26,7 +26,7 @@ abstract class LibroDocument {
     var fechaPublicacion: LocalDate = LocalDate.now()
     var estado: Estado = Estado.BUENO
     var portada: String = Environment.API_URL + "/imagenes/libro-nuevo.jpg"
-    var idDueno: Int = 0
+    var duenoId: Int? = 0
     //lateinit var dueno: Usuario
     var cantidadReservas: Int = 0
     @Field("calificacionPromedio")

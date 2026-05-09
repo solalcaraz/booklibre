@@ -15,10 +15,10 @@ import java.time.LocalDate
 
 @Service
 class LibrosBootstrap(
-    private val libroMongoRepository: LibroMongoRepository
+    private val libroDocumentRepository: LibroDocumentRepository
 ) : InitializingBean {
 
-    fun LibroMongoRepository.createIfNotExists(libro: LibroMongo): LibroMongo {
+    fun LibroDocumentRepository.createIfNotExists(libro: LibroMongo): LibroMongo {
         val bdLibro = this.findByTitulo(libro.titulo)
         return bdLibro ?: this.save(libro)
     }
@@ -81,7 +81,7 @@ class LibrosBootstrap(
             }
         )
 
-        libros.forEach { libroMongoRepository.createIfNotExists(it) }
+        libros.forEach { libroDocumentRepository.createIfNotExists(it) }
     }
 
     private fun LibroMongo.cargarDatosBase(

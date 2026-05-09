@@ -1,65 +1,66 @@
 package ar.edu.unsam.phm.helpers
 
-import ar.edu.unsam.phm.domain.*
-import ar.edu.unsam.phm.dto.*
+import ar.edu.unsam.phm.domain.Estado
+import ar.edu.unsam.phm.domain.Genero
+import ar.edu.unsam.phm.domain.Idioma
+import ar.edu.unsam.phm.domain.LibroColeccionableDocument
+import ar.edu.unsam.phm.domain.LibroComunDocument
+import ar.edu.unsam.phm.domain.LibroDedicatoriaDocument
+import ar.edu.unsam.phm.domain.LibroDocument
+import ar.edu.unsam.phm.dto.LibroDetalleDTO
+import ar.edu.unsam.phm.dto.TipoDeLibroDTO
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
-interface LibroAdapter {
-    fun fromDto(dto: LibroDetalleDTO, usuarioDueno: Usuario): Libro
-    fun toDetalleDto(libro: Libro): LibroDetalleDTO
-}
-
 @Service
-class LibroMapper : LibroAdapter {
+class LibroMapper {
+    fun fromDto(dto: LibroDetalleDTO, duenioId: Int?): LibroDocument {
+        val libro = when (dto.tipo) {
+            TipoDeLibroDTO.COMUN -> LibroComunDocument()
+            TipoDeLibroDTO.DEDICATORIA -> LibroDedicatoriaDocument()
+            TipoDeLibroDTO.COLECCIONABLE -> LibroColeccionableDocument()
+        }
 
-    override fun fromDto(dto: LibroDetalleDTO, usuarioDueno: Usuario): Libro {
-        val libroData = LibroData(
-            titulo = dto.titulo,
-            descripcion = dto.descripcion,
-            genero = Genero.valueOf(dto.genero),
-            autor = dto.autor,
-            cantPaginas = dto.paginas,
-            isbn13 = dto.isbn13,
-            idioma = Idioma.valueOf(dto.idioma),
-            editorial = dto.editorial,
-            fechaPublicacion = LocalDate.parse(dto.fechaPublicacion),
-            estado = Estado.valueOf(dto.estado),
+        return libro.apply {
+            id = dto.id
+            titulo = dto.titulo
+            descripcion = dto.descripcion
+            genero = Genero.valueOf(dto.genero)
+            autor = dto.autor
+            cantPaginas = dto.paginas
+            isbn13 = dto.isbn13
+            idioma = Idioma.valueOf(dto.idioma)
+            editorial = dto.editorial
+            fechaPublicacion = LocalDate.parse(dto.fechaPublicacion)
+            estado = Estado.valueOf(dto.estado)
             portada = dto.portada
-        )
-
-        return when (dto.tipo) {
-            TipoDeLibroDTO.COMUN -> LibroComun(libroData, usuarioDueno)
-            TipoDeLibroDTO.DEDICATORIA -> LibroDedicatoria(libroData, usuarioDueno)
-            TipoDeLibroDTO.COLECCIONABLE -> LibroColeccionable(libroData, usuarioDueno)
-        }.apply {
-            this.id = dto.id
+            duenoId = dto.duenoId
         }
     }
 
-    override fun toDetalleDto(libro: Libro): LibroDetalleDTO {
+    fun toDetalleDto(libro: LibroDocument): LibroDetalleDTO {
         val tipoDto = when (libro) {
-            is LibroComun -> TipoDeLibroDTO.COMUN
-            is LibroDedicatoria -> TipoDeLibroDTO.DEDICATORIA
-            is LibroColeccionable -> TipoDeLibroDTO.COLECCIONABLE
+            is LibroComunDocument -> TipoDeLibroDTO.COMUN
+            is LibroDedicatoriaDocument -> TipoDeLibroDTO.DEDICATORIA
+            is LibroColeccionableDocument -> TipoDeLibroDTO.COLECCIONABLE
             else -> throw IllegalArgumentException("Tipo de libro desconocido")
         }
 
-        val libroData = libro.data //para achicar los llamados
         return LibroDetalleDTO(
             id = libro.id,
-            titulo = libroData.titulo,
+            titulo = libro.titulo,
             tipo = tipoDto,
-            genero = libroData.genero.label,
-            autor = libroData.autor,
-            idioma = libroData.idioma.label,
-            estado = libroData.estado.label,
-            editorial = libroData.editorial,
-            fechaPublicacion = libroData.fechaPublicacion.toString(),
-            paginas = libroData.cantPaginas,
-            isbn13 = libroData.isbn13,
-            descripcion = libroData.descripcion,
-            portada = libroData.portada
+            genero = libro.genero.label,
+            autor = libro.autor,
+            idioma = libro.idioma.label,
+            estado = libro.estado.label,
+            editorial = libro.editorial,
+            fechaPublicacion = libro.fechaPublicacion.toString(),
+            paginas = libro.cantPaginas,
+            isbn13 = libro.isbn13,
+            descripcion = libro.descripcion,
+            portada = libro.portada,
+            duenoId = libro.duenoId
         )
     }
 }
