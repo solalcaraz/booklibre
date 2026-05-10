@@ -60,37 +60,37 @@ class ReservaService(
         return this.mapReservasToDto(pageReserva, payload, pageable)
     }
 
+//    @Transactional(readOnly = true)
+//    fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): Page<Reserva> {
+//        val usuario = usuarioRepository.findById(usuarioId).orElseThrow { NotFoundException("Usuario no encontrado") }
+//
+//        // se arma la specification combinando todos los filtros
+//        val spec = Specification.where(LibroSpecifications.noEsDelUsuario(usuarioId))
+//            .and(LibroSpecifications.noEstaOcupado(filtros.fechaDesde, filtros.fechaHasta))
+//            .and(LibroSpecifications.conGeneros(filtros.generos))
+//            .and(LibroSpecifications.conPaginasMin(filtros.cantPaginasMin))
+//            .and(LibroSpecifications.conPaginasMax(filtros.cantPaginasMax))
+//            .and(LibroSpecifications.conIsbn(filtros.isbn))
+//            .and(LibroSpecifications.conUsuarioPrestador(filtros.usuarioPrestador))
+//            .and(LibroSpecifications.conBusqueda(filtros.busqueda))
+//
+//        // se obtiene la pagina a mostrar
+//        val pageable = PageRequest.of(filtros.numeroPagina, filtros.tamanoPaginado, filtros.orden.toSort())
+//
+//        // se transforma Page<Libro> en Page<Reserva>
+//        return libroRepository.findAll(spec, pageable).map { libro ->
+//            Reserva(
+//                lector = usuario,
+//                fechaDesde = filtros.fechaDesde,
+//                fechaHasta = filtros.fechaHasta,
+//                libroMongoId = "Todo: buscar libro mongo"
+//            )
+//        }
+//    }
+
     @Transactional(readOnly = true)
-    fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): Page<Reserva> {
-        val usuario = usuarioRepository.findById(usuarioId).orElseThrow { NotFoundException("Usuario no encontrado") }
-
-        // se arma la specification combinando todos los filtros
-        val spec = Specification.where(LibroSpecifications.noEsDelUsuario(usuarioId))
-            .and(LibroSpecifications.noEstaOcupado(filtros.fechaDesde, filtros.fechaHasta))
-            .and(LibroSpecifications.conGeneros(filtros.generos))
-            .and(LibroSpecifications.conPaginasMin(filtros.cantPaginasMin))
-            .and(LibroSpecifications.conPaginasMax(filtros.cantPaginasMax))
-            .and(LibroSpecifications.conIsbn(filtros.isbn))
-            .and(LibroSpecifications.conUsuarioPrestador(filtros.usuarioPrestador))
-            .and(LibroSpecifications.conBusqueda(filtros.busqueda))
-
-        // se obtiene la pagina a mostrar
-        val pageable = PageRequest.of(filtros.numeroPagina, filtros.tamanoPaginado, filtros.orden.toSort())
-
-        // se transforma Page<Libro> en Page<Reserva>
-        return libroRepository.findAll(spec, pageable).map { libro ->
-            Reserva(
-                lector = usuario,
-                fechaDesde = filtros.fechaDesde,
-                fechaHasta = filtros.fechaHasta,
-                libroMongoId = "Todo: buscar libro mongo"
-            )
-        }
-    }
-
-    @Transactional(readOnly = true)
-    fun getDetalleReserva(libroId: Int, userId: Int, fechaDesde: LocalDate, fechaHasta: LocalDate): DetalleReservaDTO {
-        val libro = libroRepository.findConDuenoById(libroId).orElseThrow { NotFoundException("Libro no encontrado") }
+    fun getDetalleReserva(libroId: String, userId: Int, fechaDesde: LocalDate, fechaHasta: LocalDate): DetalleReservaDTO {
+        val libro = libroRepository.findById(libroId).orElseThrow { NotFoundException("Libro no encontrado") }
         val usuario = usuarioRepository.findById(userId).orElseThrow{NotFoundException("Usuario no encontrado")}
 
         //Reserva simulada con fechas del front
@@ -98,11 +98,11 @@ class ReservaService(
             lector = usuario,
             fechaDesde = fechaDesde,
             fechaHasta = fechaHasta,
-            libroMongoId = "Todo: buscar libro mongo"
+            libroMongoId = libroId
         )
 
-        val biblioKarmas = reserva.calcularBiblioKarmas()
-        val calificacionPromedio = libro.getCalificacionPromedio()
+        val biblioKarmas = reserva.calcularBiblioKarmas(libro)
+        val calificacionPromedio = libro.promedioCalificacion
         val ultimasResenias = reseniaRepository.findTop2ByLibroIdOrderByFechaDesc(libroId);
         val reservasOcupadas = reservaRepository.findReservasOcupadas(libroId)
 
@@ -118,7 +118,7 @@ class ReservaService(
     @Transactional(readOnly = false)
     fun crearReserva(userID: Int, reserva: CrearReservaDTO): ReservaDTO {
 
-        val libro = libroRepository.findConDuenoById(reserva.libroMongoID).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro = libroRepository.findById(reserva.libroMongoID).orElseThrow { NotFoundException("Libro no encontrado") }
         val usuario = usuarioRepository.findById(userID).orElseThrow { NotFoundException("Usuario no encontrado") }
 
         var nuevaReserva = Reserva(
@@ -133,7 +133,7 @@ class ReservaService(
             throw ConflictException("El libro ya se encuentra reservado en esas fechas.") //otra exception, el usuario la pifio
         }
 
-        val bibliokarmasGanados = nuevaReserva.calcularBiblioKarmas()
+        val bibliokarmasGanados = nuevaReserva.calcularBiblioKarmas(libro)
         usuario.aumentarBiblioKarmas(bibliokarmasGanados)
         usuarioRepository.save(usuario)
         reservaRepository.save(nuevaReserva)
