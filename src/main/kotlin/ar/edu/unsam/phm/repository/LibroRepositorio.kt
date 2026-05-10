@@ -25,7 +25,7 @@ interface LibroRepository : JpaRepository<Libro, Int>, JpaSpecificationExecutor<
     @Query(value = "UPDATE libro SET tipo_libro = :nuevoTipo WHERE id = :id", nativeQuery = true)
     fun cambiarTipoDeLibro(id: Int, nuevoTipo: String)
 
-    @EntityGraph(attributePaths = ["dueno", "resenias"])
+    @EntityGraph(attributePaths = ["dueno"])
     override fun findAll(spec: Specification<Libro>, pageable: Pageable): Page<Libro>
 
 

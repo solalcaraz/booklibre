@@ -16,9 +16,8 @@ data class Resenia(
     @Column(nullable = false)
     val comentario: String,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_libro", nullable = false)
-    var libro: Libro,
+    @Column(name = "id_libro_mongo")
+    val libroMongoId: String?,
 
     @Column(nullable = false)
     val fecha: Date = Date(),
@@ -26,4 +25,10 @@ data class Resenia(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     override var id: Int? = null
-): EntidadConId
+): EntidadConId {
+
+    //Tdoo: eliminar
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_libro", nullable = true)
+    lateinit var libro: Libro
+}

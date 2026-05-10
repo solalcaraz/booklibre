@@ -23,6 +23,7 @@ class Reserva(
     @JoinColumn(name = "id_libro", nullable = false)
     val libro: Libro,
 
+    //Todo: eliminar
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", nullable = false)
     val lector: Usuario,
@@ -31,7 +32,10 @@ class Reserva(
     val fechaDesde: LocalDate,
 
     @Column(name = "fecha_hasta", nullable = false)
-    val fechaHasta: LocalDate
+    val fechaHasta: LocalDate,
+
+    @Column(name = "id_libro_mongo")
+    val libroMongoId: String? = null
 
 ) : EntidadConId {
     @Column(nullable = false)

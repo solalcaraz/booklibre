@@ -1,19 +1,11 @@
 package ar.edu.unsam.phm.repository
 
-import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.domain.Reserva
-import ar.edu.unsam.phm.domain.Usuario
-/*import ar.edu.unsam.phm.dto.MiLibroDTO
-import ar.edu.unsam.phm.dto.PaginationResponseDTO
-import ar.edu.unsam.phm.helpers.ordenarLibros
-import ar.edu.unsam.phm.helpers.paginate*/
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
-import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 interface ReservaRepository : JpaRepository<Reserva, Int> {
@@ -38,13 +30,19 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
     """)
     fun cantidadPrestadosDe(@Param("usuarioId") usuarioId: Int): Int
 
-    @EntityGraph(attributePaths = ["libro", "libro.resenias"])
-    @Query("SELECT r FROM Reserva r WHERE r.libro.dueno.id = :usuarioId AND (LOWER(r.libro.data.titulo) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(r.libro.data.autor) LIKE LOWER(CONCAT('%', :search, '%')))")
-    fun findPrestadosPorMi(@Param("usuarioId") usuarioId: Int, @Param("search") search: String?, pageable: Pageable): Page<Reserva>
+    @Query("SELECT r FROM Reserva r WHERE r.libroMongoId IN :libroMongoIds AND r.libro.dueno.id = :usuarioId")
+    fun findPrestadosPorMiConLibrosMongo(
+        @Param("usuarioId") usuarioId: Int,
+        @Param("libroMongoIds") libroMongoIds: Collection<String>,
+        pageable: Pageable
+    ): Page<Reserva>
 
-    @EntityGraph(attributePaths = ["libro", "libro.resenias"])
-    @Query("SELECT r FROM Reserva r WHERE r.lector.id = :usuarioId AND (LOWER(r.libro.data.titulo) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(r.libro.data.autor) LIKE LOWER(CONCAT('%', :search, '%')))")
-    fun findPrestadosAMi(@Param("usuarioId") usuarioId: Int, @Param("search") search: String?, pageable: Pageable): Page<Reserva>
+    @Query("SELECT r FROM Reserva r WHERE r.lector.id = :usuarioId AND r.libroMongoId IN :libroMongoIds")
+    fun findPrestadosAMiConLibrosMongo(
+        @Param("usuarioId") usuarioId: Int,
+        @Param("libroMongoIds") libroMongoIds: Collection<String>,
+        pageable: Pageable
+    ): Page<Reserva>
 
     fun countByLibroId(libroId: Int): Int
 
