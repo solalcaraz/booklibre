@@ -7,27 +7,27 @@ import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.repository.ReseniaRepository
 import ar.edu.unsam.phm.repository.ReservaRepository
-import ar.edu.unsam.phm.repository.LibroRepository
+import ar.edu.unsam.phm.repository.LibroMongoRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import java.util.Locale
 
 @Service
 class ReseniaService (
     private val reseniaRepository: ReseniaRepository,
     private val reservaRepository: ReservaRepository,
-    private val libroRepository: LibroRepository
+    private val libroMongoRepository: LibroMongoRepository
 ) {
 
     @Transactional
     fun crearResenia(reseniaReq: ReseniaReqDTO) {
         val reserva = reservaRepository.findById(reseniaReq.reservaId).orElseThrow { NotFoundException("Reserva no encontrada") }
         validarResenia(reseniaReq, reserva)
-        val nuevaResenia = Resenia(reserva.lector.nombreCompleto, reseniaReq.puntuacion, reseniaReq.comentario, reserva.libro)
+        val libroMongoId = reserva.libroMongoId ?: throw NotFoundException("Reserva sin libro asociado")
+        val nuevaResenia = Resenia(reserva.lector.nombreCompleto, reseniaReq.puntuacion, reseniaReq.comentario, libroMongoId)
         reseniaRepository.save(nuevaResenia)
 
-        val libro = reserva.libro
-        libro.agregarResenia(nuevaResenia)
-        libroRepository.save(libro)
+        actualizarPromedioCalificacionEnMongo(libroMongoId)
 
         reserva.calificar()
         reservaRepository.save(reserva)
@@ -43,5 +43,13 @@ class ReseniaService (
         if (reseniaReq.comentario.isBlank()) {
             throw BadRequestException("El comentario no puede estar vacio")
         }
+    }
+
+    private fun actualizarPromedioCalificacionEnMongo(libroId: String) {
+        val libroMongo = libroMongoRepository.findById(libroId).orElse(null) ?: return
+        val promedio = reseniaRepository.promedioCalificacionDe(libroId)
+
+        libroMongo.promedioCalificacion = String.format(Locale.US, "%.1f", promedio).toDouble()
+        libroMongoRepository.save(libroMongo)
     }
 }
