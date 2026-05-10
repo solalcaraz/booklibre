@@ -2,12 +2,10 @@ package ar.edu.unsam.phm.domain
 
 import ar.edu.unsam.phm.env.Environment
 import org.springframework.data.annotation.Id
-import org.springframework.data.annotation.Transient
 import org.springframework.data.annotation.TypeAlias
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 import java.time.LocalDate
-import java.util.Locale
 import kotlin.math.ceil
 
 @Document(collection = "libros")
@@ -26,15 +24,12 @@ abstract class LibroDocument {
     var fechaPublicacion: LocalDate = LocalDate.now()
     var estado: Estado = Estado.BUENO
     var portada: String = Environment.API_URL + "/imagenes/libro-nuevo.jpg"
-    var duenoId: Int? = 0
-    //lateinit var dueno: Usuario
+    lateinit var dueno: UsuarioLibroDocument
     var cantidadReservas: Int = 0
+
     @Field("calificacionPromedio")
     var promedioCalificacion: Double = 0.0
     var activo: Boolean = true
-
-//    @Transient
-//    private val resenias: MutableList<Resenia> = mutableListOf()
 
     var reservasPendientes: MutableList<ReservaPendiente> = mutableListOf()
 
@@ -50,8 +45,9 @@ abstract class LibroDocument {
 //        return String.format(Locale.US, "%.1f", promedio).toDouble()
 //    }
 
-    fun getCalificacionPromedio(): Double =
-        String.format(Locale.US, "%.1f", promedioCalificacion).toDouble()
+    // Esta función creo que ya es redundante porque no son privadas las variables
+//    fun getCalificacionPromedio(): Double =
+//        String.format(Locale.US, "%.1f", promedioCalificacion).toDouble()
 
     fun estaDisponible(desde: LocalDate, hasta: LocalDate): Boolean {
         limpiarReservasVencidas()
@@ -82,6 +78,12 @@ data class ReservaPendiente(
         return !(hasta.isBefore(fechaInicio) || desde.isAfter(fechaFin))
     }
 }
+
+data class UsuarioLibroDocument(
+    val id: Int?,
+    val nombreCompleto: String,
+    val imagen: String
+)
 
 @TypeAlias("COMUN")
 class LibroComunDocument : LibroDocument() {

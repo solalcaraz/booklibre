@@ -44,7 +44,7 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
         pageable: Pageable
     ): Page<Reserva>
 
-    fun countByLibroId(libroId: Int): Int
+    fun countByLibroId(libroId: String): Int
 
     // Trae solo las puntuaciones de las reseñas de un libro específico
 //    @Query("SELECT r.resenia.puntuacion FROM Reserva r WHERE r.libro.id = :libroId AND r.resenia IS NOT NULL")
@@ -59,12 +59,12 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
 
     // Trae las reservas de un libro que aún no finalizaron (fechaHasta >= HOY)
     @Query("SELECT r FROM Reserva r WHERE r.libro.id = :libroId AND r.fechaHasta >= CURRENT_DATE")
-    fun findReservasOcupadas(@Param("libroId") libroId: Int): List<Reserva>
+    fun findReservasOcupadas(@Param("libroId") libroId: String): List<Reserva>
 
     // Verifica si hay reservas que se superponen con las fechas solicitadas
     @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Reserva r WHERE r.libro.id = :libroId AND r.fechaDesde <= :hasta AND r.fechaHasta >= :desde AND r.fechaHasta >= CURRENT_DATE")
     fun existReservaSuperpuesta(
-        @Param("libroId") libroId: Int,
+        @Param("libroId") libroId: String,
         @Param("desde") desde: LocalDate,
         @Param("hasta") hasta: LocalDate
     ): Boolean
@@ -73,7 +73,7 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
     // Una superposición ocurre si: reserva.fechaDesde <= hasta_solicitado AND reserva.fechaHasta >= desde_solicitado
     @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Reserva r WHERE r.libro.id = :libroId AND r.fechaDesde <= :hasta AND r.fechaHasta >= :desde AND r.fechaHasta >= CURRENT_DATE")
     fun existsReservaSuperpuesta(
-        @Param("libroId") libroId: Int,
+        @Param("libroId") libroId: String,
         @Param("desde") desde: LocalDate,
         @Param("hasta") hasta: LocalDate
     ): Boolean

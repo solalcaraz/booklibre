@@ -7,7 +7,7 @@ import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.repository.ReseniaRepository
 import ar.edu.unsam.phm.repository.ReservaRepository
-import ar.edu.unsam.phm.repository.LibroMongoRepository
+import ar.edu.unsam.phm.repository.LibroDocumentRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.util.Locale
@@ -16,7 +16,7 @@ import java.util.Locale
 class ReseniaService (
     private val reseniaRepository: ReseniaRepository,
     private val reservaRepository: ReservaRepository,
-    private val libroMongoRepository: LibroMongoRepository
+    private val libroMongoRepository: LibroDocumentRepository
 ) {
 
     @Transactional

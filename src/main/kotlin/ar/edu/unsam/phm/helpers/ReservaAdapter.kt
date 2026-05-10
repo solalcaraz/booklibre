@@ -1,6 +1,6 @@
 package ar.edu.unsam.phm.helpers
 
-import ar.edu.unsam.phm.domain.LibroMongo
+import ar.edu.unsam.phm.domain.LibroDocument
 import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.domain.Resenia
 import ar.edu.unsam.phm.dto.*
@@ -16,11 +16,12 @@ interface ReservaAdapter {
         ultimasResenias: List<Resenia>,
         reservasOcupadas: List<Reserva>
     ): DetalleReservaDTO
-    fun toDto(reserva: Reserva, bibliokarmas: Int, libroMongo: LibroMongo): ReservaDTO
+    fun toDto(reserva: Reserva, bibliokarmas: Int, libroMongo: LibroDocument): ReservaDTO
 }
 
+// Ahora tiene que recibir el libro porque la reserva solo guarda el id del libro
 @Service
-class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
+class ReservaMapper(private val libroMapper: LibroMapper, private val libro: LibroDocument): ReservaAdapter {
 
     override fun toDetalleReservaDto(
         reserva: Reserva,
@@ -46,7 +47,7 @@ class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
                     fechaHasta = reservaOcupada.fechaHasta
                 )
             },
-            libroDetalleDTO = libroMapper.toDetalleDto(reserva.libro)
+            libroDetalleDTO = libroMapper.toDetalleDto(libro)
         )
     }
 
@@ -60,7 +61,7 @@ class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
         )
     }
 
-    override fun toDto(reserva: Reserva, bibliokarmas: Int, libroMongo: LibroMongo): ReservaDTO {
+    override fun toDto(reserva: Reserva, bibliokarmas: Int, libroMongo: LibroDocument): ReservaDTO {
         val libroResumen = LibroResumen(
             libroMongo.titulo,
             libroMongo.autor,

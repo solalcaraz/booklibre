@@ -28,7 +28,7 @@ data class Resenia(
 ): EntidadConId {
 
     //Tdoo: eliminar
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_libro", nullable = true)
-    lateinit var libro: Libro
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "id_libro", nullable = true)
+//    lateinit var libro: Libro
 }

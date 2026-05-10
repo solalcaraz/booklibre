@@ -11,8 +11,7 @@ import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.ReservaAdapter
-import ar.edu.unsam.phm.repository.LibroMongoRepository
-import ar.edu.unsam.phm.repository.LibroRepository
+import ar.edu.unsam.phm.repository.LibroDocumentRepository
 import ar.edu.unsam.phm.repository.LibroSpecifications
 import ar.edu.unsam.phm.repository.ReseniaRepository
 import ar.edu.unsam.phm.repository.ReservaRepository
@@ -29,8 +28,7 @@ import kotlin.text.toInt
 @Service
 class ReservaService(
     private val reservaRepository: ReservaRepository,
-    private val libroRepository: LibroRepository,
-    private val libroMongoRepository: LibroMongoRepository,
+    private val libroRepository: LibroDocumentRepository,
     private val usuarioRepository: UsuarioRepository,
     private val reservaAdapter: ReservaAdapter,
     private val reseniaRepository: ReseniaRepository
@@ -39,7 +37,7 @@ class ReservaService(
     fun getMisReservas(payload: PaginationReqDTO<ReservaRequestDTO>): Page<ReservaDTO> {
         val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
         val pageable = PageRequest.of(payload.pageNumber, payload.pageSize)
-        val librosMongoIds = libroMongoRepository
+        val librosMongoIds = libroRepository
             .findActivosByTituloOrAutor(payload.filter.inputSearch)
             .mapNotNull { it.id }
 
@@ -52,7 +50,7 @@ class ReservaService(
     fun getPrestadosPorMi(payload: PaginationReqDTO<ReservaRequestDTO>): Page<ReservaDTO> {
         val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
         val pageable = PageRequest.of(payload.pageNumber, payload.pageSize)
-        val librosMongoIds = libroMongoRepository
+        val librosMongoIds = libroRepository
             .findActivosByDuenoIdAndTituloOrAutor(usuarioId.toInt(), payload.filter.inputSearch)
             .mapNotNull { it.id }
 
@@ -82,7 +80,6 @@ class ReservaService(
         // se transforma Page<Libro> en Page<Reserva>
         return libroRepository.findAll(spec, pageable).map { libro ->
             Reserva(
-                libro = libro,
                 lector = usuario,
                 fechaDesde = filtros.fechaDesde,
                 fechaHasta = filtros.fechaHasta,
@@ -98,7 +95,6 @@ class ReservaService(
 
         //Reserva simulada con fechas del front
         var reserva = Reserva(
-            libro = libro,
             lector = usuario,
             fechaDesde = fechaDesde,
             fechaHasta = fechaHasta,
@@ -122,11 +118,10 @@ class ReservaService(
     @Transactional(readOnly = false)
     fun crearReserva(userID: Int, reserva: CrearReservaDTO): ReservaDTO {
 
-        val libro = libroRepository.findConDuenoById(reserva.libroId).orElseThrow { NotFoundException("Libro no encontrado") }
+        val libro = libroRepository.findConDuenoById(reserva.libroMongoID).orElseThrow { NotFoundException("Libro no encontrado") }
         val usuario = usuarioRepository.findById(userID).orElseThrow { NotFoundException("Usuario no encontrado") }
 
         var nuevaReserva = Reserva(
-            libro = libro,
             lector = usuario,
             fechaDesde = reserva.fechaDesde,
             fechaHasta = reserva.fechaHasta,
@@ -146,7 +141,7 @@ class ReservaService(
 //        val calificacionPromedio = libro.getCalificacionPromedio()
 
         //Todo: agregue un nuevo atributo libroMongoID dsp hay que enviarlo del front
-        val libroMongo = libroMongoRepository.findById(reserva.libroMongoID)
+        val libroMongo = libroRepository.findById(reserva.libroMongoID)
             .orElseThrow {
                 IllegalStateException("No se encontró el libro)")
             }
@@ -157,12 +152,12 @@ class ReservaService(
         val reservasDto = pageReserva.content.map { reserva ->
             val libroMongoId = reserva.libroMongoId ?: throw IllegalStateException("La reserva no tiene libro Mongo asociado")
 
-            val libroMongo = libroMongoRepository.findById(libroMongoId)
+            val libroMongo = libroRepository.findById(libroMongoId)
                 .orElseThrow {
                     IllegalStateException("No se encontró el libro Mongo $libroMongoId")
                 }
 
-            reservaAdapter.toDto(  reserva,reserva.calcularBiblioKarmas(), libroMongo  )
+            reservaAdapter.toDto(  reserva,reserva.calcularBiblioKarmas(libroMongo), libroMongo  )
         }
 
         return PageImpl(reservasDto, pageable, pageReserva.totalElements)
