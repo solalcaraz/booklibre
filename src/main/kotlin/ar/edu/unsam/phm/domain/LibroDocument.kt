@@ -80,9 +80,9 @@ data class ReservaPendiente(
 }
 
 data class UsuarioLibroDocument(
-    val id: Int?,
-    val nombreCompleto: String,
-    val imagen: String
+    var id: Int?,
+    var nombreCompleto: String,
+    var imagen: String
 )
 
 @TypeAlias("COMUN")

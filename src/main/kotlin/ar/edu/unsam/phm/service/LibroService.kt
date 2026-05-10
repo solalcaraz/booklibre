@@ -26,7 +26,7 @@ class LibroService(
     fun getByIdForUser(id: String): LibroDocument {
         val libro = libroRepository.findById(id)
             .orElseThrow { NotFoundException("Libro no encontrado.") }
-        if (libro.duenoId != getIdUsuarioLogueado()) {
+        if (libro.dueno.id != getIdUsuarioLogueado()) {
             throw ForbiddenException("No tenés permisos para modificar este libro.")
         }
         return libro
@@ -34,23 +34,20 @@ class LibroService(
 
     fun create(libroDto: LibroDetalleDTO) {
         val dueno = usuarioRepository.findById(getIdUsuarioLogueado()).orElseThrow { NotFoundException("Usuario no encontrado") }
-        val nuevoLibro = libroMapper.fromDto(libroDto, dueno.id)
+        val nuevoLibro = libroMapper.fromDto(libroDto)
         libroRepository.save(nuevoLibro)
     }
 
     fun update(id: String, libroDto: LibroDetalleDTO) {
         val libroExistente = getByIdForUser(id)
 
-        val reservasActuales = libroExistente.reservasPendientes
-        val promedioActual = libroExistente.promedioCalificacion
-        val cantReservasActual = libroExistente.cantidadReservas
-
         // Si no le volvemos a pasar los valores existentes de estas variables va a generar un registro nuevo
-        val libroActualizado = libroMapper.fromDto(libroDto, libroExistente.duenoId).apply {
+        val libroActualizado = libroMapper.fromDto(libroDto).apply {
             this.id = id
-            this.reservasPendientes = reservasActuales
-            this.promedioCalificacion = promedioActual
-            this.cantidadReservas = cantReservasActual
+            this.dueno = libroExistente.dueno
+            this.reservasPendientes = libroExistente.reservasPendientes
+            this.promedioCalificacion = libroExistente.promedioCalificacion
+            this.cantidadReservas = libroExistente.cantidadReservas
         }
 
         libroRepository.save(libroActualizado)

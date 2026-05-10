@@ -24,6 +24,8 @@ data class LibroDetalleDTO(
     val descripcion: String,
     val portada: String,
     val duenoId: Int?,
+    val duenoNombre: String,
+    val duenoImagen: String,
 
     val promedioCalificacion: Double? = 0.0,
     val cantidadReservas: Int? = 0

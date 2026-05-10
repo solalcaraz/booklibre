@@ -14,7 +14,8 @@ import java.time.LocalDate
 
 @Service
 class LibroMapper {
-    fun fromDto(dto: LibroDetalleDTO, duenioId: Int?): LibroDocument {
+    // Solo se usa en create/update
+    fun fromDto(dto: LibroDetalleDTO): LibroDocument {
         val libro = when (dto.tipo) {
             TipoDeLibroDTO.COMUN -> LibroComunDocument()
             TipoDeLibroDTO.DEDICATORIA -> LibroDedicatoriaDocument()
@@ -34,7 +35,9 @@ class LibroMapper {
             fechaPublicacion = LocalDate.parse(dto.fechaPublicacion)
             estado = Estado.valueOf(dto.estado)
             portada = dto.portada
-            duenoId = dto.duenoId
+            dueno.id = dto.duenoId
+            dueno.nombreCompleto = dto.duenoNombre
+            dueno.imagen = dto.duenoImagen
         }
     }
 
@@ -60,7 +63,13 @@ class LibroMapper {
             isbn13 = libro.isbn13,
             descripcion = libro.descripcion,
             portada = libro.portada,
-            duenoId = libro.duenoId
+
+            duenoId = libro.dueno.id,
+            duenoNombre = libro.dueno.nombreCompleto,
+            duenoImagen = libro.dueno.imagen,
+
+            promedioCalificacion = libro.promedioCalificacion,
+            cantidadReservas = libro.cantidadReservas
         )
     }
 }
