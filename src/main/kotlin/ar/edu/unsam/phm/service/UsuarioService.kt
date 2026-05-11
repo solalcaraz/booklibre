@@ -29,7 +29,7 @@ class UsuarioService(
         val usuario = usuarioRepository.findById(id).orElseThrow { NotFoundException("Usuario no encontrado") }
 
         usuario.librosLeidos = reservaRepository.cantidadLeidosDe(usuario.id!!)
-        usuario.librosPrestados = reservaRepository.cantidadPrestadosDe(usuario.id!!)
+        //usuario.librosPrestados = reservaRepository.cantidadPrestadosDe(usuario.id!!)
 
         return usuario
     }
