@@ -33,6 +33,7 @@ class ReservaService(
     private val reservaAdapter: ReservaAdapter,
     private val reseniaRepository: ReseniaRepository
 ) {
+
     @Transactional(readOnly = true)
     fun getMisReservas(payload: PaginationReqDTO<ReservaRequestDTO>): Page<ReservaDTO> {
         val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
@@ -47,6 +48,9 @@ class ReservaService(
         return this.mapReservasToDto(pageReserva, payload, pageable)
     }
 
+    /*
+    TODO: Ver que rompe el metodo del repo porque se accede a una propiedad que ya no existe.
+
     fun getPrestadosPorMi(payload: PaginationReqDTO<ReservaRequestDTO>): Page<ReservaDTO> {
         val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
         val pageable = PageRequest.of(payload.pageNumber, payload.pageSize)
@@ -59,6 +63,7 @@ class ReservaService(
         val pageReserva: Page<Reserva> =  reservaRepository.findPrestadosPorMiConLibrosMongo(usuarioId.toInt(), librosMongoIds, pageable)
         return this.mapReservasToDto(pageReserva, payload, pageable)
     }
+*/
 
 //    @Transactional(readOnly = true)
 //    fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): Page<Reserva> {
@@ -103,7 +108,7 @@ class ReservaService(
 
         val biblioKarmas = reserva.calcularBiblioKarmas(libro)
         val calificacionPromedio = libro.promedioCalificacion
-        val ultimasResenias = reseniaRepository.findTop2ByLibroIdOrderByFechaDesc(libroId);
+        val ultimasResenias = reseniaRepository.findTop2ByLibroMongoIdOrderByFechaDesc(libroId);
         val reservasOcupadas = reservaRepository.findReservasOcupadas(libroId)
 
         return reservaAdapter.toDetalleReservaDto(
@@ -111,7 +116,8 @@ class ReservaService(
             bibliokarmas = biblioKarmas,
             calificacionPromedio = calificacionPromedio,
             ultimasResenias = ultimasResenias,
-            reservasOcupadas = reservasOcupadas
+            reservasOcupadas = reservasOcupadas,
+            libro = libro
         )
     }
 
@@ -125,7 +131,7 @@ class ReservaService(
             lector = usuario,
             fechaDesde = reserva.fechaDesde,
             fechaHasta = reserva.fechaHasta,
-            libroMongoId = "Todo: buscar libro mongo"
+            libroMongoId = reserva.libroMongoID
         )
 
         val seSuperpone = reservaRepository.existReservaSuperpuesta(libro.id!!, reserva.fechaDesde, reserva.fechaHasta)

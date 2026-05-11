@@ -91,14 +91,16 @@ abstract class Libro(
     @Formula("(SELECT COALESCE(AVG(r.puntuacion), 0.0) FROM resenias r WHERE r.id_libro = id)")
     private val calificacionPromedioDb: Double = 0.0
 
+    /*
     @OneToMany(mappedBy = "libro", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     private val resenias: MutableList<Resenia> = mutableListOf()
-
+*/
     @Column(nullable = false)
     open var activo: Boolean = true
 
     abstract fun plusBiblioKarma(cantidadBibliokarmas: Int): Int
 
+    /*
     fun calcularCalificacionPromedio(): Double {
         if (resenias.isEmpty()) return 0.0
         val sumaPuntajes = resenias.sumOf { it.puntuacion }
@@ -114,7 +116,7 @@ abstract class Libro(
     fun agregarResenia(resenia: Resenia) {
         resenias.add(resenia)
     }
-
+*/
     //Delego esto al repo para no cargar toda la lista.
     /*fun getUltimasDosResenias(): List<Resenia> {
         return resenias.sortedByDescending { it.fecha }.take(2)

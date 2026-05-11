@@ -7,7 +7,6 @@ import ar.edu.unsam.phm.domain.LibroColeccionableDocument
 import ar.edu.unsam.phm.domain.LibroComunDocument
 import ar.edu.unsam.phm.domain.LibroDedicatoriaDocument
 import ar.edu.unsam.phm.domain.LibroDocument
-import ar.edu.unsam.phm.domain.TipoUsuario
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.domain.UsuarioLibroDocument
 import org.springframework.beans.factory.InitializingBean
@@ -26,6 +25,10 @@ class LibrosBootstrap(
 
     fun init() {
         //Todo: buscar los usuarios existentes
+        //Agregue esto para eliminar los datos viejos.
+        //Habria que modificar los archivos de flyway.
+        libroDocumentRepository.deleteAll()
+
         val usuarios = listOf(
             UsuarioLibroDocument(id = 1, nombreCompleto = "Diego Maradona", imagen = "http://localhost:9000/imagenes/diego.jpg"),
             UsuarioLibroDocument(id = 2, nombreCompleto = "Max Verstappen", imagen = "https://cdn.crash.net/2025-10/si202510191331.jpg?width=1600&aspect_ratio=1:1"),
@@ -36,6 +39,7 @@ class LibrosBootstrap(
         val libros = listOf(
             // Libro 1: COLECCIONABLE, usuario 1
             LibroColeccionableDocument().apply {
+                id = "1" //Harcodeado para probar en bruno
                 titulo = "Orgullo y Prejuicio"
                 descripcion = "Novela romántica clásica"
                 genero = Genero.ROMANCE
@@ -52,6 +56,7 @@ class LibrosBootstrap(
             },
             // Libro 2: DEDICATORIA, usuario 1
             LibroDedicatoriaDocument().apply {
+                id = "2"
                 titulo = "Rayuela"
                 descripcion = "Novela experimental latinoamericana"
                 genero = Genero.LITERATURA_CLASICA
