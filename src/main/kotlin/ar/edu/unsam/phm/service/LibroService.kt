@@ -1,6 +1,7 @@
 package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.LibroDocument
+import ar.edu.unsam.phm.domain.UsuarioLibroDocument
 import ar.edu.unsam.phm.dto.LibroDetalleDTO
 import org.springframework.stereotype.Service
 import ar.edu.unsam.phm.dto.MiLibroProjection
@@ -33,8 +34,14 @@ class LibroService(
     }
 
     fun create(libroDto: LibroDetalleDTO) {
-        val dueno = usuarioRepository.findById(getIdUsuarioLogueado()).orElseThrow { NotFoundException("Usuario no encontrado") }
-        val nuevoLibro = libroMapper.fromDto(libroDto)
+        val usuarioLogueado = usuarioRepository.findById(getIdUsuarioLogueado()).orElseThrow { NotFoundException("Usuario no encontrado") }
+        val nuevoLibro = libroMapper.fromDto(libroDto).apply {
+            dueno = UsuarioLibroDocument(
+                id = usuarioLogueado.id,
+                nombreCompleto = usuarioLogueado.nombreCompleto,
+                imagen = usuarioLogueado.imagen
+            )
+        }
         libroRepository.save(nuevoLibro)
     }
 
