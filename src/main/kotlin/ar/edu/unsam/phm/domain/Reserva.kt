@@ -19,11 +19,6 @@ class Reserva(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     override var id: Int? = null,
 
-    //Todo: eliminar
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "id_libro", nullable = false)
-//    val libro: Libro,
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", nullable = false)
     val lector: Usuario,
@@ -34,7 +29,7 @@ class Reserva(
     @Column(name = "fecha_hasta", nullable = false)
     val fechaHasta: LocalDate,
 
-    @Column(name = "id_libro_mongo")
+    @Column(name = "id_libro")
     val libroMongoId: String? = null
 
 ) : EntidadConId {

@@ -11,7 +11,7 @@ services:
     volumes:
       - ~/apps/mongo_booklibre_db:/data/db
       - ~/apps/mongo_booklibre_log:/var/log/mongodb/
-      - ./Docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+  #    - ./Docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     environment:
       MONGO_INITDB_ROOT_USERNAME: jacob
       MONGO_INITDB_ROOT_PASSWORD: elgordi

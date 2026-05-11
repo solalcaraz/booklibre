@@ -12,7 +12,7 @@ import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.ReservaAdapter
 import ar.edu.unsam.phm.repository.LibroDocumentRepository
-import ar.edu.unsam.phm.repository.LibroSpecifications
+//import ar.edu.unsam.phm.repository.LibroSpecifications
 import ar.edu.unsam.phm.repository.ReseniaRepository
 import ar.edu.unsam.phm.repository.ReservaRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
@@ -56,7 +56,7 @@ class ReservaService(
 
         if (librosMongoIds.isEmpty()) return PageImpl(emptyList(), pageable, 0)
 
-        val pageReserva: Page<Reserva> =  reservaRepository.findPrestadosPorMiConLibrosMongo(usuarioId.toInt(), librosMongoIds, pageable)
+        val pageReserva: Page<Reserva> =  reservaRepository.findPrestadosPorMiConLibrosMongo(librosMongoIds, pageable) //usuarioId.toInt()
         return this.mapReservasToDto(pageReserva, payload, pageable)
     }
 
@@ -103,7 +103,7 @@ class ReservaService(
 
         val biblioKarmas = reserva.calcularBiblioKarmas(libro)
         val calificacionPromedio = libro.promedioCalificacion
-        val ultimasResenias = reseniaRepository.findTop2ByLibroIdOrderByFechaDesc(libroId);
+        val ultimasResenias = reseniaRepository.findTop2ByLibroMongoIdOrderByFechaDesc(libroId);
         val reservasOcupadas = reservaRepository.findReservasOcupadas(libroId)
 
         return reservaAdapter.toDetalleReservaDto(
@@ -111,7 +111,8 @@ class ReservaService(
             bibliokarmas = biblioKarmas,
             calificacionPromedio = calificacionPromedio,
             ultimasResenias = ultimasResenias,
-            reservasOcupadas = reservasOcupadas
+            reservasOcupadas = reservasOcupadas,
+            libroMongo = libro
         )
     }
 
