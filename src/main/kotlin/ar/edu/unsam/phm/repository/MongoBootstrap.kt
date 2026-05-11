@@ -3,13 +3,12 @@ package ar.edu.unsam.phm.repository
 import ar.edu.unsam.phm.domain.Estado
 import ar.edu.unsam.phm.domain.Genero
 import ar.edu.unsam.phm.domain.Idioma
-import ar.edu.unsam.phm.domain.LibroColeccionableMongo
-import ar.edu.unsam.phm.domain.LibroComunMongo
-import ar.edu.unsam.phm.domain.LibroDedicatoriaMongo
-import ar.edu.unsam.phm.domain.LibroMongo
-import ar.edu.unsam.phm.domain.TipoUsuario
+import ar.edu.unsam.phm.domain.LibroColeccionableDocument
+import ar.edu.unsam.phm.domain.LibroComunDocument
+import ar.edu.unsam.phm.domain.LibroDedicatoriaDocument
+import ar.edu.unsam.phm.domain.LibroDocument
 import ar.edu.unsam.phm.domain.Usuario
-import ar.edu.unsam.phm.domain.UsuarioLibroMongo
+import ar.edu.unsam.phm.domain.UsuarioLibroDocument
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -19,7 +18,7 @@ class LibrosBootstrap(
     private val libroDocumentRepository: LibroDocumentRepository
 ) : InitializingBean {
 
-    fun LibroDocumentRepository.createIfNotExists(libro: LibroMongo): LibroMongo {
+    fun LibroDocumentRepository.createIfNotExists(libro: LibroDocument): LibroDocument {
         val bdLibro = this.findByTitulo(libro.titulo)
         return bdLibro ?: this.save(libro)
     }
@@ -27,15 +26,19 @@ class LibrosBootstrap(
     fun init() {
         //Todo: buscar los usuarios existentes
         val usuarios = listOf(
-            UsuarioLibroMongo(id = 1, nombreCompleto = "Diego Maradona", imagen = "http://localhost:9000/imagenes/diego.jpg"),
-            UsuarioLibroMongo(id = 2, nombreCompleto = "Max Verstappen", imagen = "https://cdn.crash.net/2025-10/si202510191331.jpg?width=1600&aspect_ratio=1:1"),
-            UsuarioLibroMongo(id = 3, nombreCompleto = "Ye West", imagen = "http://localhost:9000/imagenes/default_user.png"),
-            UsuarioLibroMongo(id = 4, nombreCompleto = "Yiya Murano", imagen = "http://localhost:9000/imagenes/default_user.png")
+            UsuarioLibroDocument(
+                id = 1,
+                nombreCompleto = "Diego Maradona",
+                imagen = "http://localhost:9000/imagenes/diego.jpg"
+            ),
+            UsuarioLibroDocument(id = 2, nombreCompleto = "Max Verstappen", imagen = "https://cdn.crash.net/2025-10/si202510191331.jpg?width=1600&aspect_ratio=1:1"),
+            UsuarioLibroDocument(id = 3, nombreCompleto = "Ye West", imagen = "http://localhost:9000/imagenes/default_user.png"),
+            UsuarioLibroDocument(id = 4, nombreCompleto = "Yiya Murano", imagen = "http://localhost:9000/imagenes/default_user.png")
         )
 
         val libros = listOf(
             // Libro 1: COLECCIONABLE, usuario 1
-            LibroColeccionableMongo().apply {
+            LibroColeccionableDocument().apply {
                 titulo = "Orgullo y Prejuicio"
                 descripcion = "Novela romántica clásica"
                 genero = Genero.ROMANCE
@@ -51,7 +54,7 @@ class LibrosBootstrap(
                 dueno = usuarios[0]  // Diego Maradona
             },
             // Libro 2: DEDICATORIA, usuario 1
-            LibroDedicatoriaMongo().apply {
+            LibroDedicatoriaDocument().apply {
                 titulo = "Rayuela"
                 descripcion = "Novela experimental latinoamericana"
                 genero = Genero.LITERATURA_CLASICA
@@ -67,7 +70,7 @@ class LibrosBootstrap(
                 dueno = usuarios[0]
             },
             // Libro 3: COLECCIONABLE, usuario 1
-            LibroColeccionableMongo().apply {
+            LibroColeccionableDocument().apply {
                 titulo = "1984"
                 descripcion = "Distopía política sobre vigilancia y control social"
                 genero = Genero.CIENCIA_FICCION
@@ -83,7 +86,7 @@ class LibrosBootstrap(
                 dueno = usuarios[0]
             },
             // Libro 4: COLECCIONABLE, usuario 2
-            LibroColeccionableMongo().apply {
+            LibroColeccionableDocument().apply {
                 titulo = "Dune"
                 descripcion = "Épica de ciencia ficción sobre política, religión y ecología"
                 genero = Genero.CIENCIA_FICCION
@@ -99,7 +102,7 @@ class LibrosBootstrap(
                 dueno = usuarios[1]  // Max Verstappen
             },
             // Libro 5: DEDICATORIA, usuario 2
-            LibroDedicatoriaMongo().apply {
+            LibroDedicatoriaDocument().apply {
                 titulo = "Cien Años de Soledad"
                 descripcion = "Obra maestra del realismo mágico latinoamericano"
                 genero = Genero.LITERATURA_CLASICA
@@ -115,7 +118,7 @@ class LibrosBootstrap(
                 dueno = usuarios[1]
             },
             // Libro 6: COMUN, usuario 2
-            LibroComunMongo().apply {
+            LibroComunDocument().apply {
                 titulo = "Hábitos Atómicos"
                 descripcion = "Guía práctica para construir buenos hábitos y eliminar los malos"
                 genero = Genero.AUTOAYUDA
@@ -131,7 +134,7 @@ class LibrosBootstrap(
                 dueno = usuarios[1]
             },
             // Libro 7: COLECCIONABLE, usuario 3
-            LibroColeccionableMongo().apply {
+            LibroColeccionableDocument().apply {
                 titulo = "El Nombre del Viento"
                 descripcion = "Primera parte de la Crónica del Asesino de Reyes"
                 genero = Genero.CIENCIA_FICCION
@@ -147,7 +150,7 @@ class LibrosBootstrap(
                 dueno = usuarios[2]  // Ye West
             },
             // Libro 8: DEDICATORIA, usuario 3
-            LibroDedicatoriaMongo().apply {
+            LibroDedicatoriaDocument().apply {
                 titulo = "El Gran Gatsby"
                 descripcion = "Retrato de la alta sociedad estadounidense en los años 20"
                 genero = Genero.LITERATURA_CLASICA
@@ -163,7 +166,7 @@ class LibrosBootstrap(
                 dueno = usuarios[2]
             },
             // Libro 9: COMUN, usuario 2
-            LibroComunMongo().apply {
+            LibroComunDocument().apply {
                 titulo = "El Principito"
                 descripcion = "Clásico de la literatura sobre la amistad y la vida"
                 genero = Genero.CIENCIA_FICCION
@@ -179,7 +182,7 @@ class LibrosBootstrap(
                 dueno = usuarios[1]
             },
             // Libro 10: COMUN, usuario 2
-            LibroComunMongo().apply {
+            LibroComunDocument().apply {
                 titulo = "1984"
                 descripcion = "Distopía sobre un régimen totalitario"
                 genero = Genero.CIENCIA_FICCION
@@ -195,7 +198,7 @@ class LibrosBootstrap(
                 dueno = usuarios[1]
             },
             // Libro 11: COMUN, usuario 2
-            LibroComunMongo().apply {
+            LibroComunDocument().apply {
                 titulo = "Clean Code"
                 descripcion = "Buenas prácticas para escribir código limpio"
                 genero = Genero.DISENO
@@ -211,7 +214,7 @@ class LibrosBootstrap(
                 dueno = usuarios[1]
             },
             // Libro 12: COMUN, usuario 2
-            LibroComunMongo().apply {
+            LibroComunDocument().apply {
                 titulo = "El Señor de los Anillos"
                 descripcion = "Épica aventura en la Tierra Media"
                 genero = Genero.LITERATURA_CLASICA
@@ -227,7 +230,7 @@ class LibrosBootstrap(
                 dueno = usuarios[1]
             },
             // Libro 13: COMUN, usuario 2
-            LibroComunMongo().apply {
+            LibroComunDocument().apply {
                 titulo = "Padre Rico Padre Pobre"
                 descripcion = "Educación financiera básica"
                 genero = Genero.AUTOAYUDA
@@ -243,7 +246,7 @@ class LibrosBootstrap(
                 dueno = usuarios[1]
             },
             // Libro 14: COMUN, usuario 2
-            LibroComunMongo().apply {
+            LibroComunDocument().apply {
                 titulo = "Sapiens"
                 descripcion = "Historia breve de la humanidad"
                 genero = Genero.LITERATURA_CLASICA
@@ -263,7 +266,7 @@ class LibrosBootstrap(
         libros.forEach { libroDocumentRepository.createIfNotExists(it) }
     }
 
-    private fun LibroMongo.cargarDatosBase(
+    private fun LibroDocument.cargarDatosBase(
         titulo: String,
         autor: String,
         genero: Genero,
@@ -280,7 +283,7 @@ class LibrosBootstrap(
         this.editorial = "BookLibre"
         this.fechaPublicacion = LocalDate.of(2020, 1, 1)
         this.estado = Estado.BUENO
-        this.dueno = UsuarioLibroMongo(
+        this.dueno = UsuarioLibroDocument(
             id = duenoBootstrap.id,
             nombreCompleto = duenoBootstrap.nombreCompleto,
             imagen = duenoBootstrap.imagen

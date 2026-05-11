@@ -48,7 +48,7 @@ class ReservaController (private val reservaService: ReservaService, private val
         val page = reservaService.getPrestadosPorMi(payload)
         return reservaMapper.toDtoReservaPag(page)
     }
-
+/*
     @GetMapping("/librosDisponibles")
     fun listarLibros(
         @ModelAttribute filtros: FiltrosLibro
@@ -64,7 +64,7 @@ class ReservaController (private val reservaService: ReservaService, private val
             totalPages = page.totalPages
         )
     }
-
+*/
     @PostMapping("/calificar")
     fun calificar(@RequestBody payload: ReseniaReqDTO) {
         reseniaService.crearResenia(payload)
@@ -79,7 +79,7 @@ class ReservaController (private val reservaService: ReservaService, private val
         val userId = SecurityContextHolder.getContext().authentication.name
 
         return reservaService.getDetalleReserva(
-            libroId.toInt(),
+            libroId,
             userId.toInt(),
             LocalDate.parse(fechaDesde),
             LocalDate.parse(fechaHasta)
