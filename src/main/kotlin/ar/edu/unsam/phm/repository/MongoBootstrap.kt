@@ -25,6 +25,10 @@ class LibrosBootstrap(
 
     fun init() {
         //Todo: buscar los usuarios existentes
+        //Agregue esto para eliminar los datos viejos.
+        //Habria que modificar los archivos de flyway.
+        libroDocumentRepository.deleteAll()
+
         val usuarios = listOf(
             UsuarioLibroDocument(
                 id = 1,
@@ -39,6 +43,7 @@ class LibrosBootstrap(
         val libros = listOf(
             // Libro 1: COLECCIONABLE, usuario 1
             LibroColeccionableDocument().apply {
+                id = "1" //Harcodeado
                 titulo = "Orgullo y Prejuicio"
                 descripcion = "Novela romántica clásica"
                 genero = Genero.ROMANCE
@@ -55,6 +60,7 @@ class LibrosBootstrap(
             },
             // Libro 2: DEDICATORIA, usuario 1
             LibroDedicatoriaDocument().apply {
+                id = "2"
                 titulo = "Rayuela"
                 descripcion = "Novela experimental latinoamericana"
                 genero = Genero.LITERATURA_CLASICA

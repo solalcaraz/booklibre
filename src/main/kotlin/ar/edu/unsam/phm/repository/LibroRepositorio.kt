@@ -35,6 +35,7 @@ interface LibroRepository : JpaRepository<Libro, Int>, JpaSpecificationExecutor<
     calculada en Libro que sea estadoReserva, seguir trabajando con objetos Libro,
     y luego serializar a MiLibroDTO, pero no sé qué tan feo puede ser */
 
+    /*
     @Query("""
     select new ar.edu.unsam.phm.dto.MiLibroProjection(
         l.id,
@@ -149,4 +150,6 @@ interface LibroRepository : JpaRepository<Libro, Int>, JpaSpecificationExecutor<
     //Lo uso en reserva para el DTO (evito query + 1)
     @EntityGraph(attributePaths = ["dueno"])
     fun findConDuenoById(id:Int): Optional<Libro>
+
+     */
 }
