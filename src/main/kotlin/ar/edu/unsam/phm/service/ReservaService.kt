@@ -108,7 +108,7 @@ class ReservaService(
 
         val biblioKarmas = reserva.calcularBiblioKarmas(libro)
         val calificacionPromedio = libro.promedioCalificacion
-        val ultimasResenias = reseniaRepository.findTop2ByLibroIdOrderByFechaDesc(libroId);
+        val ultimasResenias = reseniaRepository.findTop2ByLibroMongoIdOrderByFechaDesc(libroId);
         val reservasOcupadas = reservaRepository.findReservasOcupadas(libroId)
 
         return reservaAdapter.toDetalleReservaDto(
