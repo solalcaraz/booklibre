@@ -7,6 +7,7 @@ import ar.edu.unsam.phm.domain.LibroColeccionableDocument
 import ar.edu.unsam.phm.domain.LibroComunDocument
 import ar.edu.unsam.phm.domain.LibroDedicatoriaDocument
 import ar.edu.unsam.phm.domain.LibroDocument
+import ar.edu.unsam.phm.domain.ReservaPendiente
 import ar.edu.unsam.phm.domain.UsuarioLibroDocument
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.stereotype.Service
@@ -15,7 +16,8 @@ import java.time.LocalDate
 @Service
 class LibrosBootstrap(
     private val libroDocumentRepository: LibroDocumentRepository,
-    private val usuarioRepository: UsuarioRepository
+    private val usuarioRepository: UsuarioRepository,
+    private val reservaRepository: ReservaRepository
 ) : InitializingBean {
 
     fun LibroDocumentRepository.createIfNotExists(libro: LibroDocument): LibroDocument {
@@ -286,8 +288,26 @@ class LibrosBootstrap(
             }
         )
 
-        libros.forEach { libroDocumentRepository.createIfNotExists(it) }
-        println("Libros inicializados correctamente en MongoDB.")
+        //libros.forEach { libroDocumentRepository.createIfNotExists(it) }
+        val reservasPostgres = reservaRepository.findAll()
+        libros.forEach { libro ->
+            val reservasDelLibro = reservasPostgres.filter { it.libroMongoId == libro.id }
+            reservasDelLibro.forEach { reservaPostgres ->
+                libro.agregarReserva(
+                    ReservaPendiente(
+                        idReserva = reservaPostgres.id!!,
+                        fechaInicio = reservaPostgres.fechaDesde,
+                        fechaFin = reservaPostgres.fechaHasta
+                    )
+                )
+            }
+
+            libroDocumentRepository.createIfNotExists(libro)
+        }
+
+        println("✅ Libros inicializados y sincronizados con las reservas de Postgres correctamente.")
+
+        //println("Libros inicializados correctamente en MongoDB.")
     }
 
     override fun afterPropertiesSet() {
