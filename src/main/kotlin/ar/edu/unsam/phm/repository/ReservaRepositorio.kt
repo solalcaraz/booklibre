@@ -23,12 +23,13 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
     fun cantidadLeidosDe(@Param("usuarioId") usuarioId: Int): Int
 
     /* Cantidad de libros prestados de un usuario = todas las reservas de cuyo libro es dueño */
-//    @Query("""
-//        select count(r)
-//        from Reserva r
-//        where r.libro.dueno.id = :usuarioId
-//    """)
-//    fun cantidadPrestadosDe(@Param("usuarioId") usuarioId: Int): Int
+/*
+    @Query("""
+        select count(r)
+        from Reserva r
+        where r.libro.dueno.id = :usuarioId
+    """)
+    fun cantidadPrestadosDe(@Param("usuarioId") usuarioId: Int): Int
 
     @Query("SELECT r FROM Reserva r WHERE r.libroMongoId IN :libroMongoIds") //AND r.libro.dueno.id = :usuarioId
     fun findPrestadosPorMiConLibrosMongo(
@@ -36,7 +37,7 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
         @Param("libroMongoIds") libroMongoIds: Collection<String>,
         pageable: Pageable
     ): Page<Reserva>
-
+*/
     @Query("SELECT r FROM Reserva r WHERE r.lector.id = :usuarioId AND r.libroMongoId IN :libroMongoIds")
     fun findPrestadosAMiConLibrosMongo(
         @Param("usuarioId") usuarioId: Int,
@@ -58,21 +59,12 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
 //    ): List<Reserva>
 
     // Trae las reservas de un libro que aún no finalizaron (fechaHasta >= HOY)
-    @Query("SELECT r FROM Reserva r WHERE libroMongoId IN :libroId AND r.fechaHasta >= CURRENT_DATE")
+    @Query("SELECT r FROM Reserva r WHERE r.libroMongoId = :libroId AND r.fechaHasta >= CURRENT_DATE")
     fun findReservasOcupadas(@Param("libroId") libroId: String): List<Reserva>
 
     // Verifica si hay reservas que se superponen con las fechas solicitadas
-    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Reserva r WHERE libroMongoId IN :libroId AND r.fechaDesde <= :hasta AND r.fechaHasta >= :desde AND r.fechaHasta >= CURRENT_DATE")
+    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Reserva r WHERE r.libroMongoId = :libroId AND r.fechaDesde <= :hasta AND r.fechaHasta >= :desde AND r.fechaHasta >= CURRENT_DATE")
     fun existReservaSuperpuesta(
-        @Param("libroId") libroId: String,
-        @Param("desde") desde: LocalDate,
-        @Param("hasta") hasta: LocalDate
-    ): Boolean
-
-    // Verifica si hay reservas que se superponen con las fechas solicitadas
-    // Una superposición ocurre si: reserva.fechaDesde <= hasta_solicitado AND reserva.fechaHasta >= desde_solicitado
-    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Reserva r WHERE r.libroMongoId IN :libroId AND r.fechaDesde <= :hasta AND r.fechaHasta >= :desde AND r.fechaHasta >= CURRENT_DATE")
-    fun existsReservaSuperpuesta(
         @Param("libroId") libroId: String,
         @Param("desde") desde: LocalDate,
         @Param("hasta") hasta: LocalDate

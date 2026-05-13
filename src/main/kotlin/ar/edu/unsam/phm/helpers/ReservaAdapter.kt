@@ -15,13 +15,16 @@ interface ReservaAdapter {
         bibliokarmas: Int,
         calificacionPromedio: Double,
         ultimasResenias: List<Resenia>,
-        reservasOcupadas: List<Reserva>
+        reservasOcupadas: List<Reserva>,
+        //Agrego aca para evitar el problema del Bean.
+        libro: LibroDocument
     ): DetalleReservaDTO
     fun toDto(reserva: Reserva, bibliokarmas: Int, libroMongo: LibroDocument): ReservaDTO
 }
 
 // Ahora tiene que recibir el libro porque la reserva solo guarda el id del libro
 @Service
+//LibroDocument no es un Bean por lo que no funca.
 class ReservaMapper(private val libroMapper: LibroMapper): ReservaAdapter {
 
     override fun toDetalleReservaDto(
@@ -30,7 +33,8 @@ class ReservaMapper(private val libroMapper: LibroMapper): ReservaAdapter {
         bibliokarmas: Int,
         calificacionPromedio: Double,
         ultimasResenias: List<Resenia>,
-        reservasOcupadas: List<Reserva>
+        reservasOcupadas: List<Reserva>,
+        libro: LibroDocument
     ): DetalleReservaDTO {
         return DetalleReservaDTO(
             bibliokarmasTotales = bibliokarmas,
