@@ -1,6 +1,7 @@
 package ar.edu.unsam.phm.domain
 
 import ar.edu.unsam.phm.env.Environment
+import com.fasterxml.jackson.annotation.JsonValue
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.TypeAlias
 import org.springframework.data.mongodb.core.mapping.Document
@@ -103,4 +104,32 @@ class LibroColeccionableDocument : LibroDocument() {
         val quintaParte = ceil(cantidadBibliokarmas / 5.0).toInt()
         return quintaParte + cantPaginas
     }
+}
+
+
+enum class Genero(val label: String) {
+    DRAMA("Drama"),
+    CIENCIA_FICCION("Ciencia Ficción"),
+    ROMANCE("Romance"),
+    AUTOAYUDA("Autoayuda"),
+    DISENO("Diseño"),
+    LITERATURA_CLASICA("Literatura Clásica");
+
+    @JsonValue
+    fun toJson() = label
+}
+
+enum class Idioma(val label: String) {
+    ESPANOL("Español"),
+    INGLES("Inglés"),
+    FRANCES("Francés"),
+    PORTUGUES("Portugués")
+}
+
+enum class Estado(val label: String) {
+    EXCELENTE("Excelente"),
+    MUY_BUENO("Muy bueno"),
+    BUENO("Bueno"),
+    MALO("Malo"),
+    REGULAR("Regular")
 }

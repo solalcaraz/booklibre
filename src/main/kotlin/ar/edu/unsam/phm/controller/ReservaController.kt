@@ -7,9 +7,9 @@ import ar.edu.unsam.phm.dto.PaginationReqDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.dto.ReseniaReqDTO
 import ar.edu.unsam.phm.dto.ReservaDTO
-import ar.edu.unsam.phm.dto.ReservaLibroDTO
+//import ar.edu.unsam.phm.dto.ReservaLibroDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
-import ar.edu.unsam.phm.dto.toReservaLibroDTO
+//import ar.edu.unsam.phm.dto.toReservaLibroDTO
 import ar.edu.unsam.phm.helpers.ReservaMapper
 import ar.edu.unsam.phm.service.ReseniaService
 import ar.edu.unsam.phm.service.ReservaService
@@ -51,23 +51,22 @@ class ReservaController (private val reservaService: ReservaService, private val
     }
     */
 
-/*
-    @GetMapping("/librosDisponibles")
-    fun listarLibros(
-        @ModelAttribute filtros: FiltrosLibro
-    ): PaginationResponseDTO<ReservaLibroDTO> {
-        val userId = SecurityContextHolder.getContext().authentication.name.toInt()
+//    @GetMapping("/librosDisponibles")
+//    fun listarLibros(
+//        @ModelAttribute filtros: FiltrosLibro
+//    ): PaginationResponseDTO<ReservaLibroDTO> {
+//        val userId = SecurityContextHolder.getContext().authentication.name.toInt()
+//
+//        val page = reservaService.getLibrosDisponiblesParaReserva(userId, filtros)
+//        return PaginationResponseDTO(
+//            items = page.content.map { it.toReservaLibroDTO() },
+//            page = page.number,
+//            size = page.size,
+//            totalItems = page.totalElements.toInt(),
+//            totalPages = page.totalPages
+//        )
+//    }
 
-        val page = reservaService.getLibrosDisponiblesParaReserva(userId, filtros)
-        return PaginationResponseDTO(
-            items = page.content.map { it.toReservaLibroDTO() },
-            page = page.number,
-            size = page.size,
-            totalItems = page.totalElements.toInt(),
-            totalPages = page.totalPages
-        )
-    }
-*/
     @PostMapping("/calificar")
     fun calificar(@RequestBody payload: ReseniaReqDTO) {
         reseniaService.crearResenia(payload)

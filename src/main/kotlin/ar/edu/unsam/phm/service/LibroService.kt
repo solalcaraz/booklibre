@@ -14,6 +14,7 @@ import ar.edu.unsam.phm.repository.LibroDocumentRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.security.core.context.SecurityContextHolder
+import java.time.LocalDate
 
 @Service
 class LibroService(
@@ -86,6 +87,41 @@ class LibroService(
 //            totalPages = librosPage.totalPages
 //        )
 //    }
+
+    fun buscarMisLibros(
+        userId: Int,
+        filter: String,
+        sort: String?,
+        page: Int,
+        size: Int
+    ): PaginationResponseDTO<MiLibroProjection> {
+        val paginado = PageRequest.of(page, size)
+        val hoy = LocalDate.now()
+
+        val librosPage = when (filter) {
+            "Disponibles" -> libroRepository.findDisponiblesByDuenoId(userId, hoy, paginado)
+            "Prestados" -> libroRepository.findPrestadosByDuenoId(userId, hoy, paginado)
+            else -> libroRepository.findByDuenoIdAndActivoTrue(userId, paginado)
+        }
+
+        return PaginationResponseDTO(
+            items = librosPage.content.map { libro ->
+                MiLibroProjection(
+                    id = libro.id!!,
+                    titulo = libro.titulo,
+                    autor = libro.autor,
+                    genero = libro.genero,
+                    estadoReserva = if (libro.reservasPendientes.any { it.fechaInicio <= hoy && it.fechaFin >= hoy }) "PRESTADO" else "DISPONIBLE",
+                    agregadoEl = libro.fechaPublicacion,
+                    portada = libro.portada
+                )
+            },
+            page = librosPage.number,
+            size = librosPage.size,
+            totalItems = librosPage.totalElements.toInt(),
+            totalPages = librosPage.totalPages
+        )
+    }
 
     fun despublicarLibro(id: String){
         val libro = getByIdForUser(id)

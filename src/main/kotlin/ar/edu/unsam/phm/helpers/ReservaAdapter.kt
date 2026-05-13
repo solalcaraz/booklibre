@@ -11,6 +11,7 @@ interface ReservaAdapter {
     fun toDtoReservaPag(page: Page<ReservaDTO>): PaginationResponseDTO<ReservaDTO>
     fun toDetalleReservaDto(
         reserva: Reserva,
+        libroMongo: LibroDocument,
         bibliokarmas: Int,
         calificacionPromedio: Double,
         ultimasResenias: List<Resenia>,
@@ -28,6 +29,7 @@ class ReservaMapper(private val libroMapper: LibroMapper): ReservaAdapter {
 
     override fun toDetalleReservaDto(
         reserva: Reserva,
+        libroMongo: LibroDocument,
         bibliokarmas: Int,
         calificacionPromedio: Double,
         ultimasResenias: List<Resenia>,
@@ -51,7 +53,7 @@ class ReservaMapper(private val libroMapper: LibroMapper): ReservaAdapter {
                     fechaHasta = reservaOcupada.fechaHasta
                 )
             },
-            libroDetalleDTO = libroMapper.toDetalleDto(libro)
+            libroDetalleDTO = libroMapper.toDetalleDto(libroMongo)
         )
     }
 

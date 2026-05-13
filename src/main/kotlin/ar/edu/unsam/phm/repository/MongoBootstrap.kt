@@ -7,7 +7,7 @@ import ar.edu.unsam.phm.domain.LibroColeccionableDocument
 import ar.edu.unsam.phm.domain.LibroComunDocument
 import ar.edu.unsam.phm.domain.LibroDedicatoriaDocument
 import ar.edu.unsam.phm.domain.LibroDocument
-import ar.edu.unsam.phm.domain.Usuario
+import ar.edu.unsam.phm.domain.ReservaPendiente
 import ar.edu.unsam.phm.domain.UsuarioLibroDocument
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.stereotype.Service
@@ -15,7 +15,9 @@ import java.time.LocalDate
 
 @Service
 class LibrosBootstrap(
-    private val libroDocumentRepository: LibroDocumentRepository
+    private val libroDocumentRepository: LibroDocumentRepository,
+    private val usuarioRepository: UsuarioRepository,
+    private val reservaRepository: ReservaRepository
 ) : InitializingBean {
 
     fun LibroDocumentRepository.createIfNotExists(libro: LibroDocument): LibroDocument {
@@ -24,22 +26,31 @@ class LibrosBootstrap(
     }
 
     fun init() {
-        //Todo: buscar los usuarios existentes
-        //Agregue esto para eliminar los datos viejos.
-        //Habria que modificar los archivos de flyway.
-        libroDocumentRepository.deleteAll()
+        val usuariosPostgres = usuarioRepository.findAll()
 
-        val usuarios = listOf(
-            UsuarioLibroDocument(id = 1, nombreCompleto = "Diego Maradona", imagen = "http://localhost:9000/imagenes/diego.jpg"),
-            UsuarioLibroDocument(id = 2, nombreCompleto = "Max Verstappen", imagen = "https://cdn.crash.net/2025-10/si202510191331.jpg?width=1600&aspect_ratio=1:1"),
-            UsuarioLibroDocument(id = 3, nombreCompleto = "Ye West", imagen = "http://localhost:9000/imagenes/default_user.png"),
-            UsuarioLibroDocument(id = 4, nombreCompleto = "Yiya Murano", imagen = "http://localhost:9000/imagenes/default_user.png")
-        )
+        if (usuariosPostgres.isEmpty()) {
+            println("ATENCIÓN: No hay usuarios en Postgres. No se pueden cargar los libros en Mongo.")
+            println("Asegurate de correr el Bootstrap de Usuarios (Postgres) antes que este.")
+            return
+        }
+
+        val usuariosParaMongo = usuariosPostgres.map { usuario ->
+            UsuarioLibroDocument(
+                id = usuario.id,
+                nombreCompleto = usuario.nombreCompleto,
+                imagen = usuario.imagen
+            )
+        }
+
+        val dueno1 = usuariosParaMongo.getOrElse(1) { usuariosParaMongo.first() } // Diego Maradona
+        val dueno2 = usuariosParaMongo.getOrElse(2) { usuariosParaMongo.first() } // Max Verstappen
+        val dueno3 = usuariosParaMongo.getOrElse(3) { usuariosParaMongo.first() } // Ye West
+        //val dueno4 = usuariosParaMongo.getOrElse(4) { usuariosParaMongo.first() } // Yiya Murano
 
         val libros = listOf(
             // Libro 1: COLECCIONABLE, usuario 1
             LibroColeccionableDocument().apply {
-                id = "1" //Harcodeado para probar en bruno
+                id = "libro_001"
                 titulo = "Orgullo y Prejuicio"
                 descripcion = "Novela romántica clásica"
                 genero = Genero.ROMANCE
@@ -52,11 +63,11 @@ class LibrosBootstrap(
                 estado = Estado.MUY_BUENO
                 portada = "http://localhost:9000/imagenes/orgullo.webp"
                 activo = true
-                dueno = usuarios[0]  // Diego Maradona
+                dueno = dueno1  // Diego Maradona
             },
             // Libro 2: DEDICATORIA, usuario 1
             LibroDedicatoriaDocument().apply {
-                id = "2"
+                id = "libro_002"
                 titulo = "Rayuela"
                 descripcion = "Novela experimental latinoamericana"
                 genero = Genero.LITERATURA_CLASICA
@@ -69,10 +80,11 @@ class LibrosBootstrap(
                 estado = Estado.BUENO
                 portada = "http://localhost:9000/imagenes/Rayuela.jpg"
                 activo = true
-                dueno = usuarios[0]
+                dueno = dueno1
             },
             // Libro 3: COLECCIONABLE, usuario 1
             LibroColeccionableDocument().apply {
+                id = "libro_003"
                 titulo = "1984"
                 descripcion = "Distopía política sobre vigilancia y control social"
                 genero = Genero.CIENCIA_FICCION
@@ -85,10 +97,11 @@ class LibrosBootstrap(
                 estado = Estado.MUY_BUENO
                 portada = "http://localhost:9000/imagenes/1984.webp"
                 activo = true
-                dueno = usuarios[0]
+                dueno = dueno1
             },
             // Libro 4: COLECCIONABLE, usuario 2
             LibroColeccionableDocument().apply {
+                id = "libro_004"
                 titulo = "Dune"
                 descripcion = "Épica de ciencia ficción sobre política, religión y ecología"
                 genero = Genero.CIENCIA_FICCION
@@ -101,10 +114,11 @@ class LibrosBootstrap(
                 estado = Estado.EXCELENTE
                 portada = "http://localhost:9000/imagenes/dune.jpg"
                 activo = true
-                dueno = usuarios[1]  // Max Verstappen
+                dueno = dueno2  // Max Verstappen
             },
             // Libro 5: DEDICATORIA, usuario 2
             LibroDedicatoriaDocument().apply {
+                id = "libro_005"
                 titulo = "Cien Años de Soledad"
                 descripcion = "Obra maestra del realismo mágico latinoamericano"
                 genero = Genero.LITERATURA_CLASICA
@@ -117,10 +131,11 @@ class LibrosBootstrap(
                 estado = Estado.MUY_BUENO
                 portada = "http://localhost:9000/imagenes/100anos.webp"
                 activo = true
-                dueno = usuarios[1]
+                dueno = dueno2
             },
             // Libro 6: COMUN, usuario 2
             LibroComunDocument().apply {
+                id = "libro_006"
                 titulo = "Hábitos Atómicos"
                 descripcion = "Guía práctica para construir buenos hábitos y eliminar los malos"
                 genero = Genero.AUTOAYUDA
@@ -133,10 +148,11 @@ class LibrosBootstrap(
                 estado = Estado.BUENO
                 portada = "http://localhost:9000/imagenes/habitos.webp"
                 activo = true
-                dueno = usuarios[1]
+                dueno = dueno2
             },
             // Libro 7: COLECCIONABLE, usuario 3
             LibroColeccionableDocument().apply {
+                id = "libro_007"
                 titulo = "El Nombre del Viento"
                 descripcion = "Primera parte de la Crónica del Asesino de Reyes"
                 genero = Genero.CIENCIA_FICCION
@@ -149,10 +165,11 @@ class LibrosBootstrap(
                 estado = Estado.EXCELENTE
                 portada = "http://localhost:9000/imagenes/viento.webp"
                 activo = true
-                dueno = usuarios[2]  // Ye West
+                dueno = dueno3  // Ye West
             },
             // Libro 8: DEDICATORIA, usuario 3
             LibroDedicatoriaDocument().apply {
+                id = "libro_008"
                 titulo = "El Gran Gatsby"
                 descripcion = "Retrato de la alta sociedad estadounidense en los años 20"
                 genero = Genero.LITERATURA_CLASICA
@@ -165,10 +182,11 @@ class LibrosBootstrap(
                 estado = Estado.BUENO
                 portada = "http://localhost:9000/imagenes/libro-nuevo.jpg"
                 activo = true
-                dueno = usuarios[2]
+                dueno = dueno3
             },
             // Libro 9: COMUN, usuario 2
             LibroComunDocument().apply {
+                id = "libro_009"
                 titulo = "El Principito"
                 descripcion = "Clásico de la literatura sobre la amistad y la vida"
                 genero = Genero.CIENCIA_FICCION
@@ -181,10 +199,11 @@ class LibrosBootstrap(
                 estado = Estado.BUENO
                 portada = "https://image.cdn1.buscalibre.com/5b57fc1690f0b5295a8b4567.RS500x500.jpg"
                 activo = true
-                dueno = usuarios[1]
+                dueno = dueno2
             },
             // Libro 10: COMUN, usuario 2
             LibroComunDocument().apply {
+                id = "libro_010"
                 titulo = "1984"
                 descripcion = "Distopía sobre un régimen totalitario"
                 genero = Genero.CIENCIA_FICCION
@@ -197,10 +216,11 @@ class LibrosBootstrap(
                 estado = Estado.BUENO
                 portada = "http://localhost:9000/imagenes/1984.webp"
                 activo = true
-                dueno = usuarios[1]
+                dueno = dueno2
             },
             // Libro 11: COMUN, usuario 2
             LibroComunDocument().apply {
+                id = "libro_011"
                 titulo = "Clean Code"
                 descripcion = "Buenas prácticas para escribir código limpio"
                 genero = Genero.DISENO
@@ -213,10 +233,11 @@ class LibrosBootstrap(
                 estado = Estado.BUENO
                 portada = "https://m.media-amazon.com/images/I/81Rnac2Fq+L._AC_UF1000,1000_QL80_.jpg"
                 activo = true
-                dueno = usuarios[1]
+                dueno = dueno2
             },
             // Libro 12: COMUN, usuario 2
             LibroComunDocument().apply {
+                id = "libro_012"
                 titulo = "El Señor de los Anillos"
                 descripcion = "Épica aventura en la Tierra Media"
                 genero = Genero.LITERATURA_CLASICA
@@ -229,10 +250,11 @@ class LibrosBootstrap(
                 estado = Estado.BUENO
                 portada = "https://image.cdn0.buscalibre.com/5b5ae93e4463b568748b4567.RS500x500.jpg"
                 activo = true
-                dueno = usuarios[1]
+                dueno = dueno2
             },
             // Libro 13: COMUN, usuario 2
             LibroComunDocument().apply {
+                id = "libro_013"
                 titulo = "Padre Rico Padre Pobre"
                 descripcion = "Educación financiera básica"
                 genero = Genero.AUTOAYUDA
@@ -245,10 +267,11 @@ class LibrosBootstrap(
                 estado = Estado.BUENO
                 portada = "https://www.edicontinente.com.ar/image/titulos/9788466373005.jpg"
                 activo = true
-                dueno = usuarios[1]
+                dueno = dueno2
             },
             // Libro 14: COMUN, usuario 2
             LibroComunDocument().apply {
+                id = "libro_014"
                 titulo = "Sapiens"
                 descripcion = "Historia breve de la humanidad"
                 genero = Genero.LITERATURA_CLASICA
@@ -261,35 +284,30 @@ class LibrosBootstrap(
                 estado = Estado.BUENO
                 portada = "https://images.cdn1.buscalibre.com/fit-in/360x360/57/3d/573d2d38b86840ce6c919c61ac6d217f.jpg"
                 activo = true
-                dueno = usuarios[1]
+                dueno = dueno2
             }
         )
 
-        libros.forEach { libroDocumentRepository.createIfNotExists(it) }
-    }
+        //libros.forEach { libroDocumentRepository.createIfNotExists(it) }
+        val reservasPostgres = reservaRepository.findAll()
+        libros.forEach { libro ->
+            val reservasDelLibro = reservasPostgres.filter { it.libroMongoId == libro.id }
+            reservasDelLibro.forEach { reservaPostgres ->
+                libro.agregarReserva(
+                    ReservaPendiente(
+                        idReserva = reservaPostgres.id!!,
+                        fechaInicio = reservaPostgres.fechaDesde,
+                        fechaFin = reservaPostgres.fechaHasta
+                    )
+                )
+            }
 
-    private fun LibroDocument.cargarDatosBase(
-        titulo: String,
-        autor: String,
-        genero: Genero,
-        isbn13: String,
-        duenoBootstrap: Usuario
-    ) {
-        this.titulo = titulo
-        this.descripcion = "Libro cargado inicialmente en MongoDB"
-        this.genero = genero
-        this.autor = autor
-        this.cantPaginas = 200
-        this.isbn13 = isbn13
-        this.idioma = Idioma.ESPANOL
-        this.editorial = "BookLibre"
-        this.fechaPublicacion = LocalDate.of(2020, 1, 1)
-        this.estado = Estado.BUENO
-        this.dueno = UsuarioLibroDocument(
-            id = duenoBootstrap.id,
-            nombreCompleto = duenoBootstrap.nombreCompleto,
-            imagen = duenoBootstrap.imagen
-        )
+            libroDocumentRepository.createIfNotExists(libro)
+        }
+
+        println("✅ Libros inicializados y sincronizados con las reservas de Postgres correctamente.")
+
+        //println("Libros inicializados correctamente en MongoDB.")
     }
 
     override fun afterPropertiesSet() {

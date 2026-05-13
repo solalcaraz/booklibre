@@ -7,6 +7,7 @@ import ar.edu.unsam.phm.domain.LibroColeccionableDocument
 import ar.edu.unsam.phm.domain.LibroComunDocument
 import ar.edu.unsam.phm.domain.LibroDedicatoriaDocument
 import ar.edu.unsam.phm.domain.LibroDocument
+import ar.edu.unsam.phm.domain.UsuarioLibroDocument
 import ar.edu.unsam.phm.dto.LibroDetalleDTO
 import ar.edu.unsam.phm.dto.TipoDeLibroDTO
 import org.springframework.stereotype.Service
@@ -35,9 +36,11 @@ class LibroMapper {
             fechaPublicacion = LocalDate.parse(dto.fechaPublicacion)
             estado = Estado.valueOf(dto.estado)
             portada = dto.portada
-            dueno.id = dto.duenoId
-            dueno.nombreCompleto = dto.duenoNombre
-            dueno.imagen = dto.duenoImagen
+            dueno = UsuarioLibroDocument(
+                id = dto.duenoId,
+                nombreCompleto = dto.duenoNombre,
+                imagen = dto.duenoImagen
+            )
         }
     }
 

@@ -29,22 +29,22 @@ class LibroController(
     @PutMapping("/libro/{id}")
     fun actualizarLibro(@PathVariable id: String, @RequestBody libroDTO: LibroDetalleDTO) { libroService.update(id, libroDTO) }
 
-//    @PreAuthorize("hasRole('PUBLICADOR') or hasRole('LECTOR_PUBLICADOR')")
-//    @GetMapping("/misLibros/me")
-//    fun listarMisLibros(
-//        @RequestParam(defaultValue = "0") page: Int,
-//        @RequestParam(defaultValue = "3") size: Int, // Cambiable por @ModelAttribute
-//        @RequestParam(defaultValue = "Todos") filter: String,
-//        @RequestParam(required = false) sort: String? = ""
-//    ): PaginationResponseDTO<MiLibroProjection> {
-//        val userId = SecurityContextHolder
-//            .getContext()
-//            .authentication
-//            .name
-//            .toInt()
-//
-//        return libroService.buscarMisLibros(userId, filter, sort, page, size)
-//    }
+    @PreAuthorize("hasRole('PUBLICADOR') or hasRole('LECTOR_PUBLICADOR')")
+    @GetMapping("/misLibros/me")
+    fun listarMisLibros(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "3") size: Int, // Cambiable por @ModelAttribute
+        @RequestParam(defaultValue = "Todos") filter: String,
+        @RequestParam(required = false) sort: String? = ""
+    ): PaginationResponseDTO<MiLibroProjection> {
+        val userId = SecurityContextHolder
+            .getContext()
+            .authentication
+            .name
+            .toInt()
+
+        return libroService.buscarMisLibros(userId, filter, sort, page, size)
+    }
 
     @PreAuthorize("hasRole('PUBLICADOR') or hasRole('LECTOR_PUBLICADOR')")
     @DeleteMapping("/misLibros/{bookId}")

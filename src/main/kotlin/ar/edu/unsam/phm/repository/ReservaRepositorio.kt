@@ -31,9 +31,9 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
     """)
     fun cantidadPrestadosDe(@Param("usuarioId") usuarioId: Int): Int
 
-    @Query("SELECT r FROM Reserva r WHERE r.libroMongoId IN :libroMongoIds AND r.libro.dueno.id = :usuarioId")
+    @Query("SELECT r FROM Reserva r WHERE r.libroMongoId IN :libroMongoIds") //AND r.libro.dueno.id = :usuarioId
     fun findPrestadosPorMiConLibrosMongo(
-        @Param("usuarioId") usuarioId: Int,
+        //@Param("usuarioId") usuarioId: Int,
         @Param("libroMongoIds") libroMongoIds: Collection<String>,
         pageable: Pageable
     ): Page<Reserva>
@@ -45,7 +45,7 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
         pageable: Pageable
     ): Page<Reserva>
 
-    fun countByLibroMongoId(libroId: String): Int
+    //fun countByLibroDocumentId(libroId: String): Int
 
     // Trae solo las puntuaciones de las reseñas de un libro específico
 //    @Query("SELECT r.resenia.puntuacion FROM Reserva r WHERE r.libro.id = :libroId AND r.resenia IS NOT NULL")

@@ -15,22 +15,22 @@ import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import javax.sql.DataSource
 
-@Entity
-@Table(name = "auditoria_puntaje_libro")
-class AuditoriaPuntajeLibro(
-    @Column(name = "id_libro", nullable = false)
-    val libroId: Int,
-
-    @Column(name = "fecha_actualizacion", nullable = false)
-    val fechaActualizacion: LocalDateTime = LocalDateTime.now(),
-
-    @Column(name = "puntaje_anterior", nullable = false)
-    val puntajeAnterior: Double,
-
-    @Column(name = "puntaje_nuevo", nullable = false)
-    val puntajeNuevo: Double,
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int? = null
-)
+//@Entity
+//@Table(name = "auditoria_puntaje_libro")
+//class AuditoriaPuntajeLibro(
+//    @Column(name = "id_libro", nullable = false)
+//    val libroId: Int,
+//
+//    @Column(name = "fecha_actualizacion", nullable = false)
+//    val fechaActualizacion: LocalDateTime = LocalDateTime.now(),
+//
+//    @Column(name = "puntaje_anterior", nullable = false)
+//    val puntajeAnterior: Double,
+//
+//    @Column(name = "puntaje_nuevo", nullable = false)
+//    val puntajeNuevo: Double,
+//
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    val id: Int? = null
+//)

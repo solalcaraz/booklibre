@@ -16,7 +16,7 @@ data class Resenia(
     @Column(nullable = false)
     val comentario: String,
 
-    @Column(name = "id_libro_mongo")
+    @Column(name = "id_libro")
     val libroMongoId: String?,
 
     @Column(nullable = false)
@@ -27,8 +27,4 @@ data class Resenia(
     override var id: Int? = null
 ): EntidadConId {
 
-    //Tdoo: eliminar
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "id_libro", nullable = true)
-//    lateinit var libro: Libro
 }
