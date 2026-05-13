@@ -1,10 +1,7 @@
 package ar.edu.unsam.phm.dto
 
-import ar.edu.unsam.phm.domain.LibroColeccionable
 import ar.edu.unsam.phm.domain.LibroColeccionableDocument
-import ar.edu.unsam.phm.domain.LibroComun
 import ar.edu.unsam.phm.domain.LibroComunDocument
-import ar.edu.unsam.phm.domain.LibroDedicatoria
 import ar.edu.unsam.phm.domain.LibroDedicatoriaDocument
 import ar.edu.unsam.phm.domain.LibroDocument
 import ar.edu.unsam.phm.domain.Reserva

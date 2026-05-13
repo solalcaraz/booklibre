@@ -117,7 +117,7 @@ class ReservaService(
             calificacionPromedio = calificacionPromedio,
             ultimasResenias = ultimasResenias,
             reservasOcupadas = reservasOcupadas,
-            libroMongo = libro
+            libro = libro
         )
     }
 
