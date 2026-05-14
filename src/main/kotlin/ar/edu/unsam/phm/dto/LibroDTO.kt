@@ -48,6 +48,6 @@ data class MiLibroProjection(
 data class LibroResumen(
     val titulo: String,
     val autor: String,
-    val promedioCalificacion: Double?,
-    val portada: String,
+    val puntuacion: Double?,
+    val imgUrl: String,
 )

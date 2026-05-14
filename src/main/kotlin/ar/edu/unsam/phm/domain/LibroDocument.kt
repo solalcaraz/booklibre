@@ -36,20 +36,6 @@ abstract class LibroDocument {
 
     abstract fun plusBiblioKarma(cantidadBibliokarmas: Int): Int
 
-    // Ahora esto se calcularía en el momento de enviar una calificación,
-    // directamente en el repo de reseñas, y se dispararía la actualización
-    // del valor en el documento
-//    fun calcularCalificacionPromedio(): Double {
-//        if (resenias.isEmpty()) return 0.0
-//        val sumaPuntajes = resenias.sumOf { it.puntuacion }
-//        val promedio = sumaPuntajes.toDouble() / resenias.size
-//        return String.format(Locale.US, "%.1f", promedio).toDouble()
-//    }
-
-    // Esta función creo que ya es redundante porque no son privadas las variables
-//    fun getCalificacionPromedio(): Double =
-//        String.format(Locale.US, "%.1f", promedioCalificacion).toDouble()
-
     fun estaDisponible(desde: LocalDate, hasta: LocalDate): Boolean {
         limpiarReservasVencidas()
         return reservasPendientes.none { it.seSuperponeCon(desde, hasta) }

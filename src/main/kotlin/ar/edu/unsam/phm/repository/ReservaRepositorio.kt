@@ -30,14 +30,13 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
         where r.libro.dueno.id = :usuarioId
     """)
     fun cantidadPrestadosDe(@Param("usuarioId") usuarioId: Int): Int
-
-    @Query("SELECT r FROM Reserva r WHERE r.libroMongoId IN :libroMongoIds") //AND r.libro.dueno.id = :usuarioId
+*/
+    @Query("SELECT r FROM Reserva r WHERE r.libroMongoId IN :libroMongoIds")
     fun findPrestadosPorMiConLibrosMongo(
-        //@Param("usuarioId") usuarioId: Int,
         @Param("libroMongoIds") libroMongoIds: Collection<String>,
         pageable: Pageable
     ): Page<Reserva>
-*/
+
     @Query("SELECT r FROM Reserva r WHERE r.lector.id = :usuarioId AND r.libroMongoId IN :libroMongoIds")
     fun findPrestadosAMiConLibrosMongo(
         @Param("usuarioId") usuarioId: Int,
