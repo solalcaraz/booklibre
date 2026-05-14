@@ -7,9 +7,9 @@ import ar.edu.unsam.phm.dto.PaginationReqDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.dto.ReseniaReqDTO
 import ar.edu.unsam.phm.dto.ReservaDTO
-import ar.edu.unsam.phm.dto.ReservaLibroDTO
+//import ar.edu.unsam.phm.dto.ReservaLibroDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
-import ar.edu.unsam.phm.dto.toReservaLibroDTO
+//import ar.edu.unsam.phm.dto.toReservaLibroDTO
 import ar.edu.unsam.phm.helpers.ReservaMapper
 import ar.edu.unsam.phm.service.ReseniaService
 import ar.edu.unsam.phm.service.ReservaService
@@ -41,6 +41,7 @@ class ReservaController (private val reservaService: ReservaService, private val
         return reservaMapper.toDtoReservaPag(page)
     }
 
+    /*
     @PostMapping("/obtenerPrestadosPorMi")
     fun obtenerPrestadosPorMi(
         @RequestBody payload: PaginationReqDTO<ReservaRequestDTO>
@@ -48,22 +49,23 @@ class ReservaController (private val reservaService: ReservaService, private val
         val page = reservaService.getPrestadosPorMi(payload)
         return reservaMapper.toDtoReservaPag(page)
     }
+    */
 
-    @GetMapping("/librosDisponibles")
-    fun listarLibros(
-        @ModelAttribute filtros: FiltrosLibro
-    ): PaginationResponseDTO<ReservaLibroDTO> {
-        val userId = SecurityContextHolder.getContext().authentication.name.toInt()
-
-        val page = reservaService.getLibrosDisponiblesParaReserva(userId, filtros)
-        return PaginationResponseDTO(
-            items = page.content.map { it.toReservaLibroDTO() },
-            page = page.number,
-            size = page.size,
-            totalItems = page.totalElements.toInt(),
-            totalPages = page.totalPages
-        )
-    }
+//    @GetMapping("/librosDisponibles")
+//    fun listarLibros(
+//        @ModelAttribute filtros: FiltrosLibro
+//    ): PaginationResponseDTO<ReservaLibroDTO> {
+//        val userId = SecurityContextHolder.getContext().authentication.name.toInt()
+//
+//        val page = reservaService.getLibrosDisponiblesParaReserva(userId, filtros)
+//        return PaginationResponseDTO(
+//            items = page.content.map { it.toReservaLibroDTO() },
+//            page = page.number,
+//            size = page.size,
+//            totalItems = page.totalElements.toInt(),
+//            totalPages = page.totalPages
+//        )
+//    }
 
     @PostMapping("/calificar")
     fun calificar(@RequestBody payload: ReseniaReqDTO) {
@@ -79,7 +81,7 @@ class ReservaController (private val reservaService: ReservaService, private val
         val userId = SecurityContextHolder.getContext().authentication.name
 
         return reservaService.getDetalleReserva(
-            libroId.toInt(),
+            libroId,
             userId.toInt(),
             LocalDate.parse(fechaDesde),
             LocalDate.parse(fechaHasta)

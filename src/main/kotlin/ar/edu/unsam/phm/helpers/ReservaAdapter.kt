@@ -1,5 +1,6 @@
 package ar.edu.unsam.phm.helpers
 
+import ar.edu.unsam.phm.domain.LibroDocument
 import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.domain.Resenia
 import ar.edu.unsam.phm.dto.*
@@ -7,26 +8,31 @@ import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 
 interface ReservaAdapter {
-    fun toDtoReservaPag(page: Page<Reserva>): PaginationResponseDTO<ReservaDTO>
+    fun toDtoReservaPag(page: Page<ReservaDTO>): PaginationResponseDTO<ReservaDTO>
     fun toDetalleReservaDto(
         reserva: Reserva,
         bibliokarmas: Int,
         calificacionPromedio: Double,
         ultimasResenias: List<Resenia>,
-        reservasOcupadas: List<Reserva>
+        reservasOcupadas: List<Reserva>,
+        //Agrego aca para evitar el problema del Bean.
+        libro: LibroDocument
     ): DetalleReservaDTO
-    fun toDto(reserva: Reserva, calificacionPromedio: Double, bibliokarmas: Int): ReservaDTO
+    fun toDto(reserva: Reserva, bibliokarmas: Int, libroMongo: LibroDocument): ReservaDTO
 }
 
+// Ahora tiene que recibir el libro porque la reserva solo guarda el id del libro
 @Service
-class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
+//LibroDocument no es un Bean por lo que no funca.
+class ReservaMapper(private val libroMapper: LibroMapper): ReservaAdapter {
 
     override fun toDetalleReservaDto(
         reserva: Reserva,
         bibliokarmas: Int,
         calificacionPromedio: Double,
         ultimasResenias: List<Resenia>,
-        reservasOcupadas: List<Reserva>
+        reservasOcupadas: List<Reserva>,
+        libro: LibroDocument
     ): DetalleReservaDTO {
         return DetalleReservaDTO(
             bibliokarmasTotales = bibliokarmas,
@@ -45,16 +51,13 @@ class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
                     fechaHasta = reservaOcupada.fechaHasta
                 )
             },
-            libroDetalleDTO = libroMapper.toDetalleDto(reserva.libro)
+            libroDetalleDTO = libroMapper.toDetalleDto(libro)
         )
     }
 
-    override fun toDtoReservaPag(page: Page<Reserva>): PaginationResponseDTO<ReservaDTO> {
-        val reservasDto = page.content.map {
-            this.toDto(it, it.libro.calcularCalificacionPromedio(), it.calcularBiblioKarmas())
-        }
+    override fun toDtoReservaPag(page: Page<ReservaDTO>): PaginationResponseDTO<ReservaDTO> {
         return PaginationResponseDTO(
-            items = reservasDto,
+            items = page.content,
             page = page.number,
             size = page.size,
             totalItems = page.totalElements.toInt(),
@@ -62,17 +65,17 @@ class ReservaMapper(private val libroMapper: LibroAdapter): ReservaAdapter {
         )
     }
 
-    override fun toDto(reserva: Reserva, calificacionPromedio: Double, bibliokarmas: Int): ReservaDTO {
+    override fun toDto(reserva: Reserva, bibliokarmas: Int, libroMongo: LibroDocument): ReservaDTO {
         val libroResumen = LibroResumen(
-            reserva.libro.data.titulo,
-            reserva.libro.data.autor,
-            calificacionPromedio,
-            reserva.libro.data.portada
+            libroMongo.titulo,
+            libroMongo.autor,
+            libroMongo.promedioCalificacion,
+            libroMongo.portada
         )
         return ReservaDTO(
             reserva.id,
             libroResumen,
-            reserva.libro.dueno.nombreCompleto,
+            libroMongo.dueno.nombreCompleto,
             bibliokarmas,           // valor recibido como parámetro, no recalculado
             reserva.fechaDesde,
             reserva.fechaHasta,

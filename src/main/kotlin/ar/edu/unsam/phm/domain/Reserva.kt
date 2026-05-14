@@ -20,10 +20,6 @@ class Reserva(
     override var id: Int? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_libro", nullable = false)
-    val libro: Libro,
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", nullable = false)
     val lector: Usuario,
 
@@ -31,7 +27,10 @@ class Reserva(
     val fechaDesde: LocalDate,
 
     @Column(name = "fecha_hasta", nullable = false)
-    val fechaHasta: LocalDate
+    val fechaHasta: LocalDate,
+
+    @Column(name = "id_libro")
+    val libroMongoId: String? = null
 
 ) : EntidadConId {
     @Column(nullable = false)
@@ -41,9 +40,11 @@ class Reserva(
         if (fechaHasta.isBefore(fechaDesde)) {
             throw BadRequestException("La fecha hasta no puede ser anterior a la fecha desde.")
         }
-        if (lector.id == libro.dueno.id) {
-            throw BadRequestException("No puedo reservar mis propios libros.")
-        }
+        // Esta validación debería estar en el momento de creación de la reserva,
+        // no dentro de la reserva
+//        if (lector.id == libro.dueno.id) {
+//            throw BadRequestException("No puedo reservar mis propios libros.")
+//        }
     }
 
     fun estaActiva(hoy: LocalDate = LocalDate.now()): Boolean {
@@ -60,7 +61,8 @@ class Reserva(
 
     fun calcularDias() = ChronoUnit.DAYS.between(fechaDesde, fechaHasta).toInt() + 1
 
-    fun calcularBiblioKarmas(): Int {
+    // Ahora el service tiene que pasarle el libro o hay que reformular este cálculo
+    fun calcularBiblioKarmas(libro: LibroDocument): Int {
         return 5 * calcularDias() + libro.plusBiblioKarma(lector.bibliokarmas)
     }
 

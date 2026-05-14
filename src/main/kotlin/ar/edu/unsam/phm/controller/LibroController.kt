@@ -3,7 +3,7 @@ package ar.edu.unsam.phm.controller
 import ar.edu.unsam.phm.dto.LibroDetalleDTO
 import ar.edu.unsam.phm.dto.MiLibroProjection
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
-import ar.edu.unsam.phm.helpers.LibroAdapter
+import ar.edu.unsam.phm.helpers.LibroMapper
 import ar.edu.unsam.phm.service.LibroService
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.*
 @CrossOrigin("*")
 class LibroController(
     val libroService: LibroService,
-    val libroAdapter: LibroAdapter
+    val libroAdapter: LibroMapper
 ){
     @PreAuthorize("hasRole('PUBLICADOR') or hasRole('LECTOR_PUBLICADOR')")
     @GetMapping("/libro/{id}")
-    fun obtenerLibroParaUsuario(@PathVariable id: Int): LibroDetalleDTO {
+    fun obtenerLibroParaUsuario(@PathVariable id: String): LibroDetalleDTO {
         return libroAdapter.toDetalleDto(libroService.getByIdForUser(id))
     }
 
@@ -27,7 +27,7 @@ class LibroController(
 
     @PreAuthorize("hasRole('PUBLICADOR') or hasRole('LECTOR_PUBLICADOR')")
     @PutMapping("/libro/{id}")
-    fun actualizarLibro(@PathVariable id: Int, @RequestBody libroDTO: LibroDetalleDTO) { libroService.update(id, libroDTO) }
+    fun actualizarLibro(@PathVariable id: String, @RequestBody libroDTO: LibroDetalleDTO) { libroService.update(id, libroDTO) }
 
     @PreAuthorize("hasRole('PUBLICADOR') or hasRole('LECTOR_PUBLICADOR')")
     @GetMapping("/misLibros/me")

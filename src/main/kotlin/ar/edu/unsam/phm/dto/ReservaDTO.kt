@@ -6,7 +6,7 @@ data class ReservaDTO(
     val id: Int?,
     val libroResumen: LibroResumen,
     val prestadoPor: String,
-    val bibliokarma: Number,
+    val bibliokarma: Int,
     val fechaDesde: LocalDate,
     val fechaHasta: LocalDate,
     val estado: String,
@@ -15,5 +15,5 @@ data class ReservaDTO(
 
 data class ReservaRequestDTO(
     val inputSearch: String,
-    val usuarioId: String,
+    val usuarioId: Int,
 )

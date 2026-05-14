@@ -1,19 +1,11 @@
 package ar.edu.unsam.phm.repository
 
-import ar.edu.unsam.phm.domain.Libro
 import ar.edu.unsam.phm.domain.Reserva
-import ar.edu.unsam.phm.domain.Usuario
-/*import ar.edu.unsam.phm.dto.MiLibroDTO
-import ar.edu.unsam.phm.dto.PaginationResponseDTO
-import ar.edu.unsam.phm.helpers.ordenarLibros
-import ar.edu.unsam.phm.helpers.paginate*/
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
-import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 interface ReservaRepository : JpaRepository<Reserva, Int> {
@@ -31,6 +23,7 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
     fun cantidadLeidosDe(@Param("usuarioId") usuarioId: Int): Int
 
     /* Cantidad de libros prestados de un usuario = todas las reservas de cuyo libro es dueño */
+/*
     @Query("""
         select count(r)
         from Reserva r
@@ -38,15 +31,21 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
     """)
     fun cantidadPrestadosDe(@Param("usuarioId") usuarioId: Int): Int
 
-    @EntityGraph(attributePaths = ["libro", "libro.resenias"])
-    @Query("SELECT r FROM Reserva r WHERE r.libro.dueno.id = :usuarioId AND (LOWER(r.libro.data.titulo) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(r.libro.data.autor) LIKE LOWER(CONCAT('%', :search, '%')))")
-    fun findPrestadosPorMi(@Param("usuarioId") usuarioId: Int, @Param("search") search: String?, pageable: Pageable): Page<Reserva>
+    @Query("SELECT r FROM Reserva r WHERE r.libroMongoId IN :libroMongoIds") //AND r.libro.dueno.id = :usuarioId
+    fun findPrestadosPorMiConLibrosMongo(
+        //@Param("usuarioId") usuarioId: Int,
+        @Param("libroMongoIds") libroMongoIds: Collection<String>,
+        pageable: Pageable
+    ): Page<Reserva>
+*/
+    @Query("SELECT r FROM Reserva r WHERE r.lector.id = :usuarioId AND r.libroMongoId IN :libroMongoIds")
+    fun findPrestadosAMiConLibrosMongo(
+        @Param("usuarioId") usuarioId: Int,
+        @Param("libroMongoIds") libroMongoIds: Collection<String>,
+        pageable: Pageable
+    ): Page<Reserva>
 
-    @EntityGraph(attributePaths = ["libro", "libro.resenias"])
-    @Query("SELECT r FROM Reserva r WHERE r.lector.id = :usuarioId AND (LOWER(r.libro.data.titulo) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(r.libro.data.autor) LIKE LOWER(CONCAT('%', :search, '%')))")
-    fun findPrestadosAMi(@Param("usuarioId") usuarioId: Int, @Param("search") search: String?, pageable: Pageable): Page<Reserva>
-
-    fun countByLibroId(libroId: Int): Int
+    //fun countByLibroDocumentId(libroId: String): Int
 
     // Trae solo las puntuaciones de las reseñas de un libro específico
 //    @Query("SELECT r.resenia.puntuacion FROM Reserva r WHERE r.libro.id = :libroId AND r.resenia IS NOT NULL")
@@ -60,22 +59,13 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
 //    ): List<Reserva>
 
     // Trae las reservas de un libro que aún no finalizaron (fechaHasta >= HOY)
-    @Query("SELECT r FROM Reserva r WHERE r.libro.id = :libroId AND r.fechaHasta >= CURRENT_DATE")
-    fun findReservasOcupadas(@Param("libroId") libroId: Int): List<Reserva>
+    @Query("SELECT r FROM Reserva r WHERE r.libroMongoId = :libroId AND r.fechaHasta >= CURRENT_DATE")
+    fun findReservasOcupadas(@Param("libroId") libroId: String): List<Reserva>
 
     // Verifica si hay reservas que se superponen con las fechas solicitadas
-    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Reserva r WHERE r.libro.id = :libroId AND r.fechaDesde <= :hasta AND r.fechaHasta >= :desde AND r.fechaHasta >= CURRENT_DATE")
+    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Reserva r WHERE r.libroMongoId = :libroId AND r.fechaDesde <= :hasta AND r.fechaHasta >= :desde AND r.fechaHasta >= CURRENT_DATE")
     fun existReservaSuperpuesta(
-        @Param("libroId") libroId: Int,
-        @Param("desde") desde: LocalDate,
-        @Param("hasta") hasta: LocalDate
-    ): Boolean
-
-    // Verifica si hay reservas que se superponen con las fechas solicitadas
-    // Una superposición ocurre si: reserva.fechaDesde <= hasta_solicitado AND reserva.fechaHasta >= desde_solicitado
-    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Reserva r WHERE r.libro.id = :libroId AND r.fechaDesde <= :hasta AND r.fechaHasta >= :desde AND r.fechaHasta >= CURRENT_DATE")
-    fun existsReservaSuperpuesta(
-        @Param("libroId") libroId: Int,
+        @Param("libroId") libroId: String,
         @Param("desde") desde: LocalDate,
         @Param("hasta") hasta: LocalDate
     ): Boolean
