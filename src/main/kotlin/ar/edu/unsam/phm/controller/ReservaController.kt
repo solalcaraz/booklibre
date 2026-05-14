@@ -41,7 +41,6 @@ class ReservaController (private val reservaService: ReservaService, private val
         return reservaMapper.toDtoReservaPag(page)
     }
 
-    /*
     @PostMapping("/obtenerPrestadosPorMi")
     fun obtenerPrestadosPorMi(
         @RequestBody payload: PaginationReqDTO<ReservaRequestDTO>
@@ -49,7 +48,6 @@ class ReservaController (private val reservaService: ReservaService, private val
         val page = reservaService.getPrestadosPorMi(payload)
         return reservaMapper.toDtoReservaPag(page)
     }
-    */
 
 //    @GetMapping("/librosDisponibles")
 //    fun listarLibros(

@@ -45,11 +45,8 @@ class ReservaService(
         if (librosMongoIds.isEmpty()) return PageImpl(emptyList(), pageable, 0)
 
         val pageReserva: Page<Reserva> = reservaRepository.findPrestadosAMiConLibrosMongo( usuarioId.toInt(), librosMongoIds, pageable  )
-        return this.mapReservasToDto(pageReserva, payload, pageable)
+        return this.mapReservasToDto(pageReserva, pageable)
     }
-
-    /*
-    TODO: Ver que rompe el metodo del repo porque se accede a una propiedad que ya no existe.
 
     fun getPrestadosPorMi(payload: PaginationReqDTO<ReservaRequestDTO>): Page<ReservaDTO> {
         val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
@@ -61,9 +58,8 @@ class ReservaService(
         if (librosMongoIds.isEmpty()) return PageImpl(emptyList(), pageable, 0)
 
         val pageReserva: Page<Reserva> =  reservaRepository.findPrestadosPorMiConLibrosMongo(librosMongoIds, pageable) //usuarioId.toInt()
-        return this.mapReservasToDto(pageReserva, payload, pageable)
+        return this.mapReservasToDto(pageReserva, pageable)
     }
-*/
 
 //    @Transactional(readOnly = true)
 //    fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): Page<Reserva> {
@@ -154,7 +150,7 @@ class ReservaService(
         return reservaAdapter.toDto(nuevaReserva, bibliokarmasGanados, libroMongo)
     }
 
-    private fun mapReservasToDto(pageReserva: Page<Reserva>, payload: PaginationReqDTO<ReservaRequestDTO>, pageable: PageRequest  ): Page<ReservaDTO> {
+    private fun mapReservasToDto(pageReserva: Page<Reserva>, pageable: PageRequest  ): Page<ReservaDTO> {
         val reservasDto = pageReserva.content.map { reserva ->
             val libroMongoId = reserva.libroMongoId ?: throw IllegalStateException("La reserva no tiene libro Mongo asociado")
 
