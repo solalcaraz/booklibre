@@ -3,7 +3,18 @@ import { API_URL } from '../env'
 import { authService } from '../services/AuthService'
 
 export const api = axios.create({
-  baseURL: API_URL
+  baseURL: API_URL,
+  paramsSerializer: (params) => {
+    const urlParams = new URLSearchParams()
+    Object.entries(params).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((v) => urlParams.append(key, String(v)))
+      } else if (value !== undefined && value !== null && value !== '') {
+        urlParams.append(key, String(value))
+      }
+    })
+    return urlParams.toString()
+  }
 })
 
 api.interceptors.request.use((config) => {

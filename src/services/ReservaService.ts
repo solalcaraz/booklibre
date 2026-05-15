@@ -2,12 +2,13 @@ import axios from 'axios'
 import { API_URL } from '../env'
 import type { ReservaRequestModel, ReservaResponseModel } from '../models/ReservaModel'
 import type { ReservaLibroHomeJSON, FiltrosLibro } from '../types/ReservaLibroHome'
-import { customAxios, getAxiosData } from './common'
+import { getAxiosData } from './common'
 import type { PagReqModel, PagResModel } from '../models/PaginationModel'
 import type { ReseniaReq } from '../models/ReseniaModel'
 import type { DetalleReserva } from '../types/DetalleReserva'
 import { authService } from './AuthService'
 import type { CrearReservaJSON } from '../classes/Reserva'
+import { api } from '../api/api'
 
 class ReservaService {
   async buscarPrestadosAmi(
@@ -59,7 +60,7 @@ class ReservaService {
     const token = authService.tokenDeStorage()
     const filtros = req.filter ?? {}
     const params = { ...filtros, numeroPagina: req.pageNumber, tamanoPaginado: req.pageSize }
-    const queryLibros = () => customAxios.get('/reserva/librosDisponibles', { params, headers: { Authorization: `Bearer ${token}` } })
+    const queryLibros = () => api.get('/reserva/librosDisponibles', { params, headers: { Authorization: `Bearer ${token}` } })
     return await getAxiosData(queryLibros)
   }
 
