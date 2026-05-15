@@ -7,13 +7,11 @@ import ar.edu.unsam.phm.dto.PaginationReqDTO
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.dto.ReseniaReqDTO
 import ar.edu.unsam.phm.dto.ReservaDTO
-//import ar.edu.unsam.phm.dto.ReservaLibroDTO
+import ar.edu.unsam.phm.dto.ReservaLibroDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
-//import ar.edu.unsam.phm.dto.toReservaLibroDTO
 import ar.edu.unsam.phm.helpers.ReservaMapper
 import ar.edu.unsam.phm.service.ReseniaService
 import ar.edu.unsam.phm.service.ReservaService
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
@@ -49,21 +46,21 @@ class ReservaController (private val reservaService: ReservaService, private val
         return reservaMapper.toDtoReservaPag(page)
     }
 
-//    @GetMapping("/librosDisponibles")
-//    fun listarLibros(
-//        @ModelAttribute filtros: FiltrosLibro
-//    ): PaginationResponseDTO<ReservaLibroDTO> {
-//        val userId = SecurityContextHolder.getContext().authentication.name.toInt()
-//
-//        val page = reservaService.getLibrosDisponiblesParaReserva(userId, filtros)
-//        return PaginationResponseDTO(
-//            items = page.content.map { it.toReservaLibroDTO() },
-//            page = page.number,
-//            size = page.size,
-//            totalItems = page.totalElements.toInt(),
-//            totalPages = page.totalPages
-//        )
-//    }
+    @GetMapping("/librosDisponibles")
+    fun listarLibros(
+        @ModelAttribute filtros: FiltrosLibro
+    ): PaginationResponseDTO<ReservaLibroDTO> {
+        val userId = SecurityContextHolder.getContext().authentication.name.toInt()
+
+        val page = reservaService.getLibrosDisponiblesParaReserva(userId, filtros)
+        return PaginationResponseDTO(
+            items = page.content,
+            page = page.number,
+            size = page.size,
+            totalItems = page.totalElements.toInt(),
+            totalPages = page.totalPages
+        )
+    }
 
     @PostMapping("/calificar")
     fun calificar(@RequestBody payload: ReseniaReqDTO) {
