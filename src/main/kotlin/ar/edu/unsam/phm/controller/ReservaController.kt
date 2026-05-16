@@ -1,6 +1,5 @@
 package ar.edu.unsam.phm.controller
 
-import ar.edu.unsam.phm.domain.ClickLibroDocument
 import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.DetalleReservaDTO
 import ar.edu.unsam.phm.helpers.FiltrosLibro
@@ -11,7 +10,6 @@ import ar.edu.unsam.phm.dto.ReservaDTO
 import ar.edu.unsam.phm.dto.ReservaLibroDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
 import ar.edu.unsam.phm.helpers.ReservaMapper
-import ar.edu.unsam.phm.repository.ClickLibroRepository
 import ar.edu.unsam.phm.service.ClickLibroService
 import ar.edu.unsam.phm.service.ReseniaService
 import ar.edu.unsam.phm.service.ReservaService
@@ -31,7 +29,7 @@ import java.time.LocalDate
 @CrossOrigin(origins = ["http://localhost:5173"], allowCredentials = "true")
 @RequestMapping("/reserva")
 class ReservaController (private val reservaService: ReservaService, private val reservaMapper: ReservaMapper,
-    private val reseniaService: ReseniaService, private val clickLibroService: ClickLibroService, private val clickLibroRepository: ClickLibroRepository) {
+    private val reseniaService: ReseniaService, private val clickLibroService: ClickLibroService) {
 
     @PostMapping("/obtenerMisReservas")
     fun obtenerReservas(
