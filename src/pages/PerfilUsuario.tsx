@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   usuarioService,
@@ -34,7 +34,7 @@ export const PerfilUsuario = () => {
   const [sort, setSort] = useState<LibroSort>({ field: '', direction: 'asc' })
   const navigate = useNavigate()
 
-  const getLibros = async () => {
+  const getLibros = useCallback(async () => {
     if (!authService.puedePublicar()) return
     try {
       const libros = await usuarioService.getLibros(pagination.page, filter, sort)
@@ -48,22 +48,18 @@ export const PerfilUsuario = () => {
     } catch (error: unknown) {
       setError(getMensajeError(error as ErrorResponse))
       console.log(error)
-    // } finally {
-    //   setLoading(false)
     }
-  }
+  }, [filter, pagination.page, sort])
 
-  const getUsuario = async () => {
+  const getUsuario = useCallback(async () => {
     try {
       const usuario = await usuarioService.getUsuario()
       setUsuario(usuario)
     } catch (error: unknown) {
       setError(getMensajeError(error as ErrorResponse))
       console.log(error)
-    // } finally {
-    //   setLoading(false)
-  }
-  }
+    }
+  }, [])
 
   const handleActualizarUsuario = async (userPatch: EditProfileData) => {
     try {
@@ -110,16 +106,19 @@ export const PerfilUsuario = () => {
     })
   }
 
-  /* consultar la separación de los useEffect en MisLibros / PerfilUsuario para optimizar queries a postgres */
   useEffect(() => {
-    const cargarDatos = async () => {
+    const cargarUsuario = async () => {
       setLoading(true)
-      await Promise.all([getUsuario(), getLibros()])
+      await getUsuario()
       setLoading(false)
     }
-    cargarDatos()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.page, filter, sort])
+    cargarUsuario()
+  }, [getUsuario])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    getLibros()
+  }, [getLibros])
 
   if (loading) return <Spinner />
 

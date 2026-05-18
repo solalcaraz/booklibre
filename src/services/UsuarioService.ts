@@ -30,6 +30,7 @@ export type LibroUsuario = {
   estadoReserva: LibroEstado
   agregadoEl: string
   portada: string
+  clicks: number
 }
 
 export type EditProfileData = {
