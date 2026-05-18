@@ -1,5 +1,6 @@
 package ar.edu.unsam.phm.domain
 
+import ar.edu.unsam.phm.dto.LibroResumen
 import ar.edu.unsam.phm.repository.EntidadConId
 import ar.edu.unsam.phm.exceptions.BadRequestException
 import jakarta.persistence.*
@@ -33,6 +34,19 @@ class Reserva(
     val libroMongoId: String? = null
 
 ) : EntidadConId {
+    @Embedded
+    @AttributeOverrides(
+        AttributeOverride(name = "titulo", column = Column(name = "libro_titulo", nullable = false)),
+        AttributeOverride(name = "autor", column = Column(name = "libro_autor", nullable = false)),
+        AttributeOverride(name = "puntuacion", column = Column(name = "libro_puntuacion")),
+        AttributeOverride(name = "imgUrl", column = Column(name = "libro_img_url", nullable = false)),
+        AttributeOverride(name = "duenoNombre", column = Column(name = "libro_duenoNombre", nullable = false)),
+    )
+    var libroResumen: LibroResumen = LibroResumen()
+
+    @Column(name = "bibliokarmas_ganados", nullable = false)
+    var bibliokarmasGanados: Int = 0
+
     @Column(nullable = false)
     private var yaResenio: Boolean = false
 
