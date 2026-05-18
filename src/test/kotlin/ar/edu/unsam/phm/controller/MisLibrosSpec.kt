@@ -126,23 +126,25 @@ class MisLibrosSpec(
         )
 
         val libro1 = MiLibroProjection(
-            id = 1,
+            id = "1",
             titulo = "1984",
             autor = "George Orwell",
             genero = Genero.CIENCIA_FICCION,
             estadoReserva = "DISPONIBLE",
             agregadoEl = LocalDate.now(),
-            portada = "portadaMock"
+            portada = "portadaMock",
+            clicks = 3
         )
 
         val libro2 = MiLibroProjection(
-            id = 2,
+            id = "2",
             titulo = "Dune",
             autor = "Frank Herbert",
             genero = Genero.CIENCIA_FICCION,
             estadoReserva = "DISPONIBLE",
             agregadoEl = LocalDate.now(),
-            portada = "portadaMock"
+            portada = "portadaMock",
+            clicks = 0
         )
 
         val paginaMock = PaginationResponseDTO(
@@ -170,6 +172,8 @@ class MisLibrosSpec(
             .andExpect(jsonPath("$.size").value(3))
             .andExpect(jsonPath("$.totalItems").value(2))
             .andExpect(jsonPath("$.totalPages").value(1))
+            .andExpect(jsonPath("$.items[0].clicks").value(3))
+            .andExpect(jsonPath("$.items[1].clicks").value(0))
     }
 
     @Test

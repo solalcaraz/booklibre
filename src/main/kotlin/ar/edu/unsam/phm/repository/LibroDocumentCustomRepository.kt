@@ -22,7 +22,7 @@ class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplat
         val criteria = Criteria.where("activo").`is`(true)
 
         // excluir libros del propio user
-        criteria.and("dueno.id").ne(excludeUsuarioId)
+        criteria.and("dueno._id").ne(excludeUsuarioId)
 
         // disponible: ninguna reserva pendiente que se superponga con el rango del filter
         criteria.and("reservasPendientes").not().elemMatch(

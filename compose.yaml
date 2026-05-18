@@ -1,21 +1,92 @@
 services:
-  mongo:
-    # tomamos la última imagen de mongo
-    image: mongo:latest
-    container_name: mongo_booklibre
-    hostname: host-mongo
+  configsvr1:
+    image: mongo:7
+    container_name: booklibre_configsvr1
+    command: mongod --configsvr --replSet config-rs --port 27017 --bind_ip_all
+    volumes:
+      - configsvr1_data:/data/db
 
-    # mapeo el puerto de mi computadora 27019 contra el 27017 (importante porque es el default de mongo)
+  configsvr2:
+    image: mongo:7
+    container_name: booklibre_configsvr2
+    command: mongod --configsvr --replSet config-rs --port 27017 --bind_ip_all
+    volumes:
+      - configsvr2_data:/data/db
+
+  configsvr3:
+    image: mongo:7
+    container_name: booklibre_configsvr3
+    command: mongod --configsvr --replSet config-rs --port 27017 --bind_ip_all
+    volumes:
+      - configsvr3_data:/data/db
+
+  shard1a:
+    image: mongo:7
+    container_name: booklibre_shard1a
+    command: mongod --shardsvr --replSet shard1-rs --port 27017 --bind_ip_all
+    volumes:
+      - shard1a_data:/data/db
+
+  shard1b:
+    image: mongo:7
+    container_name: booklibre_shard1b
+    command: mongod --shardsvr --replSet shard1-rs --port 27017 --bind_ip_all
+    volumes:
+      - shard1b_data:/data/db
+
+  shard1c:
+    image: mongo:7
+    container_name: booklibre_shard1c
+    command: mongod --shardsvr --replSet shard1-rs --port 27017 --bind_ip_all
+    volumes:
+      - shard1c_data:/data/db
+
+  shard2a:
+    image: mongo:7
+    container_name: booklibre_shard2a
+    command: mongod --shardsvr --replSet shard2-rs --port 27017 --bind_ip_all
+    volumes:
+      - shard2a_data:/data/db
+
+  shard2b:
+    image: mongo:7
+    container_name: booklibre_shard2b
+    command: mongod --shardsvr --replSet shard2-rs --port 27017 --bind_ip_all
+    volumes:
+      - shard2b_data:/data/db
+
+  shard2c:
+    image: mongo:7
+    container_name: booklibre_shard2c
+    command: mongod --shardsvr --replSet shard2-rs --port 27017 --bind_ip_all
+    volumes:
+      - shard2c_data:/data/db
+
+  mongos:
+    image: mongo:7
+    container_name: booklibre_mongos
+    command: mongos --configdb config-rs/configsvr1:27017,configsvr2:27017,configsvr3:27017 --port 27017 --bind_ip_all
+    depends_on:
+      - configsvr1
+      - configsvr2
+      - configsvr3
+      - shard1a
+      - shard1b
+      - shard1c
+      - shard2a
+      - shard2b
+      - shard2c
     ports:
       - "27019:27017"
+
+  mongo-cluster-init:
+    image: mongo:7
+    container_name: booklibre_mongo_cluster_init
+    depends_on:
+      - mongos
     volumes:
-      - ~/apps/mongo_booklibre_db:/data/db
-      - ~/apps/mongo_booklibre_log:/var/log/mongodb/
-  #    - ./Docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: jacob
-      MONGO_INITDB_ROOT_PASSWORD: elgordi
-      MONGO_INITDB_DATABASE: booklibre_mongodb
+      - ./docker/mongo:/scripts:ro
+    entrypoint: ["bash", "/scripts/init-sharded-cluster.sh"]
 
   postgres:
     image: postgres:16
@@ -41,4 +112,13 @@ services:
       - postgres
 
 volumes:
+  configsvr1_data:
+  configsvr2_data:
+  configsvr3_data:
+  shard1a_data:
+  shard1b_data:
+  shard1c_data:
+  shard2a_data:
+  shard2b_data:
+  shard2c_data:
   postgres_data:

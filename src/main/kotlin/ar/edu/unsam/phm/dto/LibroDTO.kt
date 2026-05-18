@@ -38,10 +38,17 @@ data class MiLibroProjection(
     val genero: Genero,
     val estadoReserva: String,
     val agregadoEl: LocalDate,
-    val portada: String
+    val portada: String,
+    val clicks: Int = 0
 
     // Acá podría traer también y que Denu use el mismo DTO
     //val promedioCalificacion: Double? = 0.0
+)
+
+data class LibroMasClickeadoDTO(
+    val libroId: String,
+    val libroTitulo: String,
+    val clicks: Int
 )
 
 // libro dentro de prestamos

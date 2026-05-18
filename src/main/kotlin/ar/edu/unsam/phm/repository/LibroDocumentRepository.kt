@@ -18,18 +18,20 @@ interface LibroDocumentRepository : MongoRepository<LibroDocument, String>, Libr
     @Query("{ activo: true, '\$or': [ { titulo: {'\$regex': ?0, '\$options': 'i'} }, { autor: {'\$regex': ?0, '\$options': 'i'} } ] }")
     fun findActivosByTituloOrAutor(valorABuscar: String): List<LibroDocument>
 
-    @Query("{ activo: true, 'duenoId': ?0, '\$or': [ { titulo: {'\$regex': ?1, '\$options': 'i'} }, { autor: {'\$regex': ?1, '\$options': 'i'} } ] }")
+    @Query("{ activo: true, 'dueno._id': ?0, '\$or': [ { titulo: {'\$regex': ?1, '\$options': 'i'} }, { autor: {'\$regex': ?1, '\$options': 'i'} } ] }")
     fun findActivosByDuenoIdAndTituloOrAutor(duenoId: Int, valorABuscar: String): List<LibroDocument>
 
     // Todos los libros activos de un dueño
     fun findByDuenoIdAndActivoTrue(duenoId: Int, pageable: Pageable): Page<LibroDocument>
 
+    fun findByDuenoIdAndActivoTrue(duenoId: Int): List<LibroDocument>
+
     // Libros prestados: tienen al menos una reserva que solapa con "hoy"
-    @Query("{ 'dueno.id': ?0, 'activo': true, 'reservasPendientes': { '\$elemMatch': { 'fechaInicio': { '\$lte': ?1 }, 'fechaFin': { '\$gte': ?1 } } } }")
+    @Query("{ 'dueno._id': ?0, 'activo': true, 'reservasPendientes': { '\$elemMatch': { 'fechaInicio': { '\$lte': ?1 }, 'fechaFin': { '\$gte': ?1 } } } }")
     fun findPrestadosByDuenoId(duenoId: Int, hoy: LocalDate, pageable: Pageable): Page<LibroDocument>
 
     // Libros disponibles: NO tienen ninguna reserva que solape con "hoy"
-    @Query("{ 'dueno.id': ?0, 'activo': true, 'reservasPendientes': { '\$not': { '\$elemMatch': { 'fechaInicio': { '\$lte': ?1 }, 'fechaFin': { '\$gte': ?1 } } } } }")
+    @Query("{ 'dueno._id': ?0, 'activo': true, 'reservasPendientes': { '\$not': { '\$elemMatch': { 'fechaInicio': { '\$lte': ?1 }, 'fechaFin': { '\$gte': ?1 } } } } }")
     fun findDisponiblesByDuenoId(duenoId: Int, hoy: LocalDate, pageable: Pageable): Page<LibroDocument>
 
     // REHACER --> No entiendo qué debería hacer el método para corregirlo
