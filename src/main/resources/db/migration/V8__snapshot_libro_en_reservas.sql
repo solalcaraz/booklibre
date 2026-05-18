@@ -63,6 +63,10 @@ SET
     libro_puntuacion = CASE id_libro
         WHEN 'libro_001' THEN 4.5
         WHEN 'libro_002' THEN 3.0
+        WHEN 'libro_005' THEN 2.5
+        WHEN 'libro_007' THEN 5.0
+        WHEN 'libro_009' THEN 4.5
+        WHEN 'libro_0013' THEN 4.0
         ELSE libro_puntuacion
     END,
     libro_dueno_id = CASE
@@ -76,4 +80,13 @@ SET
         WHEN id_libro IN ('libro_004', 'libro_005', 'libro_006', 'libro_009', 'libro_010', 'libro_011', 'libro_012', 'libro_013', 'libro_014') THEN 'Max Verstappen'
         WHEN id_libro IN ('libro_007', 'libro_008') THEN 'Ye West'
         ELSE libro_dueno_nombre
+    END,
+    bibliokarmas_ganados = CASE id_libro
+        WHEN 'libro_001' THEN 305
+        WHEN 'libro_005' THEN 1500
+        WHEN 'libro_007' THEN 850
+        WHEN 'libro_009' THEN 1320
+        WHEN 'libro_013' THEN 2500
+        ELSE bibliokarmas_ganados
     END;
+

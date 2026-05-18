@@ -34,7 +34,7 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
     @Query("""
         SELECT r
         FROM Reserva r
-        WHERE r.libroResumen.duenoNombre = :usuarioId
+        WHERE r.libroResumen.duenoId = :usuarioId
         AND (
             :inputSearch = ''
             OR LOWER(r.libroResumen.titulo) LIKE LOWER(CONCAT('%', :inputSearch, '%'))

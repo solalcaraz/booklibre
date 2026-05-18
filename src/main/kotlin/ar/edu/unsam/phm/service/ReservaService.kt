@@ -12,6 +12,7 @@ import ar.edu.unsam.phm.dto.toReservaLibroDTO
 import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
+import ar.edu.unsam.phm.helpers.FiltrosLibro
 import ar.edu.unsam.phm.helpers.ReservaAdapter
 import ar.edu.unsam.phm.repository.LibroDocumentRepository
 import ar.edu.unsam.phm.repository.ReseniaRepository
@@ -102,7 +103,7 @@ class ReservaService(
             fechaHasta = reserva.fechaHasta,
             libroMongoId = reserva.libroMongoID
         )
-        val libroResumen = LibroResumen(libro.titulo, libro.autor, libro.promedioCalificacion, libro.portada, libro.dueno.nombreCompleto)
+        val libroResumen = LibroResumen(libro.titulo, libro.autor, libro.promedioCalificacion, libro.portada, libro.dueno.nombreCompleto, libro.dueno.id)
         nuevaReserva.libroResumen = libroResumen
 
         val seSuperpone = reservaRepository.existReservaSuperpuesta(libro.id!!, reserva.fechaDesde, reserva.fechaHasta)

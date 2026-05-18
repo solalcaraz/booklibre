@@ -53,4 +53,5 @@ data class LibroResumen(
     val puntuacion: Double? = 0.0,
     val imgUrl: String = "",
     val duenoNombre: String = "",
-)
+    val duenoId: Int?,
+    )

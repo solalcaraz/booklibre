@@ -41,8 +41,9 @@ class Reserva(
         AttributeOverride(name = "puntuacion", column = Column(name = "libro_puntuacion")),
         AttributeOverride(name = "imgUrl", column = Column(name = "libro_img_url", nullable = false)),
         AttributeOverride(name = "duenoNombre", column = Column(name = "libro_duenoNombre", nullable = false)),
+        AttributeOverride(name = "duenoId", column = Column(name = "libro_duenoId", nullable = false)),
     )
-    var libroResumen: LibroResumen = LibroResumen()
+    lateinit var libroResumen: LibroResumen
 
     @Column(name = "bibliokarmas_ganados", nullable = false)
     var bibliokarmasGanados: Int = 0
