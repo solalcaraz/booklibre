@@ -48,7 +48,8 @@ const MIS_LIBROS_MOCK: PagResModel<LibroUsuario> = {
       genero: 'Programación',
       estadoReserva: 'DISPONIBLE',
       agregadoEl: '2026-03-18',
-      portada: 'clean-code.jpg'
+      portada: 'clean-code.jpg',
+      clicks: 42
     }
   ],
   page: 0,

@@ -47,6 +47,8 @@ export const PerfilLibro = ({ libro, onDelete }: LibroProps) => {
         {formatDate(libro.agregadoEl)}
       </td>
 
+      <td className="px-5 py-4 text-sm font-semibold text-slate-600">{libro.clicks}</td>
+
       <td className="px-5 py-4">
         <div className="flex items-center justify-center gap-3 text-lg text-slate-500">
           <Link

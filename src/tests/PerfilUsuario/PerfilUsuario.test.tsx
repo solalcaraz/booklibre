@@ -63,7 +63,8 @@ const MIS_LIBROS_MOCK: PagResModel<LibroUsuario> = {
       genero: 'Programación',
       estadoReserva: 'DISPONIBLE',
       agregadoEl: '2026-03-18',
-      portada: 'clean-code.jpg'
+      portada: 'clean-code.jpg',
+      clicks: 42
     }
   ],
   page: 0,
@@ -119,6 +120,7 @@ describe('PerfilUsuario', () => {
     expect(screen.getByText('Diego Maradona')).toBeInTheDocument()
     expect(screen.getByText('diego@maradona.com')).toBeInTheDocument()
     expect(screen.getByText('Clean Code')).toBeInTheDocument()
+    expect(screen.getByText('42')).toBeInTheDocument()
 
     expect(usuarioService.getUsuario).toHaveBeenCalledTimes(1)
     expect(usuarioService.getLibros).toHaveBeenCalledTimes(1)
@@ -145,6 +147,28 @@ describe('PerfilUsuario', () => {
     expect(usuarioService.getLibros).not.toHaveBeenCalled()
     expect(screen.queryByText('Clean Code')).not.toBeInTheDocument()
     expect(screen.queryByTestId('delete-libro')).not.toBeInTheDocument()
+  })
+
+  it('al cambiar de tab solo vuelve a pedir los libros', async () => {
+    const user = userEvent.setup()
+
+    renderComponent()
+
+    expect(await screen.findByTestId('perfil-gestor-libros')).toBeInTheDocument()
+
+    vi.mocked(usuarioService.getUsuario).mockClear()
+    vi.mocked(usuarioService.getLibros).mockClear()
+
+    await user.click(screen.getByRole('button', { name: 'Disponibles' }))
+
+    await waitFor(() => {
+      expect(usuarioService.getLibros).toHaveBeenCalledWith(0, 'Disponibles', {
+        field: '',
+        direction: 'asc'
+      })
+    })
+    expect(usuarioService.getUsuario).not.toHaveBeenCalled()
+    expect(screen.queryByTestId('spinner')).not.toBeInTheDocument()
   })
 
   it('muestra ErrorCard si falla la carga inicial', async () => {

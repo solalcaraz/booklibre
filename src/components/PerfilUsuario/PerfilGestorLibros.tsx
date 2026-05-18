@@ -117,6 +117,7 @@ export const PerfilGestorLibros = ({
                     AGREGADO
                   </button>
                 </th>
+                <th className="px-5 py-4 font-bold">CLICKS</th>
                 <th className="px-5 py-4 font-bold text-center">Acciones</th>
               </tr>
             </thead>
