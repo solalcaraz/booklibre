@@ -43,7 +43,9 @@ class LibroController(
             .name
             .toInt()
 
-        return libroService.buscarMisLibros(userId, filter, sort, page, size)
+        val libros = libroService.buscarMisLibros(userId, filter, sort, page, size)
+
+        return libros
     }
 
     @PreAuthorize("hasRole('PUBLICADOR') or hasRole('LECTOR_PUBLICADOR')")
