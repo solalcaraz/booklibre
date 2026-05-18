@@ -90,6 +90,7 @@ class LibroService(
 //        )
 //    }
 
+    /* Acá tengo que meter el sort, por agregado y disponible*/
     fun buscarMisLibros(
         userId: Int,
         filter: String,
@@ -100,11 +101,7 @@ class LibroService(
         val paginado = PageRequest.of(page, size)
         val hoy = LocalDate.now()
 
-        val librosPage = when (filter) {
-            "Disponibles" -> libroRepository.findDisponiblesByDuenoId(userId, hoy, paginado)
-            "Prestados" -> libroRepository.findPrestadosByDuenoId(userId, hoy, paginado)
-            else -> libroRepository.findByDuenoIdAndActivoTrue(userId, paginado)
-        }
+        val librosPage = libroRepository.findMisLibrosDe(userId, hoy, filter, sort, paginado)
 
         val idsLibros = librosPage.content.mapNotNull { it.id }
         val clicksPorLibro = if (idsLibros.isEmpty()) {

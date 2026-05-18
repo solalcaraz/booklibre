@@ -75,6 +75,9 @@ class UsuarioService(
         return usuario.bibliokarmas
     }
 
+    /* Acá solamente estoy teniendo en cuenta los libros activos, deberían contar los dados de baja también */
+    /* Y hago dos queries, una para todos los libros del usuario, y la siguiente para contar la
+    cantidad de reservas correspondientes a esos libros */
     private fun cantidadPrestadosDe(usuarioId: Int): Int {
         val idsLibrosDelUsuario = libroRepository.findByDuenoIdAndActivoTrue(usuarioId).mapNotNull { it.id }
 
