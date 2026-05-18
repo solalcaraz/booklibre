@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 
 interface ReservaAdapter {
-    fun toDtoReservaPag(page: Page<ReservaDTO>): PaginationResponseDTO<ReservaDTO>
+    fun toDtoReservaPag(page: Page<Reserva>): PaginationResponseDTO<ReservaDTO>
     fun toDetalleReservaDto(
         reserva: Reserva,
         bibliokarmas: Int,
@@ -18,10 +18,9 @@ interface ReservaAdapter {
         //Agrego aca para evitar el problema del Bean.
         libro: LibroDocument
     ): DetalleReservaDTO
-    fun toDto(reserva: Reserva, bibliokarmas: Int, libroMongo: LibroDocument): ReservaDTO
+    fun toDto(reserva: Reserva): ReservaDTO
 }
 
-// Ahora tiene que recibir el libro porque la reserva solo guarda el id del libro
 @Service
 //LibroDocument no es un Bean por lo que no funca.
 class ReservaMapper(private val libroMapper: LibroMapper): ReservaAdapter {
@@ -55,9 +54,13 @@ class ReservaMapper(private val libroMapper: LibroMapper): ReservaAdapter {
         )
     }
 
-    override fun toDtoReservaPag(page: Page<ReservaDTO>): PaginationResponseDTO<ReservaDTO> {
+    override fun toDtoReservaPag(page: Page<Reserva>): PaginationResponseDTO<ReservaDTO> {
+        val reservasDto = page.content.map {
+            this.toDto(it)
+        }
+
         return PaginationResponseDTO(
-            items = page.content,
+            items = reservasDto,
             page = page.number,
             size = page.size,
             totalItems = page.totalElements.toInt(),
@@ -65,18 +68,12 @@ class ReservaMapper(private val libroMapper: LibroMapper): ReservaAdapter {
         )
     }
 
-    override fun toDto(reserva: Reserva, bibliokarmas: Int, libroMongo: LibroDocument): ReservaDTO {
-        val libroResumen = LibroResumen(
-            libroMongo.titulo,
-            libroMongo.autor,
-            libroMongo.promedioCalificacion,
-            libroMongo.portada
-        )
+    override fun toDto(reserva: Reserva): ReservaDTO {
         return ReservaDTO(
             reserva.id,
-            libroResumen,
-            libroMongo.dueno.nombreCompleto,
-            bibliokarmas,           // valor recibido como parámetro, no recalculado
+            reserva.libroResumen,
+            reserva.libroResumen.duenoNombre,
+            reserva.bibliokarmasGanados,
             reserva.fechaDesde,
             reserva.fechaHasta,
             reserva.calcularEstado(),

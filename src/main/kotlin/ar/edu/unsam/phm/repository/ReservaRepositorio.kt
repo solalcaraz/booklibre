@@ -31,16 +31,35 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
     """)
     fun cantidadPrestadosDe(@Param("usuarioId") usuarioId: Int): Int
 */
-    @Query("SELECT r FROM Reserva r WHERE r.libroMongoId IN :libroMongoIds")
-    fun findPrestadosPorMiConLibrosMongo(
-        @Param("libroMongoIds") libroMongoIds: Collection<String>,
+    @Query("""
+        SELECT r
+        FROM Reserva r
+        WHERE r.libroResumen.duenoId = :usuarioId
+        AND (
+            :inputSearch = ''
+            OR LOWER(r.libroResumen.titulo) LIKE LOWER(CONCAT('%', :inputSearch, '%'))
+            OR LOWER(r.libroResumen.autor) LIKE LOWER(CONCAT('%', :inputSearch, '%'))
+        )
+    """)
+    fun findPrestadosPorMi(
+        @Param("usuarioId") usuarioId: Int,
+        @Param("inputSearch") inputSearch: String,
         pageable: Pageable
     ): Page<Reserva>
 
-    @Query("SELECT r FROM Reserva r WHERE r.lector.id = :usuarioId AND r.libroMongoId IN :libroMongoIds")
-    fun findPrestadosAMiConLibrosMongo(
+    @Query("""
+        SELECT r
+        FROM Reserva r
+        WHERE r.lector.id = :usuarioId
+        AND (
+            :inputSearch = ''
+            OR LOWER(r.libroResumen.titulo) LIKE LOWER(CONCAT('%', :inputSearch, '%'))
+            OR LOWER(r.libroResumen.autor) LIKE LOWER(CONCAT('%', :inputSearch, '%'))
+        )
+    """)
+    fun findPrestadosAMi(
         @Param("usuarioId") usuarioId: Int,
-        @Param("libroMongoIds") libroMongoIds: Collection<String>,
+        @Param("inputSearch") inputSearch: String,
         pageable: Pageable
     ): Page<Reserva>
 

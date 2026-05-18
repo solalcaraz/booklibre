@@ -1,6 +1,7 @@
 package ar.edu.unsam.phm.dto
 
 import ar.edu.unsam.phm.domain.Genero
+import jakarta.persistence.Embeddable
 import java.time.LocalDate
 
 enum class TipoDeLibroDTO(val label: String) {
@@ -45,9 +46,12 @@ data class MiLibroProjection(
 )
 
 // libro dentro de prestamos
+@Embeddable
 data class LibroResumen(
-    val titulo: String,
-    val autor: String,
-    val puntuacion: Double?,
-    val imgUrl: String,
-)
+    val titulo: String = "",
+    val autor: String = "",
+    val puntuacion: Double? = 0.0,
+    val imgUrl: String = "",
+    val duenoNombre: String = "",
+    val duenoId: Int?,
+    )
