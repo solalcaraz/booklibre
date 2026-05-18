@@ -8,7 +8,7 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://jacob:elgordi@127.0.0.1:27019/booklibre_mongodb?authSource=admin
+      uri: mongodb://127.0.0.1:27019/booklibre_mongodb
 
   datasource:
     url: jdbc:postgresql://localhost:5433/booklibre
@@ -32,7 +32,7 @@ spring:
     locations: classpath:db/migration
 
 security:
-  key: ${JWT_SECRET_KEY}
+  key: ${JWT_SECRET_KEY:booklibre-local-dev-secret-key-32-chars-minimum}
   access-token-expiration: 60000
   refresh-token-expiration: 604800000
 

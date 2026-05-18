@@ -23,14 +23,8 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
     fun cantidadLeidosDe(@Param("usuarioId") usuarioId: Int): Int
 
     /* Cantidad de libros prestados de un usuario = todas las reservas de cuyo libro es dueño */
-/*
-    @Query("""
-        select count(r)
-        from Reserva r
-        where r.libro.dueno.id = :usuarioId
-    """)
-    fun cantidadPrestadosDe(@Param("usuarioId") usuarioId: Int): Int
-*/
+    fun countByLibroMongoIdIn(libroMongoIds: Collection<String>): Int
+
     @Query("""
         SELECT r
         FROM Reserva r

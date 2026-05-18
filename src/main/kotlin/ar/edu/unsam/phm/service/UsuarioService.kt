@@ -7,6 +7,7 @@ import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.UsuarioMapper
+import ar.edu.unsam.phm.repository.LibroDocumentRepository
 import ar.edu.unsam.phm.repository.ReservaRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import ar.edu.unsam.phm.security.JwtProperties
@@ -21,15 +22,17 @@ import kotlin.text.toIntOrNull
 class UsuarioService(
     private val usuarioRepository: UsuarioRepository,
     private val reservaRepository: ReservaRepository,
+    private val libroRepository: LibroDocumentRepository,
     private val usuarioMapper: UsuarioMapper,
     private val tokenHelper: TokenHelper,
     private val jwtProperties: JwtProperties
 ) {
+    @Transactional(readOnly = true)
     fun getUsuarioById(id: Int): Usuario {
         val usuario = usuarioRepository.findById(id).orElseThrow { NotFoundException("Usuario no encontrado") }
 
         usuario.librosLeidos = reservaRepository.cantidadLeidosDe(usuario.id!!)
-        //usuario.librosPrestados = reservaRepository.cantidadPrestadosDe(usuario.id!!)
+        usuario.librosPrestados = cantidadPrestadosDe(usuario.id!!)
 
         return usuario
     }
@@ -70,5 +73,16 @@ class UsuarioService(
         val idNumerico = id.toIntOrNull() ?: throw BadRequestException("Id incorrecto")
         val usuario = usuarioRepository.findById(idNumerico).orElseThrow { NotFoundException("Usuario no encontrado") }
         return usuario.bibliokarmas
+    }
+
+    /* Acá solamente estoy teniendo en cuenta los libros activos, deberían contar los dados de baja también */
+    /* Y hago dos queries, una para todos los libros del usuario, y la siguiente para contar la
+    cantidad de reservas correspondientes a esos libros */
+    private fun cantidadPrestadosDe(usuarioId: Int): Int {
+        val idsLibrosDelUsuario = libroRepository.findByDuenoIdAndActivoTrue(usuarioId).mapNotNull { it.id }
+
+        if (idsLibrosDelUsuario.isEmpty()) return 0
+
+        return reservaRepository.countByLibroMongoIdIn(idsLibrosDelUsuario)
     }
 }

@@ -10,6 +10,7 @@ import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.helpers.LibroMapper
 import ar.edu.unsam.phm.exceptions.ForbiddenException
 import ar.edu.unsam.phm.exceptions.NotFoundException
+import ar.edu.unsam.phm.repository.ClickLibroRepository
 import ar.edu.unsam.phm.repository.LibroDocumentRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.data.domain.PageRequest
@@ -20,6 +21,7 @@ import java.time.LocalDate
 class LibroService(
     val libroRepository: LibroDocumentRepository,
     val usuarioRepository: UsuarioRepository,
+    val clickLibroRepository: ClickLibroRepository,
     val libroMapper: LibroMapper
 ) {
     private fun getIdUsuarioLogueado () =
@@ -88,6 +90,7 @@ class LibroService(
 //        )
 //    }
 
+    /* Acá tengo que meter el sort, por agregado y disponible*/
     fun buscarMisLibros(
         userId: Int,
         filter: String,
@@ -98,10 +101,13 @@ class LibroService(
         val paginado = PageRequest.of(page, size)
         val hoy = LocalDate.now()
 
-        val librosPage = when (filter) {
-            "Disponibles" -> libroRepository.findDisponiblesByDuenoId(userId, hoy, paginado)
-            "Prestados" -> libroRepository.findPrestadosByDuenoId(userId, hoy, paginado)
-            else -> libroRepository.findByDuenoIdAndActivoTrue(userId, paginado)
+        val librosPage = libroRepository.findMisLibrosDe(userId, hoy, filter, sort, paginado)
+
+        val idsLibros = librosPage.content.mapNotNull { it.id }
+        val clicksPorLibro = if (idsLibros.isEmpty()) {
+            emptyMap()
+        } else {
+            clickLibroRepository.findByLibroIdIn(idsLibros).groupingBy { it.libroId }.eachCount()
         }
 
         return PaginationResponseDTO(
@@ -113,7 +119,8 @@ class LibroService(
                     genero = libro.genero,
                     estadoReserva = if (libro.reservasPendientes.any { it.fechaInicio <= hoy && it.fechaFin >= hoy }) "PRESTADO" else "DISPONIBLE",
                     agregadoEl = libro.fechaPublicacion,
-                    portada = libro.portada
+                    portada = libro.portada,
+                    clicks = clicksPorLibro[libro.id] ?: 0
                 )
             },
             page = librosPage.number,

@@ -21,8 +21,8 @@ class LibrosBootstrap(
 ) : InitializingBean {
 
     fun LibroDocumentRepository.createIfNotExists(libro: LibroDocument): LibroDocument {
-        val bdLibro = this.findByTitulo(libro.titulo)
-        return bdLibro ?: this.save(libro)
+        val id = libro.id ?: return this.insert(libro)
+        return this.findById(id).orElseGet { this.insert(libro) }
     }
 
     fun init() {
@@ -42,9 +42,9 @@ class LibrosBootstrap(
             )
         }
 
-        val dueno1 = usuariosParaMongo.getOrElse(1) { usuariosParaMongo.first() } // Diego Maradona
-        val dueno2 = usuariosParaMongo.getOrElse(2) { usuariosParaMongo.first() } // Max Verstappen
-        val dueno3 = usuariosParaMongo.getOrElse(3) { usuariosParaMongo.first() } // Ye West
+        val dueno1 = usuariosParaMongo.firstOrNull { it.id == 1 } ?: usuariosParaMongo.first() // Diego Maradona
+        val dueno2 = usuariosParaMongo.firstOrNull { it.id == 2 } ?: usuariosParaMongo.first() // Max Verstappen
+        val dueno3 = usuariosParaMongo.firstOrNull { it.id == 3 } ?: usuariosParaMongo.first() // Ye West
         //val dueno4 = usuariosParaMongo.getOrElse(4) { usuariosParaMongo.first() } // Yiya Murano
 
         val libros = listOf(
