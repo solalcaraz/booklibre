@@ -7,9 +7,8 @@ import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.data.mongodb.repository.Query
 import org.springframework.data.repository.query.Param
 import java.time.LocalDate
-import java.util.Optional
 
-interface LibroDocumentRepository : MongoRepository<LibroDocument, String> {
+interface LibroDocumentRepository : MongoRepository<LibroDocument, String>, LibroDocumentRepositoryCustom {
     fun findByTitulo(titulo: String): LibroDocument?
 
     @Query("{ activo: true, titulo: {'\$regex': #{#valorABuscar}, '\$options': 'i'} }")
@@ -29,7 +28,7 @@ interface LibroDocumentRepository : MongoRepository<LibroDocument, String> {
     fun findPrestadosByDuenoId(duenoId: Int, hoy: LocalDate, pageable: Pageable): Page<LibroDocument>
 
     // Libros disponibles: NO tienen ninguna reserva que solape con "hoy"
-    @Query("{ 'dueno.id': ?0, 'activo': true, 'reservasPendientes': { '\$not': { '\$elemMatch': { 'fechaInicio': { '\$lte': ?1 }, 'fechaFin': ?1 } } } }")
+    @Query("{ 'dueno.id': ?0, 'activo': true, 'reservasPendientes': { '\$not': { '\$elemMatch': { 'fechaInicio': { '\$lte': ?1 }, 'fechaFin': { '\$gte': ?1} } } } }")
     fun findDisponiblesByDuenoId(duenoId: Int, hoy: LocalDate, pageable: Pageable): Page<LibroDocument>
 
     // REHACER --> No entiendo qué debería hacer el método para corregirlo
