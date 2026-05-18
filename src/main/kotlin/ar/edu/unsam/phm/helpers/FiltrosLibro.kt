@@ -34,9 +34,9 @@ enum class Ordenamiento {
     DUENO_ASC;
 
     fun toSort(): Sort = when (this) {
-        TITULO_ASC -> Sort.by(Sort.Direction.ASC, "data.titulo")
-        TITULO_DESC -> Sort.by(Sort.Direction.DESC, "data.titulo")
-        AUTOR_ASC -> Sort.by(Sort.Direction.ASC, "data.autor")
-        DUENO_ASC -> Sort.by(Sort.Direction.ASC, "data.dueno.nombreCompleto")
+        TITULO_ASC -> Sort.by(Sort.Direction.ASC, "titulo")
+        TITULO_DESC -> Sort.by(Sort.Direction.DESC, "titulo")
+        AUTOR_ASC -> Sort.by(Sort.Direction.ASC, "autor")
+        DUENO_ASC -> Sort.by(Sort.Direction.ASC, "dueno.nombreCompleto")
     }
 }

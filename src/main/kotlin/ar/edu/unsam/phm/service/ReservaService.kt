@@ -7,23 +7,22 @@ import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.DetalleReservaDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
 import ar.edu.unsam.phm.dto.ReservaDTO
+import ar.edu.unsam.phm.dto.ReservaLibroDTO
+import ar.edu.unsam.phm.dto.toReservaLibroDTO
 import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.ReservaAdapter
 import ar.edu.unsam.phm.repository.LibroDocumentRepository
-//import ar.edu.unsam.phm.repository.LibroSpecifications
 import ar.edu.unsam.phm.repository.ReseniaRepository
 import ar.edu.unsam.phm.repository.ReservaRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
-import kotlin.text.toInt
 
 @Service
 class ReservaService(
@@ -61,33 +60,22 @@ class ReservaService(
         return this.mapReservasToDto(pageReserva, pageable)
     }
 
-//    @Transactional(readOnly = true)
-//    fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): Page<Reserva> {
-//        val usuario = usuarioRepository.findById(usuarioId).orElseThrow { NotFoundException("Usuario no encontrado") }
-//
-//        // se arma la specification combinando todos los filtros
-//        val spec = Specification.where(LibroSpecifications.noEsDelUsuario(usuarioId))
-//            .and(LibroSpecifications.noEstaOcupado(filtros.fechaDesde, filtros.fechaHasta))
-//            .and(LibroSpecifications.conGeneros(filtros.generos))
-//            .and(LibroSpecifications.conPaginasMin(filtros.cantPaginasMin))
-//            .and(LibroSpecifications.conPaginasMax(filtros.cantPaginasMax))
-//            .and(LibroSpecifications.conIsbn(filtros.isbn))
-//            .and(LibroSpecifications.conUsuarioPrestador(filtros.usuarioPrestador))
-//            .and(LibroSpecifications.conBusqueda(filtros.busqueda))
-//
-//        // se obtiene la pagina a mostrar
-//        val pageable = PageRequest.of(filtros.numeroPagina, filtros.tamanoPaginado, filtros.orden.toSort())
-//
-//        // se transforma Page<Libro> en Page<Reserva>
-//        return libroRepository.findAll(spec, pageable).map { libro ->
-//            Reserva(
-//                lector = usuario,
-//                fechaDesde = filtros.fechaDesde,
-//                fechaHasta = filtros.fechaHasta,
-//                libroMongoId = "Todo: buscar libro mongo"
-//            )
-//        }
-//    }
+    @Transactional(readOnly = true)
+    fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): Page<ReservaLibroDTO> {
+        val usuario = usuarioRepository.findById(usuarioId).orElseThrow { NotFoundException("Usuario no encontrado") }
+
+        val pageDeLibros = libroRepository.findDisponiblesParaReserva(usuarioId, filtros)
+
+        // se transforma cada LibroDocument en una pre reserva y hace el mapeo (dto)
+        return pageDeLibros.map { libro ->
+            Reserva(
+                lector = usuario,
+                fechaDesde = filtros.fechaDesde,
+                fechaHasta = filtros.fechaHasta,
+                libroMongoId = libro.id!!,
+            ).toReservaLibroDTO(libro)
+        }
+    }
 
     @Transactional(readOnly = true)
     fun getDetalleReserva(libroId: String, userId: Int, fechaDesde: LocalDate, fechaHasta: LocalDate): DetalleReservaDTO {
