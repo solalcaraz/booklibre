@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param
 import java.time.LocalDate
 import java.util.Optional
 
-interface LibroDocumentRepository : MongoRepository<LibroDocument, String> {
+interface LibroDocumentRepository : MongoRepository<LibroDocument, String>, LibroDocumentRepositoryCustom {
     fun findByTitulo(titulo: String): LibroDocument?
 
     @Query("{ activo: true, titulo: {'\$regex': #{#valorABuscar}, '\$options': 'i'} }")
