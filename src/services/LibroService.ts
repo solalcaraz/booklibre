@@ -36,7 +36,7 @@ class LibroService {
 
   private mapToDTO(libroData: LibroFormData, id: string | number | null = null) {
     return {
-      id: id ? Number(id) : null,
+      id: id ? String(id) : null,
       titulo: libroData.titulo,
       tipo: libroData.tipo,
       genero: getKeyFromLabel(GENERO_OPTIONS, libroData.genero),
@@ -48,7 +48,11 @@ class LibroService {
       paginas: Number(libroData.paginas),
       isbn13: libroData.isbn13,
       descripcion: libroData.descripcion,
-      portada: libroData.portada
+      portada: libroData.portada,
+
+      duenoId: null,
+      duenoNombre: "", 
+      duenoImagen: ""
     }
   }
 }
