@@ -125,6 +125,22 @@ mongosh --quiet --host mongos --eval '
       }
     }
   ]);
+
+  const vistaCantidadColeccionables = "cantidad_libros_coleccionables";
+  if (booklibre.getCollectionInfos({ name: vistaCantidadColeccionables }).length > 0) {
+    booklibre.getCollection(vistaCantidadColeccionables).drop();
+  }
+
+  booklibre.createView(vistaCantidadColeccionables, "libros", [
+    {
+      $match: {
+        "_class": "COLECCIONABLE"
+      }
+    },
+    {
+      $count: "total_coleccionables"
+    }
+  ]);
 '
 
 echo "Mongo sharded cluster initialized."
