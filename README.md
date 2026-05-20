@@ -27,6 +27,5 @@ Backend para BookLibre
 ## Entrega 2: Parte 2: Consultas
 - Integrante 4: Saber qué libros tienen al menos 3 reservas activas.
 Se cargan reservas para libro_010 y libro_004 (que ya tenia una activa)
-<img width="433" height="730" alt="image" src="https://github.com/user-attachments/assets/63d4f5b8-19aa-452d-830e-1581ce846dea" />
-<img width="391" height="571" alt="image" src="https://github.com/user-attachments/assets/d294b74f-9bfd-484a-9f18-4af32372de98" />
-<img width="703" height="233" alt="image" src="https://github.com/user-attachments/assets/0fcc24f5-2549-4947-a6f6-eb4bca252f3b" />
+<img width="580" height="226" alt="image" src="https://github.com/user-attachments/assets/89afe249-1aac-4cb1-a0d1-b29708e74c68" />
+
