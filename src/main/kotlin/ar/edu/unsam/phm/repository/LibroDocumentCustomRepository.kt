@@ -91,7 +91,9 @@ class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplat
 
         val aggregation = Aggregation.newAggregation(
             Aggregation.match(criteria),
+            /* esta funcion calcula el estado de reserva del libro */
             estadoReservaOrdenOperation(hoy),
+            /* Y esta funcion usa el estado de la reserva para ordenar la pagina*/
             Aggregation.sort(sortMisLibros(sort)),
             Aggregation.skip(pageable.offset),
             Aggregation.limit(pageable.pageSize.toLong())
@@ -108,36 +110,44 @@ class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplat
         Criteria.where("fechaInicio").lte(hoy).and("fechaFin").gte(hoy)
 
     private fun estadoReservaOrdenOperation(hoy: LocalDate) = Aggregation.stage(
+        /* Agrego un campo estadoReservaOrden al documento
+        calculando su valor con estadoReservaOrdenExpresion(hoy) */
         Document(
-            "\$addFields", Document(
-                "estadoReservaOrden", Document(
-                    "\$cond", listOf(
-                        Document(
-                            "\$gt", listOf(
-                                Document(
-                                    "\$size", Document(
-                                        "\$filter", Document("input", "\$reservasPendientes")
-                                            .append("as", "reserva")
-                                            .append(
-                                                "cond", Document(
-                                                    "\$and", listOf(
-                                                        Document("\$lte", listOf("\$\$reserva.fechaInicio", hoy)),
-                                                        Document("\$gte", listOf("\$\$reserva.fechaFin", hoy))
-                                                    )
-                                                )
-                                            )
-                                    )
-                                ),
-                                0
-                            )
-                        ),
-                        1,
-                        0
-                    )
-                )
-            )
+            "\$addFields",
+            Document("estadoReservaOrden", estadoReservaOrdenExpression(hoy))
         )
     )
+
+    /* Devuelvo 0 si no tiene reserva activa (false), devuelvo 1 si sí (true) */
+    private fun estadoReservaOrdenExpression(hoy: LocalDate) =
+        Document("\$cond", listOf(tieneReservaActivaExpression(hoy), 1, 0))
+
+    /* Si la cantidad de reservas activas es mayor a 0 devuelve true si no false */
+    private fun tieneReservaActivaExpression(hoy: LocalDate) =
+        Document("\$gt", listOf(cantidadReservasActivasExpression(hoy), 0))
+
+    /* Averiguo el tamaño de las reservas activas */
+    private fun cantidadReservasActivasExpression(hoy: LocalDate) =
+        Document("\$size", reservasActivasExpression(hoy))
+
+    /* Filtro las reservas activas del libro para averiguar el tamaño */
+    private fun reservasActivasExpression(hoy: LocalDate) =
+        Document(
+            "\$filter",
+            Document("input", "\$reservasPendientes")
+                /* a cada item de reservasPendientes lo bautizo "reserva" para poder interpolar abajo */
+                .append("as", "reserva")
+                .append("cond", reservaActivaExpression(hoy))
+        )
+
+    /* Indica si la reserva esta activa o no con un doble condicional puesto como and */
+    private fun reservaActivaExpression(hoy: LocalDate) =
+        Document(
+            "\$and", listOf(
+                Document("\$lte", listOf("\$\$reserva.fechaInicio", hoy)),
+                Document("\$gte", listOf("\$\$reserva.fechaFin", hoy))
+            )
+        )
 
     private fun sortMisLibros(sort: String?): Sort =
         when (sort) {

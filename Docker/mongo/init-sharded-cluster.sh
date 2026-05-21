@@ -45,7 +45,7 @@ init_replica_set configsvr1 '{
 init_replica_set shard1a '{
   _id: "shard1-rs",
   members: [
-    { _id: 0, host: "shard1a:27017" },
+    { _id: 0, host: "shard1a:27017", priority: 2 },
     { _id: 1, host: "shard1b:27017" },
     { _id: 2, host: "shard1c:27017" }
   ]
@@ -54,7 +54,7 @@ init_replica_set shard1a '{
 init_replica_set shard2a '{
   _id: "shard2-rs",
   members: [
-    { _id: 0, host: "shard2a:27017" },
+    { _id: 0, host: "shard2a:27017", priority: 2 },
     { _id: 1, host: "shard2b:27017" },
     { _id: 2, host: "shard2c:27017" }
   ]
