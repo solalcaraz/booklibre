@@ -141,6 +141,42 @@ mongosh --quiet --host mongos --eval '
       $count: "total_coleccionables"
     }
   ]);
+
+  const vistaLibrosConReservasActivas = "libros_con_3_o_mas_reservas_activas";
+    if (booklibre.getCollectionInfos({ name: vistaLibrosConReservasActivas }).length > 0) {
+      booklibre.getCollection(vistaLibrosConReservasActivas).drop();
+    }
+
+    booklibre.createView(vistaLibrosConReservasActivas, "libros", [
+      {
+        $match: { activo: true }
+      },
+      {
+        $project: {
+          titulo: 1,
+          "dueno.nombreCompleto": 1,
+          reservasActivasHoy: {
+            $size: {
+              $filter: {
+                input: "$reservasPendientes",
+                as: "r",
+                cond: {
+                  $and: [
+                    { $gte: ["$$r.fechaFin", "$$NOW"] }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        $match: { reservasActivasHoy: { $gte: 3 } }
+      },
+      {
+        $sort: { reservasActivasHoy: -1 }
+      }
+    ]);
 '
 
 echo "Mongo sharded cluster initialized."

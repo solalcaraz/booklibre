@@ -23,3 +23,9 @@ Backend para BookLibre
 
 - Listar los usuarios que tengan más de 2 reservas devueltas.
 <img width="836" height="626" alt="image" src="https://github.com/user-attachments/assets/15fe9faa-ff92-4c63-9655-3ece7c231da9" />
+
+## Entrega 2: Parte 2: Consultas
+- Integrante 4: Saber qué libros tienen al menos 3 reservas activas.
+Se cargan reservas para libro_010 y libro_004 (que ya tenia una activa)
+<img width="580" height="226" alt="image" src="https://github.com/user-attachments/assets/89afe249-1aac-4cb1-a0d1-b29708e74c68" />
+
