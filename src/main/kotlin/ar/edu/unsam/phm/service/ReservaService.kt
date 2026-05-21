@@ -1,6 +1,7 @@
 package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.Reserva
+import ar.edu.unsam.phm.domain.ReservaPendiente
 import ar.edu.unsam.phm.dto.PaginationReqDTO
 import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.DetalleReservaDTO
@@ -115,8 +116,19 @@ class ReservaService(
         nuevaReserva.bibliokarmasGanados = bibliokarmasGanados
         usuario.aumentarBiblioKarmas(bibliokarmasGanados)
         usuarioRepository.save(usuario)
-        reservaRepository.save(nuevaReserva)
 
+        //Sincronizacion entre repoReservas y libroDocument.
+
+        val reservaGuardada = reservaRepository.save(nuevaReserva)
+
+        val reservaPendienteMongo = ReservaPendiente(
+            idReserva = reservaGuardada.id!!,
+            fechaInicio = reservaGuardada.fechaDesde,
+            fechaFin = reservaGuardada.fechaHasta,
+        )
+
+        libro.agregarReserva(reservaPendienteMongo)
+        libroRepository.save(libro)
         return reservaAdapter.toDto(nuevaReserva)
     }
 }
