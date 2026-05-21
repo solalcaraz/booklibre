@@ -1,7 +1,7 @@
 import type { RangosFechasOcupada } from '../types/DetalleReserva'
 
 export class Reserva {
-  public libroId: number
+  public libroId: string
   public fechaDesde: Date
   public fechaHasta: Date
   public fechasOcupadas: RangoFechas[]
@@ -12,7 +12,7 @@ export class Reserva {
     fechaHastaStr: string,
     fechasOcupadasStr: RangosFechasOcupada[]
   ) {
-    this.libroId = Number(libroId)
+    this.libroId = libroId
     this.fechaDesde = this.crearFechaNormalizada(fechaDesdeStr)
     this.fechaHasta = this.crearFechaNormalizada(fechaHastaStr)
     this.fechasOcupadas = fechasOcupadasStr.map((rango) => ({
@@ -67,7 +67,7 @@ export class Reserva {
   //Parseo a JSON
   toJSON() {
     return {
-      libroId: this.libroId.toString(),
+      libroMongoID: this.libroId,
       fechaDesde: this.crearFechaBackend(this.fechaDesde),
       fechaHasta: this.crearFechaBackend(this.fechaHasta)
     }
@@ -80,7 +80,7 @@ export interface RangoFechas {
 }
 
 export interface CrearReservaJSON {
-  libroId: string
+  libroMongoID: string
   fechaDesde: string
   fechaHasta: string
 }
