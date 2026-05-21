@@ -107,6 +107,7 @@ class LibroService(
         val clicksPorLibro = if (idsLibros.isEmpty()) {
             emptyMap()
         } else {
+            /* Cuento los clicks de cada libro de la pagina en un array y los estampo en el dto */
             clickLibroRepository.findByLibroIdIn(idsLibros).groupingBy { it.libroId }.eachCount()
         }
 
