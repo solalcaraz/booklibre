@@ -59,11 +59,12 @@ export const TuReserva = ({
     setConfirmando(true)
     try {
       const reservaJSON = nuevaReserva.toJSON()
-      await reservaService.crearReserva(reservaJSON)
-
+      console.log({ reservaJSON })
+      const crearReserva = await reservaService.crearReserva(reservaJSON)
+      console.log({ crearReserva })
       const bibliokarmas = await usuarioService.getBibliokarmas()
       updateUser({ bibliokarmas })
-      
+
       setExito(true)
       setTimeout(() => {
         navigate('/prestamos')
