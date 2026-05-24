@@ -142,6 +142,33 @@ mongosh --quiet --host mongos --eval '
     }
   ]);
 
+  const vistaLibrosConMasDe4Puntos = "libros_con_mas_de_4_puntos";
+  if (booklibre.getCollectionInfos({ name: vistaLibrosConMasDe4Puntos }).length > 0) {
+    booklibre.getCollection(vistaLibrosConMasDe4Puntos).drop();
+  }
+
+  booklibre.createView(vistaLibrosConMasDe4Puntos, "libros", [
+    {
+      $match: {
+        calificacionPromedio: { $gte: 4 }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        libroId: "$_id",
+        titulo: 1,
+        calificacionPromedio: 1
+      }
+    },
+    {
+      $sort: {
+        calificacionPromedio: -1,
+        titulo: 1
+      }
+    }
+  ]);
+
   const vistaLibrosConReservasActivas = "libros_con_3_o_mas_reservas_activas";
     if (booklibre.getCollectionInfos({ name: vistaLibrosConReservasActivas }).length > 0) {
       booklibre.getCollection(vistaLibrosConReservasActivas).drop();
