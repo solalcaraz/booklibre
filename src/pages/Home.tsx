@@ -121,6 +121,7 @@ export const Home = () => {
             return (
               <Link
                 to={`/detalles/${libro.id}?fechaDesde=${filtrosAplicados.fechaDesde}&fechaHasta=${filtrosAplicados.fechaHasta}`}
+                replace
               >
                 <LibroCard libro={libro} />
               </Link>
