@@ -26,6 +26,10 @@ vi.mock('react-router-dom', async () => {
 
 /* Mockeo UsuarioService */
 vi.mock('../../services/UsuarioService', () => ({
+  initialSort: {
+    field: 'titulo',
+    direction: 'asc'
+  },
   usuarioService: {
     getUsuario: vi.fn(),
     getLibros: vi.fn(),
@@ -163,7 +167,7 @@ describe('PerfilUsuario', () => {
 
     await waitFor(() => {
       expect(usuarioService.getLibros).toHaveBeenCalledWith(0, 'Disponibles', {
-        field: '',
+        field: 'titulo',
         direction: 'asc'
       })
     })

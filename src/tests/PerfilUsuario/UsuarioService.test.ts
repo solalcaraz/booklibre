@@ -103,7 +103,7 @@ describe('UsuarioService', () => {
     expect(authService.tokenDeStorage).toHaveBeenCalled()
     expect(mockedApi.get).toHaveBeenCalledTimes(1)
     expect(mockedApi.get).toHaveBeenCalledWith(
-      expect.stringContaining('/misLibros/me?page=0&size=3&filter=Todos'),
+      expect.stringContaining('/misLibros/me?page=0&size=3&filter=Todos&sort=titulo,asc'),
       {
         headers: {
           Authorization: 'Bearer access-token-mock'
