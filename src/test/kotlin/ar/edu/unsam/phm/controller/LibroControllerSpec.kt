@@ -1,3 +1,9 @@
+﻿package ar.edu.unsam.phm.controller
+
+/*
+Tests desactivados temporalmente por migracion de libros a MongoDB.
+Contenido original:
+
 /*
 package ar.edu.unsam.phm.controller
 
@@ -32,7 +38,7 @@ class LibroControllerSpec (@Autowired val mockMvc: MockMvc) {
           "titulo": "Rayuela",
           "tipo": "$tipo",
           "genero": "DRAMA",
-          "autor": "Cortázar",
+          "autor": "CortÃ¡zar",
           "idioma": "ESPANOL",
           "estado": "BUENO",
           "editorial": "Alfaguara",
@@ -45,7 +51,7 @@ class LibroControllerSpec (@Autowired val mockMvc: MockMvc) {
         }
     """.trimIndent()
 
-    // Esta función engaña a Kotlin diciendo que el nulo de Mockito es un T no nulo
+    // Esta funciÃ³n engaÃ±a a Kotlin diciendo que el nulo de Mockito es un T no nulo
     private fun <T> anyKotlin(): T {
         org.mockito.ArgumentMatchers.any<T>()
         return uninitialized()
@@ -109,7 +115,7 @@ class LibroControllerSpec (@Autowired val mockMvc: MockMvc) {
     }
 
     @Test
-    @DisplayName("PUT /libro/{id} -> Permite actualizar si el dueño coincide")
+    @DisplayName("PUT /libro/{id} -> Permite actualizar si el dueÃ±o coincide")
     fun actualizar_libro_propio_ok() {
         val idLibro = 1
         val idDueno = 10
@@ -129,7 +135,7 @@ class LibroControllerSpec (@Autowired val mockMvc: MockMvc) {
     }
 
     @Test
-    @DisplayName("PUT /libro/{id} -> Devuelve 403 si el ID del dueño en el JSON no es el del dueño real")
+    @DisplayName("PUT /libro/{id} -> Devuelve 403 si el ID del dueÃ±o en el JSON no es el del dueÃ±o real")
     fun actualizar_libro_ajeno_error() {
         val idLibro = 1
         val idDuenoReal = 10
@@ -148,7 +154,7 @@ class LibroControllerSpec (@Autowired val mockMvc: MockMvc) {
                 .content(generarJsonLibro(idDueno = idImpostor))
         ).andExpect(status().isForbidden)
 
-        // times(0) para asegurar que el flujo se cortó y NUNCA se intentó actualizar
+        // times(0) para asegurar que el flujo se cortÃ³ y NUNCA se intentÃ³ actualizar
         verify(libroService, times(0)).update(anyInt(), anyKotlin())
     }
 
@@ -157,7 +163,7 @@ class LibroControllerSpec (@Autowired val mockMvc: MockMvc) {
     fun actualizar_libro_inexistente_error() {
         val idInexistente = 999
 
-        `when`(libroService.getById(idInexistente)).thenThrow(ar.edu.unsam.phm.exceptions.NotFoundException("No se encontró"))
+        `when`(libroService.getById(idInexistente)).thenThrow(ar.edu.unsam.phm.exceptions.NotFoundException("No se encontrÃ³"))
 
         mockMvc.perform(
             put("/libro/$idInexistente")
@@ -185,8 +191,8 @@ class LibroControllerSpec (@Autowired val mockMvc: MockMvc) {
     fun borrar_libro_inexistente_error() {
         val idInexistente = "999"
 
-        // Forzamos al service a lanzar la excepción: como borrarLibro devuelve Unit, usamos doThrow
-        doThrow(ar.edu.unsam.phm.exceptions.NotFoundException("No se encontró el libro"))
+        // Forzamos al service a lanzar la excepciÃ³n: como borrarLibro devuelve Unit, usamos doThrow
+        doThrow(ar.edu.unsam.phm.exceptions.NotFoundException("No se encontrÃ³ el libro"))
             .`when`(libroService).borrarLibro(idInexistente)
 
         mockMvc.perform(
@@ -196,3 +202,6 @@ class LibroControllerSpec (@Autowired val mockMvc: MockMvc) {
         verify(libroService).borrarLibro(idInexistente)
     }
 }*/
+
+*/
+
