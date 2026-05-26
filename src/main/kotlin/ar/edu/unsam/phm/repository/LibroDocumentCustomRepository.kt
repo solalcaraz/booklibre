@@ -155,6 +155,8 @@ class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplat
             "disponible,desc" -> Sort.by(Sort.Direction.DESC, "estadoReservaOrden").and(Sort.by("titulo"))
             "agregado,asc" -> Sort.by(Sort.Direction.ASC, "fechaPublicacion").and(Sort.by("titulo"))
             "agregado,desc" -> Sort.by(Sort.Direction.DESC, "fechaPublicacion").and(Sort.by("titulo"))
+            "titulo,asc" -> Sort.by(Sort.Direction.ASC, "titulo")
+            "titulo,desc" -> Sort.by(Sort.Direction.DESC, "titulo")
             else -> Sort.by(Sort.Direction.ASC, "_id")
         }
 }

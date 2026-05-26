@@ -5,7 +5,7 @@ import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.MiLibroProjection
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
 import ar.edu.unsam.phm.exceptions.NotFoundException
-import ar.edu.unsam.phm.helpers.LibroAdapter
+import ar.edu.unsam.phm.helpers.LibroMapper
 import ar.edu.unsam.phm.security.JwtAuthenticationFilter
 import ar.edu.unsam.phm.security.SecurityConfiguration
 import ar.edu.unsam.phm.service.LibroService
@@ -51,8 +51,8 @@ class MisLibrosSpec(
     @MockBean lateinit var libroService: LibroService
     @MockBean lateinit var authenticationProvider: AuthenticationProvider
     @MockBean lateinit var jwtAuthenticationFilter: JwtAuthenticationFilter
+    @MockBean lateinit var libroMapper: LibroMapper
     /* No lo uso, pero tengo que mockearlo porque está en el constructor del controller */
-    @MockBean lateinit var libroAdapter: LibroAdapter
 
     /* Jwt filter bypass, no “saltea seguridad”; solo hace que el mock se comporte como filtro
     pasante para que el resto de Spring Security + MVC se ejecute normal en el test, ya que
@@ -174,6 +174,32 @@ class MisLibrosSpec(
             .andExpect(jsonPath("$.totalPages").value(1))
             .andExpect(jsonPath("$.items[0].clicks").value(3))
             .andExpect(jsonPath("$.items[1].clicks").value(0))
+    }
+
+    @Test
+    @DisplayName("Cuando se lista mis libros con sort por titulo, pasa el sort al service")
+    @WithMockUser(username = "1", roles = ["PUBLICADOR"])
+    fun listar_mis_libros_sort_titulo() {
+        val paginaMock = PaginationResponseDTO<MiLibroProjection>(
+            items = emptyList(),
+            page = 0,
+            size = 3,
+            totalItems = 0,
+            totalPages = 0
+        )
+
+        `when`(libroService.buscarMisLibros(1, "Todos", "titulo,desc", 0, 3)).thenReturn(paginaMock)
+
+        mockMvc.perform(
+            get("/misLibros/me")
+                .param("page", "0")
+                .param("size", "3")
+                .param("filter", "Todos")
+                .param("sort", "titulo,desc")
+        )
+            .andExpect(status().isOk)
+
+        verify(libroService).buscarMisLibros(1, "Todos", "titulo,desc", 0, 3)
     }
 
     @Test
