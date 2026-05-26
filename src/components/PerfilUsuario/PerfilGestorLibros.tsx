@@ -98,7 +98,15 @@ export const PerfilGestorLibros = ({
           <table className="min-w-full text-left">
             <thead>
               <tr className="border-b border-slate-200 text-sm uppercase tracking-wider text-slate-500">
-                <th className="px-5 py-4 font-bold">Título y Autor</th>
+                <th className="px-5 py-4 font-bold">
+                  <button
+                    className="flex items-center gap-1 cursor-pointer font-bold transition hover:text-slate-800"
+                    onClick={() => handleSort('titulo')}
+                  >
+                    <ArrowsDownUpIcon size={18} />
+                    TÍTULO Y AUTOR
+                  </button>
+                </th>
                 <th className="px-5 py-4 font-bold ">
                   <button
                     className="flex items-center gap-1 cursor-pointer font-bold transition hover:text-slate-800"

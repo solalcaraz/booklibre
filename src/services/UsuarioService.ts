@@ -48,6 +48,11 @@ export type LibroSort = {
   direction: string
 }
 
+export const initialSort: LibroSort = {
+  field: 'titulo',
+  direction: 'asc'
+}
+
 class UsuarioService {
   async getUsuario(): Promise<UsuarioResponse> {
     const token = authService.tokenDeStorage()
@@ -64,12 +69,12 @@ class UsuarioService {
   async getLibros(
     page = 0,
     filter: FiltroLibros = 'Todos',
-    sort?: LibroSort
+    sort: LibroSort = initialSort
   ): Promise<PagResModel<LibroUsuario>> {
     const token = authService.tokenDeStorage()
 
     const response = await api.get<PagResModel<LibroUsuario>>(
-      `${API_URL}/misLibros/me?page=${page}&size=3&filter=${filter}${sort ? `&sort=${sort.field},${sort.direction}` : ''}`,
+      `${API_URL}/misLibros/me?page=${page}&size=3&filter=${filter}&sort=${sort.field},${sort.direction}`,
       {
         headers: {
           Authorization: `Bearer ${token}`
@@ -117,7 +122,7 @@ class UsuarioService {
 
     const response = await axios.get<number>(API_URL + `/usuario/bibliokarmas/${user.sub}`, {
       headers: {
-        Authorization: `Bearer ${token}` 
+        Authorization: `Bearer ${token}`
       }
     })
     return response.data

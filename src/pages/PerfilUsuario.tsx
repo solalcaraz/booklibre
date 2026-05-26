@@ -6,7 +6,8 @@ import {
   type UsuarioResponse,
   type LibroUsuario,
   type EditProfileData,
-  type LibroSort
+  type LibroSort,
+  initialSort
 } from '../services/UsuarioService'
 import type { PaginationState } from '../models/PaginationModel'
 import { type ErrorCustom, type ErrorResponse, getMensajeError } from '../utils/errorHandler'
@@ -31,7 +32,7 @@ export const PerfilUsuario = () => {
     size: 0,
     totalItems: 0
   })
-  const [sort, setSort] = useState<LibroSort>({ field: '', direction: 'asc' })
+  const [sort, setSort] = useState<LibroSort>(initialSort)
   const navigate = useNavigate()
 
   const getLibros = useCallback(async () => {
