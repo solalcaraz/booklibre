@@ -91,8 +91,9 @@ class Reserva(
         return EstadoReserva.ACTIVO.value
     }
 
-    fun calificar() {
+    fun calificar(puntaje: Int) {
         yaResenio = true
+        libroResumen.puntuacion = puntaje.toDouble()
     }
 
     fun puedeCalificar(): Boolean = !yaResenio && estaFinalizada()

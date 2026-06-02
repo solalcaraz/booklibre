@@ -31,7 +31,7 @@ class ReseniaService (
 
         actualizarPromedioCalificacionEnMongo(libroMongoId)
 
-        reserva.calificar()
+        reserva.calificar(nuevaResenia.puntuacion)
         reservaRepository.save(reserva)
     }
 

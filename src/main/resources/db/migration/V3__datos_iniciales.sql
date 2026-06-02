@@ -142,7 +142,13 @@ VALUES
     -- reserva 13 : libro 1, lector = usuario 3 (Ye West reserva libro de Maradona)
     ('libro_001',  3, '2025-02-24', '2025-04-30', FALSE),
     -- reserva 14 : libro 2, lector = usuario 4 (Yiya Murano reserva libro de Maradona)
-    ('libro_002',  4, '2025-03-01', '2025-03-20', FALSE);
+    ('libro_002',  4, '2025-03-01', '2025-03-20', FALSE),
+    -- reserva 15 : libro 5, lector = usuario 1
+    ('libro_005',  1, '2025-05-01', '2025-05-10', FALSE),
+    -- reserva 16 : libro 5, lector = usuario 3
+    ('libro_005',  3, '2025-06-01', '2025-06-12', FALSE),
+    -- reserva 17 : libro 5, lector = usuario 4
+    ('libro_005',  1, '2025-07-01', '2025-07-15', FALSE);
 
 -- ============================================================
 -- RESEÑAS
@@ -157,6 +163,8 @@ VALUES
     ('Max Verstappen', 3, 'Lo lei y no lo entendi', 'libro_002', NOW()),
     ('Ye West',        5, 'Epico',                  'libro_001', NOW()),
     ('Yiya Murano',    4, 'God', 'libro_002', NOW());
-
+-- libro 001 orgullo promedio=4.5 (coleccionable)
+-- libro 002 rayuela promedio=3.5 (dedicatoria)
+-- 005 cien anos tmb es con dedicatoria pero no tiene reseñas
 -- Marcar las reservas que ya tienen reseña
 UPDATE reservas SET ya_resenio = TRUE WHERE id IN (1, 2, 13, 14);
