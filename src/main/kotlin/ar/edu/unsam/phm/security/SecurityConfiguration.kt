@@ -41,6 +41,7 @@ class SecurityConfiguration(
                     .requestMatchers("/auth/register", "/auth/login", "/error", "/auth/refresh")
                     .permitAll() // agregar refresh token endpoint
                     .requestMatchers("/imagenes/**").permitAll()
+                    .requestMatchers("/graphql", "/graphiql/**").permitAll()
                     // Permisos de admin para modificar
                     // Solo los que pueden reservar (lector) acceden a este endpoint
                     .requestMatchers(HttpMethod.GET, "/reserva/librosDisponibles/**")

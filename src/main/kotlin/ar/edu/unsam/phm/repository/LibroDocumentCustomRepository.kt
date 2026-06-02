@@ -1,6 +1,7 @@
 package ar.edu.unsam.phm.repository
 
 import ar.edu.unsam.phm.domain.LibroDocument
+import ar.edu.unsam.phm.dto.dashboard.PromedioCalificacionPorTipoMongo
 import ar.edu.unsam.phm.helpers.FiltrosLibro
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -20,6 +21,7 @@ import java.util.regex.Pattern
 interface LibroDocumentRepositoryCustom {
     fun findDisponiblesParaReserva( excludeUsuarioId: Int, filtros: FiltrosLibro): Page<LibroDocument>
     fun findMisLibrosDe(duenoId: Int, hoy: LocalDate, filter: String, sort: String?, pageable: Pageable): Page<LibroDocument>
+    fun promedioCalificacionPorTipo(): List<PromedioCalificacionPorTipoMongo>
 }
 @Repository
 class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplate): LibroDocumentRepositoryCustom {
@@ -159,4 +161,23 @@ class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplat
             "titulo,desc" -> Sort.by(Sort.Direction.DESC, "titulo")
             else -> Sort.by(Sort.Direction.ASC, "_id")
         }
+
+
+//   ------ Dashboard de GraphQL -------
+    override fun promedioCalificacionPorTipo(): List<PromedioCalificacionPorTipoMongo> {
+        val aggregation = Aggregation.newAggregation(
+            Aggregation.match(
+                Criteria.where("activo").`is`(true)
+                    .and("calificacionPromedio").gt(0.0)
+            ),
+            Aggregation.group("_class")
+                .avg("calificacionPromedio").`as`("puntajePromedio"),
+            Aggregation.project("puntajePromedio")
+                .and("_id").`as`("tipo")
+        )
+
+        return mongoTemplate
+            .aggregate(aggregation, "libros", PromedioCalificacionPorTipoMongo::class.java)
+            .mappedResults
+    }
 }

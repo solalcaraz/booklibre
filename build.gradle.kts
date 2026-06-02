@@ -50,6 +50,12 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
 
+    // GraphQL
+    implementation(
+        platform("com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:9.2.2")
+    )
+    implementation("com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter")
+
     // testing
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

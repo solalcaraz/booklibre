@@ -1,0 +1,14 @@
+type Query {
+    analisisCalificaciones: [PromedioCalificacionPorTipo!]!
+}
+
+type PromedioCalificacionPorTipo {
+    tipo: TipoLibro!
+    puntajePromedio: Float!
+}
+
+enum TipoLibro {
+    COMUN
+    DEDICATORIA
+    COLECCIONABLE
+}
