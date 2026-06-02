@@ -62,11 +62,7 @@ SET
     END,
     libro_puntuacion = CASE id_libro
         WHEN 'libro_001' THEN 4.5
-        WHEN 'libro_002' THEN 3.0
-        WHEN 'libro_005' THEN 2.5
-        WHEN 'libro_007' THEN 5.0
-        WHEN 'libro_009' THEN 4.5
-        WHEN 'libro_0013' THEN 4.0
+        WHEN 'libro_002' THEN 3.5
         ELSE libro_puntuacion
     END,
     libro_dueno_id = CASE
@@ -89,4 +85,3 @@ SET
         WHEN 'libro_013' THEN 2500
         ELSE bibliokarmas_ganados
     END;
-

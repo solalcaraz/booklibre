@@ -140,19 +140,23 @@ VALUES
     -- reserva 12 : libro 13, lector = usuario 1
     ('libro_013', 1, '2026-02-24', '2026-04-30', FALSE),
     -- reserva 13 : libro 1, lector = usuario 3 (Ye West reserva libro de Maradona)
-    ('libro_001',  3, '2025-02-24', '2025-04-30', FALSE);
+    ('libro_001',  3, '2025-02-24', '2025-04-30', FALSE),
+    -- reserva 14 : libro 2, lector = usuario 4 (Yiya Murano reserva libro de Maradona)
+    ('libro_002',  4, '2025-03-01', '2025-03-20', FALSE);
 
 -- ============================================================
 -- RESEÑAS
 -- reserva 1  → 4 estrellas  "Libro buenardo"       (lector = Verstappen, libro = Orgullo y Prejuicio)
 -- reserva 2  → 3 estrellas  "Lo lei y no lo entendi"
 -- reserva 13 → 5 estrellas  "Epico"                (lector = Ye West,    libro = Orgullo y Prejuicio)
+-- reserva 14 → 4 estrellas  "God"
 -- ============================================================
 INSERT INTO resenias (nombre_usuario, puntuacion, comentario, id_libro, fecha)
 VALUES
     ('Max Verstappen', 4, 'Libro buenardo',         'libro_001', NOW()),
     ('Max Verstappen', 3, 'Lo lei y no lo entendi', 'libro_002', NOW()),
-    ('Ye West',        5, 'Epico',                  'libro_001', NOW());
+    ('Ye West',        5, 'Epico',                  'libro_001', NOW()),
+    ('Yiya Murano',    4, 'God', 'libro_002', NOW());
 
 -- Marcar las reservas que ya tienen reseña
-UPDATE reservas SET ya_resenio = TRUE WHERE id IN (1, 2, 13);
+UPDATE reservas SET ya_resenio = TRUE WHERE id IN (1, 2, 13, 14);
