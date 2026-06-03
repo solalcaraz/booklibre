@@ -111,6 +111,23 @@ services:
     depends_on:
       - postgres
 
+  redis:
+    image: redis:7
+    container_name: booklibre_redis
+    hostname: redis
+    ports:
+      - "6379:6379"
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: booklibre_redis_insight
+    ports:
+      - "5540:5540"
+    volumes:
+      - redisinsight-data:/data
+    depends_on:
+      - redis
+
 volumes:
   configsvr1_data:
   configsvr2_data:
@@ -122,3 +139,4 @@ volumes:
   shard2b_data:
   shard2c_data:
   postgres_data:
+  redisinsight-data:

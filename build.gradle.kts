@@ -36,6 +36,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
+    // Redis para caché
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
     // seguridad y autenticación
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.bouncycastle:bcprov-jdk18on:1.83")

@@ -34,6 +34,8 @@ interface LibroDocumentRepository : MongoRepository<LibroDocument, String>, Libr
     @Query("{ 'dueno._id': ?0, 'activo': true, 'reservasPendientes': { '\$not': { '\$elemMatch': { 'fechaInicio': { '\$lte': ?1 }, 'fechaFin': { '\$gte': ?1 } } } } }")
     fun findDisponiblesByDuenoId(duenoId: Int, hoy: LocalDate, pageable: Pageable): Page<LibroDocument>
 
+    fun findByIdInAndActivoTrue(ids: List<String>): List<LibroDocument>
+
     // REHACER --> No entiendo qué debería hacer el método para corregirlo
 //    @EntityGraph(attributePaths = ["dueno"])
 //    fun findConDuenoById(id:Int): Optional<Libro>
