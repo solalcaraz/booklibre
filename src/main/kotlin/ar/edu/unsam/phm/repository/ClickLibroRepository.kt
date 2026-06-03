@@ -16,4 +16,12 @@ interface ClickLibroRepository: MongoRepository<ClickLibroDocument, String> {
         "{ '\$project': { '_id': 0, 'libroId': '\$_id.libroId', 'libroTitulo': '\$_id.libroTitulo', 'clicks': 1 } }"
     ])
     fun libroMasClickeado(): LibroMasClickeadoDTO?
+
+    @Aggregation(pipeline = [
+        "{ '\$group': { '_id': { 'libroId': '\$libroId', 'libroTitulo': '\$libroTitulo' }, 'clicks': { '\$sum': 1 } } }",
+        "{ '\$sort': { 'clicks': -1, '_id.libroTitulo': 1 } }",
+        "{ '\$limit': 10 }",
+        "{ '\$project': { '_id': 0, 'libroId': '\$_id.libroId', 'libroTitulo': '\$_id.libroTitulo', 'clicks': 1 } }"
+    ])
+    fun top10LibrosMasClickeados(): List<LibroMasClickeadoDTO>
 }
