@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { Home } from '../../pages/Home'
 import { reservaService } from '../../services/ReservaService'
+import { dashboardService } from '../../services/DashboardService'
 
 const mockResponse = {
   items: [
@@ -90,6 +91,12 @@ vi.mock('../../services/ReservaService', () => {
   }
 })
 
+vi.mock('../../services/DashboardService', () => ({
+  dashboardService: {
+    getTasaConversionClicksReservas: vi.fn()
+  }
+}))
+
 describe('Home', () => {
   const renderHome = () => render(
     <MemoryRouter>
@@ -101,6 +108,16 @@ describe('Home', () => {
     vi.clearAllMocks()
     localStorage.setItem('user', JSON.stringify({ id: 1, role: 'LECTOR' }))
     vi.mocked(reservaService.getLibrosDisponiblesReserva).mockResolvedValue(mockResponse)
+    vi.mocked(dashboardService.getTasaConversionClicksReservas).mockResolvedValue([
+      {
+        libroId: '1',
+        titulo: 'Rayuela',
+        autor: 'Julio Cortázar',
+        clicks: 20,
+        reservas: 5,
+        tasaConversion: 0.25
+      }
+    ])
   })
 
   afterEach(() => {
@@ -110,6 +127,7 @@ describe('Home', () => {
   it('muestra los libros disponibles al cargar', async () => {
     renderHome()
 
+    expect(await screen.findByTestId('kpi-header')).toBeInTheDocument()
     expect(await screen.findByTestId('libro-card-1')).toBeInTheDocument()
     expect(screen.getByTestId('libro-card-2')).toBeInTheDocument()
   })
