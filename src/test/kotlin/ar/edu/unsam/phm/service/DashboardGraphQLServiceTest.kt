@@ -21,7 +21,7 @@ class DashboardGraphQLServiceTest {
 
     @Test
     fun `tasaConversionClicksReservas devuelve top 5 y calcula conversion`() {
-        /* mockeo los libros populares */
+        /* mockeo los libros populares de redis */
         `when`(libroPopularRepository.findAll()).thenReturn(
             listOf(
                 libroPopular("1", "Dune", 10),

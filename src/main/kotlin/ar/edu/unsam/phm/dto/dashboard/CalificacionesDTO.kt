@@ -12,11 +12,4 @@ data class PromedioCalificacionPorTipoMongo(
     val puntajePromedio: Double = 0.0
 )
 
-data class TasaConversionLibroDTO(
-    val libroId: String,
-    val titulo: String,
-    val autor: String,
-    val clicks: Int,
-    val reservas: Int,
-    val tasaConversion: Double
-)
+
