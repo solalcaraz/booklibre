@@ -63,6 +63,7 @@ class LibrosBootstrap(
                 estado = Estado.MUY_BUENO
                 portada = "http://localhost:9000/imagenes/orgullo.webp"
                 activo = true
+                promedioCalificacion = 4.5
                 dueno = dueno1  // Diego Maradona
             },
             // Libro 2: DEDICATORIA, usuario 1
@@ -80,6 +81,7 @@ class LibrosBootstrap(
                 estado = Estado.BUENO
                 portada = "http://localhost:9000/imagenes/Rayuela.jpg"
                 activo = true
+                promedioCalificacion = 3.5
                 dueno = dueno1
             },
             // Libro 3: COLECCIONABLE, usuario 1

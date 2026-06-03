@@ -10,6 +10,8 @@ import ar.edu.unsam.phm.repository.ReservaRepository
 import ar.edu.unsam.phm.repository.LibroDocumentRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.Locale
 
 @Service
@@ -29,13 +31,13 @@ class ReseniaService (
 
         actualizarPromedioCalificacionEnMongo(libroMongoId)
 
-        reserva.calificar()
+        reserva.calificar(nuevaResenia.puntuacion)
         reservaRepository.save(reserva)
     }
 
     private fun validarResenia(reseniaReq: ReseniaReqDTO, reserva: Reserva) {
-        if (!reserva.estaFinalizada()) {
-            throw IllegalStateException("No podés reseñar una reserva no finalizada")
+        if (!reserva.puedeCalificar()){
+            throw IllegalStateException("No podés reseñar, no esta finalizada o ya calificaste")
         }
         if (reseniaReq.puntuacion !in 0..5) {
             throw BadRequestException("El puntaje debe estar entre 0 y 5")
@@ -46,10 +48,13 @@ class ReseniaService (
     }
 
     private fun actualizarPromedioCalificacionEnMongo(libroId: String) {
-        val libroMongo = libroMongoRepository.findById(libroId).orElse(null) ?: return
+        val libroMongo = libroMongoRepository.findById(libroId).orElseThrow { NotFoundException("Libro no encontrado en Mongo") }
         val promedio = reseniaRepository.promedioCalificacionDe(libroId)
 
-        libroMongo.promedioCalificacion = String.format(Locale.US, "%.1f", promedio).toDouble()
+        libroMongo.promedioCalificacion = BigDecimal(promedio)
+            .setScale(1, RoundingMode.HALF_UP)
+            .toDouble()
+
         libroMongoRepository.save(libroMongo)
     }
 }

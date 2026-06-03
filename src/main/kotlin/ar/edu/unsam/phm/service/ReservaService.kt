@@ -104,7 +104,7 @@ class ReservaService(
             fechaHasta = reserva.fechaHasta,
             libroMongoId = reserva.libroMongoID
         )
-        val libroResumen = LibroResumen(libro.titulo, libro.autor, libro.promedioCalificacion, libro.portada, libro.dueno.nombreCompleto, libro.dueno.id)
+        val libroResumen = LibroResumen(libro.titulo, libro.autor, libro.portada, libro.dueno.nombreCompleto, libro.dueno.id)
         nuevaReserva.libroResumen = libroResumen
 
         val seSuperpone = reservaRepository.existReservaSuperpuesta(libro.id!!, reserva.fechaDesde, reserva.fechaHasta)

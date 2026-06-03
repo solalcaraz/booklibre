@@ -60,13 +60,12 @@ SET
         WHEN 'libro_014' THEN 'https://images.cdn1.buscalibre.com/fit-in/360x360/57/3d/573d2d38b86840ce6c919c61ac6d217f.jpg'
         ELSE libro_img_url
     END,
-    libro_puntuacion = CASE id_libro
-        WHEN 'libro_001' THEN 4.5
-        WHEN 'libro_002' THEN 3.0
-        WHEN 'libro_005' THEN 2.5
-        WHEN 'libro_007' THEN 5.0
-        WHEN 'libro_009' THEN 4.5
-        WHEN 'libro_0013' THEN 4.0
+--    puntaje que le puso el usuario a ese libro de esa reserva, no es el promedio. ver v3 resenias
+    libro_puntuacion = CASE id
+        WHEN 1 THEN 4
+        WHEN 2 THEN 3
+        WHEN 13 THEN 5
+        WHEN 14 THEN 4
         ELSE libro_puntuacion
     END,
     libro_dueno_id = CASE
@@ -89,4 +88,3 @@ SET
         WHEN 'libro_013' THEN 2500
         ELSE bibliokarmas_ganados
     END;
-

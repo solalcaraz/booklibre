@@ -57,8 +57,8 @@ data class LibroMasClickeadoDTO(
 data class LibroResumen(
     val titulo: String = "",
     val autor: String = "",
-    val puntuacion: Double? = 0.0,
     val imgUrl: String = "",
     val duenoNombre: String = "",
     val duenoId: Int?,
+    var puntuacion: Double? = 0.0,
     )
