@@ -26,6 +26,15 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
     fun countByLibroMongoIdIn(libroMongoIds: Collection<String>): Int
 
     @Query("""
+        select r.libroMongoId as libroId,
+        count(r) as reservas
+        from Reserva r
+        where r.libroMongoId in :libroIds
+        group by r.libroMongoId
+    """)
+    fun contarReservasPorLibroMongoIdIn(@Param("libroIds") libroIds: Collection<String>): List<ReservasPorLibroProjection>
+
+    @Query("""
         SELECT r
         FROM Reserva r
         WHERE r.libroResumen.duenoId = :usuarioId
@@ -81,4 +90,9 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
         @Param("desde") desde: LocalDate,
         @Param("hasta") hasta: LocalDate
     ): Boolean
+}
+
+interface ReservasPorLibroProjection {
+    val libroId: String
+    val reservas: Long
 }

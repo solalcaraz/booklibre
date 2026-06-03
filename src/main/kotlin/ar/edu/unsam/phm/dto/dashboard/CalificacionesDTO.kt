@@ -11,3 +11,5 @@ data class PromedioCalificacionPorTipoMongo(
     val tipo: String = "",
     val puntajePromedio: Double = 0.0
 )
+
+
