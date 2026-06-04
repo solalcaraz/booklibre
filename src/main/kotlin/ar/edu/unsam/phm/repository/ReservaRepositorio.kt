@@ -90,6 +90,9 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
         @Param("desde") desde: LocalDate,
         @Param("hasta") hasta: LocalDate
     ): Boolean
+
+    // Trae las 5 reservas más recientes ordenadas por su fecha de inicio descendente
+    fun findTop5ByOrderByFechaDesdeDesc(): List<Reserva>
 }
 
 interface ReservasPorLibroProjection {

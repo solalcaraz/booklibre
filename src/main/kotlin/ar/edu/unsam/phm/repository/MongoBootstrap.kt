@@ -12,6 +12,7 @@ import ar.edu.unsam.phm.domain.UsuarioLibroDocument
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Service
 class LibrosBootstrap(
@@ -65,6 +66,7 @@ class LibrosBootstrap(
                 activo = true
                 promedioCalificacion = 4.5
                 dueno = dueno1  // Diego Maradona
+                createdAt = LocalDateTime.now().minusDays(15)
             },
             // Libro 2: DEDICATORIA, usuario 1
             LibroDedicatoriaDocument().apply {
@@ -83,6 +85,7 @@ class LibrosBootstrap(
                 activo = true
                 promedioCalificacion = 3.5
                 dueno = dueno1
+                createdAt = LocalDateTime.now().minusDays(12)
             },
             // Libro 3: COLECCIONABLE, usuario 1
             LibroColeccionableDocument().apply {
@@ -100,6 +103,7 @@ class LibrosBootstrap(
                 portada = "http://localhost:9000/imagenes/1984.webp"
                 activo = true
                 dueno = dueno1
+                createdAt = LocalDateTime.now().minusDays(10)
             },
             // Libro 4: COLECCIONABLE, usuario 2
             LibroColeccionableDocument().apply {
@@ -117,6 +121,7 @@ class LibrosBootstrap(
                 portada = "http://localhost:9000/imagenes/dune.jpg"
                 activo = true
                 dueno = dueno2  // Max Verstappen
+                createdAt = LocalDateTime.now().minusDays(8)
             },
             // Libro 5: DEDICATORIA, usuario 2
             LibroDedicatoriaDocument().apply {
@@ -134,6 +139,7 @@ class LibrosBootstrap(
                 portada = "http://localhost:9000/imagenes/100anos.webp"
                 activo = true
                 dueno = dueno2
+                createdAt = LocalDateTime.now().minusDays(5)
             },
             // Libro 6: COMUN, usuario 2
             LibroComunDocument().apply {
@@ -151,6 +157,7 @@ class LibrosBootstrap(
                 portada = "http://localhost:9000/imagenes/habitos.webp"
                 activo = true
                 dueno = dueno2
+                createdAt = LocalDateTime.now().minusDays(3)
             },
             // Libro 7: COLECCIONABLE, usuario 3
             LibroColeccionableDocument().apply {
@@ -168,6 +175,7 @@ class LibrosBootstrap(
                 portada = "http://localhost:9000/imagenes/viento.webp"
                 activo = true
                 dueno = dueno3  // Ye West
+                createdAt = LocalDateTime.now().minusDays(2)
             },
             // Libro 8: DEDICATORIA, usuario 3
             LibroDedicatoriaDocument().apply {
@@ -185,6 +193,7 @@ class LibrosBootstrap(
                 portada = "http://localhost:9000/imagenes/libro-nuevo.jpg"
                 activo = true
                 dueno = dueno3
+                createdAt = LocalDateTime.now().minusDays(1)
             },
             // Libro 9: COMUN, usuario 2
             LibroComunDocument().apply {
@@ -202,6 +211,7 @@ class LibrosBootstrap(
                 portada = "https://image.cdn1.buscalibre.com/5b57fc1690f0b5295a8b4567.RS500x500.jpg"
                 activo = true
                 dueno = dueno2
+                createdAt = LocalDateTime.now().minusHours(20)
             },
             // Libro 10: COMUN, usuario 2
             LibroComunDocument().apply {
@@ -219,6 +229,7 @@ class LibrosBootstrap(
                 portada = "http://localhost:9000/imagenes/1984.webp"
                 activo = true
                 dueno = dueno2
+                createdAt = LocalDateTime.now().minusHours(15)
             },
             // Libro 11: COMUN, usuario 2
             LibroComunDocument().apply {
@@ -236,6 +247,7 @@ class LibrosBootstrap(
                 portada = "https://m.media-amazon.com/images/I/81Rnac2Fq+L._AC_UF1000,1000_QL80_.jpg"
                 activo = true
                 dueno = dueno2
+                createdAt = LocalDateTime.now().minusHours(10)
             },
             // Libro 12: COMUN, usuario 2
             LibroComunDocument().apply {
@@ -253,6 +265,7 @@ class LibrosBootstrap(
                 portada = "https://image.cdn0.buscalibre.com/5b5ae93e4463b568748b4567.RS500x500.jpg"
                 activo = true
                 dueno = dueno2
+                createdAt = LocalDateTime.now().minusHours(5)
             },
             // Libro 13: COMUN, usuario 2
             LibroComunDocument().apply {
@@ -270,6 +283,7 @@ class LibrosBootstrap(
                 portada = "https://www.edicontinente.com.ar/image/titulos/9788466373005.jpg"
                 activo = true
                 dueno = dueno2
+                createdAt = LocalDateTime.now().minusHours(2)
             },
             // Libro 14: COMUN, usuario 2
             LibroComunDocument().apply {
@@ -287,6 +301,7 @@ class LibrosBootstrap(
                 portada = "https://images.cdn1.buscalibre.com/fit-in/360x360/57/3d/573d2d38b86840ce6c919c61ac6d217f.jpg"
                 activo = true
                 dueno = dueno2
+                createdAt = LocalDateTime.now().minusMinutes(15)
             }
         )
 
@@ -308,8 +323,6 @@ class LibrosBootstrap(
         }
 
         println("✅ Libros inicializados y sincronizados con las reservas de Postgres correctamente.")
-
-        //println("Libros inicializados correctamente en MongoDB.")
     }
 
     override fun afterPropertiesSet() {
