@@ -51,7 +51,7 @@ export const CatalogoSaludKpi = () => {
       <div className="flex items-center justify-between gap-4 mb-4">
         <div>
           <h2 className="text-sm font-semibold text-slate-700">Salud del Catálogo</h2>
-          <p className="text-xs text-slate-400">Distribución de libros (Buckets disjuntos)</p>
+          <p className="text-xs text-slate-400">Distribución de libros</p>
         </div>
         <span className="text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full">
           Total: {salud.total} libros
@@ -59,7 +59,6 @@ export const CatalogoSaludKpi = () => {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {/* Bucket 1: Prestados (Rojo) */}
         <article className="border border-rose-100 rounded-md p-3 bg-rose-50/50">
           <p className="text-xs font-medium text-rose-500 truncate" title="Prestados (Hoy)">
             Prestados (Hoy)
@@ -67,7 +66,6 @@ export const CatalogoSaludKpi = () => {
           <p className="text-xl font-bold text-rose-700 mt-1">{salud.prestados}</p>
         </article>
 
-        {/* Bucket 2: Nunca Reservados (Verde) */}
         <article className="border border-emerald-100 rounded-md p-3 bg-emerald-50/50">
           <p className="text-xs font-medium text-emerald-500 truncate" title="Nunca Reservados">
             Nunca Reservados
@@ -75,15 +73,13 @@ export const CatalogoSaludKpi = () => {
           <p className="text-xl font-bold text-emerald-700 mt-1">{salud.disponiblesNuncaReservados}</p>
         </article>
 
-        {/* Bucket 3: Reservados a Futuro (Naranja) */}
         <article className="border border-amber-100 rounded-md p-3 bg-amber-50/50">
           <p className="text-xs font-medium text-amber-500 truncate" title="Reservados a Futuro">
-            Reservados a Futuro
+            Reservados a Futuro (Disponibles)
           </p>
           <p className="text-xl font-bold text-amber-700 mt-1">{salud.disponiblesReservadosAFuturo}</p>
         </article>
 
-        {/* Bucket 4: Devueltos (Azul) */}
         <article className="border border-sky-100 rounded-md p-3 bg-sky-50/50">
           <p className="text-xs font-medium text-sky-500 truncate" title="Devueltos (Disponibles)">
             Devueltos (Disponibles)
