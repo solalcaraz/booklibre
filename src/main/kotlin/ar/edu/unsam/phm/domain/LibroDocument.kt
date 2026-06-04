@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 import org.springframework.data.mongodb.core.mapping.Sharded
 import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.math.ceil
 
 @Document(collection = "libros")
@@ -29,6 +30,7 @@ abstract class LibroDocument {
     var portada: String = Environment.API_URL + "/imagenes/libro-nuevo.jpg"
     lateinit var dueno: UsuarioLibroDocument
     var cantidadReservas: Int = 0
+    var createdAt: LocalDateTime = LocalDateTime.now()
 
     @Field("calificacionPromedio")
     var promedioCalificacion: Double = 0.0

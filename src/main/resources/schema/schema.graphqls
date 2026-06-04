@@ -22,3 +22,32 @@ enum TipoLibro {
     DEDICATORIA
     COLECCIONABLE
 }
+
+#Punto 5.
+extend type Query {
+    feedActividadReciente: [ActividadReciente!]!
+}
+
+# Los campos obligatorios
+interface ActividadReciente {
+    fecha: String!
+    tipoEvento: String!
+    usuario: String!
+}
+
+# 1. Alta de un Libro
+type NuevoLibroEvento implements ActividadReciente {
+    fecha: String!
+    tipoEvento: String!
+    usuario: String!
+    libroId: ID!
+    titulo: String!
+}
+
+# 2. Confirmación de Reserva
+type NuevaReservaEvento implements ActividadReciente {
+    fecha: String!
+    tipoEvento: String!
+    usuario: String!
+    reservaId: ID!
+}

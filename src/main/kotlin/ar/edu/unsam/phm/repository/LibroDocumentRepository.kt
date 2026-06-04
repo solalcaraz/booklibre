@@ -36,6 +36,8 @@ interface LibroDocumentRepository : MongoRepository<LibroDocument, String>, Libr
 
     fun findByIdInAndActivoTrue(ids: List<String>): List<LibroDocument>
 
+    // Trae los 5 libros más recientes ordenados por fecha de creación descendente
+    fun findTop5ByOrderByCreatedAtDesc(): List<LibroDocument>
     // REHACER --> No entiendo qué debería hacer el método para corregirlo
 //    @EntityGraph(attributePaths = ["dueno"])
 //    fun findConDuenoById(id:Int): Optional<Libro>

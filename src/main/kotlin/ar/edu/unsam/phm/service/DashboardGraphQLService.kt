@@ -4,6 +4,9 @@ import ar.edu.unsam.phm.dto.dashboard.PromedioCalificacionPorTipo
 import ar.edu.unsam.phm.dto.TipoDeLibroDTO
 import ar.edu.unsam.phm.dto.dashboard.TasaConversionLibroDTO
 import ar.edu.unsam.phm.domain.LibroPopular
+import ar.edu.unsam.phm.dto.dashboard.ActividadRecienteDTO
+import ar.edu.unsam.phm.dto.dashboard.NuevaReservaEventoDTO
+import ar.edu.unsam.phm.dto.dashboard.NuevoLibroEventoDTO
 import ar.edu.unsam.phm.repository.LibroDocumentRepository
 import ar.edu.unsam.phm.repository.LibroPopularRepository
 import ar.edu.unsam.phm.repository.ReservaRepository
@@ -60,4 +63,30 @@ class DashboardGraphQLService(
             "COLECCIONABLE", "LibroColeccionableDocument" -> TipoDeLibroDTO.COLECCIONABLE
             else -> throw IllegalArgumentException("Tipo de libro desconocido: $alias")
         }
+
+    fun feedActividadReciente(): List<ActividadRecienteDTO> {
+        // 1. Buscar los últimos 5 libros en Mongo
+        val ultimosLibros = libroRepository.findTop5ByOrderByCreatedAtDesc().map { libro ->
+            NuevoLibroEventoDTO(
+                fecha = libro.createdAt,
+                usuario = libro.dueno.nombreCompleto,
+                libroId = libro.id!!,
+                titulo = libro.titulo
+            )
+        }
+
+        // 2. Buscar las últimas 5 reservas en Postgres
+        val ultimasReservas = reservaRepository.findTop5ByOrderByFechaDesdeDesc().map { reserva ->
+            NuevaReservaEventoDTO(
+                fecha = reserva.fechaDesde.atStartOfDay(), // O el campo exacto de timestamp de la reserva
+                usuario = reserva.lector.nombreCompleto,
+                reservaId = reserva.id!!
+            )
+        }
+
+        // 3. Unificar, ordenar cronológicamente descendente y tomar el Top 5
+        return (ultimosLibros + ultimasReservas)
+            .sortedByDescending { it.fecha }
+            .take(5)
+    }
 }
