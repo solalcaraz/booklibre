@@ -11,6 +11,8 @@ import ar.edu.unsam.phm.repository.LibroDocumentRepository
 import ar.edu.unsam.phm.repository.LibroPopularRepository
 import ar.edu.unsam.phm.repository.ReservaRepository
 import org.springframework.stereotype.Service
+import java.time.LocalDate
+import ar.edu.unsam.phm.dto.dashboard.EstadoSaludCatalogoDTO
 
 @Service
 class DashboardGraphQLService(
@@ -63,6 +65,39 @@ class DashboardGraphQLService(
             "COLECCIONABLE", "LibroColeccionableDocument" -> TipoDeLibroDTO.COLECCIONABLE
             else -> throw IllegalArgumentException("Tipo de libro desconocido: $alias")
         }
+
+    fun estadoSaludCatalogo(): EstadoSaludCatalogoDTO {
+        val libros = libroRepository.findAll()
+        val hoy = LocalDate.now()
+
+        var prestados = 0
+        var nuncaReservados = 0
+        var devueltos = 0
+        var reservadosFuturo = 0
+
+        libros.forEach { libro ->
+            val reservas = libro.reservasPendientes ?: emptyList()
+
+            val estaPrestadoHoy = reservas.any { it.fechaInicio <= hoy && it.fechaFin >= hoy }
+            val tienePasadas = reservas.any { it.fechaFin < hoy }
+            val tieneFuturas = reservas.any { it.fechaInicio > hoy }
+
+            when {
+                estaPrestadoHoy -> prestados++
+                reservas.isEmpty() -> nuncaReservados++
+                tienePasadas -> devueltos++
+                tieneFuturas -> reservadosFuturo++
+            }
+        }
+
+        return EstadoSaludCatalogoDTO(
+            total = libros.size,
+            prestados = prestados,
+            disponiblesNuncaReservados = nuncaReservados,
+            disponiblesReservadosAFuturo = reservadosFuturo,
+            disponiblesDevueltos = devueltos
+        )
+    }
 
     fun feedActividadReciente(): List<ActividadRecienteDTO> {
         // 1. Buscar los últimos 5 libros en Mongo

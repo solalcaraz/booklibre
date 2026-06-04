@@ -1,6 +1,7 @@
 type Query {
     analisisCalificaciones: [PromedioCalificacionPorTipo!]!
     tasaConversionClicksReservas: [TasaConversionLibro!]!
+    estadoSaludCatalogo: EstadoSaludCatalogo!
 }
 
 type PromedioCalificacionPorTipo {
@@ -50,4 +51,13 @@ type NuevaReservaEvento implements ActividadReciente {
     tipoEvento: String!
     usuario: String!
     reservaId: ID!
+}
+
+# 3. Estado de Salud del Catálogo de Libros
+type EstadoSaludCatalogo {
+    total: Int!
+    prestados: Int!
+    disponiblesNuncaReservados: Int!
+    disponiblesReservadosAFuturo: Int!
+    disponiblesDevueltos: Int!
 }
