@@ -51,7 +51,7 @@ class LibroPopularRedisService(
 
         val librosParaRedis = topClicks.mapNotNull { click ->
             val libro = librosConClicks[click.libroId] ?: return@mapNotNull null
-
+            cachearLibro(libro)
             LibroPopular(
                 libroId = libro.id!!,
                 titulo = libro.titulo,
