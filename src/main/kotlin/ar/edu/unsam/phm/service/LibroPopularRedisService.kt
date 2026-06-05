@@ -94,9 +94,8 @@ class LibroPopularRedisService(
     fun obtenerLibroCacheado(libroId: String): LibroPopular? {
         val key = "$CACHE_PREFIX$libroId"
         val json = redisTemplate.opsForValue().get(key) ?: return null
-        return try {
-            objectMapper.readValue(json, LibroPopular::class.java)
-        } catch (e: Exception) { null }
+
+        return objectMapper.readValue(json, LibroPopular::class.java)
     }
 
     // cachea un libro de mongo con un TTL: se llama cada vez q mongo responde y busca libros

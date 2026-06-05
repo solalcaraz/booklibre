@@ -19,22 +19,17 @@ import java.util.regex.Pattern
 
 // Implementacion de un repo custom con MongoTemplate para poder aplicar a la busqueda de libros los filstros que son optativos
 interface LibroDocumentRepositoryCustom {
-    fun findDisponiblesParaReserva( excludeUsuarioId: Int, filtros: FiltrosLibro, excludeLibrosTop10Id: List<String> = emptyList()): Page<LibroDocument>
+    fun findDisponiblesParaReserva( excludeUsuarioId: Int, filtros: FiltrosLibro): Page<LibroDocument>
     fun findMisLibrosDe(duenoId: Int, hoy: LocalDate, filter: String, sort: String?, pageable: Pageable): Page<LibroDocument>
     fun promedioCalificacionPorTipo(): List<PromedioCalificacionPorTipoMongo>
 }
 @Repository
 class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplate): LibroDocumentRepositoryCustom {
-    override fun findDisponiblesParaReserva(excludeUsuarioId: Int, filtros: FiltrosLibro, excludeLibrosTop10Id: List<String>): Page<LibroDocument> {
+    override fun findDisponiblesParaReserva(excludeUsuarioId: Int, filtros: FiltrosLibro): Page<LibroDocument> {
         val criteria = Criteria.where("activo").`is`(true)
 
         // excluir libros del propio user
         criteria.and("dueno._id").ne(excludeUsuarioId)
-
-        //excluir libros que estan en redis dentro del top
-        if (excludeLibrosTop10Id.isNotEmpty()) {
-            criteria.and("_id").nin(excludeLibrosTop10Id)
-        }
 
         // disponible: ninguna reserva pendiente que se superponga con el rango del filter
         criteria.and("reservasPendientes").not().elemMatch(
