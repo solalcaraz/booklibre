@@ -56,11 +56,18 @@ class ReservaService(
     fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): Page<ReservaLibroDTO> {
         val usuario = usuarioRepository.findById(usuarioId).orElseThrow { NotFoundException("Usuario no encontrado") }
 
-        // Solo la pagina 0 y 1 podrian aplicar una logica de paginacion hibrida
-        if (filtros.numeroPagina < 2 && filtros.orden == Ordenamiento.POPULARIDAD) return resolverPaginadoHibrido(usuario, filtros)
+        // al cargar la primera pagina del home intenta traee los libros de redis
+        if (filtros.numeroPagina == 0){ // && filtros.orden == Ordenamiento.POPULARIDAD) {
+            val resultado = obtenerLibrosRedis(usuario, filtros)
+            if (resultado != null) return resultado
+        } // si no hay nada o no alcanza para mostrar los 6, va directo a mongo
 
-        // pagina 2+ se resuelve desde mongo directo
+        // pagina 1+ se resuelve desde mongo directo
         val pageDeLibros = libroRepository.findDisponiblesParaReserva(usuarioId, filtros)
+
+        // guardar en redis con TTL cada libro que devolvió mongo
+        pageDeLibros.content.forEach { libro -> libroPopularRedisService.cachearLibro(libro) }
+
         // se transforma cada LibroDocument en una pre reserva y hace el mapeo (dto)
         return pageDeLibros.map { libro ->
             Reserva(
@@ -72,71 +79,31 @@ class ReservaService(
         }
     }
 
-    private fun resolverPaginadoHibrido(usuario: Usuario, filtros: FiltrosLibro): Page<ReservaLibroDTO> {
-        // rango absoluto que le corresponde a esta pagina dentro del top de redis
-        // pagina 0: [0..5], pagina 1: [6..11], etc
-        val desdeAbsoluto = filtros.numeroPagina * filtros.tamanoPaginado
-        val hastaAbsoluto = desdeAbsoluto + filtros.tamanoPaginado - 1
+    private fun obtenerLibrosRedis(usuario: Usuario, filtros: FiltrosLibro): Page<ReservaLibroDTO>? {
+        // trae el top 10 ids (zset) del ranking
+        val topIds = libroPopularRedisService.obtenerTopIds(limite=10)
+        if (topIds.isEmpty()) return null
 
-        // si el rango esta dentro del top 10, entonces pueden haber libros de redis
-        val hayAlgoEnRedis = desdeAbsoluto < 10
-
-        val dtoDesdeRedis: List<ReservaLibroDTO> =
-            if (hayAlgoEnRedis) {
-                // si hay libros para mostrar de redis, cuantos son los libros que corresponden a esa pagina?
-                val hastaRedis = minOf(hastaAbsoluto, 10 - 1)
-                val cantidadRedis = hastaRedis - desdeAbsoluto + 1
-
-                // pedir a zset exactamente los libros de slice del ranking
-                val librosRedis = libroPopularRedisService.obtenerTopLibrosOrdenados(desde = desdeAbsoluto.toLong(), hasta = hastaRedis.toLong())
-
-                librosRedis.map { libro ->
-                    Reserva(
-                        lector = usuario,
-                        fechaDesde = filtros.fechaDesde,
-                        fechaHasta = filtros.fechaHasta,
-                        libroMongoId = libro.libroId
-                    ).toReservaDTODesdeRedis(libro)
-                }
-            } else emptyList()
-
-        // cuantos libros faltan para completar la pagina ?
-        val faltantes = filtros.tamanoPaginado - dtoDesdeRedis.size
-
-        //info de la pagina para PageImpl
-        val pageable: Pageable = PageRequest.of(
-            filtros.numeroPagina, filtros.tamanoPaginado, filtros.orden.toSort()
-        )
-        if (faltantes <= 0) {
-            return PageImpl(dtoDesdeRedis, pageable, 50)//calcularTotalMongo(filtros))
+        // intenta obtener la info cacheada de cada id que no expiro del hash
+        val librosEnRedis = topIds.mapNotNull { libroId ->
+            libroPopularRedisService.obtenerLibroCacheado(libroId)
         }
 
-        // Complemento desde Mongo:
-        // - Excluye los IDs ya traídos de Redis
-        //   (los primeros 10 libros ya los maneja Redis, el resto es Mongo)
-        val idsYaCargados = dtoDesdeRedis.mapNotNull { it.id }
+        // si no alcanza a traer 6 libros entonces vuelve para pedir los libros en mongo
+        if (librosEnRedis.size < 6) return null
 
-        val complementoDeMongo = libroRepository.findDisponiblesParaReserva(
-            usuario.id!!, filtros.copy(numeroPagina = 0, tamanoPaginado = faltantes), idsYaCargados
-        )
-
-        val dtosDesdeMongo = complementoDeMongo.content.map { libro ->
+        // toma los primeros 6 y mapear
+        val pageable = PageRequest.of(0, filtros.tamanoPaginado, filtros.orden.toSort())
+        val dtos = librosEnRedis.take(6).map { libro ->
             Reserva(
-                lector        = usuario,
-                fechaDesde    = filtros.fechaDesde,
-                fechaHasta    = filtros.fechaHasta,
-                libroMongoId  = libro.id!!
-            ).toReservaLibroDTO(libro)
+                lector = usuario,
+                fechaDesde = filtros.fechaDesde,
+                fechaHasta = filtros.fechaHasta,
+                libroMongoId = libro.libroId
+            ).toReservaDTODesdeRedis(libro)
         }
-
-        return PageImpl(
-            dtoDesdeRedis + dtosDesdeMongo,
-            PageRequest.of(filtros.numeroPagina, filtros.tamanoPaginado, filtros.orden.toSort()),
-            50//calcularTotalMongo(filtros)   // total sin excluir, para que el paginador del front sea correcto
-        )
+        return PageImpl(dtos, pageable, dtos.size.toLong())
     }
-//    private fun calcularTotalMongo(filtros: FiltrosLibro): Long =
-//        libroRepository.countDisponiblesParaReserva(filtros)
 
     @Transactional(readOnly = true)
     fun getDetalleReserva(libroId: String, userId: Int, fechaDesde: LocalDate, fechaHasta: LocalDate): DetalleReservaDTO {
