@@ -5,14 +5,13 @@ import ar.edu.unsam.phm.dto.TipoDeLibroDTO
 import ar.edu.unsam.phm.dto.dashboard.TasaConversionLibroDTO
 import ar.edu.unsam.phm.domain.LibroPopular
 import ar.edu.unsam.phm.dto.dashboard.ActividadRecienteDTO
-import ar.edu.unsam.phm.dto.dashboard.NuevaReservaEventoDTO
-import ar.edu.unsam.phm.dto.dashboard.NuevoLibroEventoDTO
 import ar.edu.unsam.phm.repository.LibroDocumentRepository
 import ar.edu.unsam.phm.repository.LibroPopularRepository
 import ar.edu.unsam.phm.repository.ReservaRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import ar.edu.unsam.phm.dto.dashboard.EstadoSaludCatalogoDTO
+import java.time.ZoneId
 
 @Service
 class DashboardGraphQLService(
@@ -100,28 +99,39 @@ class DashboardGraphQLService(
     }
 
     fun feedActividadReciente(): List<ActividadRecienteDTO> {
-        // 1. Buscar los últimos 5 libros en Mongo
+        // zona horaria para que el cálculo del timestamp sea exacto
+        val zonaHoraria = ZoneId.of("America/Argentina/Buenos_Aires")
+
+        // 1. Mapeo de Libros (LocalDateTime -> Timestamp)
         val ultimosLibros = libroRepository.findTop5ByOrderByCreatedAtDesc().map { libro ->
-            NuevoLibroEventoDTO(
-                fecha = libro.createdAt,
-                usuario = libro.dueno.nombreCompleto,
-                libroId = libro.id!!,
+            val epochMillis = libro.createdAt.atZone(zonaHoraria).toInstant().toEpochMilli()
+
+            ActividadRecienteDTO(
+                timestamp = epochMillis,
+                tipoEvento = "ALTA_LIBRO",
+                usuario = libro.dueno?.nombreCompleto ?: "Sistema",
+                libroId = libro.id!!, // Llenas estos dos
                 titulo = libro.titulo
             )
         }
 
-        // 2. Buscar las últimas 5 reservas en Postgres
+        // 2. Mapeo de Reservas (LocalDate -> Timestamp)
         val ultimasReservas = reservaRepository.findTop5ByOrderByFechaDesdeDesc().map { reserva ->
-            NuevaReservaEventoDTO(
-                fecha = reserva.fechaDesde.atStartOfDay(), // O el campo exacto de timestamp de la reserva
+            // Se agrega el "inicio del día" (00:00) para poder convertirlo
+            val epochMillis = reserva.fechaDesde.atStartOfDay(zonaHoraria).toInstant().toEpochMilli()
+
+            ActividadRecienteDTO(
+                timestamp = epochMillis,
+                tipoEvento = "NUEVA_RESERVA",
                 usuario = reserva.lector.nombreCompleto,
-                reservaId = reserva.id!!
+                reservaId = reserva.id!! // Llenas solo este
+                // libroId y titulo quedan en null por defecto
             )
         }
 
-        // 3. Unificar, ordenar cronológicamente descendente y tomar el Top 5
+        // 3. Unificar, ordenar usando el Long y tomar el Top 5
         return (ultimosLibros + ultimasReservas)
-            .sortedByDescending { it.fecha }
+            .sortedByDescending { it.timestamp }
             .take(5)
     }
 }
