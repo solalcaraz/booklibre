@@ -1,3 +1,4 @@
+import { ActividadFeedHeader } from '../components/Dashboard/ActividadFeedHeader'
 import { KpiHeader } from '../components/Dashboard/KpiHeader'
 import { CatalogoSaludKpi } from '../components/Dashboard/SaludKpiHeader'
 
@@ -12,6 +13,7 @@ export const Dashboard = () => {
         <div className="flex flex-col gap-6">
             <KpiHeader />
             <CatalogoSaludKpi />
+            <ActividadFeedHeader />
         </div>
         </div>
     )
