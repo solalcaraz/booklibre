@@ -19,7 +19,7 @@ const filtrosIniciales: FiltrosLibro = {
   fechaHasta: hoy,
   isbn: '',
   usuarioPrestador: '',
-  orden: 'TITULO_ASC',
+  orden: 'POPULARIDAD',
   numeroPagina: 0,
   tamanoPaginado: 6
 }
@@ -105,6 +105,7 @@ export const Home = () => {
               onChange={handleOrden}
               className="border border-slate-200 rounded-md px-2 py-1 text-slate-700"
             >
+              <option value="POPULARIDAD">Popularidad</option>
               <option value="TITULO_ASC">Título A→Z</option>
               <option value="TITULO_DESC">Título Z→A</option>
               <option value="AUTOR_ASC">Autor A→Z</option>

@@ -50,17 +50,17 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
 
           <div>
             <p className="text-slate-400">ISBN</p>
-            <p>{libro.isbn13}</p>
+            <p className="truncate">{libro.isbn13}</p>
           </div>
 
           <div>
             <p className="text-slate-400">Idioma</p>
-            <p>{libro.idioma}</p>
+            <p className="truncate">{libro.idioma}</p>
           </div>
 
           <div>
             <p className="text-slate-400">Tipo</p>
-            <p>{libro.tipo}</p>
+            <p className="truncate">{libro.tipo}</p>
           </div>
 
           <div>
