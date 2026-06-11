@@ -18,9 +18,6 @@ const RutaProtegida = ({ children }: { children: JSX.Element }) => {
   if (!authService.puedeReservar()) {
     return <Navigate to="/profile" replace />
   }
-  if (!authService.puedePublicar()) {
-    return <Navigate to="/home" replace /> 
-  }
   return children
 }
 
