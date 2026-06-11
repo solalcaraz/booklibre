@@ -1,24 +1,16 @@
 package ar.edu.unsam.phm.dto.dashboard
 
-import java.time.LocalDateTime
+data class ActividadRecienteDTO(
+    // Campos obligatorios
+    val timestamp: Long,
+    val fecha: String = timestamp.toString(),
+    val tipoEvento: String,
+    val usuario: String,
 
-interface ActividadRecienteDTO {
-    val fecha: LocalDateTime
-    val tipoEvento: String
-    val usuario: String
-}
+    // OPCIONAL para el evento de Libro
+    val libroId: String? = null,
+    val titulo: String? = null,
 
-data class NuevoLibroEventoDTO(
-    override val fecha: LocalDateTime,
-    override val tipoEvento: String = "ALTA_LIBRO",
-    override val usuario: String, //Dueño
-    val libroId: String,
-    val titulo: String
-) : ActividadRecienteDTO
-
-data class NuevaReservaEventoDTO(
-    override val fecha: LocalDateTime,
-    override val tipoEvento: String = "NUEVA_RESERVA",
-    override val usuario: String, // El usuario que hizo la reserva
-    val reservaId: Int
-) : ActividadRecienteDTO
+    // OPCIONAL para el evento de Reserva
+    val reservaId: Int? = null
+)
