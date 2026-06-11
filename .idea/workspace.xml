@@ -4,16 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8a36f2c3-771b-47e2-ace9-f2cb2e709c1d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/dto/dashboard/FeedActividadRecienteDTO.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/graphql/FeedActividadReciente.kt" afterDir="false" />
+    <list default="true" id="8a36f2c3-771b-47e2-ace9-f2cb2e709c1d" name="Changes" comment="zset y esas cosas de conexion con el home + registro de clicks">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/LibroDocument.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/domain/LibroDocument.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/LibroDocumentRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/LibroDocumentRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/helpers/FiltrosLibro.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/helpers/FiltrosLibro.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/MongoBootstrap.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/MongoBootstrap.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/ReservaRepositorio.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/repository/ReservaRepositorio.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/DashboardGraphQLService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/DashboardGraphQLService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/schema/schema.graphqls" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/schema/schema.graphqls" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/LibroPopularRedisService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/LibroPopularRedisService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/ReservaService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ar/edu/unsam/phm/service/ReservaService.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,6 +49,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="redisClicks" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -104,7 +105,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.BookLibre.executor": "Run",
-    "git-widget-placeholder": "dev",
+    "git-widget-placeholder": "Cherry-picking in fixRedis",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",

@@ -2,6 +2,7 @@ package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.domain.ReservaPendiente
+import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.PaginationReqDTO
 import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.DetalleReservaDTO
@@ -9,18 +10,22 @@ import ar.edu.unsam.phm.dto.LibroResumen
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
 import ar.edu.unsam.phm.dto.ReservaDTO
 import ar.edu.unsam.phm.dto.ReservaLibroDTO
+import ar.edu.unsam.phm.dto.toReservaDTODesdeRedis
 import ar.edu.unsam.phm.dto.toReservaLibroDTO
 import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.FiltrosLibro
+import ar.edu.unsam.phm.helpers.Ordenamiento
 import ar.edu.unsam.phm.helpers.ReservaAdapter
 import ar.edu.unsam.phm.repository.LibroDocumentRepository
 import ar.edu.unsam.phm.repository.ReseniaRepository
 import ar.edu.unsam.phm.repository.ReservaRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -31,9 +36,9 @@ class ReservaService(
     private val libroRepository: LibroDocumentRepository,
     private val usuarioRepository: UsuarioRepository,
     private val reservaAdapter: ReservaAdapter,
-    private val reseniaRepository: ReseniaRepository
+    private val reseniaRepository: ReseniaRepository,
+    private val libroPopularRedisService: LibroPopularRedisService,
 ) {
-
     @Transactional(readOnly = true)
     fun getMisReservas(payload: PaginationReqDTO<ReservaRequestDTO>): Page<Reserva> {
         val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
@@ -51,7 +56,17 @@ class ReservaService(
     fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): Page<ReservaLibroDTO> {
         val usuario = usuarioRepository.findById(usuarioId).orElseThrow { NotFoundException("Usuario no encontrado") }
 
+        // al cargar la primera pagina del home intenta traee los libros de redis
+        if (filtros.numeroPagina == 0){ // && filtros.orden == Ordenamiento.POPULARIDAD) {
+            val resultado = obtenerLibrosRedis(usuario, filtros)
+            if (resultado != null) return resultado
+        } // si no hay nada o no alcanza para mostrar los 6, va directo a mongo
+
+        // pagina 1+ se resuelve desde mongo directo
         val pageDeLibros = libroRepository.findDisponiblesParaReserva(usuarioId, filtros)
+
+        // guardar en redis con TTL cada libro que devolvió mongo
+        pageDeLibros.content.forEach { libro -> libroPopularRedisService.cachearLibro(libro) }
 
         // se transforma cada LibroDocument en una pre reserva y hace el mapeo (dto)
         return pageDeLibros.map { libro ->
@@ -62,6 +77,32 @@ class ReservaService(
                 libroMongoId = libro.id!!,
             ).toReservaLibroDTO(libro)
         }
+    }
+
+    private fun obtenerLibrosRedis(usuario: Usuario, filtros: FiltrosLibro): Page<ReservaLibroDTO>? {
+        // trae el top 10 ids (zset) del ranking
+        val topIds = libroPopularRedisService.obtenerTopIds(limite=10)
+        if (topIds.isEmpty()) return null
+
+        // intenta obtener la info cacheada de cada id que no expiro del hash
+        val librosEnRedis = topIds.mapNotNull { libroId ->
+            libroPopularRedisService.obtenerLibroCacheado(libroId)
+        }
+
+        // si no alcanza a traer 6 libros entonces vuelve para pedir los libros en mongo
+        if (librosEnRedis.size < 6) return null
+
+        // toma los primeros 6 y mapear
+        val pageable = PageRequest.of(0, filtros.tamanoPaginado, filtros.orden.toSort())
+        val dtos = librosEnRedis.take(6).map { libro ->
+            Reserva(
+                lector = usuario,
+                fechaDesde = filtros.fechaDesde,
+                fechaHasta = filtros.fechaHasta,
+                libroMongoId = libro.libroId
+            ).toReservaDTODesdeRedis(libro)
+        }
+        return PageImpl(dtos, pageable, dtos.size.toLong())
     }
 
     @Transactional(readOnly = true)

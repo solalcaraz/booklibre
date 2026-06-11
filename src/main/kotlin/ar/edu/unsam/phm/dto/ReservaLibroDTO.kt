@@ -4,6 +4,7 @@ import ar.edu.unsam.phm.domain.LibroColeccionableDocument
 import ar.edu.unsam.phm.domain.LibroComunDocument
 import ar.edu.unsam.phm.domain.LibroDedicatoriaDocument
 import ar.edu.unsam.phm.domain.LibroDocument
+import ar.edu.unsam.phm.domain.LibroPopular
 import ar.edu.unsam.phm.domain.Reserva
 
 data class ReservaLibroDTO(
@@ -20,21 +21,21 @@ data class ReservaLibroDTO(
     var biblioKarmasTotal: Int,
     var portada: String
 )
-
-fun Reserva.toReservaLibroDTO(libro: LibroDocument): ReservaLibroDTO {
-    val tipoDTO = when (libro) {
-        is LibroComunDocument -> TipoDeLibroDTO.COMUN
-        is LibroDedicatoriaDocument -> TipoDeLibroDTO.DEDICATORIA
-        is LibroColeccionableDocument -> TipoDeLibroDTO.COLECCIONABLE
+private fun obtenerTipo(libro: LibroDocument): String =
+    when (libro) {
+        is LibroComunDocument -> TipoDeLibroDTO.COMUN.label
+        is LibroDedicatoriaDocument -> TipoDeLibroDTO.DEDICATORIA.label
+        is LibroColeccionableDocument -> TipoDeLibroDTO.COLECCIONABLE.label
         else -> throw IllegalArgumentException("Tipo de libro desconocido")
     }
 
-    return ReservaLibroDTO(
+fun Reserva.toReservaLibroDTO(libro: LibroDocument): ReservaLibroDTO =
+    ReservaLibroDTO(
         id = libro.id,
         titulo = libro.titulo,
         genero = libro.genero.label,
         autor = libro.autor,
-        tipo = tipoDTO.label,
+        tipo = obtenerTipo(libro),
         isbn13 = libro.isbn13,
         idioma = libro.idioma.label,
         estado = libro.estado.label,
@@ -43,4 +44,19 @@ fun Reserva.toReservaLibroDTO(libro: LibroDocument): ReservaLibroDTO {
         biblioKarmasTotal = this.calcularBiblioKarmas(libro),
         portada = libro.portada
     )
-}
+
+fun Reserva.toReservaDTODesdeRedis(libro: LibroPopular): ReservaLibroDTO =
+    ReservaLibroDTO(
+        id = libro.libroId,
+        titulo = libro.titulo,
+        genero = libro.genero,
+        autor = libro.autor,
+        tipo = libro.tipo,
+        isbn13 = libro.isbn13,
+        idioma = libro.idioma,
+        estado = libro.estado,
+        dueno = libro.dueno,
+        calificacionPromedio = 0.0, //libro.promedioCalificacion,
+        biblioKarmasTotal = 0, //this.calcularBiblioKarmas(libro),
+        portada = libro.portada
+    )

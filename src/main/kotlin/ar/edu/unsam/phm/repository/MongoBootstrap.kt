@@ -1,5 +1,6 @@
 package ar.edu.unsam.phm.repository
 
+import ar.edu.unsam.phm.domain.ClickLibroDocument
 import ar.edu.unsam.phm.domain.Estado
 import ar.edu.unsam.phm.domain.Genero
 import ar.edu.unsam.phm.domain.Idioma
@@ -8,6 +9,7 @@ import ar.edu.unsam.phm.domain.LibroComunDocument
 import ar.edu.unsam.phm.domain.LibroDedicatoriaDocument
 import ar.edu.unsam.phm.domain.LibroDocument
 import ar.edu.unsam.phm.domain.ReservaPendiente
+import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.domain.UsuarioLibroDocument
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.stereotype.Service
@@ -18,7 +20,8 @@ import java.time.LocalDateTime
 class LibrosBootstrap(
     private val libroDocumentRepository: LibroDocumentRepository,
     private val usuarioRepository: UsuarioRepository,
-    private val reservaRepository: ReservaRepository
+    private val reservaRepository: ReservaRepository,
+    private val clickLibroRepository: ClickLibroRepository
 ) : InitializingBean {
 
     fun LibroDocumentRepository.createIfNotExists(libro: LibroDocument): LibroDocument {
@@ -323,6 +326,97 @@ class LibrosBootstrap(
         }
 
         println("✅ Libros inicializados y sincronizados con las reservas de Postgres correctamente.")
+
+        // agrego clicks de ejemplo
+        if (usuariosPostgres.isNotEmpty() && libroDocumentRepository.count() > 0) {
+            registrarClicks(usuariosPostgres)
+        }
+    }
+
+    private fun registrarClicks(usuarios: List<Usuario>) {
+        if (clickLibroRepository.count() > 0) return // ya hay clicks, no duplicar
+
+        val clicks = listOf(
+            // libro_001 - Orgullo y Prejuicio: 45 clicks
+            *(1..45).map {
+                ClickLibroDocument(
+                    usuarioId = usuarios.random().id!!,
+                    usuarioNombre = usuarios.random().nombreCompleto,
+                    libroId = "libro_001",
+                    libroTitulo = "Orgullo y Prejuicio",
+                    fechaHora = LocalDateTime.now().minusDays((1..30).random().toLong())
+                )
+            }.toTypedArray(),
+
+            // libro_005 - Cien Años de Soledad: 38 clicks
+            *(1..38).map {
+                ClickLibroDocument(
+                    usuarioId = usuarios.random().id!!,
+                    usuarioNombre = usuarios.random().nombreCompleto,
+                    libroId = "libro_005",
+                    libroTitulo = "Cien Años de Soledad",
+                    fechaHora = LocalDateTime.now().minusDays((1..30).random().toLong())
+                )
+            }.toTypedArray(),
+
+            // libro_003 - 1984: 30 clicks
+            *(1..30).map {
+                ClickLibroDocument(
+                    usuarioId = usuarios.random().id!!,
+                    usuarioNombre = usuarios.random().nombreCompleto,
+                    libroId = "libro_003",
+                    libroTitulo = "1984",
+                    fechaHora = LocalDateTime.now().minusDays((1..30).random().toLong())
+                )
+            }.toTypedArray(),
+
+            // libro_007 - El nombre del viento: 15 clicks
+            *(1..15).map {
+                ClickLibroDocument(
+                    usuarioId = usuarios.random().id!!,
+                    usuarioNombre = usuarios.random().nombreCompleto,
+                    libroId = "libro_007",
+                    libroTitulo = "El Nombre del Viento",
+                    fechaHora = LocalDateTime.now().minusDays((1..30).random().toLong())
+                )
+            }.toTypedArray(),
+
+            // libro_013 - Padre rico padre pobre: 60 clicks
+            *(1..60).map {
+                ClickLibroDocument(
+                    usuarioId = usuarios.random().id!!,
+                    usuarioNombre = usuarios.random().nombreCompleto,
+                    libroId = "libro_013",
+                    libroTitulo = "Padre Rico Padre Pobre",
+                    fechaHora = LocalDateTime.now().minusDays((1..30).random().toLong())
+                )
+            }.toTypedArray(),
+
+            // libro_014 - Sapiens: 20 clicks
+            *(1..20).map {
+                ClickLibroDocument(
+                    usuarioId = usuarios.random().id!!,
+                    usuarioNombre = usuarios.random().nombreCompleto,
+                    libroId = "libro_014",
+                    libroTitulo = "Sapiens",
+                    fechaHora = LocalDateTime.now().minusDays((1..30).random().toLong())
+                )
+            }.toTypedArray(),
+
+            // libro_009 - El principito: 33 clicks
+            *(1..33).map {
+                ClickLibroDocument(
+                    usuarioId = usuarios.random().id!!,
+                    usuarioNombre = usuarios.random().nombreCompleto,
+                    libroId = "libro_009",
+                    libroTitulo = "El Principito",
+                    fechaHora = LocalDateTime.now().minusDays((1..30).random().toLong())
+                )
+            }.toTypedArray()
+        )
+
+        clickLibroRepository.saveAll(clicks)
+        println("✅ ${clicks.size} clicks inicializados correctamente.")
     }
 
     override fun afterPropertiesSet() {
