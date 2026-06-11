@@ -9,7 +9,7 @@ import com.netflix.graphql.dgs.DgsQuery
 class TasaConversionDataFetcher(
     private val dashboardGraphQLService: DashboardGraphQLService
 ) {
-    @DgsQuery
-    fun tasaConversionClicksReservas(): List<TasaConversionLibroDTO> =
-        dashboardGraphQLService.tasaConversionClicksReservas()
+//    @DgsQuery
+//    fun tasaConversionClicksReservas(): List<TasaConversionLibroDTO> =
+//        dashboardGraphQLService.tasaConversionClicksReservas()
 }

@@ -20,6 +20,4 @@ data class LibroPopular (
     var calificacionPromedio: Double,
     //var biblioKarmasTotal: Int,
     var portada: String,
-
-    var clicks: Int = 0
 )
