@@ -8,9 +8,6 @@ import { BarraBusqueda } from '../components/Home/BarraBusqueda'
 import { LibroCard } from '../components/Home/LibroCard'
 import { formatearFecha } from '../utils/formatearFecha'
 import { Link } from 'react-router-dom'
-import { KpiHeader } from '../components/Home/KpiHeader'
-import { CatalogoSaludKpi } from '../components/Home/SaludKpiHeader'
-import { ActividadFeedHeader } from '../components/Home/ActividadFeedHeader'
 
 const hoy = formatearFecha(new Date())
 
@@ -87,10 +84,6 @@ export const Home = () => {
       />
 
       <div className="flex flex-col gap-6 w-full">
-        <KpiHeader />
-        <CatalogoSaludKpi />
-        <ActividadFeedHeader />
-
         <BarraBusqueda
           busqueda={filtros.busqueda ?? ''}
           onChangeBusqueda={(v) => actualizar('busqueda', v)}
