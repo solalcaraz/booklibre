@@ -15,7 +15,16 @@ interface PanelFiltrosProps {
 
 export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActualizar, onGenero, hoy }: PanelFiltrosProps) => {
   return (
-    <aside className="w-fit rounded-2xl bg-white p-6 shadow-[0_10px_30px_rgba(15,23,42,0.08)] h-fit">
+    // <aside className="w-fit rounded-2xl bg-white p-6 shadow-[0_10px_30px_rgba(15,23,42,0.08)] h-fit">
+    <aside className="
+  w-full
+  max-w-[280px]
+  rounded-2xl
+  bg-white
+  p-4 sm:p-5
+  shadow-[0_10px_30px_rgba(15,23,42,0.08)]
+  h-fit
+">
       <form className="space-y-6" onSubmit={onAplicar}>
 
         {errores.length > 0 && (
@@ -26,7 +35,7 @@ export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActuali
 
         <fieldset>
           <legend className="text-sm font-semibold text-slate-700">GÉNERO</legend>
-          <div className="mt-3 space-y-2 text-sm text-slate-600">
+          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-600">
             {/* desarmo el enum genero para mostrar en los checkbox cada uno */}
             {Object.values(Genero).map(genero => (
               <label key={genero} className="flex items-center gap-2">
@@ -58,26 +67,34 @@ export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActuali
         <hr className="border-slate-200" />
 
         <fieldset>
-          <legend className="text-sm font-semibold text-slate-700">Rango de fechas</legend>
-          <div className="flex gap-3 mt-3">
-            <div className="flex flex-col w-1/2">
+          <legend className="text-sm font-semibold text-slate-700">
+            Rango de fechas
+          </legend>
+
+          <div className="flex flex-col gap-3 mt-3">
+            
+            <div className="flex flex-col w-full flex-1">
               <label className="text-xs text-slate-400">Desde</label>
               <input
-                type="date" min={hoy} value={filtros.fechaDesde ?? hoy}
+                type="date"
+                min={hoy}
+                value={filtros.fechaDesde ?? hoy}
                 onChange={e => onActualizar('fechaDesde', e.target.value)}
-                className="border border-slate-200 rounded-md px-2 py-1 text-sm"
-                data-testid="input-fecha-desde"
+                className="w-full border border-slate-200 rounded-md px-2 py-1 text-sm"
               />
             </div>
-            <div className="flex flex-col w-1/2">
+
+            <div className="flex flex-col w-full flex-1">
               <label className="text-xs text-slate-400">Hasta</label>
               <input
-                type="date" min={filtros.fechaDesde ?? hoy} value={filtros.fechaHasta ?? hoy}
+                type="date"
+                min={filtros.fechaDesde ?? hoy}
+                value={filtros.fechaHasta ?? hoy}
                 onChange={e => onActualizar('fechaHasta', e.target.value)}
-                className="border border-slate-200 rounded-md px-2 py-1 text-sm"
-                data-testid="input-fecha-hasta"
+                className="w-full border border-slate-200 rounded-md px-2 py-1 text-sm"
               />
             </div>
+
           </div>
         </fieldset>
 
@@ -91,7 +108,8 @@ export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActuali
               type="text" placeholder="978-3-16..."
               value={filtros.isbn ?? ''}
               onChange={e => onActualizar('isbn', e.target.value)}
-              className="border border-slate-200 rounded-md px-3 py-2 text-sm"
+              // className="border border-slate-200 rounded-md px-3 py-2 text-sm"
+              className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm"
               data-testid="input-isbn"
             />
           </div>
@@ -101,7 +119,8 @@ export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActuali
               type="text" placeholder="Usuario..."
               value={filtros.usuarioPrestador ?? ''}
               onChange={e => onActualizar('usuarioPrestador', e.target.value)}
-              className="border border-slate-200 rounded-md px-3 py-2 text-sm"
+              // className="border border-slate-200 rounded-md px-3 py-2 text-sm"
+              className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm"
               data-testid="input-prestador"
             />
           </div>
