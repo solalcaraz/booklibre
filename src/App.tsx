@@ -12,10 +12,21 @@ import { UserProvider } from './contexts/UserContext'
 import { Toaster } from 'react-hot-toast';
 import { authService } from './services/AuthService'
 import type { JSX } from 'react'
+import { Dashboard } from './pages/Dashboard'
 
 const RutaProtegida = ({ children }: { children: JSX.Element }) => {
   if (!authService.puedeReservar()) {
     return <Navigate to="/profile" replace />
+  }
+  if (!authService.puedePublicar()) {
+    return <Navigate to="/home" replace /> 
+  }
+  return children
+}
+
+const RutaPublicador = ({ children }: { children: JSX.Element }) => {
+  if (!authService.puedePublicar()) {
+    return <Navigate to="/home" replace /> 
   }
   return children
 }
@@ -46,6 +57,11 @@ function App() {
                 <RutaProtegida>
                   <DetalleReservaPage />
                 </RutaProtegida>
+              } />
+              <Route path="/dashboard" element={
+                <RutaPublicador>
+                  <Dashboard />
+                </RutaPublicador>
               } />
             </Route>
           </Route>
