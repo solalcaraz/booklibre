@@ -20,12 +20,13 @@ import java.util.regex.Pattern
 // Implementacion de un repo custom con MongoTemplate para poder aplicar a la busqueda de libros los filstros que son optativos
 interface LibroDocumentRepositoryCustom {
     fun findDisponiblesParaReserva( excludeUsuarioId: Int, filtros: FiltrosLibro): Page<LibroDocument>
+    fun countDisponiblesParaReserva(excludeUsuarioId: Int, filtros: FiltrosLibro): Long
     fun findMisLibrosDe(duenoId: Int, hoy: LocalDate, filter: String, sort: String?, pageable: Pageable): Page<LibroDocument>
     fun promedioCalificacionPorTipo(): List<PromedioCalificacionPorTipoMongo>
 }
 @Repository
 class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplate): LibroDocumentRepositoryCustom {
-    override fun findDisponiblesParaReserva(excludeUsuarioId: Int, filtros: FiltrosLibro): Page<LibroDocument> {
+    private fun buildCriteria(excludeUsuarioId: Int, filtros: FiltrosLibro): Criteria {
         val criteria = Criteria.where("activo").`is`(true)
 
         // excluir libros del propio user
@@ -58,7 +59,10 @@ class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplat
                 Criteria.where("autor").regex(regex)
             )
         }
-
+        return criteria
+    }
+    override fun findDisponiblesParaReserva(excludeUsuarioId: Int, filtros: FiltrosLibro): Page<LibroDocument> {
+        val criteria = buildCriteria(excludeUsuarioId, filtros)
         // paginado, total y libros dispo
         val pageable: Pageable = PageRequest.of(
             filtros.numeroPagina, filtros.tamanoPaginado, filtros.orden.toSort()
@@ -73,6 +77,9 @@ class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplat
 
         return PageImpl(libros, pageable, total)
     }
+
+    override fun countDisponiblesParaReserva(excludeUsuarioId: Int, filtros: FiltrosLibro): Long =
+        mongoTemplate.count(Query(buildCriteria(excludeUsuarioId, filtros)), LibroDocument::class.java)
 
     override fun findMisLibrosDe(
         duenoId: Int,
