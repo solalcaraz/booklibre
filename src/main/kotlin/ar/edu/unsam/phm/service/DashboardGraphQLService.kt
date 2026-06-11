@@ -66,31 +66,37 @@ class DashboardGraphQLService(
         }
 
     fun estadoSaludCatalogo(): EstadoSaludCatalogoDTO {
-        val libros = libroRepository.findAll()
         val hoy = LocalDate.now()
-
         var prestados = 0
-        var nuncaReservados = 0
         var devueltos = 0
         var reservadosFuturo = 0
 
-        libros.forEach { libro ->
-            val reservas = libro.reservasPendientes ?: emptyList()
+        // 1. La verdad absoluta de la existencia (Mongo)
+        val totalLibros = libroRepository.count().toInt()
 
-            val estaPrestadoHoy = reservas.any { it.fechaInicio <= hoy && it.fechaFin >= hoy }
-            val tienePasadas = reservas.any { it.fechaFin < hoy }
-            val tieneFuturas = reservas.any { it.fechaInicio > hoy }
+        // 2. La verdad absoluta del historial (Postgres)
+        val todasLasReservas = reservaRepository.findAll()
+
+        val reservasPorLibro = todasLasReservas.groupBy { it.libroMongoId }
+
+        reservasPorLibro.values.forEach { reservasDelLibro ->
+
+            val estaPrestadoHoy = reservasDelLibro.any { it.fechaDesde <= hoy && it.fechaHasta >= hoy }
+            val tienePasadas = reservasDelLibro.any { it.fechaHasta < hoy }
+            val tieneFuturas = reservasDelLibro.any { it.fechaDesde > hoy }
 
             when {
                 estaPrestadoHoy -> prestados++
-                reservas.isEmpty() -> nuncaReservados++
                 tienePasadas -> devueltos++
                 tieneFuturas -> reservadosFuturo++
             }
         }
 
+        // 3. Cruce de verdades (bases)
+        val nuncaReservados = totalLibros - (prestados + devueltos + reservadosFuturo)
+
         return EstadoSaludCatalogoDTO(
-            total = libros.size,
+            total = totalLibros,
             prestados = prestados,
             disponiblesNuncaReservados = nuncaReservados,
             disponiblesReservadosAFuturo = reservadosFuturo,
