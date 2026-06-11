@@ -23,3 +23,17 @@ export interface EstadoSaludCatalogo {
 export interface EstadoSaludData {
   estadoSaludCatalogo: EstadoSaludCatalogo
 }
+
+//Punto 5
+export interface ActividadReciente {
+  fecha: string
+  tipoEvento: 'ALTA_LIBRO' | 'NUEVA_RESERVA'
+  usuario: string
+  libroId?: string
+  titulo?: string
+  reservaId?: number
+}
+
+export interface FeedActividadData {
+  feedActividadReciente: ActividadReciente[]
+}
