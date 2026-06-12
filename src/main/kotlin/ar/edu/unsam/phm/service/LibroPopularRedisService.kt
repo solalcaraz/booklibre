@@ -15,6 +15,7 @@ import org.springframework.context.event.EventListener
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import java.time.Duration
+import java.time.LocalDate
 
 @Service
 class LibroPopularRedisService(
@@ -47,7 +48,8 @@ class LibroPopularRedisService(
 
         // ahora anda y busca el detalle completo de cada libro "popular" en mongo
         val topConIds = topClicks.map { it.libroId }
-        val librosConClicks = libroDocumentRepository.findByIdInAndActivoTrue(topConIds).associateBy { it.id }
+        val librosConClicks = libroDocumentRepository.findByIdInAndActivoTrueAndDisponible(
+            topConIds, LocalDate.now(), LocalDate.now()).associateBy { it.id }
 
         val librosParaRedis = topClicks.mapNotNull { click ->
             val libro = librosConClicks[click.libroId] ?: return@mapNotNull null
@@ -72,7 +74,7 @@ class LibroPopularRedisService(
         topClicks.forEach { libro ->
             redisTemplate.opsForZSet().add(RANKING_KEY, libro.libroId, libro.clicks.toDouble())
         }
-        println("Redis vacio. Se construyó con un total de: ${libroPopularRepository.findAll().toList().size} libros populares")
+        println("Se construyó la cache de redis con un total de: ${libroPopularRepository.findAll().toList().size} libros populares")
         return librosParaRedis
     }
 
