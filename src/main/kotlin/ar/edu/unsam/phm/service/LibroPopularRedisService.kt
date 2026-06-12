@@ -17,6 +17,11 @@ import org.springframework.stereotype.Service
 import java.time.Duration
 import java.time.LocalDate
 
+data class LibroPopularConClicks(
+    val libro: LibroPopular,
+    val clicks: Int
+)
+
 @Service
 class LibroPopularRedisService(
     private val libroPopularRepository: LibroPopularRepository,
@@ -85,6 +90,24 @@ class LibroPopularRedisService(
     fun obtenerTopIds(limite: Int): List<String> {
         return redisTemplate.opsForZSet().reverseRange(RANKING_KEY, 0, limite-1.toLong())
             ?.toList() ?: emptyList()
+    }
+
+    fun obtenerTopLibrosConClicks(limite: Int): List<LibroPopularConClicks> {
+        return redisTemplate.opsForZSet()
+            .reverseRangeWithScores(RANKING_KEY, 0, limite - 1L)
+            ?.mapNotNull { libroConScore ->
+                val libroId = libroConScore.value ?: return@mapNotNull null
+                /* busco el libro completo para sacar el autor y el titulo nada más */
+                val libro = libroPopularRepository.findById(libroId).orElse(null)
+                    ?: obtenerLibroCacheado(libroId)
+                    ?: return@mapNotNull null
+
+                LibroPopularConClicks(
+                    libro = libro,
+                    clicks = libroConScore.score?.toInt() ?: 0
+                )
+            }
+            ?: emptyList()
     }
 
     /*

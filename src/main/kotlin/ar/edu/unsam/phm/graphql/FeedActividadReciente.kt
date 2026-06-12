@@ -5,12 +5,14 @@ import ar.edu.unsam.phm.service.DashboardGraphQLService
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.DgsTypeResolver
+import org.springframework.security.access.prepost.PreAuthorize
 
 @DgsComponent
 class ActividadRecienteDataFetcher(
     private val dashboardGraphQLService: DashboardGraphQLService
 ) {
     @DgsQuery
+    @PreAuthorize("hasRole('PUBLICADOR') or hasRole('LECTOR_PUBLICADOR')")
     fun feedActividadReciente(): List<ActividadRecienteDTO> =
         dashboardGraphQLService.feedActividadReciente()
 
