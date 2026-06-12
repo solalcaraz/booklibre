@@ -93,6 +93,7 @@ class LibroPopularRedisService(
             .reverseRangeWithScores(RANKING_KEY, 0, limite - 1L)
             ?.mapNotNull { libroConScore ->
                 val libroId = libroConScore.value ?: return@mapNotNull null
+                /* busco el libro completo para sacar el autor y el titulo nada más */
                 val libro = libroPopularRepository.findById(libroId).orElse(null)
                     ?: obtenerLibroCacheado(libroId)
                     ?: return@mapNotNull null
