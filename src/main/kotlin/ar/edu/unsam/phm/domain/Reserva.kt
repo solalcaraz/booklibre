@@ -77,7 +77,7 @@ class Reserva(
     fun calcularDias() = ChronoUnit.DAYS.between(fechaDesde, fechaHasta).toInt() + 1
 
     // Ahora el service tiene que pasarle el libro o hay que reformular este cálculo
-    fun calcularBiblioKarmas(libro: LibroDocument): Int {
+    fun calcularBiblioKarmas(libro: LibroCalculoBibliokarmas): Int {
         return 5 * calcularDias() + libro.plusBiblioKarma(lector.bibliokarmas)
     }
 
