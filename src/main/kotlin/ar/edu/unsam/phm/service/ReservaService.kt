@@ -56,15 +56,7 @@ class ReservaService(
     fun getLibrosDisponiblesParaReserva(usuarioId: Int, filtros: FiltrosLibro): Page<ReservaLibroDTO> {
         val usuario = usuarioRepository.findById(usuarioId).orElseThrow { NotFoundException("Usuario no encontrado") }
 
-        // al cargar la primera pagina del home intenta traee los libros de redis
-        if (filtros.numeroPagina == 0 && filtros.orden == Ordenamiento.POPULARIDAD) {
-            val resultado = obtenerLibrosRedis(usuario, filtros)
-            if (resultado != null) return resultado
-        } // si no hay nada o no alcanza para mostrar los 6, va directo a mongo
-
-        // pagina 1+ se resuelve desde mongo directo
         val pageDeLibros = libroRepository.findDisponiblesParaReserva(usuarioId, filtros)
-
         // guardar en redis con TTL cada libro que devolvió mongo
         pageDeLibros.content.forEach { libro -> libroPopularRedisService.cachearLibro(libro) }
 
@@ -79,32 +71,29 @@ class ReservaService(
         }
     }
 
-    private fun obtenerLibrosRedis(usuario: Usuario, filtros: FiltrosLibro): Page<ReservaLibroDTO>? {
+    @Transactional(readOnly = true)
+    fun getLibrosPopulares(usuarioId: Int): List<ReservaLibroDTO> {
+        val usuario = usuarioRepository.findById(usuarioId).orElseThrow { NotFoundException("Usuario no encontrado") }
+
         // trae el top 10 ids (zset) del ranking
         val topIds = libroPopularRedisService.obtenerTopIds(limite=10)
-        if (topIds.isEmpty()) return null
 
         // intenta obtener la info cacheada de cada id que no expiro del hash
-        val librosEnRedis = topIds.mapNotNull { libroId ->
-            libroPopularRedisService.obtenerLibroCacheado(libroId)
-        }
+        val librosEnRedis = topIds.mapNotNull { libroPopularRedisService.obtenerLibroCacheado(it) }
 
         // si no alcanza a traer 6 libros entonces vuelve para pedir los libros en mongo
-        if (librosEnRedis.size < filtros.tamanoPaginado) return null
-
-        val totalReal = libroRepository.countDisponiblesParaReserva(usuario.id!!, filtros)
+        if (librosEnRedis.size < 6)
+            throw NotFoundException("Redis no tiene suficientes libros populares para mostrar")
 
         // toma los primeros 6 y mapear
-        val pageable = PageRequest.of(filtros.numeroPagina, filtros.tamanoPaginado, filtros.orden.toSort())
-        val dtos = librosEnRedis.take(filtros.tamanoPaginado).map { libro ->
+        return librosEnRedis.take(6).map { libro ->
             Reserva(
                 lector = usuario,
-                fechaDesde = filtros.fechaDesde,
-                fechaHasta = filtros.fechaHasta,
+                fechaDesde = LocalDate.now(),
+                fechaHasta = LocalDate.now(),
                 libroMongoId = libro.libroId
             ).toReservaDTODesdeRedis(libro)
         }
-        return PageImpl(dtos, pageable, totalReal)
     }
 
     @Transactional(readOnly = true)
