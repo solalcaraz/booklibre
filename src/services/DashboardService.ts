@@ -5,6 +5,16 @@ interface TasaConversionData {
   tasaConversionClicksReservas: TasaConversionLibro[]
 }
 
+export interface UsuarioLeaderboard {
+  id: number
+  nombreCompleto: string
+  bibliokarmas: number
+}
+
+interface LeaderboardData {
+  leaderboardUsuarios: UsuarioLeaderboard[]
+}
+
 class DashboardService {
   async getTasaConversionClicksReservas(): Promise<TasaConversionLibro[]> {
     const response = await api.post<GraphQLResponse<TasaConversionData>>('/graphql', {
@@ -96,6 +106,26 @@ class DashboardService {
     }
 
     return response.data.data?.feedActividadReciente ?? []
+  }
+
+  async getLeaderboardUsuarios(): Promise<UsuarioLeaderboard[]> {
+    const response = await api.post<GraphQLResponse<LeaderboardData>>('/graphql', {
+      query: `
+        query LeaderboardUsuarios {
+          leaderboardUsuarios {
+            id
+            nombreCompleto
+            bibliokarmas
+          }
+        }
+      `
+    })
+
+    if (response.data.errors?.length) {
+      throw new Error(response.data.errors[0].message)
+    }
+
+    return response.data.data?.leaderboardUsuarios ?? []
   }
 }
 
