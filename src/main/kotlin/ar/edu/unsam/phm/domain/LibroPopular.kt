@@ -19,8 +19,8 @@ data class LibroPopular (
     var estado: String,
     var dueno: String,
     var calificacionPromedio: Double,
-    override val cantPaginas: Int = 0,
-    override val cantidadReservas: Int = 0,
+    override val cantPaginas: Int,
+    override val cantidadReservas: Int,
     var portada: String,
 ) : LibroCalculoBibliokarmas {
     override fun plusBiblioKarma(cantidadBiblioKarma: Int): Int {

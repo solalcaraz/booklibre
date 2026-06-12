@@ -64,8 +64,10 @@ class LibroPopularRedisService(
                 estado = libro.estado.label,
                 dueno = libro.dueno.nombreCompleto,
                 isbn13 = libro.isbn13,
-                portada = libro.portada,
-                calificacionPromedio = libro.promedioCalificacion
+                calificacionPromedio = libro.promedioCalificacion,
+                cantPaginas = libro.cantPaginas,
+                cantidadReservas = libro.cantidadReservas,
+                portada = libro.portada
             )
         }
 
@@ -112,8 +114,10 @@ class LibroPopularRedisService(
             estado = libro.estado.label,
             dueno = libro.dueno.nombreCompleto,
             isbn13 = libro.isbn13,
-            portada = libro.portada,
-            calificacionPromedio = libro.promedioCalificacion
+            calificacionPromedio = libro.promedioCalificacion,
+            cantPaginas = libro.cantPaginas,
+            cantidadReservas = libro.cantidadReservas,
+            portada = libro.portada
         )
         val key = "$CACHE_PREFIX${libro.id}"
         val json = objectMapper.writeValueAsString(libroPopular)
@@ -145,8 +149,10 @@ class LibroPopularRedisService(
             estado = libro.estado.label,
             dueno = libro.dueno.nombreCompleto,
             isbn13 = libro.isbn13,
-            portada = libro.portada,
-            calificacionPromedio = libro.promedioCalificacion
+            calificacionPromedio = libro.promedioCalificacion,
+            cantPaginas = libro.cantPaginas,
+            cantidadReservas = libro.cantidadReservas,
+            portada = libro.portada
         ))
     }
 
