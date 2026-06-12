@@ -67,11 +67,11 @@ class UsuarioLeaderboardRedisService(
         }
     }
 
-    fun actualizarScoreUsuario(userId: Int, delta: Int) {
+    fun actualizarScoreUsuario(userId: Int, bibliokarmas: Int) {
         redisTemplate.opsForZSet().incrementScore(
             LEADERBOARD_KEY,
             userId.toString(),
-            delta.toDouble()
+            bibliokarmas.toDouble()
         )
 
         redisTemplate.expire(LEADERBOARD_KEY, LEADERBOARD_TTL)

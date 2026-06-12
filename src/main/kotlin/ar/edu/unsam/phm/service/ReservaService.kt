@@ -59,7 +59,8 @@ class ReservaService(
 
         val pageDeLibros = libroRepository.findDisponiblesParaReserva(usuarioId, filtros)
         // guardar en redis con TTL cada libro que devolvió mongo
-        pageDeLibros.content.forEach { libro -> libroPopularRedisService.cachearLibro(libro) }
+        //pageDeLibros.content.forEach { libro -> libroPopularRedisService.cachearLibro(libro) }
+        //libroPopularRedisService.inicializarRedis()
 
         // se transforma cada LibroDocument en una pre reserva y hace el mapeo (dto)
         return pageDeLibros.map { libro ->
@@ -80,11 +81,17 @@ class ReservaService(
         val topIds = libroPopularRedisService.obtenerTopIds(limite=10)
 
         // intenta obtener la info cacheada de cada id que no expiro del hash
-        val librosEnRedis = topIds.mapNotNull { libroPopularRedisService.obtenerLibroCacheado(it) }
+        val librosEnRedis = topIds.mapNotNull { libroPopularRedisService.obtenerLibroPopular(it) }
 
-        // si no alcanza a traer 6 libros entonces vuelve para pedir los libros en mongo
-        if (librosEnRedis.size < 6)
+        // si no alcanza a traer 6 libros entonces vuelve para pedir los libros en mongo y los cachea con un ttl
+        if (librosEnRedis.size < 6) {
+            val librosDeMongo = libroRepository
+                .findByIdInAndActivoTrueAndDisponible(topIds, LocalDate.now(), LocalDate.now())
+
+            librosDeMongo.forEach { libroPopularRedisService.cachearLibro(it) }
+
             throw NotFoundException("Redis no tiene suficientes libros populares para mostrar")
+        }
 
         // toma los primeros 6 y mapear
         return librosEnRedis.take(6).map { libro ->

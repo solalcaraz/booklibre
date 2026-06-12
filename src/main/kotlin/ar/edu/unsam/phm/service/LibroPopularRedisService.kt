@@ -28,19 +28,15 @@ class LibroPopularRedisService(
     private val clickLibroRepository: ClickLibroRepository,
     private val libroDocumentRepository: LibroDocumentRepository,
     private val redisTemplate: RedisTemplate<String, String>,
-    private val objectMapper: ObjectMapper
 ){
     private val RANKING_KEY="libros:ranking"
-    private val CACHE_PREFIX = "libro:cache"
-    private val CACHE_TTL = Duration.ofMinutes(3)
 
     // Si Redis esta vacía (reinicio del servidor o primer levantamiento de la app),
     // pregunta a mongo por los libros e hidrata redis, sigue siendo la fuente de verdad
     @EventListener(ApplicationReadyEvent::class)
     fun inicializarRedis() {
-        //val librosEnRedis = libroPopularRepository.findAll().toList()
-        //if (librosEnRedis.isEmpty())
-            reconstruirDesdeDB()
+        val yaInicializado = redisTemplate.opsForZSet().size(RANKING_KEY) ?: 0
+        if (yaInicializado == 0L) reconstruirDesdeDB()
     }
 
     // consulta en mongo los libros mas clickeados y guarda la info en dos estructuras
@@ -58,7 +54,6 @@ class LibroPopularRedisService(
 
         val librosParaRedis = topClicks.mapNotNull { click ->
             val libro = librosConClicks[click.libroId] ?: return@mapNotNull null
-            cachearLibro(libro)
             LibroPopular(
                 libroId = libro.id!!,
                 titulo = libro.titulo,
@@ -88,7 +83,7 @@ class LibroPopularRedisService(
     // Devuelve solo los id del top segun el zset, sin traer el detalle de los libros
     // sirve para verificar si tenemos la informacion de tal id, es mas liviano traer ids a memoria
     fun obtenerTopIds(limite: Int): List<String> {
-        return redisTemplate.opsForZSet().reverseRange(RANKING_KEY, 0, limite-1.toLong())
+        return redisTemplate.opsForZSet().reverseRange(RANKING_KEY, 0, limite-1L)
             ?.toList() ?: emptyList()
     }
 
@@ -99,7 +94,6 @@ class LibroPopularRedisService(
                 val libroId = libroConScore.value ?: return@mapNotNull null
                 /* busco el libro completo para sacar el autor y el titulo nada más */
                 val libro = libroPopularRepository.findById(libroId).orElse(null)
-                    ?: obtenerLibroCacheado(libroId)
                     ?: return@mapNotNull null
 
                 LibroPopularConClicks(
@@ -110,20 +104,8 @@ class LibroPopularRedisService(
             ?: emptyList()
     }
 
-    /*
-    obtenerLibroCacheado y cachearLibro trabajan con otra estructura:
-    claves "libro:cache:<id>" que son strings json con TTL de 10 minutos
-    independiente del hash y el ranking
-    hago esto porque quiero que la clase libro popular mantenga persistencia con el ranking pero que expire la informacion hasheada
-    esta tercer clase permite justamente eso y el costo a pagar es armar el ttl manual
-     */
-    // intenta obtener el libro en redis por su id -> devuelve null si expiro su ttl o no existe
-    fun obtenerLibroCacheado(libroId: String): LibroPopular? {
-        val key = "$CACHE_PREFIX$libroId"
-        val json = redisTemplate.opsForValue().get(key) ?: return null
-
-        return objectMapper.readValue(json, LibroPopular::class.java)
-    }
+    fun obtenerLibroPopular(libroId: String): LibroPopular? =
+        libroPopularRepository.findById(libroId).orElse(null)
 
     // cachea un libro de mongo con un TTL: se llama cada vez q mongo responde y busca libros
     fun cachearLibro(libro: LibroDocument) {
@@ -142,10 +124,7 @@ class LibroPopularRedisService(
             cantidadReservas = libro.cantidadReservas,
             portada = libro.portada
         )
-        val key = "$CACHE_PREFIX${libro.id}"
-        val json = objectMapper.writeValueAsString(libroPopular)
-
-        redisTemplate.opsForValue().set(key, json, CACHE_TTL)
+        libroPopularRepository.save(libroPopular)
     }
 
     // registrar click actualiza el score en el ZSET
