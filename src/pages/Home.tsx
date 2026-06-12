@@ -8,6 +8,10 @@ import { BarraBusqueda } from '../components/Home/BarraBusqueda'
 import { LibroCard } from '../components/Home/LibroCard'
 import { formatearFecha } from '../utils/formatearFecha'
 import { Link } from 'react-router-dom'
+import { type ErrorCustom } from '../utils/errorHandler'
+import { Spinner } from '../components/Spinner'
+import { ErrorCard } from '../components/ErrorCard'
+import { useOnInit } from '../utils/hooks'
 
 const hoy = formatearFecha(new Date())
 
@@ -19,15 +23,44 @@ const filtrosIniciales: FiltrosLibro = {
   fechaHasta: hoy,
   isbn: '',
   usuarioPrestador: '',
-  orden: 'POPULARIDAD',
+  orden: 'TITULO_ASC',
   numeroPagina: 0,
   tamanoPaginado: 6
 }
+
+type Vista =
+  | 'HOME_POPULARES'
+  | 'HOME_BUSQUEDA'
 
 export const Home = () => {
   const [filtros, setFiltros] = useState<FiltrosLibro>(filtrosIniciales)
   const [filtrosAplicados, setFiltrosAplicados] = useState<FiltrosLibro>(filtrosIniciales)
   const [errores, setErrores] = useState<string[]>([])
+
+  const [vista, setVista] = useState<Vista>('HOME_POPULARES')
+
+  const [librosPopulares, setLibrosPopulares] = useState<ReservaLibroHomeJSON[]>([])
+  const [loadingPopulares, setLoadingPopulares] = useState(true)
+  const [errorPopulares, setErrorPopulares] = useState<ErrorCustom | null>(null)
+
+  const cargarHome = async () => {
+    setLoadingPopulares(true)
+    setErrorPopulares(null)
+
+    try {
+        // intenta Redis primero
+        const populares = await reservaService.getLibrosPopularesHome()
+        setLibrosPopulares(populares)
+        setVista('HOME_POPULARES')
+    } catch {
+        // Redis no tenía suficientes o tira error
+        setVista('HOME_BUSQUEDA')            
+    } finally {
+        setLoadingPopulares(false)
+    }
+  }
+
+  useOnInit(cargarHome)
 
   // metodo para actualizar inputs dinamicamente
   const actualizar = (campo: keyof FiltrosLibro, valor: unknown) => {
@@ -56,7 +89,10 @@ export const Home = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (validar()) setFiltrosAplicados({ ...filtros })
+    if (validar()) {
+      setFiltrosAplicados({ ...filtros })
+      setVista('HOME_BUSQUEDA')
+    }
   }
 
   const handleOrden = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -65,10 +101,12 @@ export const Home = () => {
     setFiltrosAplicados(nuevosFiltros)
   }
 
-  const limpiarFiltros = () => {
+  const limpiarFiltros = async () => {
     setFiltros(filtrosIniciales)
     setFiltrosAplicados(filtrosIniciales)
     setErrores([])
+    setVista('HOME_POPULARES')
+    await cargarHome()
   }
 
   return (
@@ -94,42 +132,75 @@ export const Home = () => {
           }}
         />
 
-        {/* Header resultados */}
-        <section className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-800">Libros Populares</h2>
+        {vista === 'HOME_POPULARES' && (
+          /* ── HOME SUGERENCIA POPULARES ──
+             Redis OK : 6 libros populares, sin orden ni paginado
+          */
+          <>
+            <section className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-slate-800">Libros Populares</h2>
+            </section>
 
-          <div className="flex items-center gap-2 text-sm text-slate-500">
-            <span>Ordenar por:</span>
-            <select
-              value={filtros.orden}
-              onChange={handleOrden}
-              className="border border-slate-200 rounded-md px-2 py-1 text-slate-700"
-            >
-              <option value="POPULARIDAD">Popularidad</option>
-              <option value="TITULO_ASC">Título A→Z</option>
-              <option value="TITULO_DESC">Título Z→A</option>
-              <option value="AUTOR_ASC">Autor A→Z</option>
-              <option value="DUENO_ASC">Dueño A→Z</option>
-            </select>
-          </div>
-        </section>
+            {errorPopulares ? (
+              <ErrorCard error={errorPopulares} onRetry={() => window.location.reload()} onVolver={() => {}} />
+            ) : loadingPopulares ? (
+              <Spinner />
+            ) : (
+              <div className="grid grid-cols-3 gap-6">
+                {librosPopulares.map((libro) => (
+                  <Link
+                    key={libro.id}
+                    to={`/detalles/${libro.id}?fechaDesde=${filtrosIniciales.fechaDesde}&fechaHasta=${filtrosIniciales.fechaHasta}`}
+                    replace
+                  >
+                    <LibroCard libro={libro} />
+                  </Link>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+        {vista === 'HOME_BUSQUEDA' && (
+          /* ── HOME BÚSQUEDA/FILTROS ──
+             Siempre la busqueda a Mongo, DataGrid completo con paginado y orden  */
+          <>
+            {/* Header resultados */}
+            <section className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-slate-800">Libros Disponibles</h2>
 
-        {/* Lista del resultado de libros con paginado */}
-        <DataGrid<ReservaLibroHomeJSON, FiltrosLibro>
-          fetchFunction={(req) => reservaService.getLibrosDisponiblesReserva(req)}
-          filter={filtrosAplicados}
-          renderItem={(libro) => {
-            return (
-              <Link
-                to={`/detalles/${libro.id}?fechaDesde=${filtrosAplicados.fechaDesde}&fechaHasta=${filtrosAplicados.fechaHasta}`}
-                replace
-              >
-                <LibroCard libro={libro} />
-              </Link>
-            )
-          }}
-          pageSize={filtros.tamanoPaginado!}
-        />
+              <div className="flex items-center gap-2 text-sm text-slate-500">
+                <span>Ordenar por:</span>
+                <select
+                  value={filtros.orden}
+                  onChange={handleOrden}
+                  className="border border-slate-200 rounded-md px-2 py-1 text-slate-700"
+                >
+                  <option value="TITULO_ASC">Título A→Z</option>
+                  <option value="TITULO_DESC">Título Z→A</option>
+                  <option value="AUTOR_ASC">Autor A→Z</option>
+                  <option value="DUENO_ASC">Dueño A→Z</option>
+                </select>
+              </div>
+            </section>
+
+            {/* Lista del resultado de libros con paginado */}
+            <DataGrid<ReservaLibroHomeJSON, FiltrosLibro>
+              fetchFunction={(req) => reservaService.getLibrosDisponiblesReserva(req)}
+              filter={filtrosAplicados}
+              renderItem={(libro) => {
+                return (
+                  <Link
+                    to={`/detalles/${libro.id}?fechaDesde=${filtrosAplicados.fechaDesde}&fechaHasta=${filtrosAplicados.fechaHasta}`}
+                    replace
+                  >
+                    <LibroCard libro={libro} />
+                  </Link>
+                )
+              }}
+              pageSize={filtros.tamanoPaginado!}
+            />
+          </>
+        )}
       </div>
     </main>
   )
