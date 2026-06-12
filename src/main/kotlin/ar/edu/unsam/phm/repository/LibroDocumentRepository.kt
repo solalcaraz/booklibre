@@ -34,7 +34,8 @@ interface LibroDocumentRepository : MongoRepository<LibroDocument, String>, Libr
     @Query("{ 'dueno._id': ?0, 'activo': true, 'reservasPendientes': { '\$not': { '\$elemMatch': { 'fechaInicio': { '\$lte': ?1 }, 'fechaFin': { '\$gte': ?1 } } } } }")
     fun findDisponiblesByDuenoId(duenoId: Int, hoy: LocalDate, pageable: Pageable): Page<LibroDocument>
 
-    fun findByIdInAndActivoTrue(ids: List<String>): List<LibroDocument>
+    @Query("{ '_id': { '\$in': ?0 }, 'activo': true, 'reservasPendientes': { '\$not': { '\$elemMatch': { 'fechaInicio': { '\$lte': ?1 }, 'fechaFin': { '\$gte': ?2 } } } } }")
+    fun findByIdInAndActivoTrueAndDisponible(ids: List<String>, desde: LocalDate, hasta: LocalDate): List<LibroDocument>
 
     // Trae los 5 libros más recientes ordenados por fecha de creación descendente
     fun findTop5ByOrderByCreatedAtDesc(): List<LibroDocument>

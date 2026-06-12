@@ -57,6 +57,6 @@ fun Reserva.toReservaDTODesdeRedis(libro: LibroPopular): ReservaLibroDTO =
         estado = libro.estado,
         dueno = libro.dueno,
         calificacionPromedio = libro.calificacionPromedio,
-        biblioKarmasTotal = 0, //this.calcularBiblioKarmas(libro),
+        biblioKarmasTotal = this.calcularBiblioKarmas(libro),
         portada = libro.portada
     )

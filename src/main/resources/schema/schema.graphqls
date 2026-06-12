@@ -2,6 +2,7 @@ type Query {
     analisisCalificaciones: [PromedioCalificacionPorTipo!]!
     tasaConversionClicksReservas: [TasaConversionLibro!]!
     estadoSaludCatalogo: EstadoSaludCatalogo!
+    leaderboardUsuarios: [UsuarioLeaderboard!]!
 }
 
 type PromedioCalificacionPorTipo {
@@ -16,6 +17,12 @@ type TasaConversionLibro {
     clicks: Int!
     reservas: Int!
     tasaConversion: Float!
+}
+
+type UsuarioLeaderboard {
+    id: ID!
+    nombreCompleto: String!
+    bibliokarmas: Int!
 }
 
 enum TipoLibro {

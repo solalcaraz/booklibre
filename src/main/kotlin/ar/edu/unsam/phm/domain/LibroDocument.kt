@@ -13,7 +13,7 @@ import kotlin.math.ceil
 
 @Document(collection = "libros")
 @Sharded(shardKey = ["dueno._id"])
-abstract class LibroDocument {
+abstract class LibroDocument : LibroCalculoBibliokarmas {
     @Id
     var id: String? = null
 
@@ -21,7 +21,7 @@ abstract class LibroDocument {
     var descripcion: String = ""
     var genero: Genero = Genero.DRAMA
     var autor: String = ""
-    var cantPaginas: Int = 0
+    override var cantPaginas: Int = 0
     var isbn13: String = ""
     var idioma: Idioma = Idioma.ESPANOL
     var editorial: String = ""
@@ -29,7 +29,7 @@ abstract class LibroDocument {
     var estado: Estado = Estado.BUENO
     var portada: String = Environment.API_URL + "/imagenes/libro-nuevo.jpg"
     lateinit var dueno: UsuarioLibroDocument
-    var cantidadReservas: Int = 0
+    override var cantidadReservas: Int = 0
     var createdAt: LocalDateTime = LocalDateTime.now()
 
     @Field("calificacionPromedio")
@@ -38,7 +38,7 @@ abstract class LibroDocument {
 
     var reservasPendientes: MutableList<ReservaPendiente> = mutableListOf()
 
-    abstract fun plusBiblioKarma(cantidadBibliokarmas: Int): Int
+    abstract override fun plusBiblioKarma(cantidadBibliokarmas: Int): Int
 
     fun estaDisponible(desde: LocalDate, hasta: LocalDate): Boolean {
         limpiarReservasVencidas()

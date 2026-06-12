@@ -15,6 +15,7 @@ import org.springframework.context.event.EventListener
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import java.time.Duration
+import java.time.LocalDate
 
 @Service
 class LibroPopularRedisService(
@@ -26,7 +27,7 @@ class LibroPopularRedisService(
 ){
     private val RANKING_KEY="libros:ranking"
     private val CACHE_PREFIX = "libro:cache"
-    private val CACHE_TTL = Duration.ofMinutes(10)
+    private val CACHE_TTL = Duration.ofMinutes(3)
 
     // Si Redis esta vacía (reinicio del servidor o primer levantamiento de la app),
     // pregunta a mongo por los libros e hidrata redis, sigue siendo la fuente de verdad
@@ -47,7 +48,8 @@ class LibroPopularRedisService(
 
         // ahora anda y busca el detalle completo de cada libro "popular" en mongo
         val topConIds = topClicks.map { it.libroId }
-        val librosConClicks = libroDocumentRepository.findByIdInAndActivoTrue(topConIds).associateBy { it.id }
+        val librosConClicks = libroDocumentRepository.findByIdInAndActivoTrueAndDisponible(
+            topConIds, LocalDate.now(), LocalDate.now()).associateBy { it.id }
 
         val librosParaRedis = topClicks.mapNotNull { click ->
             val libro = librosConClicks[click.libroId] ?: return@mapNotNull null
@@ -62,8 +64,10 @@ class LibroPopularRedisService(
                 estado = libro.estado.label,
                 dueno = libro.dueno.nombreCompleto,
                 isbn13 = libro.isbn13,
-                portada = libro.portada,
-                calificacionPromedio = libro.promedioCalificacion
+                calificacionPromedio = libro.promedioCalificacion,
+                cantPaginas = libro.cantPaginas,
+                cantidadReservas = libro.cantidadReservas,
+                portada = libro.portada
             )
         }
 
@@ -72,7 +76,7 @@ class LibroPopularRedisService(
         topClicks.forEach { libro ->
             redisTemplate.opsForZSet().add(RANKING_KEY, libro.libroId, libro.clicks.toDouble())
         }
-        println("Redis vacio. Se construyó con un total de: ${libroPopularRepository.findAll().toList().size} libros populares")
+        println("Se construyó la cache de redis con un total de: ${libroPopularRepository.findAll().toList().size} libros populares")
         return librosParaRedis
     }
 
@@ -110,8 +114,10 @@ class LibroPopularRedisService(
             estado = libro.estado.label,
             dueno = libro.dueno.nombreCompleto,
             isbn13 = libro.isbn13,
-            portada = libro.portada,
-            calificacionPromedio = libro.promedioCalificacion
+            calificacionPromedio = libro.promedioCalificacion,
+            cantPaginas = libro.cantPaginas,
+            cantidadReservas = libro.cantidadReservas,
+            portada = libro.portada
         )
         val key = "$CACHE_PREFIX${libro.id}"
         val json = objectMapper.writeValueAsString(libroPopular)
@@ -143,8 +149,10 @@ class LibroPopularRedisService(
             estado = libro.estado.label,
             dueno = libro.dueno.nombreCompleto,
             isbn13 = libro.isbn13,
-            portada = libro.portada,
-            calificacionPromedio = libro.promedioCalificacion
+            calificacionPromedio = libro.promedioCalificacion,
+            cantPaginas = libro.cantPaginas,
+            cantidadReservas = libro.cantidadReservas,
+            portada = libro.portada
         ))
     }
 

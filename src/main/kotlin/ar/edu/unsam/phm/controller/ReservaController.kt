@@ -52,8 +52,8 @@ class ReservaController (private val reservaService: ReservaService, private val
         @ModelAttribute filtros: FiltrosLibro
     ): PaginationResponseDTO<ReservaLibroDTO> {
         val userId = SecurityContextHolder.getContext().authentication.name.toInt()
-
         val page = reservaService.getLibrosDisponiblesParaReserva(userId, filtros)
+
         return PaginationResponseDTO(
             items = page.content,
             page = page.number,
@@ -61,6 +61,12 @@ class ReservaController (private val reservaService: ReservaService, private val
             totalItems = page.totalElements.toInt(),
             totalPages = page.totalPages
         )
+    }
+
+    @GetMapping("/librosPopulares")
+    fun listarLibrosPopulares(): List<ReservaLibroDTO> {
+        val userId = SecurityContextHolder.getContext().authentication.name.toInt()
+        return reservaService.getLibrosPopulares(userId)
     }
 
     @PostMapping("/calificar")
