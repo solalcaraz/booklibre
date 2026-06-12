@@ -24,6 +24,15 @@ export interface EstadoSaludData {
   estadoSaludCatalogo: EstadoSaludCatalogo
 }
 
+export interface PromedioCalificacionPorTipo {
+  tipo: 'COMUN' | 'DEDICATORIA' | 'COLECCIONABLE'
+  puntajePromedio: number
+}
+
+export interface PromedioCalificacionData {
+  analisisCalificaciones: PromedioCalificacionPorTipo[]
+}
+
 //Punto 5
 export interface ActividadReciente {
   fecha: string
