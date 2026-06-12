@@ -27,7 +27,7 @@ class LibroPopularRedisService(
 ){
     private val RANKING_KEY="libros:ranking"
     private val CACHE_PREFIX = "libro:cache"
-    private val CACHE_TTL = Duration.ofMinutes(10)
+    private val CACHE_TTL = Duration.ofMinutes(5)
 
     // Si Redis esta vacía (reinicio del servidor o primer levantamiento de la app),
     // pregunta a mongo por los libros e hidrata redis, sigue siendo la fuente de verdad

@@ -38,6 +38,7 @@ class ReservaService(
     private val reservaAdapter: ReservaAdapter,
     private val reseniaRepository: ReseniaRepository,
     private val libroPopularRedisService: LibroPopularRedisService,
+    private val usuarioLeaderboardRedisService: UsuarioLeaderboardRedisService,
 ) {
     @Transactional(readOnly = true)
     fun getMisReservas(payload: PaginationReqDTO<ReservaRequestDTO>): Page<Reserva> {
@@ -148,6 +149,9 @@ class ReservaService(
         nuevaReserva.bibliokarmasGanados = bibliokarmasGanados
         usuario.aumentarBiblioKarmas(bibliokarmasGanados)
         usuarioRepository.save(usuario)
+
+        // Invalida el caché del leaderboard cuando se actualizan bibliokarmas
+        usuarioLeaderboardRedisService.invalidarLeaderboard()
 
         //Sincronizacion entre repoReservas y libroDocument.
 
