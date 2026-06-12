@@ -29,4 +29,4 @@ export type FiltrosLibro = {
     tamanoPaginado?: number
 }
 
-export type Orden = | 'POPULARIDAD' | 'TITULO_ASC' | 'TITULO_DESC' | 'AUTOR_ASC' | 'DUENO_ASC' 
+export type Orden = | 'TITULO_ASC' | 'TITULO_DESC' | 'AUTOR_ASC' | 'DUENO_ASC' 
