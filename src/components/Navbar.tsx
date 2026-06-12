@@ -34,7 +34,8 @@ export default function Navbar() {
   const items: NavItemProps[] = [
     ...(authService.puedeReservar() ? [{ to: '/home', label: 'Inicio' }] : []),
     { to: `/prestamos`, label: 'Mis Préstamos' },
-    { to: '/profile', label: 'Perfil' }
+    { to: '/profile', label: 'Perfil' },
+    ...(authService.puedePublicar() ? [{ to: '/dashboard', label: 'Dashboard' }] : [])
   ]
 
   const handleLogout = () => {

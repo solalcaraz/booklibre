@@ -1,5 +1,5 @@
 import { api } from '../api/api'
-import type { GraphQLResponse, TasaConversionLibro, EstadoSaludCatalogo, EstadoSaludData, ActividadReciente, FeedActividadData } from '../types/Dashboard'
+import type { GraphQLResponse, TasaConversionLibro, EstadoSaludCatalogo, EstadoSaludData, ActividadReciente, FeedActividadData, PromedioCalificacionPorTipo, PromedioCalificacionData } from '../types/Dashboard'
 
 interface TasaConversionData {
   tasaConversionClicksReservas: TasaConversionLibro[]
@@ -49,6 +49,25 @@ class DashboardService {
     }
 
     return response.data.data?.estadoSaludCatalogo ?? null
+  }
+
+  async getAnalisisCalificaciones(): Promise<PromedioCalificacionPorTipo[]> {
+    const response = await api.post<GraphQLResponse<PromedioCalificacionData>>('/graphql', {
+      query: `
+        query PromedioCalificacionData {
+          analisisCalificaciones {
+            tipo,
+            puntajePromedio
+          }
+        }
+      `
+    })
+
+    if (response.data.errors?.length) {
+      throw new Error(response.data.errors[0].message)
+    }
+
+    return response.data.data?.analisisCalificaciones ?? []
   }
 
   //Punto 5

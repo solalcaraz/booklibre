@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { KpiHeader } from '../../components/Home/KpiHeader'
+import { KpiHeader } from '../../components/Dashboard/KpiHeader'
 import { dashboardService } from '../../services/DashboardService'
 
 vi.mock('../../services/DashboardService', () => ({
