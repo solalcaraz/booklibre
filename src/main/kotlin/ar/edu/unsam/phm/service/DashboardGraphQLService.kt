@@ -3,7 +3,6 @@ package ar.edu.unsam.phm.service
 import ar.edu.unsam.phm.dto.dashboard.PromedioCalificacionPorTipo
 import ar.edu.unsam.phm.dto.TipoDeLibroDTO
 import ar.edu.unsam.phm.dto.dashboard.TasaConversionLibroDTO
-import ar.edu.unsam.phm.domain.LibroPopular
 import ar.edu.unsam.phm.dto.dashboard.ActividadRecienteDTO
 import ar.edu.unsam.phm.dto.dashboard.NuevaReservaEventoDTO
 import ar.edu.unsam.phm.dto.dashboard.NuevoLibroEventoDTO
@@ -30,14 +29,19 @@ class DashboardGraphQLService(
             }
             .sortedBy { it.tipo.ordinal }
 
+    private fun tipoDesdeAliasMongo(alias: String): TipoDeLibroDTO =
+        when (alias.substringAfterLast(".")) {
+            "COMUN", "LibroComunDocument" -> TipoDeLibroDTO.COMUN
+            "DEDICATORIA", "LibroDedicatoriaDocument" -> TipoDeLibroDTO.DEDICATORIA
+            "COLECCIONABLE", "LibroColeccionableDocument" -> TipoDeLibroDTO.COLECCIONABLE
+            else -> throw IllegalArgumentException("Tipo de libro desconocido: $alias")
+        }
+
     fun tasaConversionClicksReservas(): List<TasaConversionLibroDTO> {
         /* me agarro los 5 libros con mas clicks de redis, en orden descendente */
-        val topLibros = libroPopularRepository.findAll()
-            .filter { it.clicks > 0 }
-            .sortedWith(compareByDescending<LibroPopular> { it.clicks }.thenBy { it.titulo })
-            .take(5)
+        val topLibros = libroPopularRepository.findTop5ByClicksDesc()
 
-        /* si no tengo, devuelvo lista vacía para no dividir por 0 y que explote hiroshima */
+        /* si no tengo, devuelvo lista vacia para no dividir por 0 */
         if (topLibros.isEmpty()) return emptyList()
 
         /* busco las reservas de los 5 libros con una sola query mandandole el array de ids */
@@ -58,13 +62,7 @@ class DashboardGraphQLService(
         }
     }
 
-    private fun tipoDesdeAliasMongo(alias: String): TipoDeLibroDTO =
-        when (alias.substringAfterLast(".")) {
-            "COMUN", "LibroComunDocument" -> TipoDeLibroDTO.COMUN
-            "DEDICATORIA", "LibroDedicatoriaDocument" -> TipoDeLibroDTO.DEDICATORIA
-            "COLECCIONABLE", "LibroColeccionableDocument" -> TipoDeLibroDTO.COLECCIONABLE
-            else -> throw IllegalArgumentException("Tipo de libro desconocido: $alias")
-        }
+
 
     fun estadoSaludCatalogo(): EstadoSaludCatalogoDTO {
         val libros = libroRepository.findAll()

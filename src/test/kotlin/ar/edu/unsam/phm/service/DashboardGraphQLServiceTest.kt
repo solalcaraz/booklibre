@@ -22,14 +22,13 @@ class DashboardGraphQLServiceTest {
     @Test
     fun `tasaConversionClicksReservas devuelve top 5 y calcula conversion`() {
         /* mockeo los libros populares de redis */
-        `when`(libroPopularRepository.findAll()).thenReturn(
+        `when`(libroPopularRepository.findTop5ByClicksDesc()).thenReturn(
             listOf(
-                libroPopular("1", "Dune", 10),
-                libroPopular("2", "Rayuela", 20),
-                libroPopular("3", "1984", 30),
-                libroPopular("4", "Orgullo y prejuicio", 40),
+                libroPopular("6", "Cien anios de soledad", 60),
                 libroPopular("5", "El gran Gatsby", 50),
-                libroPopular("6", "Cien anios de soledad", 60)
+                libroPopular("4", "Orgullo y prejuicio", 40),
+                libroPopular("3", "1984", 30),
+                libroPopular("2", "Rayuela", 20)
             )
         )
 
@@ -57,9 +56,7 @@ class DashboardGraphQLServiceTest {
 
     @Test
     fun `tasaConversionClicksReservas devuelve vacio si Redis no tiene libros con clicks`() {
-        `when`(libroPopularRepository.findAll()).thenReturn(
-            listOf(libroPopular("1", "Dune", 0))
-        )
+        `when`(libroPopularRepository.findTop5ByClicksDesc()).thenReturn(emptyList())
 
         val resultado = service.tasaConversionClicksReservas()
 

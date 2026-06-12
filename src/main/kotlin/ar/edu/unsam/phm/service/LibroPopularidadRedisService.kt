@@ -22,7 +22,12 @@ class LibroPopularidadRedisService(
     // Si Redis esta vacía (reinicio del servidor o primer levantamiento de la app), pregunta a mongo por los libros e hidrata redis, sigue siendo la fuente de verdad
     @EventListener(ApplicationReadyEvent::class)
     fun inicializarRedis() {
-        if (libroPopularRepository.findAll().toList().isEmpty()) reconstruirDesdeDB()
+        val librosEnRedis = libroPopularRepository.findAll().toList()
+        if (librosEnRedis.isEmpty()) {
+            reconstruirDesdeDB()
+        } else if (libroPopularRepository.findTop5ByClicksDesc().isEmpty()) {
+            libroPopularRepository.rebuildRanking(librosEnRedis)
+        }
     }
     private fun reconstruirDesdeDB(): List<LibroPopular> {
         // cuales son los libros que mas clicks tiene? puede no llegar al top 10
@@ -51,7 +56,7 @@ class LibroPopularidadRedisService(
             )
         }
 
-        libroPopularRepository.saveAll(librosParaRedis)
+        libroPopularRepository.saveAllWithRanking(librosParaRedis)
         println("Redis vacio. Se construyó con un total de: ${libroPopularRepository.findAll().toList().size} libros populares")
         return librosParaRedis
     }
