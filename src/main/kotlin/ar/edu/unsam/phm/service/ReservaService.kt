@@ -150,8 +150,11 @@ class ReservaService(
         usuario.aumentarBiblioKarmas(bibliokarmasGanados)
         usuarioRepository.save(usuario)
 
-        // Invalida el caché del leaderboard cuando se actualizan bibliokarmas
-        usuarioLeaderboardRedisService.invalidarLeaderboard()
+        // actualiza los bibliokarmas ganados en el score
+        usuarioLeaderboardRedisService.actualizarScoreUsuario(
+            usuario.id!!,
+            bibliokarmasGanados
+        )
 
         //Sincronizacion entre repoReservas y libroDocument.
 

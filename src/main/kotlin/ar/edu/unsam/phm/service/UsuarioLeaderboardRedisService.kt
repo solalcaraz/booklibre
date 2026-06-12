@@ -3,6 +3,7 @@ package ar.edu.unsam.phm.service
 import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.UsuarioLeaderboardDTO
 import ar.edu.unsam.phm.repository.UsuarioRepository
+import jakarta.annotation.PostConstruct
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import java.time.Duration
@@ -14,6 +15,11 @@ class UsuarioLeaderboardRedisService(
 ) {
     private val LEADERBOARD_KEY = "usuarios:leaderboard"
     private val LEADERBOARD_TTL = Duration.ofMinutes(5)
+
+    @PostConstruct
+    fun initLeaderboard() {
+        cargarDesdeDB()
+    }
 
     fun obtenerTop5(): List<UsuarioLeaderboardDTO> {
         val zsetOps = redisTemplate.opsForZSet()
@@ -61,9 +67,14 @@ class UsuarioLeaderboardRedisService(
         }
     }
 
-    // Invalida caché cuando se actualiza un usuario (llamado desde ReservaService)
-    fun invalidarLeaderboard() {
-        redisTemplate.delete(LEADERBOARD_KEY)
+    fun actualizarScoreUsuario(userId: Int, delta: Int) {
+        redisTemplate.opsForZSet().incrementScore(
+            LEADERBOARD_KEY,
+            userId.toString(),
+            delta.toDouble()
+        )
+
+        redisTemplate.expire(LEADERBOARD_KEY, LEADERBOARD_TTL)
     }
 }
 
