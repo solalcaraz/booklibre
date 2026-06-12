@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash
 import kotlin.math.ceil
 
-@RedisHash("LibroPopular")
+@RedisHash("LibroPopular", timeToLive = 30)
 data class LibroPopular (
     @Id
     var libroId: String,
