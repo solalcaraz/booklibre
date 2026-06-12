@@ -64,6 +64,14 @@ class ReservaService {
     return await getAxiosData(queryLibros)
   }
 
+  async getLibrosPopularesHome(): Promise<ReservaLibroHomeJSON[]> {
+    const token = authService.tokenDeStorage()
+    const response = await axios.get<ReservaLibroHomeJSON[]>(API_URL + '/reserva/librosPopulares', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    return response.data
+  }
+
   async getDetalleLibroByID(
     libroId: string,
     fechaDesde: string,
