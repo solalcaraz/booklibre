@@ -11,9 +11,9 @@ spring:
       uri: mongodb://127.0.0.1:27019/booklibre_mongodb
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/booklibre
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
