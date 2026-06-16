@@ -8,7 +8,7 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://127.0.0.1:27019/booklibre_mongodb
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://127.0.0.1:27019/booklibre_mongodb}
 
     redis:
       url: ${SPRING_DATA_REDIS_URL:redis://localhost:6379}
