@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { API_URL } from '../env'
+import { API_URL } from '../serverConstants'
 import type { ReservaRequestModel, ReservaResponseModel } from '../models/ReservaModel'
 import type { ReservaLibroHomeJSON, FiltrosLibro } from '../types/ReservaLibroHome'
 import { getAxiosData } from './common'
@@ -60,7 +60,11 @@ class ReservaService {
     const token = authService.tokenDeStorage()
     const filtros = req.filter ?? {}
     const params = { ...filtros, numeroPagina: req.pageNumber, tamanoPaginado: req.pageSize }
-    const queryLibros = () => api.get('/reserva/librosDisponibles', { params, headers: { Authorization: `Bearer ${token}` } })
+    const queryLibros = () =>
+      api.get('/reserva/librosDisponibles', {
+        params,
+        headers: { Authorization: `Bearer ${token}` }
+      })
     return await getAxiosData(queryLibros)
   }
 

@@ -14,31 +14,24 @@ vi.mock('../../services/AuthService', () => ({
   }
 }))
 
-// Mockeamos common para customAxios
-vi.mock('../../services/common', () => {
-  const customAxios = {
+// getLibrosDisponiblesReserva usa la instancia 'api' (axios.create), no axios directo
+vi.mock('../../api/api', () => ({
+  api: {
     get: vi.fn()
   }
-  return {
-    customAxios,
-    getAxiosData: vi.fn(async (query) => {
-      const response = await query()
-      return response.data
-    })
-  }
-})
+}))
 
-import { customAxios } from '../../services/common'
-const mockCustomAxios = vi.mocked(customAxios)
+import { api } from '../../api/api'
+const mockApi = api as unknown as { get: ReturnType<typeof vi.fn> }
 
 describe('ReservaService', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(authService.userDeStorage).mockReturnValue({
-      id: 1,
-      nombreCompleto: 'Test User',
-      imagen: 'img.jpg',
-      bibliokarmas: 100
+      sub: '1',
+      role: 'LECTOR_PUBLICADOR',
+      iat: 1700000000,
+      exp: 9999999999
     })
   })
 
@@ -68,7 +61,7 @@ describe('ReservaService', () => {
   it('crearReserva: Lanza error si el back devuelve 409 Conflicto', async () => {
     mockedAxios.post.mockRejectedValueOnce(new Error('Fechas ocupadas'))
 
-    const mockReserva = { libroId: '1', fechaDesde: '2026-01-01', fechaHasta: '2026-01-10' }
+    const mockReserva = { libroId: '1', libroMongoID: 'mongo-id-1', fechaDesde: '2026-01-01', fechaHasta: '2026-01-10' }
 
     await expect(reservaService.crearReserva(mockReserva)).rejects.toThrow('Fechas ocupadas')
   })
@@ -224,7 +217,7 @@ describe('ReservaService', () => {
           fechaHasta: '2026-01-10',
           isbn: '',
           usuarioPrestador: '',
-          orden: 'TITULO_ASC'
+          orden: 'TITULO_ASC' as any // TODO: reemplazar por el enum Orden real, ej. Orden.TITULO_ASC, una vez confirmado en models/PaginationModel.ts
         }
       }
       const mockResponse = {
@@ -235,11 +228,11 @@ describe('ReservaService', () => {
         totalPages: 0
       }
 
-      mockCustomAxios.get.mockResolvedValueOnce({ data: mockResponse })
+      mockApi.get.mockResolvedValueOnce({ data: mockResponse })
 
       const result = await reservaService.getLibrosDisponiblesReserva(request)
 
-      expect(mockCustomAxios.get).toHaveBeenCalledWith(
+      expect(mockApi.get).toHaveBeenCalledWith(
         '/reserva/librosDisponibles',
         expect.objectContaining({
           params: expect.objectContaining({
@@ -261,7 +254,7 @@ describe('ReservaService', () => {
         filter: {}
       }
 
-      mockCustomAxios.get.mockRejectedValueOnce(new Error('Error API'))
+      mockApi.get.mockRejectedValueOnce(new Error('Error API'))
 
       await expect(
         reservaService.getLibrosDisponiblesReserva(request)

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { API_URL } from '../env'
+import { API_URL } from '../serverConstants'
 import { authService } from '../services/AuthService'
 
 export const api = axios.create({

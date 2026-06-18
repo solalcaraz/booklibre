@@ -4,7 +4,6 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import LibroForm from '../../pages/LibroForm'
 import { libroService } from '../../services/LibroService'
 import { authService } from '../../services/AuthService'
-import { Genero, Idioma, Estado, TipoDeLibro } from '../../models/LibroResponseModel'
 
 const mockNavigate = vi.fn()
 
@@ -15,17 +14,17 @@ vi.mock('react-router-dom', async () => {
         useNavigate: () => mockNavigate
     }
 })
-vi.mock('../services/LibroService')
-vi.mock('../services/AuthService')
+vi.mock('../../services/LibroService')
+vi.mock('../../services/AuthService')
 
 describe('LibroForm - Casos de Borde', () => {
     beforeEach(() => {
         vi.clearAllMocks()
-        vi.spyOn(authService, 'userDeStorage').mockReturnValue({ id: 1 })
+        vi.spyOn(authService, 'puedePublicar').mockReturnValue(true)
     })
 
     it('muestra mensaje de error si el libro no le pertenece al usuario logueado', async () => {
-        vi.spyOn(libroService, 'getByIdFor').mockRejectedValue({
+        vi.spyOn(libroService, 'getByIdForUser').mockRejectedValue({
         response: {
             status: 403,
             data: { message: "No tenés permisos para modificar este libro." }
@@ -48,11 +47,12 @@ describe('LibroForm - Casos de Borde', () => {
 })
 
 describe('LibroForm - Validaciones de Formulario', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let createSpy: any;
 
     beforeEach(() => {
         vi.clearAllMocks()
-        vi.spyOn(authService, 'userDeStorage').mockReturnValue({ id: 1 })
+        vi.spyOn(authService, 'puedePublicar').mockReturnValue(true)
         createSpy = vi.spyOn(libroService, 'create').mockResolvedValue(undefined)
     })
 

@@ -2,10 +2,11 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import DataGrid from '../components/DataGrid'
+import type { PagResModel } from '../models/PaginationModel'
 
 type Item = { id: number; title: string }
 
-const renderDataGrid = (fetchFunction: (request: unknown) => Promise<unknown>, filter?: unknown) => {
+const renderDataGrid = (fetchFunction: (request: unknown) => Promise<PagResModel<Item>>, filter?: unknown) => {
   render(
     <MemoryRouter>
       <DataGrid

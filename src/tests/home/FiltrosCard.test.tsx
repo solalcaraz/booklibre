@@ -13,13 +13,21 @@ const filtrosVacios = {
   usuarioPrestador: '',
 }
 
+type RenderPanelProps = {
+  onAplicar?: (e: React.FormEvent) => void
+  onLimpiar?: () => void
+  onActualizar?: (campo: string, valor: unknown) => void
+  onGenero?: (genero: Genero, checked: boolean) => void
+  errores?: string[]
+}
+
 const renderPanel = ({
   onAplicar = vi.fn(),
   onLimpiar = vi.fn(),
   onActualizar = vi.fn(),
   onGenero = vi.fn(),
   errores = []
-} = {}) => {
+}: RenderPanelProps = {}) => {
   render(
     <PanelFiltros
       filtros={filtrosVacios}

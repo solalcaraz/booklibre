@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { API_URL } from '../env'
+import { API_URL } from '../serverConstants'
 import { authService, type AuthResponse } from './AuthService'
 import type { PagResModel } from '../models/PaginationModel'
 import { api } from '../api/api'

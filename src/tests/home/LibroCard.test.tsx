@@ -1,51 +1,88 @@
-﻿import { render, screen } from '@testing-library/react'
+﻿import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router-dom'
-import { LibroCard } from '../../components/Home/LibroCard'
+import { PanelFiltros } from '../../components/Home/FiltrosCard'
+import { Genero } from '../../models/LibroResponseModel'
 
-const mockNavigate = vi.fn()
-vi.mock('react-router', () => ({
-  useNavigate: () => mockNavigate,
-}))
-
-const libroMock = {
-  id: 1,
-  titulo: 'Rayuela',
-  genero: 'Literatura Clásica',
-  autor: 'Julio Cortázar',
-  tipo: 'DEDICATORIA',
-  isbn13: '9788437604947',
-  idioma: 'Español',
-  estado: 'Bueno',
-  dueno: 'Lionel Messi',
-  calificacionPromedio: 4.5,
-  biblioKarmasTotal: 300,
-  portada: 'portada.jpg'
+const filtrosVacios = {
+  generos: [],
+  cantPaginasMin: 0,
+  cantPaginasMax: 1000,
+  fechaDesde: '2026-03-25',
+  fechaHasta: '2026-03-25',
+  isbn: '',
+  usuarioPrestador: '',
 }
 
-describe('LibroCard', () => {
-  it('muestra el titulo del libro', () => {
-    render(<MemoryRouter><LibroCard libro={libroMock} /></MemoryRouter>)
-    expect(screen.getByTestId('libro-titulo').textContent).toBe('Rayuela')
+const renderPanel = ({
+  onAplicar = vi.fn(),
+  onLimpiar = vi.fn(),
+  onActualizar = vi.fn(),
+  onGenero = vi.fn(),
+  errores = [] as string[]
+} = {}) => {
+  render(
+    <PanelFiltros
+      filtros={filtrosVacios}
+      errores={errores}
+      onAplicar={onAplicar}
+      onLimpiar={onLimpiar}
+      onActualizar={onActualizar}
+      onGenero={onGenero}
+      hoy="2026-03-25"
+    />
+  )
+}
+
+describe('PanelFiltros', () => {
+  it('renderiza todos los checkboxes de genero', () => {
+    renderPanel()
+
+    Object.values(Genero).forEach(genero => {
+      expect(screen.getByTestId(`checkbox-genero-${genero}`)).toBeInTheDocument()
+    })
   })
 
-  it('muestra la calificacion promedio', () => {
-    render(<MemoryRouter><LibroCard libro={libroMock} /></MemoryRouter>)
-    expect(screen.getByTestId('libro-calificacion').textContent).toContain('4.5')
+  it('llama a onGenero cuando se marca un checkbox', () => {
+    const onGeneroMock = vi.fn()
+    renderPanel({ onGenero: onGeneroMock })
+
+    fireEvent.click(screen.getByTestId(`checkbox-genero-${Genero.ROMANCE}`))
+
+    expect(onGeneroMock).toHaveBeenCalledWith(Genero.ROMANCE, true)
   })
 
-  it('renderiza la card con el id correcto', () => {
-    render(<MemoryRouter><LibroCard libro={libroMock} /></MemoryRouter>)
-    expect(screen.getByTestId('libro-card-1')).toBeTruthy()
+  it('llama a onAplicar cuando se envia el formulario', () => {
+    const onAplicarMock = vi.fn((e) => e.preventDefault())
+    renderPanel({ onAplicar: onAplicarMock })
+
+    fireEvent.click(screen.getByTestId('btn-aplicar'))
+
+    expect(onAplicarMock).toHaveBeenCalled()
   })
 
-  it('navega al detalle cuando se hace click en la card', async () => {
-    const user = userEvent.setup()
-    render(<MemoryRouter><LibroCard libro={libroMock} /></MemoryRouter>)
+  it('llama a onActualizar cuando se escriben detalles', () => {
+    const onActualizarMock = vi.fn()
+    renderPanel({ onActualizar: onActualizarMock })
 
-    await user.click(screen.getByTestId('libro-card-1'))
+    fireEvent.change(screen.getByTestId('input-isbn'), { target: { value: '978' } })
+    fireEvent.change(screen.getByTestId('input-prestador'), { target: { value: 'usuario' } })
 
-    expect(mockNavigate).toHaveBeenCalledWith('/libros/detalle/1')
+    expect(onActualizarMock).toHaveBeenCalledWith('isbn', '978')
+    expect(onActualizarMock).toHaveBeenCalledWith('usuarioPrestador', 'usuario')
+  })
+
+  it('muestra los errores cuando los hay', () => {
+    renderPanel({ errores: ['La fecha de inicio no puede ser anterior a hoy'] })
+
+    expect(screen.getByText('⚠ La fecha de inicio no puede ser anterior a hoy')).toBeInTheDocument()
+  })
+
+  it('llama a onLimpiar cuando se hace click en limpiar filtros', () => {
+    const onLimpiarMock = vi.fn()
+    renderPanel({ onLimpiar: onLimpiarMock })
+
+    fireEvent.click(screen.getByTestId('btn-limpiar'))
+
+    expect(onLimpiarMock).toHaveBeenCalled()
   })
 })

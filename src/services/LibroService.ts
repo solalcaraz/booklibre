@@ -1,9 +1,14 @@
-import { API_URL } from "../env";
-import type { LibroFormData } from "../classes/Libro";
-import type { LibroDetalleResponse } from "../models/LibroResponseModel";
-import { GENERO_OPTIONS, IDIOMA_OPTIONS, ESTADO_OPTIONS, getKeyFromLabel } from "../utils/formateEnumLibros";
-import { api } from "../api/api";
-import { authService } from "./AuthService";
+import { API_URL } from '../serverConstants'
+import type { LibroFormData } from '../classes/Libro'
+import type { LibroDetalleResponse } from '../models/LibroResponseModel'
+import {
+  GENERO_OPTIONS,
+  IDIOMA_OPTIONS,
+  ESTADO_OPTIONS,
+  getKeyFromLabel
+} from '../utils/formateEnumLibros'
+import { api } from '../api/api'
+import { authService } from './AuthService'
 
 class LibroService {
   async getByIdForUser(id: string): Promise<LibroDetalleResponse> {
@@ -12,7 +17,7 @@ class LibroService {
       headers: {
         Authorization: `Bearer ${token}`
       }
-    });
+    })
     return response.data
   }
 
@@ -22,7 +27,7 @@ class LibroService {
       headers: {
         Authorization: `Bearer ${token}`
       }
-    });
+    })
   }
 
   async update(id: string, libroData: LibroFormData): Promise<void> {
@@ -31,7 +36,7 @@ class LibroService {
       headers: {
         Authorization: `Bearer ${token}`
       }
-    });
+    })
   }
 
   private mapToDTO(libroData: LibroFormData, id: string | number | null = null) {
@@ -51,8 +56,8 @@ class LibroService {
       portada: libroData.portada,
 
       duenoId: null,
-      duenoNombre: "", 
-      duenoImagen: ""
+      duenoNombre: '',
+      duenoImagen: ''
     }
   }
 }

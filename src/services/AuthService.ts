@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { API_URL } from '../env'
+import { API_URL } from '../serverConstants'
 import { jwtDecode } from 'jwt-decode'
 
 export type LoginData = {
@@ -14,7 +14,7 @@ export type RegisterData = {
 }
 
 export type AuthResponse = {
-  accessToken: string,
+  accessToken: string
   refreshToken: string
 }
 

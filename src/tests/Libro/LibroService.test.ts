@@ -1,15 +1,30 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import axios from 'axios'
 import { libroService } from '../../services/LibroService'
 import { authService } from '../../services/AuthService'
 import { Genero, Idioma, Estado, TipoDeLibro } from '../../models/LibroResponseModel'
 
-vi.mock('axios')
-const mockedAxios = vi.mocked(axios, true)
+const mockApi = {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn()
+}
 
-vi.mock('../services/AuthService', () => ({
+vi.mock('axios', () => ({
+    default: {
+        create: vi.fn(() => ({
+            ...mockApi,
+            interceptors: {
+                request: { use: vi.fn() },
+                response: { use: vi.fn() }
+            }
+        }))
+    }
+}))
+
+vi.mock('../../services/AuthService', () => ({
     authService: {
-        userDeStorage: vi.fn()
+        userDeStorage: vi.fn(),
+        tokenDeStorage: vi.fn(() => 'fake-token')
     }
 }))
 
@@ -31,71 +46,76 @@ const LIBRO_FORM_MOCK = {
 describe('LibroService', () => {
     beforeEach(() => {
         vi.clearAllMocks()
-        const userStorageSpy = vi.spyOn(authService, 'userDeStorage')
-        userStorageSpy.mockReturnValue({ id: 10, nombreCompleto: "Julio" })
+        vi.mocked(authService.tokenDeStorage).mockReturnValue('fake-token')
     })
 
     it('create - envía los Enums correctamente al backend', async () => {
-        mockedAxios.post.mockResolvedValue({ data: {} })
+        mockApi.post.mockResolvedValue({ data: {} })
 
         await libroService.create(LIBRO_FORM_MOCK)
 
-        expect(mockedAxios.post).toHaveBeenCalledWith(
+        expect(mockApi.post).toHaveBeenCalledWith(
         expect.stringContaining('/libro/nuevo'),
         expect.objectContaining({
             tipo: "COMUN",
             genero: "LITERATURA_CLASICA",
-            idDueno: 10
+            duenoId: null
+        }),
+        expect.objectContaining({
+            headers: { Authorization: 'Bearer fake-token' }
         })
         )
     })
 
     it('update - envía el ID y los datos actualizados correctamente', async () => {
-        mockedAxios.put.mockResolvedValue({ data: {} })
+        mockApi.put.mockResolvedValue({ data: {} })
         const idLibro = "123"
 
         await libroService.update(idLibro, LIBRO_FORM_MOCK)
 
-        expect(mockedAxios.put).toHaveBeenCalledWith(
+        expect(mockApi.put).toHaveBeenCalledWith(
             expect.stringContaining(`/libro/${idLibro}`),
             expect.objectContaining({
-                id: 123,
+                id: "123",
                 titulo: "Rayuela",
-                idDueno: 10
+                duenoId: null
+            }),
+            expect.objectContaining({
+                headers: { Authorization: 'Bearer fake-token' }
             })
         )
     })
 
-    it('getById - retorna los datos del libro correctamente', async () => {
+    it('getByIdForUser - retorna los datos del libro correctamente', async () => {
         const mockResponse = { ...LIBRO_FORM_MOCK, id: 1, idDueno: 10 }
-        mockedAxios.get.mockResolvedValue({ data: mockResponse })
+        mockApi.get.mockResolvedValue({ data: mockResponse })
 
-        const result = await libroService.getByIdFor("1")
+        const result = await libroService.getByIdForUser("1")
 
-        expect(mockedAxios.get).toHaveBeenCalledWith(expect.stringContaining('/libro/1'),
+        expect(mockApi.get).toHaveBeenCalledWith(expect.stringContaining('/libro/1'),
         {
             headers: {
-                'X-User-Id': 10
+                Authorization: 'Bearer fake-token'
             }
         })
         expect(result).toEqual(mockResponse)
     })
 
     it('create - lanza una excepción si el servidor devuelve un error', async () => {
-        mockedAxios.post.mockRejectedValue(new Error('Error interno del servidor'))
+        mockApi.post.mockRejectedValue(new Error('Error interno del servidor'))
 
         await expect(libroService.create(LIBRO_FORM_MOCK)).rejects.toThrow('Error interno del servidor')
         
-        expect(mockedAxios.post).toHaveBeenCalledTimes(1)
+        expect(mockApi.post).toHaveBeenCalledTimes(1)
     })
 
     it('mapToDTO - convierte correctamente las páginas de String a Number', async () => {
-        mockedAxios.post.mockResolvedValue({ data: {} })
+        mockApi.post.mockResolvedValue({ data: {} })
         const dataConPinasComoString = { ...LIBRO_FORM_MOCK, paginas: "500" }
 
         await libroService.create(dataConPinasComoString)
 
-        expect(mockedAxios.post).toHaveBeenCalledWith(
+        expect(mockApi.post).toHaveBeenCalledWith(
             expect.any(String),
             expect.objectContaining({
                 paginas: 500
