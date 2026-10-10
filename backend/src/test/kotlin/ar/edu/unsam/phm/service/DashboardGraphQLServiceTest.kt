@@ -76,7 +76,9 @@ class DashboardGraphQLServiceTest {
                 dueno = "Dueno $id",
                 isbn13 = "978000000000$id",
                 portada = "portada-$id",
-                calificacionPromedio = 0.0
+                calificacionPromedio = 0.0,
+                cantPaginas = 100,
+                cantidadReservas = 0
             ),
             clicks = clicks
         )
