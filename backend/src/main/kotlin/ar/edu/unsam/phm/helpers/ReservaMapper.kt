@@ -51,7 +51,8 @@ class ReservaMapper(private val libroMapper: LibroMapper) {
             reserva.fechaDesde,
             reserva.fechaHasta,
             reserva.calcularEstado(),
-            reserva.puedeCalificar()
+            reserva.puedeCalificar(),
+            reserva.puntuacionResenia()
         )
     }
 }

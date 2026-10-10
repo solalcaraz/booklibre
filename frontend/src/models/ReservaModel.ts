@@ -9,7 +9,7 @@ export interface ReservaResponseModel {
   fechaHasta: string;
   estado: string;
   puedeCalificar: boolean;
-  reseniaPuntuacion: number;
+  reseniaPuntuacion: number | null;
 }
 
 export interface ReservaRequestModel {

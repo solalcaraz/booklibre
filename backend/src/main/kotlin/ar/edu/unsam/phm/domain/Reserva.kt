@@ -91,4 +91,6 @@ class Reserva(
     }
 
     fun puedeCalificar(): Boolean = !yaResenio && estaFinalizada()
+
+    fun puntuacionResenia(): Int? = if (yaResenio) libroResumen.puntuacion?.toInt() else null
 }
