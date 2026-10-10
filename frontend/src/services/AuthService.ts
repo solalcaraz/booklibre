@@ -29,12 +29,22 @@ export type AuthPayload = {
   exp: number
 }
 
+// Con "Recordarme" los tokens van a localStorage y la sesión sobrevive al cerrar el navegador;
+// sin tildarlo van a sessionStorage y se pierden al cerrar la pestaña
+const leerToken = (clave: string) =>
+  window.sessionStorage.getItem(clave) ?? window.localStorage.getItem(clave)
+
+const almacenDeLaSesion = () =>
+  window.sessionStorage.getItem('refreshToken') !== null ? window.sessionStorage : window.localStorage
+
 class AuthService {
-  async login(loginData: LoginData): Promise<AuthResponse> {
+  async login(loginData: LoginData, recordarme = true): Promise<AuthResponse> {
     const response = await axios.post<AuthResponse>(API_URL + '/auth/login', loginData)
 
-    window.localStorage.setItem('accessToken', response.data.accessToken)
-    window.localStorage.setItem('refreshToken', response.data.refreshToken)
+    this.cerrarSesion()
+    const almacen = recordarme ? window.localStorage : window.sessionStorage
+    almacen.setItem('accessToken', response.data.accessToken)
+    almacen.setItem('refreshToken', response.data.refreshToken)
 
     return response.data
   }
@@ -46,19 +56,19 @@ class AuthService {
   }
 
   estaAutenticado(): boolean {
-    const token = window.localStorage.getItem('accessToken')
+    const token = leerToken('accessToken')
 
     return token !== null && token !== ''
   }
 
   tieneRefreshToken(): boolean {
-    const token = window.localStorage.getItem('refreshToken')
+    const token = leerToken('refreshToken')
 
     return token !== null && token !== ''
   }
 
   async renovarAccessToken(): Promise<string | null> {
-    const refreshToken = window.localStorage.getItem('refreshToken')
+    const refreshToken = leerToken('refreshToken')
 
     if (!refreshToken) {
       this.cerrarSesion()
@@ -76,7 +86,7 @@ class AuthService {
         return null
       }
 
-      window.localStorage.setItem('accessToken', accessToken)
+      this.guardarAccessToken(accessToken)
 
       return accessToken
     } catch {
@@ -85,16 +95,20 @@ class AuthService {
     }
   }
 
+  guardarAccessToken(accessToken: string) {
+    almacenDeLaSesion().setItem('accessToken', accessToken)
+  }
+
   cerrarSesion() {
-    window.localStorage.removeItem('accessToken')
-    window.localStorage.removeItem('refreshToken')
+    for (const almacen of [window.localStorage, window.sessionStorage]) {
+      almacen.removeItem('accessToken')
+      almacen.removeItem('refreshToken')
+    }
     window.localStorage.removeItem('user')
   }
 
   tokenDeStorage(): string {
-    const token = window.localStorage.getItem('accessToken') || ''
-
-    return token
+    return leerToken('accessToken') || ''
   }
 
   userDeStorage(): AuthPayload | null {

@@ -71,7 +71,7 @@ class UsuarioService {
   async patchUsuario(userPatch: EditProfileData): Promise<AuthResponse> {
     const response = await api.patch<AuthResponse>('/usuario/me', userPatch)
     // El back emite tokens nuevos porque el rol del usuario pudo cambiar
-    window.localStorage.setItem('accessToken', response.data.accessToken)
+    authService.guardarAccessToken(response.data.accessToken)
     return response.data
   }
 

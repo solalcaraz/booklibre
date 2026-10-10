@@ -21,7 +21,8 @@ const mockedApi = vi.mocked(api, true)
 vi.mock('../../services/AuthService', () => ({
   authService: {
     userDeStorage: vi.fn(),
-    tokenDeStorage: vi.fn()
+    tokenDeStorage: vi.fn(),
+    guardarAccessToken: vi.fn()
   }
 }))
 
@@ -124,14 +125,13 @@ describe('UsuarioService', () => {
       refreshToken: 'refresh-token'
     }
 
-    vi.spyOn(Storage.prototype, 'setItem')
     mockedApi.patch.mockResolvedValue({ data: authResponse })
 
     const result = await usuarioService.patchUsuario(userPatch)
 
     expect(mockedApi.patch).toHaveBeenCalledTimes(1)
     expect(mockedApi.patch).toHaveBeenCalledWith('/usuario/me', userPatch)
-    expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', authResponse.accessToken)
+    expect(authService.guardarAccessToken).toHaveBeenCalledWith(authResponse.accessToken)
     expect(result).toEqual(authResponse)
   })
 

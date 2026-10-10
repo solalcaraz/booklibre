@@ -219,18 +219,33 @@ describe('AuthForm', () => {
     await user.click(screen.getByRole('button', { name: /ingresar/i }))
 
     await waitFor(() => {
-      expect(authService.login).toHaveBeenCalledWith({
-        email: 'test@mail.com',
-        password: '123456'
-      })
-    })
-
-    expect(authService.login).toHaveBeenCalledWith({
-      email: 'test@mail.com',
-      password: '123456'
+      expect(authService.login).toHaveBeenCalledWith(
+        { email: 'test@mail.com', password: '123456' },
+        false
+      )
     })
 
     expect(mockNavigate).toHaveBeenCalledWith('/home')
+  })
+
+  it('con "Recordarme" tildado pide mantener la sesión', async () => {
+    const user = userEvent.setup()
+    mockUseParams.mockReturnValue({ mode: 'login' })
+    mockToLoginData.mockReturnValue({ email: 'test@mail.com', password: '123456' })
+
+    renderComponent()
+
+    await user.type(screen.getByLabelText(/correo electrónico/i), 'test@mail.com')
+    await user.type(screen.getByLabelText(/^contraseña$/i), '123456')
+    await user.click(screen.getByLabelText(/recordarme/i))
+    await user.click(screen.getByRole('button', { name: /ingresar/i }))
+
+    await waitFor(() => {
+      expect(authService.login).toHaveBeenCalledWith(
+        { email: 'test@mail.com', password: '123456' },
+        true
+      )
+    })
   })
 
   it('envía register correctamente, guarda el user en localStorage y navega a /home', async () => {

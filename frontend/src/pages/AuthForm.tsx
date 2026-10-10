@@ -20,6 +20,7 @@ export const AuthForm = () => {
   const [formData, setFormData] = useState<AuthFormData>(initialFormData)
   const [formErrors, setFormErrors] = useState<AuthErrors>({})
   const [responseErrors, setResponseErrors] = useState<ErrorCustom | null>(null)
+  const [recordarme, setRecordarme] = useState(false)
   const navigate = useNavigate()
   const { mode } = useParams()
   const { fetchUser } = useUser()
@@ -89,7 +90,7 @@ export const AuthForm = () => {
     try {
       if (isLogin) {
         const loginData = auth.toLoginData()
-        await authService.login(loginData)
+        await authService.login(loginData, recordarme)
         await fetchUser()
 
         if(authService.puedeReservar()){
@@ -173,7 +174,8 @@ export const AuthForm = () => {
                 <input
                   type="checkbox"
                   name="rememberMe"
-                  onChange={handleChange}
+                  checked={recordarme}
+                  onChange={(event) => setRecordarme(event.target.checked)}
                   className="h-4 w-4 rounded border-slate-300 text-emerald-400 focus:ring-emerald-300"
                 />
                 Recordarme
