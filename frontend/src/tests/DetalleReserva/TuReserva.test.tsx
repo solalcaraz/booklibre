@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { TuReserva } from '../../components/DetalleReserva/TuReserva'
 import { reservaService } from '../../services/ReservaService'
+import { UserProvider } from '../../contexts/UserContext'
 
 const mockNavigate = vi.fn()
 
@@ -23,22 +24,32 @@ vi.mock('../../services/ReservaService', () => ({
   }
 }))
 
+// Después de reservar se refrescan los bibliokarmas del navbar
+vi.mock('../../services/UsuarioService', () => ({
+  usuarioService: {
+    getBibliokarmas: vi.fn().mockResolvedValue(100),
+    getUsuario: vi.fn()
+  }
+}))
+
 describe('Componente TuReserva', () => {
   const mockSetFechaDesde = vi.fn()
   const mockSetFechaHasta = vi.fn()
 
   const renderComponent = (fechaDesde: string, fechaHasta: string) => {
     return render(
-      <MemoryRouter>
-        <TuReserva
-          libroId={1}
-          fechaDesde={fechaDesde}
-          fechaHasta={fechaHasta}
-          fechasOcupadas={[{ fechaDesde: '2026-05-10', fechaHasta: '2026-05-15' }]}
-          setFechaDesde={mockSetFechaDesde}
-          setFechaHasta={mockSetFechaHasta}
-        />
-      </MemoryRouter>
+      <UserProvider>
+        <MemoryRouter>
+          <TuReserva
+            libroId={1}
+            fechaDesde={fechaDesde}
+            fechaHasta={fechaHasta}
+            fechasOcupadas={[{ fechaDesde: '2099-05-10', fechaHasta: '2099-05-15' }]}
+            setFechaDesde={mockSetFechaDesde}
+            setFechaHasta={mockSetFechaHasta}
+          />
+        </MemoryRouter>
+      </UserProvider>
     )
   }
 
@@ -52,7 +63,7 @@ describe('Componente TuReserva', () => {
 
   it('Botón deshabilitado y mensaje de error si las fechas están invertidas', () => {
     // Renderizamos con la fecha de Devolución ANTES que la de Recogida
-    renderComponent('2026-12-20', '2026-12-10')
+    renderComponent('2099-12-20', '2099-12-10')
 
     const btn = screen.getByRole('button', { name: /confirmar reserva/i })
     expect(btn).toBeDisabled()
@@ -61,7 +72,7 @@ describe('Componente TuReserva', () => {
 
   it('Botón deshabilitado si el rango pisa una fecha ocupada', () => {
     // Fechas que chocan con el mock (10 al 15 de mayo)
-    renderComponent('2026-05-12', '2026-05-18')
+    renderComponent('2099-05-12', '2099-05-18')
 
     const btn = screen.getByRole('button', { name: /confirmar reserva/i })
     expect(btn).toBeDisabled()
@@ -75,7 +86,7 @@ describe('Componente TuReserva', () => {
     vi.mocked(reservaService.crearReserva).mockRejectedValueOnce(new Error('Backend explotó'))
 
     // Fechas válidas
-    renderComponent('2026-06-01', '2026-06-10')
+    renderComponent('2099-06-01', '2099-06-10')
 
     const btn = screen.getByRole('button', { name: /confirmar reserva/i })
     expect(btn).not.toBeDisabled()
@@ -95,7 +106,7 @@ describe('Componente TuReserva', () => {
 
     vi.useFakeTimers({ shouldAdvanceTime: true })
 
-    renderComponent('2026-06-01', '2026-06-10')
+    renderComponent('2099-06-01', '2099-06-10')
 
     const btn = screen.getByRole('button', { name: /confirmar reserva/i })
     fireEvent.click(btn)

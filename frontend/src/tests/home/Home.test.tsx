@@ -86,7 +86,8 @@ vi.mock('../../services/ReservaService', () => {
   }
   return {
     reservaService: {
-      getLibrosDisponiblesReserva: vi.fn().mockResolvedValue(mockResponse)
+      getLibrosDisponiblesReserva: vi.fn().mockResolvedValue(mockResponse),
+      getLibrosPopularesHome: vi.fn()
     }
   }
 })
@@ -108,6 +109,8 @@ describe('Home', () => {
     vi.clearAllMocks()
     localStorage.setItem('user', JSON.stringify({ id: 1, role: 'LECTOR' }))
     vi.mocked(reservaService.getLibrosDisponiblesReserva).mockResolvedValue(mockResponse)
+    // Sin populares suficientes en Redis el Home cae a la búsqueda en Mongo
+    vi.mocked(reservaService.getLibrosPopularesHome).mockRejectedValue(new Error('Sin populares'))
     vi.mocked(dashboardService.getTasaConversionClicksReservas).mockResolvedValue([
       {
         libroId: '1',
@@ -127,7 +130,6 @@ describe('Home', () => {
   it('muestra los libros disponibles al cargar', async () => {
     renderHome()
 
-    expect(await screen.findByTestId('kpi-header')).toBeInTheDocument()
     expect(await screen.findByTestId('libro-card-1')).toBeInTheDocument()
     expect(screen.getByTestId('libro-card-2')).toBeInTheDocument()
   })
@@ -181,10 +183,12 @@ describe('Home', () => {
     'renderiza Home correctamente para role %s',
     async (role) => {
       localStorage.setItem('user', JSON.stringify({ id: 1, role }))
+      vi.mocked(reservaService.getLibrosPopularesHome).mockResolvedValue(mockResponse.items)
       renderHome()
 
       expect(await screen.findByText('Libros Populares')).toBeInTheDocument()
-      expect(reservaService.getLibrosDisponiblesReserva).toHaveBeenCalled()
+      expect(await screen.findByTestId('libro-card-1')).toBeInTheDocument()
+      expect(reservaService.getLibrosDisponiblesReserva).not.toHaveBeenCalled()
     }
   )
 

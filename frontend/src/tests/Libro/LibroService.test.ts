@@ -3,11 +3,12 @@ import { libroService } from '../../services/LibroService'
 import { authService } from '../../services/AuthService'
 import { Genero, Idioma, Estado, TipoDeLibro } from '../../models/LibroResponseModel'
 
-const mockApi = {
+// vi.mock se eleva al inicio del archivo, así que el mock tiene que crearse con vi.hoisted
+const mockApi = vi.hoisted(() => ({
     get: vi.fn(),
     post: vi.fn(),
     put: vi.fn()
-}
+}))
 
 vi.mock('axios', () => ({
     default: {
