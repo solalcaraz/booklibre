@@ -1,0 +1,132 @@
+import axios from 'axios'
+import { API_URL } from '../serverConstants'
+import { authService, type AuthResponse } from './AuthService'
+import type { PagResModel } from '../models/PaginationModel'
+import { api } from '../api/api'
+
+export type FiltroLibros = 'Todos' | 'Disponibles' | 'Prestados'
+
+export type UsuarioResponse = {
+  nombreCompleto: string
+  email: string
+  descripcion: string
+  telefono: string
+  anoUnido: number
+  ciudad: string
+  bibliokarmas: number
+  tipoUsuario: string
+  imagen: string
+  librosLeidos: number
+  librosPrestados: number
+}
+
+type LibroEstado = 'DISPONIBLE' | 'PRESTADO'
+
+export type LibroUsuario = {
+  id: number
+  titulo: string
+  autor: string
+  genero: string
+  estadoReserva: LibroEstado
+  agregadoEl: string
+  portada: string
+  clicks: number
+}
+
+export type EditProfileData = {
+  nombreCompleto: string
+  descripcion: string
+  email: string
+  telefono: string
+  ciudad: string
+  imagen: string
+  tipoUsuario: string
+}
+
+export type LibroSort = {
+  field: string
+  direction: string
+}
+
+export const initialSort: LibroSort = {
+  field: 'titulo',
+  direction: 'asc'
+}
+
+class UsuarioService {
+  async getUsuario(): Promise<UsuarioResponse> {
+    const token = authService.tokenDeStorage()
+
+    const response = await api.get<UsuarioResponse>(`${API_URL}/usuario/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    return response.data
+  }
+
+  async getLibros(
+    page = 0,
+    filter: FiltroLibros = 'Todos',
+    sort: LibroSort = initialSort
+  ): Promise<PagResModel<LibroUsuario>> {
+    const token = authService.tokenDeStorage()
+
+    const response = await api.get<PagResModel<LibroUsuario>>(
+      `${API_URL}/misLibros/me?page=${page}&size=3&filter=${filter}&sort=${sort.field},${sort.direction}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+
+    return response.data
+  }
+
+  async patchUsuario(userPatch: EditProfileData): Promise<AuthResponse> {
+    const token = authService.tokenDeStorage()
+
+    const response = await api.patch(API_URL + `/usuario/me`, userPatch, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    window.localStorage.setItem('accessToken', response.data.accessToken)
+    /* Aca no renuevo el refresh token! */
+
+    return response.data
+  }
+
+  async deleteLibro(id: number) {
+    const token = authService.tokenDeStorage()
+
+    const response = await api.delete(API_URL + `/misLibros/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    return response.data
+  }
+
+  async getBibliokarmas(): Promise<number> {
+    const user = authService.userDeStorage()
+    const token = authService.tokenDeStorage()
+
+    if (!user) {
+      throw new Error('No hay usuario autenticado')
+    }
+
+    const response = await axios.get<number>(API_URL + `/usuario/bibliokarmas/${user.sub}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    return response.data
+  }
+}
+
+export const usuarioService = new UsuarioService()
