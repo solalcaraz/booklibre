@@ -49,7 +49,7 @@ class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplat
 
         // filtro del ISBN y el nombre del dueño del libro
         filtros.isbn?.takeIf { it.isNotBlank() }?.let { criteria.and("isbn13").regex(it, "i") }
-        filtros.usuarioPrestador?.takeIf { it.isNotBlank() }?.let { criteria.and("dueno.nombreCompleto").regex(it, "d") }
+        filtros.usuarioPrestador?.takeIf { it.isNotBlank() }?.let { criteria.and("dueno.nombreCompleto").regex(it, "i") }
 
         // filtro por busqueda: por titulo o por autor
         filtros.busqueda?.takeIf { it.isNotBlank() }?.let { busqueda ->
