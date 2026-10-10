@@ -75,4 +75,4 @@ Las cinco consultas son vistas de Mongo que crea el mismo script de inicializaci
 
 El esquema está en [`backend/src/main/resources/schema/schema.graphqls`](../backend/src/main/resources/schema/schema.graphqls) y la pantalla que lo consume, en `frontend/src/pages/Dashboard.tsx`.
 
-**Deploy.** El back se desplegó en Render con el [`Dockerfile`](../backend/Dockerfile), junto con PostgreSQL y Redis de Render. MongoDB fue a Atlas, cuyo plan gratuito no permite sharding, así que en la nube quedó una instancia única y el cluster de dos shards se mantiene para correr en local.
+**Deploy.** Desplegamos el back en Render con el [`Dockerfile`](../backend/Dockerfile), junto con PostgreSQL y Redis de Render. MongoDB fue a Atlas, cuyo plan gratuito no permite sharding, así que en la nube quedó una instancia única y el cluster de dos shards se mantiene para correr en local.
