@@ -10,14 +10,11 @@ export const getMensajeError = (error: unknown): ErrorCustom => {
 
   if (error instanceof AxiosError) {
     status = error.response?.status ?? error.status ?? 0
+    // En los 4xx el back explica qué falló (validación, permisos, conflicto): se muestra tal cual
     errorMessage =
       status >= 400 && status < 500
-        ? error.response?.data.message
+        ? error.response?.data?.message || 'No se pudo completar la operación'
         : 'Ocurrió un error al conectarse al backend. Intente nuevamente más tarde'
-
-    if (status == 400) {
-      errorMessage = 'El ID del recurso que estás buscando es erroneo'
-    }
   }
 
   return {
