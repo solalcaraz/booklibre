@@ -85,7 +85,7 @@ services:
     depends_on:
       - mongos
     volumes:
-      - ./docker/mongo:/scripts:ro
+      - ./Docker/mongo:/scripts:ro
     entrypoint: ["bash", "/scripts/init-sharded-cluster.sh"]
 
   postgres:
