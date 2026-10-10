@@ -58,9 +58,9 @@ Las reglas de bibliokarma (5 por día más un plus que depende del tipo de libro
 
 ## Cómo correrlo
 
-Necesitás Docker, Java 21 y Node 20 o superior.
+Requisitos: Docker, Java 21 y Node 20 o superior.
 
-**1. Bases de datos.** Levanta PostgreSQL, Redis y el cluster de MongoDB (diez contenedores entre config servers, shards y router), además de pgAdmin y RedisInsight:
+**1. Bases de datos** (el cluster de Mongo tarda alrededor de un minuto en armarse):
 
 ```bash
 git clone https://github.com/solalcaraz/booklibre.git
@@ -68,9 +68,7 @@ cd booklibre/backend
 docker compose up -d
 ```
 
-El contenedor `mongo-cluster-init` arma el cluster y crea las vistas de las consultas; tarda alrededor de un minuto. Cuando termina, `docker compose ps -a` lo muestra como `Exited (0)`.
-
-**2. Backend.** Corre en `http://localhost:9000`. Flyway crea las tablas y carga los datos de ejemplo, y al arrancar se cargan los libros en Mongo:
+**2. Backend** en `http://localhost:9000`:
 
 ```bash
 export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5433/booklibre
@@ -79,9 +77,9 @@ export SPRING_DATASOURCE_PASSWORD=postgres
 ./gradlew bootRun
 ```
 
-En Windows con PowerShell, las variables se definen con `$env:SPRING_DATASOURCE_URL="..."` y la app se levanta con `.\gradlew.bat bootRun`.
+En Windows: `$env:VARIABLE="valor"` y `.\gradlew.bat bootRun`.
 
-**3. Frontend.** Corre en `http://localhost:5173` y por defecto apunta a `http://localhost:9000` (se puede cambiar con `VITE_SERVER_CONNECTION`, ver `frontend/.env.example`):
+**3. Frontend** en `http://localhost:5173`:
 
 ```bash
 cd ../frontend
@@ -90,13 +88,13 @@ yarn install
 yarn dev
 ```
 
-**Usuarios de prueba** (contraseña `admin` en todos):
+**Usuarios** (contraseña `admin`):
 
 | Email | Rol |
 |---|---|
-| `diego@maradona.com` | Lector y publicador: ve todas las pantallas |
-| `yiyi@killer.com` | Lector: busca y reserva |
-| `yewest@bully.com` | Publicador: publica libros y ve el tablero |
+| `diego@maradona.com` | Lector y publicador |
+| `yiyi@killer.com` | Lector |
+| `yewest@bully.com` | Publicador |
 
 **Tests:** `./gradlew test` en `backend/` y `yarn test --run` en `frontend/`.
 
@@ -104,14 +102,19 @@ yarn dev
 
 **Qué aprendí**
 
-- Que cambiar la base de un dominio que ya funciona no es cambiar un repositorio: al pasar los libros a Mongo hubo que repensar qué dato vive dónde y qué copia se guarda en la otra base para no cruzarlas en cada consulta.
-- Que el sharding se nota en el código. Con la colección particionada, Mongo rechaza las actualizaciones que no incluyen la shard key; al preparar el deploy en Atlas sacamos la anotación que la declaraba y dejaron de funcionar las reservas en local.
-- Que una caché con vencimiento tiene bordes que no se ven en la primera prueba. El KPI de conversión dependía de un hash de 30 segundos y quedaba vacío cuando nadie abría el home en ese lapso.
+- A modelar los tipos de libro con herencia: cada tipo calcula su propio plus de bibliokarma, y la reserva le pide ese cálculo sin saber de qué tipo es. Después llevé ese modelo a JPA con herencia en una sola tabla.
+- A armar consultas complejas con JPA Specifications (Criteria API). Cada filtro del home es una condición opcional que se combina con las demás, y la disponibilidad entre dos fechas es una subconsulta sobre las reservas.
+- A detectar y resolver un problema de N+1: al listar libros, cada uno disparaba otra consulta para traer a su dueño, y lo resolví con un `EntityGraph`.
+- A versionar la base con Flyway: esquema, datos iniciales y un trigger que audita cada cambio de puntaje de un libro.
+- A usar una base documental para registrar eventos, con el log de clicks en MongoDB.
+- A usar Redis como caché de punta a punta. Lo levanté con Docker, lo inicialicé desde los clicks guardados en Mongo y armé el ranking de populares con un sorted set y el detalle de cada libro con hashes con TTL. Para que el bibliokarma se calcule igual con el libro de Mongo o con su copia en Redis, definí una interfaz común para los dos.
+- A exponer una métrica por GraphQL que lee primero de Redis y, si no encuentra el dato, lo calcula desde PostgreSQL y lo vuelve a cachear: el ranking de usuarios con más bibliokarma.
 
 **Qué mejoraría**
 
+- Dos personas pueden reservar el mismo libro en fechas superpuestas si confirman al mismo tiempo, porque el chequeo de superposición y el guardado no son atómicos. Lo bloquearía en la base con un constraint de exclusión sobre el rango de fechas de cada libro, o con un lock por libro, para que la segunda reserva falle aunque lleguen juntas.
+- Reservar escribe en tres bases y la transacción solo cubre PostgreSQL. Si falla la escritura en Mongo, PostgreSQL se revierte, pero el puntaje que ya se sumó en el ranking de Redis queda. Actualizaría Redis recién después de confirmar la reserva.
 - Las vistas, la función y el trigger de la Entrega 1 quedaron comentados cuando los libros pasaron a Mongo. Los volvería a activar con una migración nueva adaptada al modelo actual.
-- Reservar escribe en tres bases y la transacción solo cubre PostgreSQL. Si falla la escritura en Mongo, PostgreSQL se revierte, pero el puntaje que ya se sumó en el ranking de Redis queda. Lo resolvería actualizando Redis recién después de confirmar la reserva, o con una tarea que reconcilie.
 - El detalle del libro no recalcula el bibliokarma si cambiás las fechas ahí mismo (la consigna lo proponía como bonus).
 - La lógica de bibliokarma no tiene tests desde la migración a Mongo; los de la versión JPA ya no aplicaban.
 - La interfaz está pensada solo para escritorio, como pedía la consigna; no es responsive.
@@ -132,20 +135,18 @@ Este repositorio junta los dos repositorios originales del trabajo práctico que
 **Lo que hice después**:
 
 - Uní los dos repos en uno solo sin reescribir el historial y marqué con tags el cierre de cada entrega.
-- Corregí que crear reservas, editar y despublicar libros fallaran con el cluster de MongoDB local (faltaba declarar la shard key).
-- Corregí el filtro por dueño del libro, que respondía 500 por una opción de regex inválida.
-- Corregí las validaciones de filtros y reseñas, que respondían 500 en vez de 400, y que el mensaje real llegue al front.
-- Corregí que el refresh token sirviera como token de acceso.
-- Corregí las pantallas que no renovaban el token vencido.
-- Corregí que el front sin `.env` no supiera a qué backend conectarse.
-- Corregí las fechas, que se mostraban un día antes por la zona horaria.
-- Corregí el KPI de conversión, que quedaba vacío 30 segundos después del último click.
-- Corregí las estrellas de la reseña, que nunca aparecían en "Mis préstamos".
-- Corregí el montaje del script de MongoDB en Linux y una tarjeta que navegaba a una ruta inexistente.
+- Arreglé bugs que venían de la versión entregada:
+  - reservas, ediciones y bajas de libros que fallaban con el cluster local de MongoDB, porque faltaba declarar la shard key;
+  - el filtro por dueño del libro, que respondía 500 por una opción de regex inválida;
+  - validaciones de filtros y reseñas que respondían 500 en vez de 400, y cuyo mensaje no llegaba al front;
+  - el refresh token, que servía como token de acceso;
+  - pantallas que no renovaban el token vencido, y un front que sin `.env` no sabía a qué backend conectarse;
+  - fechas que se mostraban un día antes por la zona horaria;
+  - el KPI de conversión, que quedaba vacío 30 segundos después del último click;
+  - las estrellas de la reseña, que nunca aparecían en "Mis préstamos";
+  - el montaje del script de MongoDB en Linux y una tarjeta que navegaba a una ruta inexistente.
 - Hice funcionar el checkbox "Recordarme" del login.
-- Arreglé los tests que ya no compilaban o fallaban en la versión entregada y sumé tests para las validaciones de filtros.
+- Puse al día los tests que ya no compilaban o fallaban, y sumé tests para las validaciones de filtros.
 - Limpié código muerto y comentado, unifiqué código repetido y saqué una dependencia sin uso.
 - Rediseñé la interfaz con un sistema de colores y tipografía propio, con contraste WCAG AA y textos en voseo.
 - Grabé la demo, documenté las entregas y escribí este README.
-
-Para verificar que el comportamiento no cambiara, corrí el mismo recorrido de 82 requests contra la versión entregada y contra la final, con las bases recién creadas. 61 respuestas son idénticas; las otras 21 son los bugs corregidos (y los datos que esas escrituras ahora sí guardan) y el puntaje de la reseña que agregué al listado de préstamos. Los tests pasan en los dos proyectos.
