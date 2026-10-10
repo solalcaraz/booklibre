@@ -36,7 +36,7 @@ export const LibroCard = ( {libro}: LibroCardProps) => {
           {libro.titulo}
         </h3>
 
-        <p className="ttext-sm text-slate-500">
+        <p className="text-sm text-slate-500">
           {libro.autor}
         </p>
 

@@ -206,7 +206,7 @@ export const AuthForm = () => {
       </section>
 
       <footer className="mt-10 text-center text-xs text-slate-400">
-        © 2026 PastelReads. Todos los derechos reservados.
+        © 2026 BookLibre. Todos los derechos reservados.
       </footer>
     </section>
   )
