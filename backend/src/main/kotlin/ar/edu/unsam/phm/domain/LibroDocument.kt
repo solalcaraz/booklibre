@@ -6,11 +6,15 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.TypeAlias
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
+import org.springframework.data.mongodb.core.mapping.Sharded
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.math.ceil
 
+// En el cluster local la colección está particionada por dueño: sin la shard key,
+// Mongo rechaza los save() que actualizan un libro. En Atlas (sin sharding) no molesta.
 @Document(collection = "libros")
+@Sharded(shardKey = ["dueno._id"])
 abstract class LibroDocument : LibroCalculoBibliokarmas {
     @Id
     var id: String? = null
