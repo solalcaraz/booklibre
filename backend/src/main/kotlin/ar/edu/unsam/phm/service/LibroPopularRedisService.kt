@@ -63,7 +63,10 @@ class LibroPopularRedisService(
             .reverseRangeWithScores(RANKING_KEY, 0, limite - 1L)
             ?.mapNotNull { libroConScore ->
                 val libroId = libroConScore.value ?: return@mapNotNull null
+                // El hash vence a los 30 segundos pero el ranking no: si expiró, se recachea desde Mongo
                 val libro = libroPopularRepository.findById(libroId).orElse(null)
+                    ?: libroDocumentRepository.findById(libroId).orElse(null)
+                        ?.toLibroPopular()?.also { libroPopularRepository.save(it) }
                     ?: return@mapNotNull null
 
                 LibroPopularConClicks(
