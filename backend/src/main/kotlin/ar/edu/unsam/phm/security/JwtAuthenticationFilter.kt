@@ -40,7 +40,7 @@ class JwtAuthenticationFilter(
 
             if (userId != null && SecurityContextHolder.getContext().authentication == null) {
                 // Validamos solo contra la secret key (sin DB)
-                if (tokenHelper.isValid(jwtToken, userId)) {
+                if (tokenHelper.isValid(jwtToken, userId) && tokenHelper.extractType(jwtToken) == "access") {
                     val role = tokenHelper.extractRole(jwtToken)
                     val authorities = listOf(SimpleGrantedAuthority("ROLE_$role"))
 
