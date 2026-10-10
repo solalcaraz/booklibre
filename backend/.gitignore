@@ -5,10 +5,8 @@ build/
 !**/src/test/**/build/
 
 ### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
+# workspace.xml guarda el estado local del IDE (y las run configs con variables de entorno)
+.idea/
 *.iws
 *.iml
 *.ipr
