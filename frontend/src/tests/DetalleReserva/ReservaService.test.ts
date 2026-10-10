@@ -1,65 +1,44 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import axios from 'axios'
 import { reservaService } from '../../services/ReservaService'
-import { authService } from '../../services/AuthService'
+import { api } from '../../api/api'
 
-vi.mock('axios')
-const mockedAxios = vi.mocked(axios, true)
-
-// Mockeamos el authService para que devuelva un usuario falso
-vi.mock('../../services/AuthService', () => ({
-  authService: {
-    userDeStorage: vi.fn(),
-    tokenDeStorage: vi.fn(() => 'fake-token')
-  }
-}))
-
-// getLibrosDisponiblesReserva usa la instancia 'api' (axios.create), no axios directo
+// El token lo agrega el interceptor de api, así que alcanza con mockear la instancia
 vi.mock('../../api/api', () => ({
   api: {
-    get: vi.fn()
+    get: vi.fn(),
+    post: vi.fn()
   }
 }))
 
-import { api } from '../../api/api'
-const mockApi = api as unknown as { get: ReturnType<typeof vi.fn> }
+const mockApi = vi.mocked(api)
 
 describe('ReservaService', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(authService.userDeStorage).mockReturnValue({
-      sub: '1',
-      role: 'LECTOR_PUBLICADOR',
-      iat: 1700000000,
-      exp: 9999999999
-    })
   })
 
   it('getDetalle: Lanza error si la API falla (ej. 404/500)', async () => {
-    mockedAxios.get.mockRejectedValueOnce(new Error('Libro no encontrado'))
+    mockApi.get.mockRejectedValueOnce(new Error('Libro no encontrado'))
 
     await expect(
       reservaService.getDetalleLibroByID('99', '2026-01-01', '2026-01-10')
     ).rejects.toThrow('Libro no encontrado')
   })
 
-  it('getDetalle: Llama a la URL correcta con los headers y params', async () => {
-    mockedAxios.get.mockResolvedValueOnce({ data: { calificacionPromedio: 4 } })
+  it('getDetalle: Llama a la URL correcta con los params', async () => {
+    mockApi.get.mockResolvedValueOnce({ data: { calificacionPromedio: 4 } })
 
     const result = await reservaService.getDetalleLibroByID('1', '2026-01-01', '2026-01-10')
 
-    expect(mockedAxios.get).toHaveBeenCalledWith(
-      expect.stringContaining('/reserva/detalles/1'),
-      expect.objectContaining({
-        headers: { Authorization: 'Bearer fake-token' },
-        params: { fechaDesde: '2026-01-01', fechaHasta: '2026-01-10' }
-      })
+    expect(mockApi.get).toHaveBeenCalledWith(
+      '/reserva/detalles/1',
+      { params: { fechaDesde: '2026-01-01', fechaHasta: '2026-01-10' } }
     )
     expect(result).toEqual({ calificacionPromedio: 4 })
   })
 
   it('crearReserva: Lanza error si el back devuelve 409 Conflicto', async () => {
-    mockedAxios.post.mockRejectedValueOnce(new Error('Fechas ocupadas'))
+    mockApi.post.mockRejectedValueOnce(new Error('Fechas ocupadas'))
 
     const mockReserva = { libroId: '1', libroMongoID: 'mongo-id-1', fechaDesde: '2026-01-01', fechaHasta: '2026-01-10' }
 
@@ -90,18 +69,13 @@ describe('ReservaService', () => {
         totalPages: 0
       }
 
-      mockedAxios.post.mockResolvedValueOnce({ data: mockResponse })
+      mockApi.post.mockResolvedValueOnce({ data: mockResponse })
 
       const result = await reservaService.buscarPrestadosAmi(request)
 
-      expect(mockedAxios.post).toHaveBeenCalledWith(
-        expect.stringContaining('/reserva/obtenerMisReservas'),
-        request,
-        {
-          headers: {
-            Authorization: `Bearer fake-token`
-          }
-        }
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/reserva/obtenerMisReservas',
+        request
       )
 
       expect(result).toEqual(mockResponse)
@@ -117,7 +91,7 @@ describe('ReservaService', () => {
         }
       }
 
-      mockedAxios.post.mockRejectedValueOnce(new Error('Error API'))
+      mockApi.post.mockRejectedValueOnce(new Error('Error API'))
 
       await expect(
         reservaService.buscarPrestadosAmi(request)
@@ -143,24 +117,18 @@ describe('ReservaService', () => {
         totalPages: 0
       }
 
-      mockedAxios.post.mockResolvedValueOnce({ data: mockResponse })
+      mockApi.post.mockResolvedValueOnce({ data: mockResponse })
 
       const result = await reservaService.buscarPrestadosPorMi(request)
 
-      expect(mockedAxios.post).toHaveBeenCalledWith(
-        expect.stringContaining('/reserva/obtenerPrestadosPorMi'),
-        request,
-        {
-          headers: {
-            Authorization: `Bearer fake-token`
-          }
-        }
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/reserva/obtenerPrestadosPorMi',
+        request
       )
 
       expect(result).toEqual(mockResponse)
     })
 
-    // omito error porque es igual que el anterior
   })
 
   describe('calificar', () => {
@@ -171,18 +139,13 @@ describe('ReservaService', () => {
         comentario: 'Excelente'
       }
 
-      mockedAxios.post.mockResolvedValueOnce({ data: 'OK' })
+      mockApi.post.mockResolvedValueOnce({ data: 'OK' })
 
       const result = await reservaService.calificar(request)
 
-      expect(mockedAxios.post).toHaveBeenCalledWith(
-        expect.stringContaining('/reserva/calificar'),
-        request,
-        {
-          headers: {
-            Authorization: `Bearer fake-token`
-          }
-        }
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/reserva/calificar',
+        request
       )
 
       expect(result).toBe('OK')
@@ -195,7 +158,7 @@ describe('ReservaService', () => {
         comentario: 'Excelente'
       }
 
-      mockedAxios.post.mockRejectedValueOnce(new Error('Error al calificar'))
+      mockApi.post.mockRejectedValueOnce(new Error('Error al calificar'))
 
       await expect(
         reservaService.calificar(request)
@@ -217,7 +180,7 @@ describe('ReservaService', () => {
           fechaHasta: '2026-01-10',
           isbn: '',
           usuarioPrestador: '',
-          orden: 'TITULO_ASC' as any // TODO: reemplazar por el enum Orden real, ej. Orden.TITULO_ASC, una vez confirmado en models/PaginationModel.ts
+          orden: 'TITULO_ASC' as const
         }
       }
       const mockResponse = {
@@ -239,8 +202,7 @@ describe('ReservaService', () => {
             busqueda: 'Rayuela',
             numeroPagina: 0,
             tamanoPaginado: 10
-          }),
-          headers: { Authorization: 'Bearer fake-token' }
+          })
         })
       )
 

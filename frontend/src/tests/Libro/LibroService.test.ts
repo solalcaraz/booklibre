@@ -56,15 +56,12 @@ describe('LibroService', () => {
         await libroService.create(LIBRO_FORM_MOCK)
 
         expect(mockApi.post).toHaveBeenCalledWith(
-        expect.stringContaining('/libro/nuevo'),
-        expect.objectContaining({
-            tipo: "COMUN",
-            genero: "LITERATURA_CLASICA",
-            duenoId: null
-        }),
-        expect.objectContaining({
-            headers: { Authorization: 'Bearer fake-token' }
-        })
+            '/libro/nuevo',
+            expect.objectContaining({
+                tipo: "COMUN",
+                genero: "LITERATURA_CLASICA",
+                duenoId: null
+            })
         )
     })
 
@@ -75,14 +72,11 @@ describe('LibroService', () => {
         await libroService.update(idLibro, LIBRO_FORM_MOCK)
 
         expect(mockApi.put).toHaveBeenCalledWith(
-            expect.stringContaining(`/libro/${idLibro}`),
+            `/libro/${idLibro}`,
             expect.objectContaining({
                 id: "123",
                 titulo: "Rayuela",
                 duenoId: null
-            }),
-            expect.objectContaining({
-                headers: { Authorization: 'Bearer fake-token' }
             })
         )
     })
@@ -93,12 +87,7 @@ describe('LibroService', () => {
 
         const result = await libroService.getByIdForUser("1")
 
-        expect(mockApi.get).toHaveBeenCalledWith(expect.stringContaining('/libro/1'),
-        {
-            headers: {
-                Authorization: 'Bearer fake-token'
-            }
-        })
+        expect(mockApi.get).toHaveBeenCalledWith('/libro/1')
         expect(result).toEqual(mockResponse)
     })
 

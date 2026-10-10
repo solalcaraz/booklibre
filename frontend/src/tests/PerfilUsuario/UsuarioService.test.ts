@@ -68,7 +68,6 @@ describe('UsuarioService', () => {
       iat: 222,
       exp: 444
     })
-    vi.mocked(authService.tokenDeStorage).mockReturnValue('access-token-mock')
   })
 
   it('get usuario - happy path: obtiene el usuario y retorna response.data', async () => {
@@ -76,13 +75,8 @@ describe('UsuarioService', () => {
 
     const result = await usuarioService.getUsuario()
 
-    expect(authService.tokenDeStorage).toHaveBeenCalled()
     expect(mockedApi.get).toHaveBeenCalledTimes(1)
-    expect(mockedApi.get).toHaveBeenCalledWith(expect.stringContaining('/usuario/me'), {
-      headers: {
-        Authorization: 'Bearer access-token-mock'
-      }
-    })
+    expect(mockedApi.get).toHaveBeenCalledWith('/usuario/me')
     expect(result).toEqual(USUARIO_COMPLETO_MOCK)
   })
 
@@ -91,7 +85,6 @@ describe('UsuarioService', () => {
 
     await expect(usuarioService.getUsuario()).rejects.toThrow('Usuario no encontrado')
 
-    expect(authService.tokenDeStorage).toHaveBeenCalled()
     expect(mockedApi.get).toHaveBeenCalledTimes(1)
   })
 
@@ -100,15 +93,9 @@ describe('UsuarioService', () => {
 
     const result = await usuarioService.getLibros()
 
-    expect(authService.tokenDeStorage).toHaveBeenCalled()
     expect(mockedApi.get).toHaveBeenCalledTimes(1)
     expect(mockedApi.get).toHaveBeenCalledWith(
-      expect.stringContaining('/misLibros/me?page=0&size=3&filter=Todos&sort=titulo,asc'),
-      {
-        headers: {
-          Authorization: 'Bearer access-token-mock'
-        }
-      }
+      '/misLibros/me?page=0&size=3&filter=Todos&sort=titulo,asc'
     )
     expect(result).toEqual(MIS_LIBROS_MOCK)
   })
@@ -118,7 +105,6 @@ describe('UsuarioService', () => {
 
     await expect(usuarioService.getLibros()).rejects.toThrow('Error al obtener libros')
 
-    expect(authService.tokenDeStorage).toHaveBeenCalled()
     expect(mockedApi.get).toHaveBeenCalledTimes(1)
   })
 
@@ -143,13 +129,8 @@ describe('UsuarioService', () => {
 
     const result = await usuarioService.patchUsuario(userPatch)
 
-    expect(authService.tokenDeStorage).toHaveBeenCalled()
     expect(mockedApi.patch).toHaveBeenCalledTimes(1)
-    expect(mockedApi.patch).toHaveBeenCalledWith(expect.stringContaining('/usuario/me'), userPatch, {
-      headers: {
-        Authorization: 'Bearer access-token-mock'
-      }
-    })
+    expect(mockedApi.patch).toHaveBeenCalledWith('/usuario/me', userPatch)
     expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', authResponse.accessToken)
     expect(result).toEqual(authResponse)
   })
@@ -171,7 +152,6 @@ describe('UsuarioService', () => {
       'Error al actualizar usuario'
     )
 
-    expect(authService.tokenDeStorage).toHaveBeenCalled()
     expect(mockedApi.patch).toHaveBeenCalledTimes(1)
   })
 
@@ -180,13 +160,8 @@ describe('UsuarioService', () => {
 
     const result = await usuarioService.deleteLibro(15)
 
-    expect(authService.tokenDeStorage).toHaveBeenCalled()
     expect(mockedApi.delete).toHaveBeenCalledTimes(1)
-    expect(mockedApi.delete).toHaveBeenCalledWith(expect.stringContaining('/misLibros/15'), {
-      headers: {
-        Authorization: 'Bearer access-token-mock'
-      }
-    })
+    expect(mockedApi.delete).toHaveBeenCalledWith('/misLibros/15')
     expect(result).toEqual({})
   })
 
@@ -195,7 +170,6 @@ describe('UsuarioService', () => {
 
     await expect(usuarioService.deleteLibro(15)).rejects.toThrow('Error al eliminar el libro')
 
-    expect(authService.tokenDeStorage).toHaveBeenCalled()
     expect(mockedApi.delete).toHaveBeenCalledTimes(1)
   })
 })
