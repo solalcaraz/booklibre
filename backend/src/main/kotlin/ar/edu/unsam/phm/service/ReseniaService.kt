@@ -37,7 +37,7 @@ class ReseniaService (
 
     private fun validarResenia(reseniaReq: ReseniaReqDTO, reserva: Reserva) {
         if (!reserva.puedeCalificar()){
-            throw IllegalStateException("No podés reseñar, no esta finalizada o ya calificaste")
+            throw BadRequestException("No podés reseñar, no esta finalizada o ya calificaste")
         }
         if (reseniaReq.puntuacion !in 0..5) {
             throw BadRequestException("El puntaje debe estar entre 0 y 5")

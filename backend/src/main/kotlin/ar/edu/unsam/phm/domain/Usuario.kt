@@ -1,6 +1,7 @@
 package ar.edu.unsam.phm.domain
 
 import ar.edu.unsam.phm.env.Environment
+import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.repository.EntidadConId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -64,7 +65,7 @@ class Usuario(
 
     fun cambiarTipo(label: String){
         tipoUsuario = TipoUsuario.entries.find { it.label == label }
-            ?: throw IllegalArgumentException("Tipo de usuario inválido: $label")
+            ?: throw BadRequestException("Tipo de usuario inválido: $label")
     }
 
     fun aumentarBiblioKarmas(bibliokarmas: Int){
