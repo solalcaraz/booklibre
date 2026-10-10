@@ -24,23 +24,19 @@ class UsuarioLeaderboardRedisService(
     fun obtenerTop5(): List<UsuarioLeaderboardDTO> {
         val zsetOps = redisTemplate.opsForZSet()
 
-        // Intenta leer del ZSET: reverseRange devuelve top 5 en orden descendente por score
+        // El ZSET solo guarda ids y puntaje: nombre y bibliokarmas se leen de Postgres en el orden del ranking
         val topIds = zsetOps.reverseRange(LEADERBOARD_KEY, 0, 4)?.toList() ?: emptyList()
 
-        // Si hay datos en Redis, recupera desde DB manteniendo orden
         if (topIds.isNotEmpty()) return mapFromDB(topIds)
 
-        // Cache miss: calcula desde DB y guarda en Redis
         return cargarDesdeDB()
     }
 
     private fun cargarDesdeDB(): List<UsuarioLeaderboardDTO> {
         val topUsuarios = usuarioRepository.findTop5ByOrderByBibliokarmasDesc()
 
-        // Borra el ranking viejo
         redisTemplate.delete(LEADERBOARD_KEY)
 
-        // Carga Redis ZSET con bibliokarmas como score (descendente en reverseRange)
         topUsuarios.forEach { usuario ->
             redisTemplate.opsForZSet().add(
                 LEADERBOARD_KEY,
@@ -49,19 +45,16 @@ class UsuarioLeaderboardRedisService(
             )
         }
 
-        // Establece TTL para expiración automática
         redisTemplate.expire(LEADERBOARD_KEY, LEADERBOARD_TTL)
 
         return topUsuarios.map { it.toDTO() }
     }
 
     private fun mapFromDB(ids: List<String>): List<UsuarioLeaderboardDTO> {
-        // Obtiene usuarios del DB usando los IDs del ZSET
         val usuarios = usuarioRepository.findAllById(
             ids.map { it.toInt() }
         ).associateBy { it.id }
 
-        // Mantiene el orden del ZSET (que ya está ordenado descendentemente)
         return ids.mapNotNull { id ->
             usuarios[id.toInt()]?.toDTO()
         }

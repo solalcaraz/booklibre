@@ -66,7 +66,6 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
     @Query("SELECT r FROM Reserva r WHERE r.libroMongoId = :libroId AND r.fechaHasta >= CURRENT_DATE")
     fun findReservasOcupadas(@Param("libroId") libroId: String): List<Reserva>
 
-    // Verifica si hay reservas que se superponen con las fechas solicitadas
     @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Reserva r WHERE r.libroMongoId = :libroId AND r.fechaDesde <= :hasta AND r.fechaHasta >= :desde AND r.fechaHasta >= CURRENT_DATE")
     fun existReservaSuperpuesta(
         @Param("libroId") libroId: String,
