@@ -1,4 +1,4 @@
-package ar.edu.unsam.phm.dto
+package ar.edu.unsam.phm.dto.dashboard
 
 data class UsuarioLeaderboardDTO(
     val id: Int,

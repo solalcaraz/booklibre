@@ -90,7 +90,5 @@ class AuthService(
         )
 
         usuarioRepository.save(nuevoUsuario)
-
-        return
     }
 }

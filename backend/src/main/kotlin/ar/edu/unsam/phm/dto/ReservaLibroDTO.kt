@@ -1,8 +1,5 @@
 package ar.edu.unsam.phm.dto
 
-import ar.edu.unsam.phm.domain.LibroColeccionableDocument
-import ar.edu.unsam.phm.domain.LibroComunDocument
-import ar.edu.unsam.phm.domain.LibroDedicatoriaDocument
 import ar.edu.unsam.phm.domain.LibroDocument
 import ar.edu.unsam.phm.domain.LibroPopular
 import ar.edu.unsam.phm.domain.Reserva
@@ -21,13 +18,6 @@ data class ReservaLibroDTO(
     var biblioKarmasTotal: Int,
     var portada: String
 )
-private fun obtenerTipo(libro: LibroDocument): String =
-    when (libro) {
-        is LibroComunDocument -> TipoDeLibroDTO.COMUN.label
-        is LibroDedicatoriaDocument -> TipoDeLibroDTO.DEDICATORIA.label
-        is LibroColeccionableDocument -> TipoDeLibroDTO.COLECCIONABLE.label
-        else -> throw IllegalArgumentException("Tipo de libro desconocido")
-    }
 
 fun Reserva.toReservaLibroDTO(libro: LibroDocument): ReservaLibroDTO =
     ReservaLibroDTO(
@@ -35,7 +25,7 @@ fun Reserva.toReservaLibroDTO(libro: LibroDocument): ReservaLibroDTO =
         titulo = libro.titulo,
         genero = libro.genero.label,
         autor = libro.autor,
-        tipo = obtenerTipo(libro),
+        tipo = libro.tipo().label,
         isbn13 = libro.isbn13,
         idioma = libro.idioma.label,
         estado = libro.estado.label,

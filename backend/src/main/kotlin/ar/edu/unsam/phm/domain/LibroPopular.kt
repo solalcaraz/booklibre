@@ -3,7 +3,6 @@ package ar.edu.unsam.phm.domain
 import ar.edu.unsam.phm.dto.TipoDeLibroDTO
 import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash
-import kotlin.math.ceil
 
 @RedisHash("LibroPopular", timeToLive = 30)
 data class LibroPopular (
@@ -23,17 +22,9 @@ data class LibroPopular (
     override val cantidadReservas: Int,
     var portada: String,
 ) : LibroCalculoBibliokarmas {
-    override fun plusBiblioKarma(cantidadBiblioKarma: Int): Int {
-        return when(tipo) {
-            TipoDeLibroDTO.COMUN.label ->
-                if (cantidadBiblioKarma < 1000) cantPaginas * 5 else cantPaginas * 2
-
-            TipoDeLibroDTO.DEDICATORIA.label ->
-                200 + 10 * cantidadReservas
-
-            TipoDeLibroDTO.COLECCIONABLE.label ->
-                ceil(cantidadBiblioKarma / 5.0).toInt() + cantPaginas
-            else -> 0
-        }
-    }
+    // En Redis el tipo se guarda como label; si no coincide con ninguno no suma plus
+    override fun plusBiblioKarma(cantidadBiblioKarma: Int): Int =
+        TipoDeLibroDTO.entries.find { it.label == tipo }
+            ?.plusBiblioKarma(cantPaginas, cantidadReservas, cantidadBiblioKarma)
+            ?: 0
 }

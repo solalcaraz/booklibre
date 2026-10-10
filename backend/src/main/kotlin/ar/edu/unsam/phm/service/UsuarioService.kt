@@ -15,8 +15,6 @@ import ar.edu.unsam.phm.security.TokenHelper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Date
-import kotlin.text.toIntOrNull
-
 
 @Service
 class UsuarioService(
@@ -51,8 +49,7 @@ class UsuarioService(
 
         usuarioRepository.save(usuarioActualizado)
 
-        /* Si cambia el rol del usuario tengo que actualizar el token en esta request, o bien mandar al usuario
-        a que inicie sesion de nuevo pero destroza la UX */
+        // El rol viaja en el token: si cambió, se emiten tokens nuevos para no obligar a loguearse otra vez
         val accessToken = tokenHelper.generateAccessToken(
             usuarioActualizado,
             expirationDate = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration)
@@ -75,9 +72,8 @@ class UsuarioService(
         return usuario.bibliokarmas
     }
 
-    /* Acá solamente estoy teniendo en cuenta los libros activos, deberían contar los dados de baja también */
-    /* Y hago dos queries, una para todos los libros del usuario, y la siguiente para contar la
-    cantidad de reservas correspondientes a esos libros */
+    // Los libros están en Mongo y las reservas en Postgres: primero se buscan los ids y después se cuentan.
+    // Solo se consideran los libros activos, así que los préstamos de libros despublicados no suman.
     private fun cantidadPrestadosDe(usuarioId: Int): Int {
         val idsLibrosDelUsuario = libroRepository.findByDuenoIdAndActivoTrue(usuarioId).mapNotNull { it.id }
 

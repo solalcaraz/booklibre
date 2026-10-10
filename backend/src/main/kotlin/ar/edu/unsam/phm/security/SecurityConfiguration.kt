@@ -12,8 +12,6 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.DefaultSecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
-/* En este archivo se indica en qué endpoints se va a aplicar el filtro de autenticación */
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -26,31 +24,19 @@ class SecurityConfiguration(
         jwtAuthenticationFilter: JwtAuthenticationFilter
     ): DefaultSecurityFilterChain =
         http
-            .csrf {
-                it.disable()
-                /*it.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                it.csrfTokenRequestHandler(SpaCsrfTokenRequestHandler())
-                it.ignoringRequestMatchers("/auth/login", "/auth/register", "/error")*/
-            }
-            /*.cors{ cors -> cors.configurationSource(corsConfigurationSource()) }*/
+            // La API es stateless y el token viaja en un header, no en cookies: CSRF no aplica
+            .csrf { it.disable() }
             .authorizeHttpRequests {
-                // Queremos que cualquier persona se pueda loguear y mostrar errores
-                // Importante: no definirlo solo para el method POST
-                // porque CORS requiere que también puedas mandar el OPTIONS para hacer el pre-flight
+                // El preflight de CORS llega sin token, así que OPTIONS tiene que pasar en todas las rutas
                 it.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    .requestMatchers("/auth/register", "/auth/login", "/error", "/auth/refresh")
-                    .permitAll() // agregar refresh token endpoint
+                    .requestMatchers("/auth/register", "/auth/login", "/error", "/auth/refresh").permitAll()
                     .requestMatchers("/imagenes/**").permitAll()
+                    // Los permisos por rol del dashboard se resuelven en cada data fetcher con @PreAuthorize
                     .requestMatchers("/graphql", "/graphiql/**").permitAll()
-                    // Permisos de admin para modificar
-                    // Solo los que pueden reservar (lector) acceden a este endpoint
                     .requestMatchers(HttpMethod.GET, "/reserva/librosDisponibles/**")
                     .hasAnyRole("LECTOR", "LECTOR_PUBLICADOR")
-                    //---------------------------
                     .requestMatchers(HttpMethod.POST, "/libro/nuevo")
                     .hasAnyRole("PUBLICADOR", "LECTOR_PUBLICADOR")
-                    // Default: que se autentique para poder ver información
-                    // ---------------------------
                     .requestMatchers(HttpMethod.GET, "/reserva/detalles/**")
                     .hasAnyRole("LECTOR", "LECTOR_PUBLICADOR")
                     .requestMatchers(HttpMethod.POST, "/reserva/crear")

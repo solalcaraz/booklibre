@@ -7,25 +7,10 @@ import ar.edu.unsam.phm.dto.*
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 
-interface ReservaAdapter {
-    fun toDtoReservaPag(page: Page<Reserva>): PaginationResponseDTO<ReservaDTO>
-    fun toDetalleReservaDto(
-        reserva: Reserva,
-        bibliokarmas: Int,
-        calificacionPromedio: Double,
-        ultimasResenias: List<Resenia>,
-        reservasOcupadas: List<Reserva>,
-        //Agrego aca para evitar el problema del Bean.
-        libro: LibroDocument
-    ): DetalleReservaDTO
-    fun toDto(reserva: Reserva): ReservaDTO
-}
-
 @Service
-//LibroDocument no es un Bean por lo que no funca.
-class ReservaMapper(private val libroMapper: LibroMapper): ReservaAdapter {
+class ReservaMapper(private val libroMapper: LibroMapper) {
 
-    override fun toDetalleReservaDto(
+    fun toDetalleReservaDto(
         reserva: Reserva,
         bibliokarmas: Int,
         calificacionPromedio: Double,
@@ -54,21 +39,10 @@ class ReservaMapper(private val libroMapper: LibroMapper): ReservaAdapter {
         )
     }
 
-    override fun toDtoReservaPag(page: Page<Reserva>): PaginationResponseDTO<ReservaDTO> {
-        val reservasDto = page.content.map {
-            this.toDto(it)
-        }
+    fun toDtoReservaPag(page: Page<Reserva>): PaginationResponseDTO<ReservaDTO> =
+        page.map { toDto(it) }.toPaginationDTO()
 
-        return PaginationResponseDTO(
-            items = reservasDto,
-            page = page.number,
-            size = page.size,
-            totalItems = page.totalElements.toInt(),
-            totalPages = page.totalPages
-        )
-    }
-
-    override fun toDto(reserva: Reserva): ReservaDTO {
+    fun toDto(reserva: Reserva): ReservaDTO {
         return ReservaDTO(
             reserva.id,
             reserva.libroResumen,

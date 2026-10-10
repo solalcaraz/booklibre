@@ -3,11 +3,24 @@ package ar.edu.unsam.phm.dto
 import ar.edu.unsam.phm.domain.Genero
 import jakarta.persistence.Embeddable
 import java.time.LocalDate
+import kotlin.math.ceil
 
+// Cada tipo suma 5 bibliokarmas por día de reserva más este plus (reglas de la consigna)
 enum class TipoDeLibroDTO(val label: String) {
-    COMUN("Común"),
-    DEDICATORIA("Con dedicatoria"),
-    COLECCIONABLE("Coleccionable")
+    COMUN("Común") {
+        override fun plusBiblioKarma(cantPaginas: Int, cantidadReservas: Int, bibliokarmasLector: Int) =
+            if (bibliokarmasLector < 1000) cantPaginas * 5 else cantPaginas * 2
+    },
+    DEDICATORIA("Con dedicatoria") {
+        override fun plusBiblioKarma(cantPaginas: Int, cantidadReservas: Int, bibliokarmasLector: Int) =
+            200 + 10 * cantidadReservas
+    },
+    COLECCIONABLE("Coleccionable") {
+        override fun plusBiblioKarma(cantPaginas: Int, cantidadReservas: Int, bibliokarmasLector: Int) =
+            ceil(bibliokarmasLector / 5.0).toInt() + cantPaginas
+    };
+
+    abstract fun plusBiblioKarma(cantPaginas: Int, cantidadReservas: Int, bibliokarmasLector: Int): Int
 }
 
 data class LibroDetalleDTO(
@@ -41,9 +54,6 @@ data class MiLibroProjection(
     val agregadoEl: LocalDate,
     val portada: String,
     val clicks: Int = 0
-
-    // Acá podría traer también y que Denu use el mismo DTO
-    //val promedioCalificacion: Double? = 0.0
 )
 
 data class LibroMasClickeadoDTO(
@@ -52,7 +62,7 @@ data class LibroMasClickeadoDTO(
     val clicks: Int
 )
 
-// libro dentro de prestamos
+// Copia de los datos del libro que se guarda con la reserva, para listar préstamos sin ir a Mongo
 @Embeddable
 data class LibroResumen(
     val titulo: String = "",
@@ -61,4 +71,4 @@ data class LibroResumen(
     val duenoNombre: String = "",
     val duenoId: Int?,
     var puntuacion: Double? = 0.0,
-    )
+)

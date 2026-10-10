@@ -25,7 +25,7 @@ enum class TipoUsuario(val label: String) {
 class Usuario(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    override var id: Int? = null, /* el id es nullable porque lo asigna el repo */
+    override var id: Int? = null,
 
     @Column(nullable = false)
     var nombreCompleto: String,

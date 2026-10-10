@@ -7,9 +7,6 @@ import io.jsonwebtoken.security.Keys
 import org.springframework.stereotype.Service
 import java.util.Date
 
-/* Este TokenHelper nos aporta funciones básicas para la manipulación del token del usuario */
-/* Crearlo, saber si expiró, si es válido, extraer los claims o el email. */
-
 @Service
 class TokenHelper(
     jwtProperties: JwtProperties,
@@ -40,7 +37,6 @@ class TokenHelper(
     fun extractType(token: String): String? =
         getAllClaims(token)["type"] as? String
 
-    // Extrae el rol del claim para construir las authorities sin tocar la DB
     fun extractRole(token: String): String? =
         getAllClaims(token)["role"] as? String
 

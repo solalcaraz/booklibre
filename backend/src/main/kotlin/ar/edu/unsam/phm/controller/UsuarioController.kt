@@ -5,7 +5,6 @@ import ar.edu.unsam.phm.dto.PerfilUsuarioDTO
 import ar.edu.unsam.phm.dto.UsuarioPatchRequest
 import ar.edu.unsam.phm.helpers.UsuarioMapper
 import ar.edu.unsam.phm.service.UsuarioService
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.CrossOrigin

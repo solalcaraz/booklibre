@@ -1,7 +1,7 @@
 package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.Usuario
-import ar.edu.unsam.phm.dto.UsuarioLeaderboardDTO
+import ar.edu.unsam.phm.dto.dashboard.UsuarioLeaderboardDTO
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import jakarta.annotation.PostConstruct
 import org.springframework.data.redis.core.RedisTemplate

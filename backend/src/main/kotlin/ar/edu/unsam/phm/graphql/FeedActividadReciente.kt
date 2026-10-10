@@ -18,7 +18,7 @@ class ActividadRecienteDataFetcher(
 
     @DgsTypeResolver(name = "ActividadReciente")
     fun resolveActividadTipo(actividad: ActividadRecienteDTO): String {
-        // Evaluamos el String que le pusimos al evento para decidir el tipo de GraphQL
+        // El feed es una interface de GraphQL: DGS necesita saber qué tipo concreto es cada evento
         return when (actividad.tipoEvento) {
             "ALTA_LIBRO" -> "NuevoLibroEvento"
             "NUEVA_RESERVA" -> "NuevaReservaEvento"

@@ -6,14 +6,9 @@ import ar.edu.unsam.phm.dto.UsuarioPatchRequest
 import ar.edu.unsam.phm.env.Environment
 import org.springframework.stereotype.Service
 
-interface UsuarioAdapter {
-    fun toFullDto(usuario: Usuario): PerfilUsuarioDTO
-    fun fromDto(userPatch: UsuarioPatchRequest, usuario: Usuario): Usuario
-}
-
 @Service
-class UsuarioMapper: UsuarioAdapter {
-    override fun toFullDto(usuario: Usuario): PerfilUsuarioDTO {
+class UsuarioMapper {
+    fun toFullDto(usuario: Usuario): PerfilUsuarioDTO {
         return PerfilUsuarioDTO(
             nombreCompleto = usuario.nombreCompleto,
             email = usuario.email,
@@ -29,7 +24,7 @@ class UsuarioMapper: UsuarioAdapter {
         )
     }
 
-    override fun fromDto(userPatch: UsuarioPatchRequest, usuario: Usuario): Usuario {
+    fun fromDto(userPatch: UsuarioPatchRequest, usuario: Usuario): Usuario {
         usuario.email = userPatch.email
         usuario.ciudad = userPatch.ciudad
         usuario.telefono = userPatch.telefono
@@ -41,5 +36,4 @@ class UsuarioMapper: UsuarioAdapter {
 
         return usuario
     }
-
 }

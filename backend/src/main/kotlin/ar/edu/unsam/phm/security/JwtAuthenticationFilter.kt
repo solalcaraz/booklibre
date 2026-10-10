@@ -11,15 +11,10 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
-/* Esto sería como un middleware de node. Establece como tiene que actuar el security filter
-y delega al siguiente eslabón de la filter chain. */
-
+// El rol viaja en el token firmado, así que no hace falta consultar la base en cada request
 @Component
 class JwtAuthenticationFilter(
     private val tokenHelper: TokenHelper,
-    // Se eliminaron userDetailsService y usuarioRepository:
-    // el JWT firmado ya es prueba suficiente de identidad.
-    // No hace falta ir a la DB en cada request.
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -39,13 +34,12 @@ class JwtAuthenticationFilter(
             val userId = tokenHelper.extractUserId(jwtToken)
 
             if (userId != null && SecurityContextHolder.getContext().authentication == null) {
-                // Validamos solo contra la secret key (sin DB)
                 if (tokenHelper.isValid(jwtToken, userId) && tokenHelper.extractType(jwtToken) == "access") {
                     val role = tokenHelper.extractRole(jwtToken)
                     val authorities = listOf(SimpleGrantedAuthority("ROLE_$role"))
 
                     val authToken = UsernamePasswordAuthenticationToken(
-                        userId.toString(), // authentication.name sigue siendo el id del usuario
+                        userId.toString(),
                         null,
                         authorities
                     )
@@ -57,7 +51,7 @@ class JwtAuthenticationFilter(
             filterChain.doFilter(request, response)
 
         } catch (e: ExpiredJwtException) {
-            // Captura la excepción de token expirado y devuelve el status code adecuado (401-Unauthorized)
+            // El 401 explícito es lo que le indica al front que tiene que renovar el token
             logger.warn(e.message)
             response.status = HttpServletResponse.SC_UNAUTHORIZED
             response.contentType = "application/json"
@@ -65,8 +59,7 @@ class JwtAuthenticationFilter(
         }
     }
 
-    /* Si el token expira, debería poder loguear de nuevo y no recibir 401, por eso salto el filter
-    tanto para login como register como /refresh más adelante */
+    // Con un token vencido en el header, login, registro y refresh devolverían 401: no se filtran
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val path = request.servletPath
         return path.startsWith("/auth/")

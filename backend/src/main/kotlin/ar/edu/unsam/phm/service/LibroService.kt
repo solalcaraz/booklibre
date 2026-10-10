@@ -6,7 +6,7 @@ import ar.edu.unsam.phm.dto.LibroDetalleDTO
 import org.springframework.stereotype.Service
 import ar.edu.unsam.phm.dto.MiLibroProjection
 import ar.edu.unsam.phm.dto.PaginationResponseDTO
-import ar.edu.unsam.phm.exceptions.BadRequestException
+import ar.edu.unsam.phm.dto.toPaginationDTO
 import ar.edu.unsam.phm.helpers.LibroMapper
 import ar.edu.unsam.phm.exceptions.ForbiddenException
 import ar.edu.unsam.phm.exceptions.NotFoundException
@@ -51,7 +51,7 @@ class LibroService(
     fun update(id: String, libroDto: LibroDetalleDTO) {
         val libroExistente = getByIdForUser(id)
 
-        // Si no le volvemos a pasar los valores existentes de estas variables va a generar un registro nuevo
+        // El DTO no trae dueño, reservas ni calificación: sin copiarlos se perderían al guardar
         val libroActualizado = libroMapper.fromDto(libroDto).apply {
             this.id = id
             this.dueno = libroExistente.dueno
@@ -63,34 +63,6 @@ class LibroService(
         libroRepository.save(libroActualizado)
     }
 
-//    fun buscarMisLibros(
-//        userId: Int,
-//        filter: String,
-//        sort: String?,
-//        page: Int,
-//        size: Int
-//    ): PaginationResponseDTO<MiLibroProjection> {
-//
-//        val usuario = usuarioRepository.findById(userId).orElseThrow { NotFoundException("Usuario no encontrado") }
-//        val paginado = PageRequest.of(page, size)
-//
-//        val librosPage = when (filter) {
-//            "Disponibles" -> libroRepository.librosDisponiblesDe(usuario.id!!, sort, paginado)
-//            "Prestados" -> libroRepository.librosPrestadosDe(usuario.id!!, sort, paginado)
-//            else -> libroRepository.todosLibrosDe(usuario.id!!, sort, paginado)
-//        }
-//
-//        /* Esto lo puedo mover al controller, sería serializar el DTO final */
-//        return PaginationResponseDTO(
-//            items = librosPage.content,
-//            page = librosPage.number,
-//            size = librosPage.size,
-//            totalItems = librosPage.totalElements.toInt(),
-//            totalPages = librosPage.totalPages
-//        )
-//    }
-
-    /* Acá tengo que meter el sort, por agregado y disponible*/
     fun buscarMisLibros(
         userId: Int,
         filter: String,
@@ -104,31 +76,25 @@ class LibroService(
         val librosPage = libroRepository.findMisLibrosDe(userId, hoy, filter, sort, paginado)
 
         val idsLibros = librosPage.content.mapNotNull { it.id }
+        // Solo se cuentan los clicks de los libros de la página actual
         val clicksPorLibro = if (idsLibros.isEmpty()) {
             emptyMap()
         } else {
-            /* Cuento los clicks de cada libro de la pagina en un array y los estampo en el dto */
             clickLibroRepository.findByLibroIdIn(idsLibros).groupingBy { it.libroId }.eachCount()
         }
 
-        return PaginationResponseDTO(
-            items = librosPage.content.map { libro ->
-                MiLibroProjection(
-                    id = libro.id!!,
-                    titulo = libro.titulo,
-                    autor = libro.autor,
-                    genero = libro.genero,
-                    estadoReserva = if (libro.reservasPendientes.any { it.fechaInicio <= hoy && it.fechaFin >= hoy }) "PRESTADO" else "DISPONIBLE",
-                    agregadoEl = libro.fechaPublicacion,
-                    portada = libro.portada,
-                    clicks = clicksPorLibro[libro.id] ?: 0
-                )
-            },
-            page = librosPage.number,
-            size = librosPage.size,
-            totalItems = librosPage.totalElements.toInt(),
-            totalPages = librosPage.totalPages
-        )
+        return librosPage.map { libro ->
+            MiLibroProjection(
+                id = libro.id!!,
+                titulo = libro.titulo,
+                autor = libro.autor,
+                genero = libro.genero,
+                estadoReserva = if (libro.reservasPendientes.any { it.fechaInicio <= hoy && it.fechaFin >= hoy }) "PRESTADO" else "DISPONIBLE",
+                agregadoEl = libro.fechaPublicacion,
+                portada = libro.portada,
+                clicks = clicksPorLibro[libro.id] ?: 0
+            )
+        }.toPaginationDTO()
     }
 
     fun despublicarLibro(id: String){

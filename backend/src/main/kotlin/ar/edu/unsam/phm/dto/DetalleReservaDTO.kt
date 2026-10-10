@@ -2,7 +2,6 @@ package ar.edu.unsam.phm.dto
 
 import java.time.LocalDate
 
-//Data para el front.
 data class DetalleReservaDTO(
     val libroDetalleDTO: LibroDetalleDTO,
     val bibliokarmasTotales: Int,

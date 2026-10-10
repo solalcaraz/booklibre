@@ -1,20 +1,14 @@
 package ar.edu.unsam.phm.service
 
-import ar.edu.unsam.phm.domain.LibroColeccionableDocument
-import ar.edu.unsam.phm.domain.LibroComunDocument
-import ar.edu.unsam.phm.domain.LibroDedicatoriaDocument
 import ar.edu.unsam.phm.domain.LibroDocument
 import ar.edu.unsam.phm.domain.LibroPopular
-import ar.edu.unsam.phm.dto.TipoDeLibroDTO
 import ar.edu.unsam.phm.repository.ClickLibroRepository
 import ar.edu.unsam.phm.repository.LibroDocumentRepository
 import ar.edu.unsam.phm.repository.LibroPopularRepository
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
-import java.time.Duration
 import java.time.LocalDate
 
 data class LibroPopularConClicks(
@@ -31,48 +25,27 @@ class LibroPopularRedisService(
 ){
     private val RANKING_KEY="libros:ranking"
 
-    // Si Redis esta vacía (reinicio del servidor o primer levantamiento de la app),
-    // pregunta a mongo por los libros e hidrata redis, sigue siendo la fuente de verdad
+    // Si Redis arranca vacío (primer arranque o reinicio) se reconstruye desde Mongo,
+    // que sigue siendo la fuente de verdad
     @EventListener(ApplicationReadyEvent::class)
     fun inicializarRedis() {
         val yaInicializado = redisTemplate.opsForZSet().size(RANKING_KEY) ?: 0
         if (yaInicializado == 0L) reconstruirDesdeDB()
     }
 
-    // consulta en mongo los libros mas clickeados y guarda la info en dos estructuras
-    // HASH (libroPopularRepository): la info completa que necesia el home del libro
-    // ZSET (libros:ranking): solo el id del libro con su scrore que es la cantidad de clicks para poder ordenarlos
+    // Se guardan dos estructuras: un ZSET con id y cantidad de clicks (el ranking ordenado)
+    // y un hash con TTL por libro con los datos que muestra el home
     private fun reconstruirDesdeDB(): List<LibroPopular> {
-        // cuales son los libros que mas clicks tiene? puede no llegar al top 10
         val topClicks = clickLibroRepository.top10LibrosMasClickeados()
         if (topClicks.isEmpty()) return emptyList()
 
-        // ahora anda y busca el detalle completo de cada libro "popular" en mongo
         val topConIds = topClicks.map { it.libroId }
         val librosConClicks = libroDocumentRepository.findByIdInAndActivoTrueAndDisponible(
             topConIds, LocalDate.now(), LocalDate.now()).associateBy { it.id }
 
-        val librosParaRedis = topClicks.mapNotNull { click ->
-            val libro = librosConClicks[click.libroId] ?: return@mapNotNull null
-            LibroPopular(
-                libroId = libro.id!!,
-                titulo = libro.titulo,
-                autor = libro.autor,
-                tipo = obtenerTipo(libro),
-                genero = libro.genero.label,
-                idioma = libro.idioma.label,
-                estado = libro.estado.label,
-                dueno = libro.dueno.nombreCompleto,
-                isbn13 = libro.isbn13,
-                calificacionPromedio = libro.promedioCalificacion,
-                cantPaginas = libro.cantPaginas,
-                cantidadReservas = libro.cantidadReservas,
-                portada = libro.portada
-            )
-        }
+        val librosParaRedis = topClicks.mapNotNull { click -> librosConClicks[click.libroId]?.toLibroPopular() }
 
         libroPopularRepository.saveAll(librosParaRedis)
-        // se guarda el ID del libro con su puntaje de clicks en el ZSET
         topClicks.forEach { libro ->
             redisTemplate.opsForZSet().add(RANKING_KEY, libro.libroId, libro.clicks.toDouble())
         }
@@ -80,8 +53,6 @@ class LibroPopularRedisService(
         return librosParaRedis
     }
 
-    // Devuelve solo los id del top segun el zset, sin traer el detalle de los libros
-    // sirve para verificar si tenemos la informacion de tal id, es mas liviano traer ids a memoria
     fun obtenerTopIds(limite: Int): List<String> {
         return redisTemplate.opsForZSet().reverseRange(RANKING_KEY, 0, limite-1L)
             ?.toList() ?: emptyList()
@@ -92,7 +63,6 @@ class LibroPopularRedisService(
             .reverseRangeWithScores(RANKING_KEY, 0, limite - 1L)
             ?.mapNotNull { libroConScore ->
                 val libroId = libroConScore.value ?: return@mapNotNull null
-                /* busco el libro completo para sacar el autor y el titulo nada más */
                 val libro = libroPopularRepository.findById(libroId).orElse(null)
                     ?: return@mapNotNull null
 
@@ -107,62 +77,34 @@ class LibroPopularRedisService(
     fun obtenerLibroPopular(libroId: String): LibroPopular? =
         libroPopularRepository.findById(libroId).orElse(null)
 
-    // cachea un libro de mongo con un TTL: se llama cada vez q mongo responde y busca libros
     fun cachearLibro(libro: LibroDocument) {
-        val libroPopular = LibroPopular(
-            libroId = libro.id!!,
-            titulo = libro.titulo,
-            autor = libro.autor,
-            tipo = obtenerTipo(libro),
-            genero = libro.genero.label,
-            idioma = libro.idioma.label,
-            estado = libro.estado.label,
-            dueno = libro.dueno.nombreCompleto,
-            isbn13 = libro.isbn13,
-            calificacionPromedio = libro.promedioCalificacion,
-            cantPaginas = libro.cantPaginas,
-            cantidadReservas = libro.cantidadReservas,
-            portada = libro.portada
-        )
-        libroPopularRepository.save(libroPopular)
+        libroPopularRepository.save(libro.toLibroPopular())
     }
 
-    // registrar click actualiza el score en el ZSET
     fun registrarClick(libroId: String) {
         redisTemplate.opsForZSet().incrementScore(RANKING_KEY, libroId, 1.0) ?: return
 
         val rank = redisTemplate.opsForZSet().reverseRank(RANKING_KEY, libroId) ?: return
 
-        //carga libro a redis solo si todavia no esta cargado (o sea ingresa al ranking)
-        if (!libroPopularRepository.existsById(libroId) && rank < 10) hidratar(libroId)
-    }
-
-    // carga el libro de mongo a redis porque entro en el ranking del top 10
-    private fun hidratar(libroId: String) {
-        val libro = libroDocumentRepository.findById(libroId).orElse(null) ?: return
-
-        libroPopularRepository.save(LibroPopular(
-            libroId = libro.id!!,
-            titulo = libro.titulo,
-            autor = libro.autor,
-            tipo = obtenerTipo(libro),
-            genero = libro.genero.label,
-            idioma = libro.idioma.label,
-            estado = libro.estado.label,
-            dueno = libro.dueno.nombreCompleto,
-            isbn13 = libro.isbn13,
-            calificacionPromedio = libro.promedioCalificacion,
-            cantPaginas = libro.cantPaginas,
-            cantidadReservas = libro.cantidadReservas,
-            portada = libro.portada
-        ))
-    }
-
-    private fun obtenerTipo(libro: LibroDocument): String =
-        when (libro) {
-            is LibroComunDocument -> TipoDeLibroDTO.COMUN.label
-            is LibroDedicatoriaDocument -> TipoDeLibroDTO.DEDICATORIA.label
-            is LibroColeccionableDocument -> TipoDeLibroDTO.COLECCIONABLE.label
-            else -> "DESCONOCIDO"
+        // El detalle se cachea recién cuando el libro entra al top 10
+        if (!libroPopularRepository.existsById(libroId) && rank < 10) {
+            libroDocumentRepository.findById(libroId).orElse(null)?.let { cachearLibro(it) }
         }
+    }
+
+    private fun LibroDocument.toLibroPopular() = LibroPopular(
+        libroId = id!!,
+        titulo = titulo,
+        autor = autor,
+        tipo = tipo().label,
+        genero = genero.label,
+        idioma = idioma.label,
+        estado = estado.label,
+        dueno = dueno.nombreCompleto,
+        isbn13 = isbn13,
+        calificacionPromedio = promedioCalificacion,
+        cantPaginas = cantPaginas,
+        cantidadReservas = cantidadReservas,
+        portada = portada
+    )
 }

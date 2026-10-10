@@ -9,10 +9,6 @@ import org.springframework.data.repository.query.Param
 import java.time.LocalDate
 
 interface ReservaRepository : JpaRepository<Reserva, Int> {
-    /*@Modifying
-    @Query("delete from Reserva r where r.libro.id = :libroId")
-    fun deleteByLibroId(@Param("libroId") libroId: Int): Int*/
-
     /* Cantidad de libros leídos de un usuario = todas sus reservas que ya finalizaron */
     @Query("""
         select count(r)
@@ -66,19 +62,6 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
         pageable: Pageable
     ): Page<Reserva>
 
-    //fun countByLibroDocumentId(libroId: String): Int
-
-    // Trae solo las puntuaciones de las reseñas de un libro específico
-//    @Query("SELECT r.resenia.puntuacion FROM Reserva r WHERE r.libro.id = :libroId AND r.resenia IS NOT NULL")
-//    fun findPuntuacionesByLibroId(@Param("libroId") libroId: Int): List<Int>
-
-    //Ultimas dos reservas
-//    @Query("SELECT r FROM Reserva r WHERE r.libro.id = :libroId AND r.fechaHasta < :hoy AND r.resenia IS NOT NULL ORDER BY r.fechaHasta DESC")
-//    fun findTop2UltimasReservas(
-//        @Param("libroId") libroId: Int,
-//        @Param("hoy") hoy: LocalDate = LocalDate.now()
-//    ): List<Reserva>
-
     // Trae las reservas de un libro que aún no finalizaron (fechaHasta >= HOY)
     @Query("SELECT r FROM Reserva r WHERE r.libroMongoId = :libroId AND r.fechaHasta >= CURRENT_DATE")
     fun findReservasOcupadas(@Param("libroId") libroId: String): List<Reserva>
@@ -91,7 +74,6 @@ interface ReservaRepository : JpaRepository<Reserva, Int> {
         @Param("hasta") hasta: LocalDate
     ): Boolean
 
-    // Trae las 5 reservas más recientes ordenadas por su fecha de inicio descendente
     fun findTop5ByOrderByFechaDesdeDesc(): List<Reserva>
 }
 

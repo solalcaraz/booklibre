@@ -20,21 +20,16 @@ class AuthController(
     val authService: AuthService
 ) {
     @PostMapping("/login")
-    fun login(@RequestBody usuario: LoginRequest): AuthenticationResponse {
-
-        return authService.login(usuario)
-    }
+    fun login(@RequestBody usuario: LoginRequest): AuthenticationResponse =
+        authService.login(usuario)
 
     @PostMapping("/register")
     fun register(@RequestBody usuarioRegister: RegisterRequest) {
-        val usuario = authService.register(usuarioRegister)
-
-        return
+        authService.register(usuarioRegister)
     }
 
     @PostMapping("/refresh")
     fun refresh(@RequestBody request: RefreshTokenRequest): RefreshTokenResponse {
-        println(request)
         return authService.refreshToken(request.token)?.maptoTokenResponse()?: throw ForbiddenException("Refresh token invalido")
     }
 

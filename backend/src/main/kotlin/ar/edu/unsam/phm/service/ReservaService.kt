@@ -2,7 +2,6 @@ package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.Reserva
 import ar.edu.unsam.phm.domain.ReservaPendiente
-import ar.edu.unsam.phm.domain.Usuario
 import ar.edu.unsam.phm.dto.PaginationReqDTO
 import ar.edu.unsam.phm.dto.CrearReservaDTO
 import ar.edu.unsam.phm.dto.DetalleReservaDTO
@@ -16,16 +15,13 @@ import ar.edu.unsam.phm.exceptions.BadRequestException
 import ar.edu.unsam.phm.exceptions.ConflictException
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.helpers.FiltrosLibro
-import ar.edu.unsam.phm.helpers.Ordenamiento
-import ar.edu.unsam.phm.helpers.ReservaAdapter
+import ar.edu.unsam.phm.helpers.ReservaMapper
 import ar.edu.unsam.phm.repository.LibroDocumentRepository
 import ar.edu.unsam.phm.repository.ReseniaRepository
 import ar.edu.unsam.phm.repository.ReservaRepository
 import ar.edu.unsam.phm.repository.UsuarioRepository
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -35,7 +31,7 @@ class ReservaService(
     private val reservaRepository: ReservaRepository,
     private val libroRepository: LibroDocumentRepository,
     private val usuarioRepository: UsuarioRepository,
-    private val reservaAdapter: ReservaAdapter,
+    private val reservaMapper: ReservaMapper,
     private val reseniaRepository: ReseniaRepository,
     private val libroPopularRedisService: LibroPopularRedisService,
     private val usuarioLeaderboardRedisService: UsuarioLeaderboardRedisService,
@@ -50,7 +46,7 @@ class ReservaService(
     fun getPrestadosPorMi(payload: PaginationReqDTO<ReservaRequestDTO>): Page<Reserva> {
         val usuarioId = payload.filter?.usuarioId ?: throw BadRequestException("Falta el ID del usuario en el payload")
         val pageable = PageRequest.of(payload.pageNumber, payload.pageSize)
-        return reservaRepository.findPrestadosPorMi(usuarioId.toInt(), payload.filter.inputSearch.trim(), pageable)
+        return reservaRepository.findPrestadosPorMi(usuarioId, payload.filter.inputSearch.trim(), pageable)
     }
 
     @Transactional(readOnly = true)
@@ -58,11 +54,8 @@ class ReservaService(
         val usuario = usuarioRepository.findById(usuarioId).orElseThrow { NotFoundException("Usuario no encontrado") }
 
         val pageDeLibros = libroRepository.findDisponiblesParaReserva(usuarioId, filtros)
-        // guardar en redis con TTL cada libro que devolvió mongo
-        //pageDeLibros.content.forEach { libro -> libroPopularRedisService.cachearLibro(libro) }
-        //libroPopularRedisService.inicializarRedis()
 
-        // se transforma cada LibroDocument en una pre reserva y hace el mapeo (dto)
+        // Cada libro se arma como una reserva simulada con las fechas del filtro para calcular sus bibliokarmas
         return pageDeLibros.map { libro ->
             Reserva(
                 lector = usuario,
@@ -77,13 +70,11 @@ class ReservaService(
     fun getLibrosPopulares(usuarioId: Int): List<ReservaLibroDTO> {
         val usuario = usuarioRepository.findById(usuarioId).orElseThrow { NotFoundException("Usuario no encontrado") }
 
-        // trae el top 10 ids (zset) del ranking
-        val topIds = libroPopularRedisService.obtenerTopIds(limite=10)
-
-        // intenta obtener la info cacheada de cada id que no expiro del hash
+        // Consigna: del top 10 del ranking se necesitan al menos 6 libros todavía cacheados (no vencidos)
+        val topIds = libroPopularRedisService.obtenerTopIds(limite = 10)
         val librosEnRedis = topIds.mapNotNull { libroPopularRedisService.obtenerLibroPopular(it) }
 
-        // si no alcanza a traer 6 libros entonces vuelve para pedir los libros en mongo y los cachea con un ttl
+        // Si no alcanzan, se recachean desde Mongo y el front cae a la búsqueda normal
         if (librosEnRedis.size < 6) {
             val librosDeMongo = libroRepository
                 .findByIdInAndActivoTrueAndDisponible(topIds, LocalDate.now(), LocalDate.now())
@@ -93,7 +84,6 @@ class ReservaService(
             throw NotFoundException("Redis no tiene suficientes libros populares para mostrar")
         }
 
-        // toma los primeros 6 y mapear
         return librosEnRedis.take(6).map { libro ->
             Reserva(
                 lector = usuario,
@@ -109,8 +99,8 @@ class ReservaService(
         val libro = libroRepository.findById(libroId).orElseThrow { NotFoundException("Libro no encontrado") }
         val usuario = usuarioRepository.findById(userId).orElseThrow{NotFoundException("Usuario no encontrado")}
 
-        //Reserva simulada con fechas del front
-        var reserva = Reserva(
+        // Reserva simulada con las fechas elegidas en el front, solo para calcular bibliokarmas
+        val reserva = Reserva(
             lector = usuario,
             fechaDesde = fechaDesde,
             fechaHasta = fechaHasta,
@@ -119,10 +109,10 @@ class ReservaService(
 
         val biblioKarmas = reserva.calcularBiblioKarmas(libro)
         val calificacionPromedio = libro.promedioCalificacion
-        val ultimasResenias = reseniaRepository.findTop2ByLibroMongoIdOrderByFechaDesc(libroId);
+        val ultimasResenias = reseniaRepository.findTop2ByLibroMongoIdOrderByFechaDesc(libroId)
         val reservasOcupadas = reservaRepository.findReservasOcupadas(libroId)
 
-        return reservaAdapter.toDetalleReservaDto(
+        return reservaMapper.toDetalleReservaDto(
             reserva = reserva,
             bibliokarmas = biblioKarmas,
             calificacionPromedio = calificacionPromedio,
@@ -134,11 +124,10 @@ class ReservaService(
 
     @Transactional(readOnly = false)
     fun crearReserva(userID: Int, reserva: CrearReservaDTO): ReservaDTO {
-
         val libro = libroRepository.findById(reserva.libroMongoID).orElseThrow { NotFoundException("Libro no encontrado") }
         val usuario = usuarioRepository.findById(userID).orElseThrow { NotFoundException("Usuario no encontrado") }
 
-        var nuevaReserva = Reserva(
+        val nuevaReserva = Reserva(
             lector = usuario,
             fechaDesde = reserva.fechaDesde,
             fechaHasta = reserva.fechaHasta,
@@ -149,7 +138,7 @@ class ReservaService(
 
         val seSuperpone = reservaRepository.existReservaSuperpuesta(libro.id!!, reserva.fechaDesde, reserva.fechaHasta)
         if (seSuperpone) {
-            throw ConflictException("El libro ya se encuentra reservado en esas fechas.") //otra exception, el usuario la pifio
+            throw ConflictException("El libro ya se encuentra reservado en esas fechas.")
         }
 
         val bibliokarmasGanados = nuevaReserva.calcularBiblioKarmas(libro)
@@ -157,14 +146,13 @@ class ReservaService(
         usuario.aumentarBiblioKarmas(bibliokarmasGanados)
         usuarioRepository.save(usuario)
 
-        // actualiza los bibliokarmas ganados en el score
         usuarioLeaderboardRedisService.actualizarScoreUsuario(
             usuario.id!!,
             bibliokarmasGanados
         )
 
-        //Sincronizacion entre repoReservas y libroDocument.
-
+        // La reserva vive en Postgres, pero el libro en Mongo guarda una copia de sus fechas
+        // para poder filtrar disponibilidad sin cruzar bases
         val reservaGuardada = reservaRepository.save(nuevaReserva)
 
         val reservaPendienteMongo = ReservaPendiente(
@@ -175,6 +163,6 @@ class ReservaService(
 
         libro.agregarReserva(reservaPendienteMongo)
         libroRepository.save(libro)
-        return reservaAdapter.toDto(nuevaReserva)
+        return reservaMapper.toDto(nuevaReserva)
     }
 }

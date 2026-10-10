@@ -49,7 +49,6 @@ class LibrosBootstrap(
         val dueno1 = usuariosParaMongo.firstOrNull { it.id == 1 } ?: usuariosParaMongo.first() // Diego Maradona
         val dueno2 = usuariosParaMongo.firstOrNull { it.id == 2 } ?: usuariosParaMongo.first() // Max Verstappen
         val dueno3 = usuariosParaMongo.firstOrNull { it.id == 3 } ?: usuariosParaMongo.first() // Ye West
-        //val dueno4 = usuariosParaMongo.getOrElse(4) { usuariosParaMongo.first() } // Yiya Murano
 
         val libros = listOf(
             // Libro 1: COLECCIONABLE, usuario 1
@@ -308,7 +307,7 @@ class LibrosBootstrap(
             }
         )
 
-        //libros.forEach { libroDocumentRepository.createIfNotExists(it) }
+        // Las reservas de ejemplo las carga Flyway en Postgres; acá se copian sus fechas a cada libro
         val reservasPostgres = reservaRepository.findAll()
         libros.forEach { libro ->
             val reservasDelLibro = reservasPostgres.filter { it.libroMongoId == libro.id }
@@ -327,93 +326,32 @@ class LibrosBootstrap(
 
         println("✅ Libros inicializados y sincronizados con las reservas de Postgres correctamente.")
 
-        // agrego clicks de ejemplo
         if (usuariosPostgres.isNotEmpty() && libroDocumentRepository.count() > 0) {
             registrarClicks(usuariosPostgres)
         }
     }
 
     private fun registrarClicks(usuarios: List<Usuario>) {
-        if (clickLibroRepository.count() > 0) return // ya hay clicks, no duplicar
+        if (clickLibroRepository.count() > 0) return
 
-        val clicks = listOf(
-            // libro_001 - Orgullo y Prejuicio: 45 clicks
-            *(1..45).map {
-                ClickLibroDocument(
-                    usuarioId = usuarios.random().id!!,
-                    usuarioNombre = usuarios.random().nombreCompleto,
-                    libroId = "libro_001",
-                    libroTitulo = "Orgullo y Prejuicio",
-                    fechaHora = LocalDateTime.now().minusDays((1..30).random().toLong())
-                )
-            }.toTypedArray(),
+        // Cantidades fijas para que el ranking de populares tenga un orden predecible
+        fun clicksDe(libroId: String, titulo: String, cantidad: Int) = (1..cantidad).map {
+            ClickLibroDocument(
+                usuarioId = usuarios.random().id!!,
+                usuarioNombre = usuarios.random().nombreCompleto,
+                libroId = libroId,
+                libroTitulo = titulo,
+                fechaHora = LocalDateTime.now().minusDays((1..30).random().toLong())
+            )
+        }
 
-            // libro_005 - Cien Años de Soledad: 38 clicks
-            *(1..38).map {
-                ClickLibroDocument(
-                    usuarioId = usuarios.random().id!!,
-                    usuarioNombre = usuarios.random().nombreCompleto,
-                    libroId = "libro_005",
-                    libroTitulo = "Cien Años de Soledad",
-                    fechaHora = LocalDateTime.now().minusDays((1..30).random().toLong())
-                )
-            }.toTypedArray(),
-
-            // libro_003 - 1984: 30 clicks
-            *(1..30).map {
-                ClickLibroDocument(
-                    usuarioId = usuarios.random().id!!,
-                    usuarioNombre = usuarios.random().nombreCompleto,
-                    libroId = "libro_003",
-                    libroTitulo = "1984",
-                    fechaHora = LocalDateTime.now().minusDays((1..30).random().toLong())
-                )
-            }.toTypedArray(),
-
-            // libro_007 - El nombre del viento: 15 clicks
-            *(1..15).map {
-                ClickLibroDocument(
-                    usuarioId = usuarios.random().id!!,
-                    usuarioNombre = usuarios.random().nombreCompleto,
-                    libroId = "libro_007",
-                    libroTitulo = "El Nombre del Viento",
-                    fechaHora = LocalDateTime.now().minusDays((1..30).random().toLong())
-                )
-            }.toTypedArray(),
-
-            // libro_013 - Padre rico padre pobre: 60 clicks
-            *(1..60).map {
-                ClickLibroDocument(
-                    usuarioId = usuarios.random().id!!,
-                    usuarioNombre = usuarios.random().nombreCompleto,
-                    libroId = "libro_013",
-                    libroTitulo = "Padre Rico Padre Pobre",
-                    fechaHora = LocalDateTime.now().minusDays((1..30).random().toLong())
-                )
-            }.toTypedArray(),
-
-            // libro_014 - Sapiens: 20 clicks
-            *(1..20).map {
-                ClickLibroDocument(
-                    usuarioId = usuarios.random().id!!,
-                    usuarioNombre = usuarios.random().nombreCompleto,
-                    libroId = "libro_014",
-                    libroTitulo = "Sapiens",
-                    fechaHora = LocalDateTime.now().minusDays((1..30).random().toLong())
-                )
-            }.toTypedArray(),
-
-            // libro_009 - El principito: 33 clicks
-            *(1..33).map {
-                ClickLibroDocument(
-                    usuarioId = usuarios.random().id!!,
-                    usuarioNombre = usuarios.random().nombreCompleto,
-                    libroId = "libro_009",
-                    libroTitulo = "El Principito",
-                    fechaHora = LocalDateTime.now().minusDays((1..30).random().toLong())
-                )
-            }.toTypedArray()
-        )
+        val clicks = clicksDe("libro_001", "Orgullo y Prejuicio", 45) +
+            clicksDe("libro_005", "Cien Años de Soledad", 38) +
+            clicksDe("libro_003", "1984", 30) +
+            clicksDe("libro_007", "El Nombre del Viento", 15) +
+            clicksDe("libro_013", "Padre Rico Padre Pobre", 60) +
+            clicksDe("libro_014", "Sapiens", 20) +
+            clicksDe("libro_009", "El Principito", 33)
 
         clickLibroRepository.saveAll(clicks)
         println("✅ ${clicks.size} clicks inicializados correctamente.")

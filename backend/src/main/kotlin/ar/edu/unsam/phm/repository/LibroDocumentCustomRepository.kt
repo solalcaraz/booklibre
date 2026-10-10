@@ -17,10 +17,9 @@ import org.bson.Document
 import java.time.LocalDate
 import java.util.regex.Pattern
 
-// Implementacion de un repo custom con MongoTemplate para poder aplicar a la busqueda de libros los filstros que son optativos
+// Repo custom con MongoTemplate porque los filtros del home son opcionales y se combinan en tiempo de ejecución
 interface LibroDocumentRepositoryCustom {
-    fun findDisponiblesParaReserva( excludeUsuarioId: Int, filtros: FiltrosLibro): Page<LibroDocument>
-    fun countDisponiblesParaReserva(excludeUsuarioId: Int, filtros: FiltrosLibro): Long
+    fun findDisponiblesParaReserva(excludeUsuarioId: Int, filtros: FiltrosLibro): Page<LibroDocument>
     fun findMisLibrosDe(duenoId: Int, hoy: LocalDate, filter: String, sort: String?, pageable: Pageable): Page<LibroDocument>
     fun promedioCalificacionPorTipo(): List<PromedioCalificacionPorTipoMongo>
 }
@@ -29,29 +28,25 @@ class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplat
     private fun buildCriteria(excludeUsuarioId: Int, filtros: FiltrosLibro): Criteria {
         val criteria = Criteria.where("activo").`is`(true)
 
-        // excluir libros del propio user
         criteria.and("dueno._id").ne(excludeUsuarioId)
 
-        // disponible: ninguna reserva pendiente que se superponga con el rango del filter
+        // Disponible = ninguna reserva pendiente se superpone con el rango pedido
         criteria.and("reservasPendientes").not().elemMatch(
             Criteria.where("fechaInicio").lte(filtros.fechaHasta)
                 .and("fechaFin").gte(filtros.fechaDesde)
         )
 
-        // filtro de los generos
-        if(filtros.generos.isNotEmpty()){ criteria.and("genero").`in`(filtros.generos) }
+        if (filtros.generos.isNotEmpty()) { criteria.and("genero").`in`(filtros.generos) }
 
-        // filtro por el rango de paginas
         val rangoPaginas = mutableListOf<Criteria>()
         filtros.cantPaginasMin?.let { rangoPaginas.add(Criteria.where("cantPaginas").gte(it)) }
         filtros.cantPaginasMax?.let { rangoPaginas.add(Criteria.where("cantPaginas").lte(it)) }
         if (rangoPaginas.isNotEmpty()) { criteria.andOperator(*rangoPaginas.toTypedArray()) }
 
-        // filtro del ISBN y el nombre del dueño del libro
         filtros.isbn?.takeIf { it.isNotBlank() }?.let { criteria.and("isbn13").regex(it, "i") }
         filtros.usuarioPrestador?.takeIf { it.isNotBlank() }?.let { criteria.and("dueno.nombreCompleto").regex(it, "i") }
 
-        // filtro por busqueda: por titulo o por autor
+        // Pattern.quote para que lo que escribe el usuario no se interprete como regex
         filtros.busqueda?.takeIf { it.isNotBlank() }?.let { busqueda ->
             val regex = Pattern.compile(Pattern.quote(busqueda.trim()), Pattern.CASE_INSENSITIVE)
             criteria.orOperator(
@@ -63,7 +58,6 @@ class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplat
     }
     override fun findDisponiblesParaReserva(excludeUsuarioId: Int, filtros: FiltrosLibro): Page<LibroDocument> {
         val criteria = buildCriteria(excludeUsuarioId, filtros)
-        // paginado, total y libros dispo
         val pageable: Pageable = PageRequest.of(
             filtros.numeroPagina, filtros.tamanoPaginado, filtros.orden.toSort()
         )
@@ -77,9 +71,6 @@ class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplat
 
         return PageImpl(libros, pageable, total)
     }
-
-    override fun countDisponiblesParaReserva(excludeUsuarioId: Int, filtros: FiltrosLibro): Long =
-        mongoTemplate.count(Query(buildCriteria(excludeUsuarioId, filtros)), LibroDocument::class.java)
 
     override fun findMisLibrosDe(
         duenoId: Int,
@@ -98,11 +89,11 @@ class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplat
 
         val total = mongoTemplate.count(Query(criteria), LibroDocument::class.java)
 
+        // Ordenar por disponibilidad exige calcularla en la base: se agrega un campo
+        // estadoReservaOrden (1 = prestado hoy, 0 = disponible) antes de ordenar y paginar
         val aggregation = Aggregation.newAggregation(
             Aggregation.match(criteria),
-            /* esta funcion calcula el estado de reserva del libro */
             estadoReservaOrdenOperation(hoy),
-            /* Y esta funcion usa el estado de la reserva para ordenar la pagina*/
             Aggregation.sort(sortMisLibros(sort)),
             Aggregation.skip(pageable.offset),
             Aggregation.limit(pageable.pageSize.toLong())
@@ -119,37 +110,29 @@ class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplat
         Criteria.where("fechaInicio").lte(hoy).and("fechaFin").gte(hoy)
 
     private fun estadoReservaOrdenOperation(hoy: LocalDate) = Aggregation.stage(
-        /* Agrego un campo estadoReservaOrden al documento
-        calculando su valor con estadoReservaOrdenExpresion(hoy) */
         Document(
             "\$addFields",
             Document("estadoReservaOrden", estadoReservaOrdenExpression(hoy))
         )
     )
 
-    /* Devuelvo 0 si no tiene reserva activa (false), devuelvo 1 si sí (true) */
     private fun estadoReservaOrdenExpression(hoy: LocalDate) =
         Document("\$cond", listOf(tieneReservaActivaExpression(hoy), 1, 0))
 
-    /* Si la cantidad de reservas activas es mayor a 0 devuelve true si no false */
     private fun tieneReservaActivaExpression(hoy: LocalDate) =
         Document("\$gt", listOf(cantidadReservasActivasExpression(hoy), 0))
 
-    /* Averiguo el tamaño de las reservas activas */
     private fun cantidadReservasActivasExpression(hoy: LocalDate) =
         Document("\$size", reservasActivasExpression(hoy))
 
-    /* Filtro las reservas activas del libro para averiguar el tamaño */
     private fun reservasActivasExpression(hoy: LocalDate) =
         Document(
             "\$filter",
             Document("input", "\$reservasPendientes")
-                /* a cada item de reservasPendientes lo bautizo "reserva" para poder interpolar abajo */
                 .append("as", "reserva")
                 .append("cond", reservaActivaExpression(hoy))
         )
 
-    /* Indica si la reserva esta activa o no con un doble condicional puesto como and */
     private fun reservaActivaExpression(hoy: LocalDate) =
         Document(
             "\$and", listOf(
@@ -169,8 +152,7 @@ class LibroDocumentRepositoryCustomImpl( private val mongoTemplate: MongoTemplat
             else -> Sort.by(Sort.Direction.ASC, "_id")
         }
 
-
-//   ------ Dashboard de GraphQL -------
+    // Promedio de promedios por tipo; los libros sin reseñas (promedio 0) no cuentan
     override fun promedioCalificacionPorTipo(): List<PromedioCalificacionPorTipoMongo> {
         val aggregation = Aggregation.newAggregation(
             Aggregation.match(

@@ -1,5 +1,6 @@
 package ar.edu.unsam.phm.domain
 
+import ar.edu.unsam.phm.dto.TipoDeLibroDTO
 import ar.edu.unsam.phm.env.Environment
 import com.fasterxml.jackson.annotation.JsonValue
 import org.springframework.data.annotation.Id
@@ -9,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Field
 import org.springframework.data.mongodb.core.mapping.Sharded
 import java.time.LocalDate
 import java.time.LocalDateTime
-import kotlin.math.ceil
 
 // En el cluster local la colección está particionada por dueño: sin la shard key,
 // Mongo rechaza los save() que actualizan un libro. En Atlas (sin sharding) no molesta.
@@ -40,7 +40,10 @@ abstract class LibroDocument : LibroCalculoBibliokarmas {
 
     var reservasPendientes: MutableList<ReservaPendiente> = mutableListOf()
 
-    abstract override fun plusBiblioKarma(cantidadBibliokarmas: Int): Int
+    abstract fun tipo(): TipoDeLibroDTO
+
+    override fun plusBiblioKarma(cantidadBiblioKarma: Int): Int =
+        tipo().plusBiblioKarma(cantPaginas, cantidadReservas, cantidadBiblioKarma)
 
     fun estaDisponible(desde: LocalDate, hasta: LocalDate): Boolean {
         limpiarReservasVencidas()
@@ -56,9 +59,8 @@ abstract class LibroDocument : LibroCalculoBibliokarmas {
 
     fun agregarReserva(reservaPendiente: ReservaPendiente) {
         reservasPendientes.add(reservaPendiente)
+        // Se lleva un contador aparte porque las reservas vencidas se limpian de reservasPendientes
         sumarReserva()
-        // sumamos en vez de hacer reservasPendientes.size porque las reservas
-        // vencidas ya no van a estar acá
     }
 }
 
@@ -80,24 +82,18 @@ data class UsuarioLibroDocument(
 
 @TypeAlias("COMUN")
 class LibroComunDocument : LibroDocument() {
-    override fun plusBiblioKarma(cantidadBibliokarmas: Int): Int =
-        if (cantidadBibliokarmas < 1000) cantPaginas * 5 else cantPaginas * 2
+    override fun tipo() = TipoDeLibroDTO.COMUN
 }
 
 @TypeAlias("DEDICATORIA")
 class LibroDedicatoriaDocument : LibroDocument() {
-    override fun plusBiblioKarma(cantidadBibliokarmas: Int): Int =
-        200 + 10 * cantidadReservas
+    override fun tipo() = TipoDeLibroDTO.DEDICATORIA
 }
 
 @TypeAlias("COLECCIONABLE")
 class LibroColeccionableDocument : LibroDocument() {
-    override fun plusBiblioKarma(cantidadBibliokarmas: Int): Int {
-        val quintaParte = ceil(cantidadBibliokarmas / 5.0).toInt()
-        return quintaParte + cantPaginas
-    }
+    override fun tipo() = TipoDeLibroDTO.COLECCIONABLE
 }
-
 
 enum class Genero(val label: String) {
     DRAMA("Drama"),

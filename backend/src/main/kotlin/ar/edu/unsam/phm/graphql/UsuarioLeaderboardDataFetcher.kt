@@ -1,6 +1,6 @@
 package ar.edu.unsam.phm.graphql
 
-import ar.edu.unsam.phm.dto.UsuarioLeaderboardDTO
+import ar.edu.unsam.phm.dto.dashboard.UsuarioLeaderboardDTO
 import ar.edu.unsam.phm.service.UsuarioLeaderboardRedisService
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery

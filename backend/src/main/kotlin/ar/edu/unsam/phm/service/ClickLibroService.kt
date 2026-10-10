@@ -1,7 +1,6 @@
 package ar.edu.unsam.phm.service
 
 import ar.edu.unsam.phm.domain.ClickLibroDocument
-import ar.edu.unsam.phm.dto.LibroMasClickeadoDTO
 import ar.edu.unsam.phm.exceptions.NotFoundException
 import ar.edu.unsam.phm.repository.ClickLibroRepository
 import ar.edu.unsam.phm.repository.LibroDocumentRepository
@@ -32,9 +31,4 @@ class ClickLibroService(
 
         libroPopularRedisService.registrarClick(libro.id!!)
     }
-
-    /* Creo que codex hizo esto para mostrar el libro mas clickeado en el front xD, ignore it */
-    @Transactional(readOnly = true)
-    fun libroMasClickeado(): LibroMasClickeadoDTO? =
-        clickLibroRepository.libroMasClickeado()
 }

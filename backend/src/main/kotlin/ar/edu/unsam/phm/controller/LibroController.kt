@@ -33,7 +33,7 @@ class LibroController(
     @GetMapping("/misLibros/me")
     fun listarMisLibros(
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "3") size: Int, // Cambiable por @ModelAttribute
+        @RequestParam(defaultValue = "3") size: Int,
         @RequestParam(defaultValue = "Todos") filter: String,
         @RequestParam(required = false) sort: String? = ""
     ): PaginationResponseDTO<MiLibroProjection> {
@@ -43,9 +43,7 @@ class LibroController(
             .name
             .toInt()
 
-        val libros = libroService.buscarMisLibros(userId, filter, sort, page, size)
-
-        return libros
+        return libroService.buscarMisLibros(userId, filter, sort, page, size)
     }
 
     @PreAuthorize("hasRole('PUBLICADOR') or hasRole('LECTOR_PUBLICADOR')")

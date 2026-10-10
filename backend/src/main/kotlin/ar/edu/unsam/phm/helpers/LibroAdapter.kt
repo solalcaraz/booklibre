@@ -15,7 +15,6 @@ import java.time.LocalDate
 
 @Service
 class LibroMapper {
-    // Solo se usa en create/update
     fun fromDto(dto: LibroDetalleDTO): LibroDocument {
         val libro = when (dto.tipo) {
             TipoDeLibroDTO.COMUN -> LibroComunDocument()
@@ -45,17 +44,10 @@ class LibroMapper {
     }
 
     fun toDetalleDto(libro: LibroDocument): LibroDetalleDTO {
-        val tipoDto = when (libro) {
-            is LibroComunDocument -> TipoDeLibroDTO.COMUN
-            is LibroDedicatoriaDocument -> TipoDeLibroDTO.DEDICATORIA
-            is LibroColeccionableDocument -> TipoDeLibroDTO.COLECCIONABLE
-            else -> throw IllegalArgumentException("Tipo de libro desconocido")
-        }
-
         return LibroDetalleDTO(
             id = libro.id,
             titulo = libro.titulo,
-            tipo = tipoDto,
+            tipo = libro.tipo(),
             genero = libro.genero.label,
             autor = libro.autor,
             idioma = libro.idioma.label,

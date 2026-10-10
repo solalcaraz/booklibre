@@ -9,6 +9,7 @@ import ar.edu.unsam.phm.dto.ReseniaReqDTO
 import ar.edu.unsam.phm.dto.ReservaDTO
 import ar.edu.unsam.phm.dto.ReservaLibroDTO
 import ar.edu.unsam.phm.dto.ReservaRequestDTO
+import ar.edu.unsam.phm.dto.toPaginationDTO
 import ar.edu.unsam.phm.helpers.ReservaMapper
 import ar.edu.unsam.phm.service.ClickLibroService
 import ar.edu.unsam.phm.service.ReseniaService
@@ -52,15 +53,7 @@ class ReservaController (private val reservaService: ReservaService, private val
         @ModelAttribute filtros: FiltrosLibro
     ): PaginationResponseDTO<ReservaLibroDTO> {
         val userId = SecurityContextHolder.getContext().authentication.name.toInt()
-        val page = reservaService.getLibrosDisponiblesParaReserva(userId, filtros)
-
-        return PaginationResponseDTO(
-            items = page.content,
-            page = page.number,
-            size = page.size,
-            totalItems = page.totalElements.toInt(),
-            totalPages = page.totalPages
-        )
+        return reservaService.getLibrosDisponiblesParaReserva(userId, filtros).toPaginationDTO()
     }
 
     @GetMapping("/librosPopulares")
@@ -82,7 +75,6 @@ class ReservaController (private val reservaService: ReservaService, private val
     ): DetalleReservaDTO {
         val userId = SecurityContextHolder.getContext().authentication.name
 
-        // para guardar el registro del click de dicho libro
         clickLibroService.registrar(userId.toInt(), libroId)
 
         return reservaService.getDetalleReserva(
