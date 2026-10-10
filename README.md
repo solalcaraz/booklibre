@@ -123,7 +123,7 @@ yarn dev
 
 Este repositorio junta los dos repositorios originales del trabajo práctico que hicimos en equipo entre marzo y junio de 2026, con todo su historial. El tag [`tp-original-2026`](https://github.com/solalcaraz/booklibre/tree/tp-original-2026) marca el TP tal como lo entregamos.
 
-**Equipo:** Thomas Reemeerie, Illed Huilen Nacucchio, Denise Mayra Higa, Luis Mazo y yo.
+**Equipo:** María Sol Alcaraz, Thomas Reemeerie, Illed Huilen Nacucchio, Denise Mayra Higa y Luis Mazo.
 
 **Mi parte en la versión original**:
 
