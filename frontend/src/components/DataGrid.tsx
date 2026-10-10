@@ -10,9 +10,9 @@ export type FetchFunction<TData, TFilter> = (
 ) => Promise<PagResModel<TData>>
 
 interface DataGridProps<TData, TFilter> {
-  fetchFunction: FetchFunction<TData, TFilter>  // metodo del servicio que llama al endpoint que trae la data
+  fetchFunction: FetchFunction<TData, TFilter>
   filter?: TFilter
-  renderItem: (item: TData) => React.ReactNode  //componente (fila/card) que quiero renderizar dentro de la grid, la grid itera sola
+  renderItem: (item: TData) => React.ReactNode
   pageSize: number
 }
 
@@ -28,7 +28,7 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
 
   useEffect(() => {
     const filterChanged = prevFilterRef.current !== filter
-    // Si cambia el filtro → ir a página 0
+    // Un filtro nuevo siempre arranca en la primera página
     const pageToLoad = filterChanged ? 0 : page
 
     prevFilterRef.current = filter
@@ -50,12 +50,10 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
         setTotalPages(res.totalPages)
       } catch (error: unknown) {
         setError(getMensajeError(error as ErrorResponse))
-        console.log(error)
       } finally {
         setLoading(false)
       }
 
-      // Si cambió filtro y no estábamos en 0 → sincronizar page
       if (filterChanged && page !== 0) {
         setPage(0)
       }
@@ -67,7 +65,6 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
 
   return (
     <div>
-      {/* ------ CONTENIDO ------*/}
 
       {error ? (
         <ErrorCard
@@ -91,7 +88,6 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
         </div>
       )}
 
-      {/* ----- PAGINATION ----- */}
       <div className="flex justify-center gap-2 mt-10">
         <button
           onClick={() => setPage(p => p - 1)}

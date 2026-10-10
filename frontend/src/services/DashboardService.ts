@@ -16,9 +16,19 @@ interface LeaderboardData {
 }
 
 class DashboardService {
+  private async consultar<T>(query: string): Promise<T | undefined> {
+    const response = await api.post<GraphQLResponse<T>>('/graphql', { query })
+
+    // GraphQL responde 200 aunque falle un resolver: el error viene en el body
+    if (response.data.errors?.length) {
+      throw new Error(response.data.errors[0].message)
+    }
+
+    return response.data.data
+  }
+
   async getTasaConversionClicksReservas(): Promise<TasaConversionLibro[]> {
-    const response = await api.post<GraphQLResponse<TasaConversionData>>('/graphql', {
-      query: `
+    const data = await this.consultar<TasaConversionData>(`
         query TasaConversionClicksReservas {
           tasaConversionClicksReservas {
             libroId
@@ -29,19 +39,12 @@ class DashboardService {
             tasaConversion
           }
         }
-      `
-    })
-
-    if (response.data.errors?.length) {
-      throw new Error(response.data.errors[0].message)
-    }
-
-    return response.data.data?.tasaConversionClicksReservas ?? []
+      `)
+    return data?.tasaConversionClicksReservas ?? []
   }
 
   async getEstadoSaludCatalogo(): Promise<EstadoSaludCatalogo | null> {
-    const response = await api.post<GraphQLResponse<EstadoSaludData>>('/graphql', {
-      query: `
+    const data = await this.consultar<EstadoSaludData>(`
         query EstadoSaludCatalogo {
           estadoSaludCatalogo {
             total
@@ -51,39 +54,24 @@ class DashboardService {
             disponiblesDevueltos
           }
         }
-      `
-    })
-
-    if (response.data.errors?.length) {
-      throw new Error(response.data.errors[0].message)
-    }
-
-    return response.data.data?.estadoSaludCatalogo ?? null
+      `)
+    return data?.estadoSaludCatalogo ?? null
   }
 
   async getAnalisisCalificaciones(): Promise<PromedioCalificacionPorTipo[]> {
-    const response = await api.post<GraphQLResponse<PromedioCalificacionData>>('/graphql', {
-      query: `
+    const data = await this.consultar<PromedioCalificacionData>(`
         query PromedioCalificacionData {
           analisisCalificaciones {
             tipo,
             puntajePromedio
           }
         }
-      `
-    })
-
-    if (response.data.errors?.length) {
-      throw new Error(response.data.errors[0].message)
-    }
-
-    return response.data.data?.analisisCalificaciones ?? []
+      `)
+    return data?.analisisCalificaciones ?? []
   }
 
-  //Punto 5
   async getFeedActividadReciente(): Promise<ActividadReciente[]> {
-    const response = await api.post<GraphQLResponse<FeedActividadData>>('/graphql', {
-      query: `
+    const data = await this.consultar<FeedActividadData>(`
         query FeedActividadReciente {
           feedActividadReciente {
             fecha
@@ -98,19 +86,12 @@ class DashboardService {
             }
           }
         }
-      `
-    })
-
-    if (response.data.errors?.length) {
-      throw new Error(response.data.errors[0].message)
-    }
-
-    return response.data.data?.feedActividadReciente ?? []
+      `)
+    return data?.feedActividadReciente ?? []
   }
 
   async getLeaderboardUsuarios(): Promise<UsuarioLeaderboard[]> {
-    const response = await api.post<GraphQLResponse<LeaderboardData>>('/graphql', {
-      query: `
+    const data = await this.consultar<LeaderboardData>(`
         query LeaderboardUsuarios {
           leaderboardUsuarios {
             id
@@ -118,14 +99,8 @@ class DashboardService {
             bibliokarmas
           }
         }
-      `
-    })
-
-    if (response.data.errors?.length) {
-      throw new Error(response.data.errors[0].message)
-    }
-
-    return response.data.data?.leaderboardUsuarios ?? []
+      `)
+    return data?.leaderboardUsuarios ?? []
   }
 }
 

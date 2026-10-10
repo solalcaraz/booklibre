@@ -48,7 +48,6 @@ export const PerfilUsuario = () => {
       })
     } catch (error: unknown) {
       setError(getMensajeError(error as ErrorResponse))
-      console.log(error)
     }
   }, [filter, pagination.page, sort])
 
@@ -58,7 +57,6 @@ export const PerfilUsuario = () => {
       setUsuario(usuario)
     } catch (error: unknown) {
       setError(getMensajeError(error as ErrorResponse))
-      console.log(error)
     }
   }, [])
 
@@ -78,12 +76,10 @@ export const PerfilUsuario = () => {
       getLibros()
     } catch (error: unknown) {
       setError(getMensajeError(error as ErrorResponse))
-      console.log(error)
     }
   }
 
   const handleFilterChange = (newFilter: FiltroLibros) => {
-    /* cuando cambia el filtro, reinicia a pagina 0 */
     setFilter(newFilter)
     setPagination((prev) => ({
       ...prev,

@@ -72,7 +72,6 @@ export const ActividadFeedHeader = () => {
   return (
     <div className={contenedorBase} data-testid="feed-container">
 
-      {/* ── Encabezado ── */}
       <div className="flex items-center justify-between mb-3">
         <div>
           <p className="text-sm font-semibold text-slate-700">Actividad Reciente</p>
@@ -83,7 +82,6 @@ export const ActividadFeedHeader = () => {
         </span>
       </div>
 
-      {/* ── Grilla de 5 columnas ── */}
       <div className="grid grid-cols-5 gap-2">
         {[...Array(totalSlots)].map((_, index) => {
           const actividad = actividades[index]
@@ -105,17 +103,14 @@ export const ActividadFeedHeader = () => {
                      className={`rounded-md bg-slate-50 p-3 flex flex-col gap-1
                                  min-h-[72px] ${borde}`}>
 
-              {/* Tipo de evento */}
               <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">
                 {iconoEvento(actividad)} {tipoEvento(actividad)}
               </p>
 
-              {/* Descripción principal */}
               <p className="text-xs font-semibold text-slate-700 line-clamp-2 flex-1">
                 {descripcion(actividad)}
               </p>
 
-              {/* Usuario + fecha */}
               <div className="flex items-center justify-between mt-auto gap-1">
                 <span className="text-[10px] text-slate-500 truncate">
                   {actividad.usuario}

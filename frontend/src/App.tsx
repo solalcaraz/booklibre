@@ -39,7 +39,6 @@ function App() {
 
           <Route element={<AuthLayout />}>
             <Route path="/" element={<Navigate to="/auth/login" />} />
-            <Route />
             <Route element={<MainLayout />}>
               <Route path="/home" element={
                 <RutaProtegida>

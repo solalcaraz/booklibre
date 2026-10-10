@@ -10,15 +10,12 @@ interface RangeDobleProps {
 export const RangeDoble = ({ min, max, valorMin, valorMax, onChangeMin, onChangeMax }: RangeDobleProps) => {
   return (
     <div className="mt-4">
-      {/* valores */}
       <div className="flex justify-between text-xs text-slate-400 mb-2">
         <span data-testid="valor-min">{valorMin}</span>
         <span data-testid="valor-max">{valorMax}</span>
       </div>
       <div className="relative w-full h-6 flex items-center">
-        {/* barra base */}
         <div className="absolute w-full h-1 bg-slate-200 rounded" />
-        {/* barra activa */}
         <div
           className="absolute h-1 bg-sky-400 rounded"
           style={{
@@ -26,7 +23,6 @@ export const RangeDoble = ({ min, max, valorMin, valorMax, onChangeMin, onChange
             right: `${100 - (valorMax / max) * 100}%`
           }}
         />
-        {/* rango minimo */}
         <input
           type="range" min={min} max={max} value={valorMin}
           data-testid="range-min"
@@ -42,7 +38,6 @@ export const RangeDoble = ({ min, max, valorMin, valorMax, onChangeMin, onChange
                     [&::-webkit-slider-thumb]:rounded-full
                     [&::-webkit-slider-thumb]:bg-sky-500"
         />
-        {/* range maximo */}
         <input
           type="range" min={min} max={max} value={valorMax}
           data-testid="range-max"

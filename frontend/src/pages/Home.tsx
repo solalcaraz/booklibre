@@ -8,9 +8,7 @@ import { BarraBusqueda } from '../components/Home/BarraBusqueda'
 import { LibroCard } from '../components/Home/LibroCard'
 import { formatearFecha } from '../utils/formatearFecha'
 import { Link } from 'react-router-dom'
-import { type ErrorCustom } from '../utils/errorHandler'
 import { Spinner } from '../components/Spinner'
-import { ErrorCard } from '../components/ErrorCard'
 import { useOnInit } from '../utils/hooks'
 
 const hoy = formatearFecha(new Date())
@@ -41,33 +39,29 @@ export const Home = () => {
 
   const [librosPopulares, setLibrosPopulares] = useState<ReservaLibroHomeJSON[]>([])
   const [loadingPopulares, setLoadingPopulares] = useState(true)
-  const [errorPopulares, setErrorPopulares] = useState<ErrorCustom | null>(null)
 
+  // El back responde error si Redis no tiene al menos 6 populares cacheados:
+  // en ese caso el home arranca directo con la búsqueda en Mongo
   const cargarHome = async () => {
     setLoadingPopulares(true)
-    setErrorPopulares(null)
 
     try {
-        // intenta Redis primero
-        const populares = await reservaService.getLibrosPopularesHome()
-        setLibrosPopulares(populares)
-        setVista('HOME_POPULARES')
+      const populares = await reservaService.getLibrosPopularesHome()
+      setLibrosPopulares(populares)
+      setVista('HOME_POPULARES')
     } catch {
-        // Redis no tenía suficientes o tira error
-        setVista('HOME_BUSQUEDA')            
+      setVista('HOME_BUSQUEDA')
     } finally {
-        setLoadingPopulares(false)
+      setLoadingPopulares(false)
     }
   }
 
   useOnInit(cargarHome)
 
-  // metodo para actualizar inputs dinamicamente
   const actualizar = (campo: keyof FiltrosLibro, valor: unknown) => {
     setFiltros((prev) => ({ ...prev, [campo]: valor }))
   }
 
-  // validaciones para los filtros
   const validar = (): boolean => {
     const nuevosErrores: string[] = []
 
@@ -133,17 +127,12 @@ export const Home = () => {
         />
 
         {vista === 'HOME_POPULARES' && (
-          /* ── HOME SUGERENCIA POPULARES ──
-             Redis OK : 6 libros populares, sin orden ni paginado
-          */
           <>
             <section className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-slate-800">Libros Populares</h2>
             </section>
 
-            {errorPopulares ? (
-              <ErrorCard error={errorPopulares} onRetry={() => window.location.reload()} onVolver={() => {}} />
-            ) : loadingPopulares ? (
+            {loadingPopulares ? (
               <Spinner />
             ) : (
               <div className="grid grid-cols-3 gap-6">
@@ -160,10 +149,7 @@ export const Home = () => {
           </>
         )}
         {vista === 'HOME_BUSQUEDA' && (
-          /* ── HOME BÚSQUEDA/FILTROS ──
-             Siempre la busqueda a Mongo, DataGrid completo con paginado y orden  */
           <>
-            {/* Header resultados */}
             <section className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-slate-800">Libros Disponibles</h2>
 
@@ -182,7 +168,6 @@ export const Home = () => {
               </div>
             </section>
 
-            {/* Lista del resultado de libros con paginado */}
             <DataGrid<ReservaLibroHomeJSON, FiltrosLibro>
               fetchFunction={(req) => reservaService.getLibrosDisponiblesReserva(req)}
               filter={filtrosAplicados}

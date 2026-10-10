@@ -58,10 +58,7 @@ export const TuReserva = ({
     if (!nuevaReserva.puedeConfirmar()) return
     setConfirmando(true)
     try {
-      const reservaJSON = nuevaReserva.toJSON()
-      console.log({ reservaJSON })
-      const crearReserva = await reservaService.crearReserva(reservaJSON)
-      console.log({ crearReserva })
+      await reservaService.crearReserva(nuevaReserva.toJSON())
       const bibliokarmas = await usuarioService.getBibliokarmas()
       updateUser({ bibliokarmas })
 

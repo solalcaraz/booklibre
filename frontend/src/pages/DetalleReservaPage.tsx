@@ -9,7 +9,7 @@ import { getMensajeError, type ErrorCustom } from '../utils/errorHandler'
 import { ErrorCard } from '../components/ErrorCard'
 
 export const DetalleReservaPage = () => {
-  //Capturo los datos pasados de la vista de sol.
+  // Las fechas llegan desde el home en la URL para calcular los bibliokarmas de ese rango
   const { id } = useParams<{ id: string }>()
   const [searchParams] = useSearchParams()
   const fechaDesdeURL = searchParams.get('fechaDesde') || ''
@@ -18,7 +18,6 @@ export const DetalleReservaPage = () => {
   const [fechaHasta, setFechaHasta] = useState(fechaHastaURL)
   const navigate = useNavigate()
 
-  //Estado de la pagina.
   const [detalleReserva, setDetalleReserva] = useState<DetalleReserva | null>(null)
   const [error, setError] = useState<ErrorCustom | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
@@ -33,7 +32,6 @@ export const DetalleReservaPage = () => {
       setDetalleReserva(reserva)
     } catch (error) {
       setError(getMensajeError(error as ErrorResponse))
-      console.log(error)
     } finally {
       setLoading(false)
     }

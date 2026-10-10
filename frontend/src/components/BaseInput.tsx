@@ -31,9 +31,7 @@ export const BaseInput = ({
             {type === 'select' ? (
                 <select id={name} name={name} value={value} onChange={onChange} className={baseClass} disabled={disabled}>
                     <option value="">Seleccionar...</option>
-                    {/* {options?.map(opt => <option key={opt} value={opt}>{opt}</option>)} */}
                     {options?.map(opt => {
-                        // Si es un objeto usamos sus propiedades (type Option), si es string lo usamos para ambos
                         const val = typeof opt === 'string' ? opt : opt.value;
                         const lab = typeof opt === 'string' ? opt : opt.label;
                         return <option key={val} value={val}>{lab}</option>;

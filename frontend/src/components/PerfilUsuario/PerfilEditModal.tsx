@@ -18,7 +18,7 @@ export const EditProfileModal = ({
   onClose,
   onUpdate
 }: EditProfileModalProps) => {
-  /* uso el hook useMemo para evitar re-render infinito */
+  // Sin useMemo el objeto cambiaría en cada render y el useEffect de abajo se dispararía en loop
   const initialEditFormData = useMemo(() => {
     return {
       nombreCompleto: initialData.nombreCompleto,
@@ -31,7 +31,6 @@ export const EditProfileModal = ({
     }
   }, [initialData])
 
-  /* Mapeo los datos iniciales del usuario en un estado reactivo */
   const [editFormData, setEditFormData] = useState<EditProfileData>(initialEditFormData)
   const [loading, setLoading] = useState(false)
 
@@ -58,8 +57,6 @@ export const EditProfileModal = ({
       setLoading(true)
       await onUpdate(editFormData)
       onClose()
-    } catch (err) {
-      console.log(err)
     } finally {
       setLoading(false)
     }

@@ -75,7 +75,6 @@ export const AnalisisCalificaciones = () => {
     return (
         <div className={contenedorBase}>
 
-            {/* ── Encabezado ── */}
             <div className="flex items-center justify-between mb-3">
                 <div>
                     <p className="text-sm font-semibold text-slate-700">Análisis de Calificaciones</p>
@@ -86,7 +85,6 @@ export const AnalisisCalificaciones = () => {
                 </span>
             </div>
 
-            {/* ── Contenido ── */}
             <div className="grid grid-cols-3 gap-10">
                 {[...Array(totalSlots)].map((_, index) => {
                 const calificacion = calificaciones[index]

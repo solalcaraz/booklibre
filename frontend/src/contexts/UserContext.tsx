@@ -56,7 +56,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   }, [])
   
-  // Cargar el usuario al montar el componente
   useEffect(() => {
     fetchUser()
   }, [fetchUser])

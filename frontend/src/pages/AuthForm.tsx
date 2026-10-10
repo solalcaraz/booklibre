@@ -28,11 +28,9 @@ export const AuthForm = () => {
   const isLogin = mode === 'login'
 
   useOnInit(() => {
-    /* Si estoy logeado me manda al home */
     if (authService.estaAutenticado()) {
       navigate('/home')
     }
-    /* Si quiero entrar a una subruta invalida de auth me redirecciona al login */
     if (!isValidMode) {
       navigate('/auth/login')
     }
@@ -66,7 +64,6 @@ export const AuthForm = () => {
       [name]: value
     }))
 
-    /* Limpio errores onChange y despues valido onSubmit */
     setFormErrors((prev) => ({
       ...prev,
       [name]: undefined
@@ -111,7 +108,6 @@ export const AuthForm = () => {
       navigate('/auth/login')
     } catch (error) {
       setResponseErrors(getMensajeError(error as ErrorResponse))
-      console.log(error)
     }
   }
 

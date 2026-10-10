@@ -18,14 +18,14 @@ const generoOptions = Object.values(GENERO_OPTIONS).map(label => ({ value: label
 const idiomaOptions = Object.values(IDIOMA_OPTIONS).map(label => ({ value: label, label }));
 const estadoOptions = Object.values(ESTADO_OPTIONS).map(label => ({ value: label, label }));
 
-const tipoOptions = Object.entries(TIPO_OPTIONS).map(([value, label]) => ({ value, label })); // El back lo manda como Key en el Mapper
+// El back devuelve el tipo como clave del enum (COMUN) y el resto de los campos como label
+const tipoOptions = Object.entries(TIPO_OPTIONS).map(([value, label]) => ({ value, label }));
 
 export default function LibroForm() {
     const navigate = useNavigate();
     const { id } = useParams();
     const [formData, setFormData] = useState<LibroFormData>(initialFormData);
     const [errors, setErrors] = useState<LibroErrors>({});
-    //Para el manejo de errores de acceso (editar un libro que no es tuyo/no existe)
     const [accessError, setAccessError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -108,8 +108,6 @@ export default function LibroForm() {
             if (id) {
                 await libroService.update(id, formData);
                 toast.success("¡Libro actualizado con éxito!");
-                //navigate(0); //Refresh forzado
-                // navigate(`/libros/editar/${id}`) //Para usar con toasts
             } else {
                 await libroService.create(formData);
                 toast.success("¡Libro creado con éxito!");
@@ -118,7 +116,6 @@ export default function LibroForm() {
         } catch (error: any) {
             const mensajeBack = error.response?.data?.message;
             toast.error(mensajeBack || "Hubo un problema al guardar el libro");
-            //alert(mensajeBack || "¡Error al guardar el libro! No se pudo conectar con el servidor. Intente de nuevo más tarde.");
         } finally {
             setIsSubmitting(false);
         }
@@ -147,7 +144,6 @@ export default function LibroForm() {
                 </header>
 
                 <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {/* COLUMNA IZQUIERDA: Portada e Input de Enlace */}
                     <div className="flex flex-col gap-4">
                         <label className="block text-sm font-semibold text-slate-600">Portada</label>
                         <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center">
@@ -173,7 +169,6 @@ export default function LibroForm() {
                         />
                     </div>
 
-                    {/* COLUMNA DERECHA: Datos del Libro */}
                     <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div className="md:col-span-2">
                             <BaseInput label="Título" type="text" name="titulo" value={formData.titulo} onChange={handleChange} error={errors.titulo} />
@@ -196,7 +191,6 @@ export default function LibroForm() {
                             <BaseInput label="Descripción" type="textarea" name="descripcion" value={formData.descripcion} onChange={handleChange} error={errors.descripcion} />
                         </div>
 
-                        {/* Botones de acción */}
                         <div className="md:col-span-2 flex gap-4 mt-4">
                             <button 
                                 type="submit" 

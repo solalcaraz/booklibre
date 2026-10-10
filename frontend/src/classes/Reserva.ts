@@ -21,7 +21,7 @@ export class Reserva {
     }))
   }
 
-  //Manejo de fechas
+  // Se arma la fecha a mano porque new Date('AAAA-MM-DD') la interpreta en UTC y en Argentina queda en el día anterior
   private crearFechaNormalizada(fechaString: string): Date {
     const [anio, mes, dia] = fechaString.split('-').map(Number)
     return new Date(anio, mes - 1, dia)
@@ -34,7 +34,6 @@ export class Reserva {
     return `${y}-${m}-${d}`
   }
 
-  //Validaciones
   fechasValidas(): boolean {
     const hoy = new Date()
     hoy.setHours(0, 0, 0, 0)
@@ -64,7 +63,6 @@ export class Reserva {
   setHasta(fechaHasta: string): void {
     this.fechaHasta = this.crearFechaNormalizada(fechaHasta)
   }
-  //Parseo a JSON
   toJSON() {
     return {
       libroMongoID: this.libroId,

@@ -15,7 +15,6 @@ interface PanelFiltrosProps {
 
 export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActualizar, onGenero, hoy }: PanelFiltrosProps) => {
   return (
-    // <aside className="w-fit rounded-2xl bg-white p-6 shadow-[0_10px_30px_rgba(15,23,42,0.08)] h-fit">
     <aside className="
   w-full
   max-w-[280px]
@@ -36,7 +35,6 @@ export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActuali
         <fieldset>
           <legend className="text-sm font-semibold text-slate-700">GÉNERO</legend>
           <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-600">
-            {/* desarmo el enum genero para mostrar en los checkbox cada uno */}
             {Object.values(Genero).map(genero => (
               <label key={genero} className="flex items-center gap-2">
                 <input
@@ -108,7 +106,6 @@ export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActuali
               type="text" placeholder="978-3-16..."
               value={filtros.isbn ?? ''}
               onChange={e => onActualizar('isbn', e.target.value)}
-              // className="border border-slate-200 rounded-md px-3 py-2 text-sm"
               className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm"
               data-testid="input-isbn"
             />
@@ -119,7 +116,6 @@ export const PanelFiltros = ({ filtros, errores, onAplicar, onLimpiar, onActuali
               type="text" placeholder="Usuario..."
               value={filtros.usuarioPrestador ?? ''}
               onChange={e => onActualizar('usuarioPrestador', e.target.value)}
-              // className="border border-slate-200 rounded-md px-3 py-2 text-sm"
               className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm"
               data-testid="input-prestador"
             />

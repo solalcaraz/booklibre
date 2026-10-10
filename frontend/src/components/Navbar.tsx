@@ -43,7 +43,6 @@ export default function Navbar() {
     navigate('/auth/login')
   }
 
-  // cerrar dropdown de logout cuando hace click fuera 
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

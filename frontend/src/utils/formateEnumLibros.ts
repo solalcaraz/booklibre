@@ -29,7 +29,7 @@ export const ESTADO_OPTIONS: Record<string, string> = {
     REGULAR: "Regular"
 };
 
-// Recibe un Label (del back) y devuelve la Key (para el back)
+// El back devuelve labels ("Ciencia Ficción") pero espera claves ("CIENCIA_FICCION") al guardar
 export const getKeyFromLabel = (options: Record<string, string>, label: string) => {
     return Object.keys(options).find(key => options[key] === label) || label;
 }

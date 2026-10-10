@@ -6,7 +6,6 @@ export interface DetalleReserva {
   rangosFechasOcupadas: RangosFechasOcupada[]
 }
 
-//TODO: Usar el detalleLibro de Illed.
 export interface LibroDetalleDTO {
   id: number
   titulo: string

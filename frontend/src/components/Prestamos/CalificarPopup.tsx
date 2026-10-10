@@ -59,7 +59,6 @@ export function CalificarPopup({ open, onClose, reserva }: Props) {
           </div> )
         }
 
-        {/* ⭐ puntaje */}
         <div className="flex justify-center gap-2 mb-4">
           {[1,2,3,4,5].map((star) => (
             <span

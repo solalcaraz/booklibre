@@ -42,7 +42,6 @@ export class Libro {
         ];
         requiredFields.forEach(field => {
             if (!this[field as keyof this]?.toString().trim()) {
-                // errors[field] = `El campo ${field} es requerido`;
                 errors[field] = `Este campo es requerido`;
             }
         });

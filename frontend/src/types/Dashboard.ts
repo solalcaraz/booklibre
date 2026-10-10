@@ -33,7 +33,6 @@ export interface PromedioCalificacionData {
   analisisCalificaciones: PromedioCalificacionPorTipo[]
 }
 
-//Punto 5
 export interface ActividadReciente {
   fecha: string
   tipoEvento: 'ALTA_LIBRO' | 'NUEVA_RESERVA'
