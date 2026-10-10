@@ -10,7 +10,7 @@ vi.mock('../../api/api', () => ({
   }
 }))
 
-const mockApi = vi.mocked(api)
+const mockApi = vi.mocked(api, true)
 
 describe('ReservaService', () => {
   beforeEach(() => {
