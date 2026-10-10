@@ -7,27 +7,29 @@ interface BarraBusquedaProps {
 
 export const BarraBusqueda = ({ busqueda, onChangeBusqueda, onBuscar, onLimpiar }: BarraBusquedaProps) => {
   return (
-    <section className="rounded-2xl bg-white p-8 shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
+    <section className="rounded-2xl border border-stone-200 bg-white p-8">
       <header>
-        <h1 className="text-3xl font-extrabold text-slate-800">Encuentra tu próxima lectura</h1>
-        <p className="text-slate-500 mt-2">Explora miles de libros disponibles para préstamo en nuestra comunidad.</p>
+        <h1 className="font-display text-3xl font-semibold text-tinta-900">Encontrá tu próxima lectura</h1>
+        <p className="mt-2 max-w-2xl text-stone-600">
+          Libros que prestan otros lectores, disponibles en las fechas que elijas. Cada reserva suma bibliokarma.
+        </p>
       </header>
       <form className="mt-6" onSubmit={onBuscar}>
         <div className="relative">
           <input
             type="search"
-            placeholder="Buscar por título o autor..."
+            placeholder="Título o autor"
             value={busqueda}
             onChange={e => onChangeBusqueda(e.target.value)}
             onInput={e => {
               if ((e.target as HTMLInputElement).value === '') onLimpiar()
             }}
-            className="w-full border border-slate-200 rounded-md px-4 py-3 pr-28 focus:outline-none focus:ring-2 focus:ring-sky-300"
+            className="w-full rounded-lg border border-stone-200 bg-stone-50 px-4 py-3 pr-28 focus:border-tinta-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-tinta-100"
             data-testid="input-busqueda"
           />
           <button
             type="submit"
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-sky-500 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-600 transition cursor-pointer"
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md bg-tinta-700 px-4 py-2 text-sm font-semibold text-white hover:bg-tinta-800 transition cursor-pointer"
             data-testid="btn-buscar"
           >Buscar</button>
         </div>

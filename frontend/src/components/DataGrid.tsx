@@ -75,24 +75,25 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
       ) : loading ? (
         <Spinner />
       ) : data.length === 0 ? (
-        <div className="text-center py-10 text-gray-600">
-          No se encontraron resultados para los filtros aplicados.
+        <div className="rounded-2xl border border-dashed border-stone-300 py-12 text-center text-stone-600">
+          No hay resultados para esta búsqueda. Probá con otras fechas o sacá algún filtro.
         </div>
       ) : (
         <div className="grid grid-cols-3 gap-6">
           {data.map((item, i) => (
-            <div key={i}>
+            <div key={i} className="h-full">
               {renderItem(item)}
             </div>
           ))}
         </div>
       )}
 
-      <div className="flex justify-center gap-2 mt-10">
+      {totalPages > 1 && (
+      <div className="mt-10 flex justify-center gap-2">
         <button
           onClick={() => setPage(p => p - 1)}
           disabled={page === 0}
-          className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          className="h-9 min-w-9 cursor-pointer rounded-md border border-stone-200 bg-white px-3 text-stone-700 hover:border-tinta-200 disabled:cursor-not-allowed disabled:opacity-40"
         >
           ‹
         </button>
@@ -105,10 +106,12 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
             <button
               key={p}
               onClick={() => setPage(p-1)}
-              className={`px-3 py-1 rounded
-                ${p === page+1
-                  ? "bg-blue-500 text-white"
-                  : "border border-gray-300"}`}
+              aria-current={p === page + 1 ? 'page' : undefined}
+              className={`cifra h-9 min-w-9 cursor-pointer rounded-md px-3 ${
+                p === page + 1
+                  ? 'bg-tinta-700 font-semibold text-white'
+                  : 'border border-stone-200 bg-white text-stone-700 hover:border-tinta-200'
+              }`}
             >
               {p}
             </button>
@@ -118,11 +121,12 @@ export default function DataGrid<TData, TFilter>({ fetchFunction, filter, render
         <button
           onClick={() => setPage(p => p + 1)}
           disabled={page === totalPages-1}
-          className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          className="h-9 min-w-9 cursor-pointer rounded-md border border-stone-200 bg-white px-3 text-stone-700 hover:border-tinta-200 disabled:cursor-not-allowed disabled:opacity-40"
         >
           ›
         </button>
       </div>
+      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios'
 
 export const getMensajeError = (error: unknown): ErrorCustom => {
-  let errorMessage = 'Ocurrió un error. Consulte al administrador del sistema'
+  let errorMessage = 'Algo falló. Probá de nuevo en un rato.'
   let status = 0
 
   if (error instanceof Error) {
@@ -14,7 +14,7 @@ export const getMensajeError = (error: unknown): ErrorCustom => {
     errorMessage =
       status >= 400 && status < 500
         ? error.response?.data?.message || 'No se pudo completar la operación'
-        : 'Ocurrió un error al conectarse al backend. Intente nuevamente más tarde'
+        : 'No pudimos conectarnos con el servidor. Probá de nuevo en un rato.'
   }
 
   return {

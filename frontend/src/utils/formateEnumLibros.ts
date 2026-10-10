@@ -1,6 +1,6 @@
 export const TIPO_OPTIONS: Record<string, string> = {
     COMUN: "Común",
-    DEDICATORIA: "Dedicatoria",
+    DEDICATORIA: "Con dedicatoria",
     COLECCIONABLE: "Coleccionable"
 };
 

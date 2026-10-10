@@ -21,7 +21,7 @@ export const FormInput = ({
 }: FormFieldProps) => {
   return (
     <div>
-      <label htmlFor={name} className="mb-2 block text-sm font-semibold text-slate-600">
+      <label htmlFor={name} className="mb-2 block text-sm font-medium text-stone-700">
         {label}
       </label>
 
@@ -32,10 +32,10 @@ export const FormInput = ({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`w-full rounded-lg border bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:bg-white ${error ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-sky-300'}`}
+        className={`w-full rounded-lg border bg-stone-50 px-4 py-3 text-sm text-stone-700 outline-none transition placeholder:text-stone-500 focus:bg-white ${error ? 'border-red-400 focus:border-red-600 focus:ring-2 focus:ring-red-100' : 'border-stone-200 focus:border-tinta-500 focus:ring-2 focus:ring-tinta-100'}`}
       />
       {error && (
-        <span className="mt-1 text-xs text-red-500" data-testid={`${name}Error`}>
+        <span className="mt-1 text-xs text-red-700" data-testid={`${name}Error`}>
           {error}
         </span>
       )}

@@ -47,7 +47,7 @@ describe('DataGrid', () => {
 
     renderDataGrid(fetchFunction)
 
-    expect(await screen.findByText('No se encontraron resultados para los filtros aplicados.')).toBeInTheDocument()
+    expect(await screen.findByText(/no hay resultados para esta búsqueda/i)).toBeInTheDocument()
   })
 
   it('muestra el ErrorCard cuando fetch falla', async () => {

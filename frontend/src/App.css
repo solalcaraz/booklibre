@@ -1,5 +1,41 @@
 @import "tailwindcss";
 
+/*
+  Sistema visual de BookLibre: la ficha de una biblioteca de barrio.
+  - papel: el fondo de toda la app.
+  - tinta: el azul del logo. El tono de marca (500) no llega a 4.5:1 sobre blanco,
+    así que textos, links y botones usan 700 o más oscuro; 500 queda para el logo y acentos grandes.
+  - lacre: el único color cálido. Se reserva para lo que suma bibliokarma (reservar, puntos ganados)
+    para que el ojo lo asocie con esa acción y no compita con la navegación.
+  - Los grises son la escala stone de Tailwind (cálida), que combina con el papel mejor que los grises fríos.
+*/
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+
+  --color-papel: #f8f7f4;
+
+  --color-tinta-50: #eef5fc;
+  --color-tinta-100: #dcebf9;
+  --color-tinta-200: #b9d6f2;
+  --color-tinta-500: #4199e7;
+  --color-tinta-600: #5288b8;
+  --color-tinta-700: #36638a;
+  --color-tinta-800: #1f3f5c;
+  --color-tinta-900: #0c1e2e;
+
+  --color-lacre-50: #fcefea;
+  --color-lacre-100: #f8dcd2;
+  --color-lacre-600: #b5502f;
+  --color-lacre-700: #8f3e24;
+}
+
 body {
-  background-color: #f8f7f4;
+  background-color: var(--color-papel);
+  color: var(--color-stone-800);
+}
+
+/* Las cifras de bibliokarma y fechas se alinean mejor con números de ancho fijo */
+.cifra {
+  font-variant-numeric: tabular-nums;
 }

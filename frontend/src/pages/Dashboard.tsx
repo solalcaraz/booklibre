@@ -6,10 +6,10 @@ import { CatalogoSaludKpi } from '../components/Dashboard/SaludKpiHeader'
 
 export const Dashboard = () => {
     return (
-        <div className="flex flex-col gap-6 p-6">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-8 pb-10">
         <header>
-            <h1 className="text-2xl font-bold text-slate-800">Tablero de Administración</h1>
-            <p className="text-sm text-slate-500">Métricas y estado general del sistema</p>
+            <h1 className="font-display text-3xl font-semibold text-tinta-900">Tablero</h1>
+            <p className="mt-1 text-stone-600">Qué busca la comunidad, qué termina reservando y cómo está el catálogo hoy.</p>
         </header>
 
         <div className="flex flex-col gap-6">

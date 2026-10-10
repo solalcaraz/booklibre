@@ -65,23 +65,23 @@ export const EditProfileModal = ({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/30 px-4 py-6">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-stone-900/40 px-4 py-6">
       <div className="flex min-h-full items-center justify-center">
-        <div className="max-h-[90vh] w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.18)]">
+        <div className="max-h-[90vh] w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-xl">
           {loading ? (
             <Spinner />
           ) : (
             <div className="flex max-h-[90vh] flex-col">
-              <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 shrink-0">
+              <div className="flex items-center justify-between border-b border-stone-200 px-6 py-4 shrink-0">
                 <div>
-                  <h2 className="text-xl font-extrabold text-slate-800">Editar perfil</h2>
-                  <p className="mt-1 text-sm text-slate-500">Modificá tus datos personales.</p>
+                  <h2 className="font-display text-xl font-semibold text-stone-900">Editar perfil</h2>
+                  <p className="mt-1 text-sm text-stone-600">Si cambiás el tipo de usuario, cambian las secciones que ves.</p>
                 </div>
 
                 <button
                   type="button"
                   onClick={onClose}
-                  className="cursor-pointer rounded-full px-2 py-2 text-black transition hover:bg-slate-100"
+                  className="cursor-pointer rounded-full px-2 py-2 text-stone-600 transition hover:bg-stone-100"
                   aria-label="Cerrar modal"
                 >
                   <XIcon size={22} />
@@ -149,7 +149,7 @@ export const EditProfileModal = ({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="cursor-pointer rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+                    className="cursor-pointer rounded-xl border border-stone-200 px-4 py-2.5 text-sm font-semibold text-stone-600 transition hover:bg-stone-50"
                   >
                     Cancelar
                   </button>
@@ -157,7 +157,7 @@ export const EditProfileModal = ({
                   <button
                     type="submit"
                     disabled={loading}
-                    className="cursor-pointer rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
+                    className="cursor-pointer rounded-xl bg-tinta-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-tinta-800 disabled:cursor-not-allowed disabled:opacity-70"
                     data-testid="patch-usuario"
                   >
                     {loading ? 'Guardando...' : 'Guardar cambios'}

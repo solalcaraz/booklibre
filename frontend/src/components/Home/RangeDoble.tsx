@@ -10,14 +10,14 @@ interface RangeDobleProps {
 export const RangeDoble = ({ min, max, valorMin, valorMax, onChangeMin, onChangeMax }: RangeDobleProps) => {
   return (
     <div className="mt-4">
-      <div className="flex justify-between text-xs text-slate-400 mb-2">
+      <div className="flex justify-between text-xs text-stone-400 mb-2">
         <span data-testid="valor-min">{valorMin}</span>
         <span data-testid="valor-max">{valorMax}</span>
       </div>
       <div className="relative w-full h-6 flex items-center">
-        <div className="absolute w-full h-1 bg-slate-200 rounded" />
+        <div className="absolute w-full h-1 bg-stone-200 rounded" />
         <div
-          className="absolute h-1 bg-sky-400 rounded"
+          className="absolute h-1 bg-tinta-700 rounded"
           style={{
             left: `${(valorMin / max) * 100}%`,
             right: `${100 - (valorMax / max) * 100}%`
@@ -36,7 +36,7 @@ export const RangeDoble = ({ min, max, valorMin, valorMax, onChangeMin, onChange
                     [&::-webkit-slider-thumb]:h-4
                     [&::-webkit-slider-thumb]:w-4
                     [&::-webkit-slider-thumb]:rounded-full
-                    [&::-webkit-slider-thumb]:bg-sky-500"
+                    [&::-webkit-slider-thumb]:bg-tinta-700"
         />
         <input
           type="range" min={min} max={max} value={valorMax}
@@ -51,7 +51,7 @@ export const RangeDoble = ({ min, max, valorMin, valorMax, onChangeMin, onChange
                     [&::-webkit-slider-thumb]:h-4
                     [&::-webkit-slider-thumb]:w-4
                     [&::-webkit-slider-thumb]:rounded-full
-                    [&::-webkit-slider-thumb]:bg-sky-500"
+                    [&::-webkit-slider-thumb]:bg-tinta-700"
         />
       </div>
     </div>

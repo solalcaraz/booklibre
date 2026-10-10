@@ -1,23 +1,21 @@
 import type { LibroDetalleDTO } from '../../types/DetalleReserva'
+import { Calificacion } from '../Calificacion'
 
 interface Props {
   libro: LibroDetalleDTO
   calificacion: number
 }
 
-const section = 'flex gap-6 bg-white rounded-2xl p-6 shadow-sm border border-slate-100'
+const section = 'flex gap-8 rounded-2xl border border-stone-200 bg-white p-6'
 const figure = 'shrink-0'
-const img = 'w-40 h-56 object-cover rounded-xl shadow-md'
-const content = 'flex flex-col gap-3 min-w-0'
+const img = 'h-60 w-40 rounded-sm object-cover shadow-lg shadow-stone-400/40'
+const content = 'flex min-w-0 flex-col gap-3'
 const metaRow = 'flex items-center gap-3'
-const genreBadge =
-  'bg-sky-100 text-sky-700 text-[11px] font-semibold px-3 py-1 rounded-full uppercase tracking-wide'
-const rating = 'text-amber-400 text-sm font-semibold'
-const title = 'text-3xl font-bold text-slate-800 leading-tight'
-const authorLabel = 'text-[10px] text-slate-400 uppercase tracking-widest'
-const authorName = 'text-sm font-semibold text-slate-700'
-const synopsisTitle = 'text-sm font-semibold text-slate-700'
-const synopsisText = 'text-sm text-slate-500 leading-relaxed'
+const genreBadge = 'rounded-full bg-tinta-50 px-2.5 py-1 text-xs font-medium text-tinta-800'
+const title = 'font-display text-4xl font-semibold leading-tight text-stone-900'
+const authorName = 'text-base text-stone-600'
+const synopsisTitle = 'mt-2 text-xs font-semibold uppercase tracking-wide text-stone-500'
+const synopsisText = 'max-w-2xl text-sm leading-relaxed text-stone-700'
 
 export const LibroHeader = ({ libro, calificacion }: Props) => {
   return (
@@ -32,17 +30,13 @@ export const LibroHeader = ({ libro, calificacion }: Props) => {
       <div className={content}>
         <div className={metaRow}>
           <span className={genreBadge}>{libro.genero}</span>
-          <span className={rating}>
-            {'★'.repeat(Math.round(calificacion))}
-            {'☆'.repeat(5 - Math.round(calificacion))} ({calificacion})
-          </span>
+          <Calificacion valor={calificacion} />
         </div>
         <div>
-          <h2 className={title}> {libro.titulo}</h2>
+          <h1 className={title}>{libro.titulo}</h1>
         </div>
         <div>
-          <p className={authorLabel}>Autor</p>
-          <p className={authorName}>{libro.autor}</p>
+          <p className={authorName}>de {libro.autor}</p>
         </div>
         <div>
           <h4 className={synopsisTitle}>Sinopsis</h4>

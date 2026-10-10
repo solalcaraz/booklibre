@@ -182,7 +182,7 @@ describe('Home', () => {
       vi.mocked(reservaService.getLibrosPopularesHome).mockResolvedValue(mockResponse.items)
       renderHome()
 
-      expect(await screen.findByText('Libros Populares')).toBeInTheDocument()
+      expect(await screen.findByText('Los más consultados')).toBeInTheDocument()
       expect(await screen.findByTestId('libro-card-1')).toBeInTheDocument()
       expect(reservaService.getLibrosDisponiblesReserva).not.toHaveBeenCalled()
     }

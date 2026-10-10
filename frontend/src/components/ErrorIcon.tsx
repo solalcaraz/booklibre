@@ -1,7 +1,7 @@
 export const ErrorIcon = () => {
   return (
     <svg
-      className="w-14 h-14 text-sky-500 mb-4 mr-2"
+      className="w-14 h-14 text-tinta-700 mb-4 mr-2"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

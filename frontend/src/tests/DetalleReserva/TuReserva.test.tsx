@@ -113,7 +113,7 @@ describe('Componente TuReserva', () => {
 
     await waitFor(() => {
       expect(reservaService.crearReserva).toHaveBeenCalledTimes(1)
-      expect(screen.getByText(/reserva exitosa/i)).toBeInTheDocument()
+      expect(screen.getByText(/reserva confirmada/i)).toBeInTheDocument()
     })
 
     vi.advanceTimersByTime(2000)

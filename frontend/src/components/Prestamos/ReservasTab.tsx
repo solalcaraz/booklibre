@@ -46,8 +46,8 @@ export const ReservasTab = ({ tab, fetchFunction }: Props) => {
             type="search"
             value={input}
             onChange={(e) => changeInput(e)}
-            placeholder="Buscar por título, autor..."
-            className="w-full border border-gray-300 rounded-md px-4 py-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Buscá por título o autor y presioná Enter"
+            className="w-full rounded-lg border border-stone-200 bg-white px-4 py-3 focus:border-tinta-500 focus:outline-none focus:ring-2 focus:ring-tinta-100"
           />
         </div>
       </form>

@@ -10,8 +10,8 @@ export const Prestamos = () => {
   const puedeVerPrestadosPorMi = authService.puedePublicar()
   
   const prestamosTabs: Tab[] = [
-    puedeVerPrestadosAMi && { id: TAB_PRESTADOS_A_MI, label: 'Prestados a mí' },
-    puedeVerPrestadosPorMi && { id: TAB_PRESTADOS_POR_MI, label: 'Prestados por mí' }
+    puedeVerPrestadosAMi && { id: TAB_PRESTADOS_A_MI, label: 'Libros que me prestaron' },
+    puedeVerPrestadosPorMi && { id: TAB_PRESTADOS_POR_MI, label: 'Libros que presté' }
   ].filter(Boolean) as Tab[]
 
   const [activeTab, setActiveTab] = useState(prestamosTabs[0].id)
@@ -22,21 +22,23 @@ export const Prestamos = () => {
   }
 
   return (
-    <div className="px-20">
+    <div className="mx-auto max-w-6xl px-8 pb-10">
       <div>
-        <h1 className="text-3xl font-bold text-gray-800">Prestamos de libros</h1>
-        <p className="text-gray-500 mt-2">Aqui vas a encontrar toda la informacion sobre el intercambio de libros con otros usuarios.</p>
+        <h1 className="font-display text-3xl font-semibold text-tinta-900">Mis préstamos</h1>
+        <p className="mt-2 text-stone-600">
+          Los libros que reservaste y los tuyos que reservaron otros. Cuando devolvés un libro, lo podés calificar.
+        </p>
       </div>
 
       <Tabs tabs={prestamosTabs} active={activeTab} onChange={handleTabChange} />
 
       {activeTab === TAB_PRESTADOS_A_MI && puedeVerPrestadosAMi && (
-        <div className="flex flex-col gap-6 px-4 my-7">
+        <div className="my-7 flex flex-col gap-6">
           <ReservasTab tab={activeTab} fetchFunction={reservaService.buscarPrestadosAmi}/>
         </div>
       )}
       {activeTab === TAB_PRESTADOS_POR_MI && puedeVerPrestadosPorMi && (
-        <div className="flex flex-col gap-6 px-4 my-7">
+        <div className="my-7 flex flex-col gap-6">
           <ReservasTab tab={activeTab} fetchFunction={reservaService.buscarPrestadosPorMi}/>
         </div>
       )}

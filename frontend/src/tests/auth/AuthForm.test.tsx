@@ -106,7 +106,7 @@ describe('AuthForm', () => {
     renderComponent()
 
     expect(screen.getByRole('heading', { name: /booklibre/i })).toBeInTheDocument()
-    expect(screen.getByText(/por favor ingresa tus datos/i)).toBeInTheDocument()
+    expect(screen.getByText(/ingresá para ver tus préstamos/i)).toBeInTheDocument()
 
     expect(screen.getByLabelText(/correo electrónico/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/^contraseña$/i)).toBeInTheDocument()
@@ -115,7 +115,7 @@ describe('AuthForm', () => {
 
     expect(screen.getByRole('checkbox', { name: /recordarme/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /ingresar/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /regístrate gratis/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /^registrate$/i })).toHaveAttribute(
       'href',
       '/auth/register'
     )
@@ -126,8 +126,8 @@ describe('AuthForm', () => {
 
     renderComponent()
 
-    expect(screen.getByRole('heading', { name: /crear una cuenta/i })).toBeInTheDocument()
-    expect(screen.getByText(/únete a nuestra comunidad/i)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /creá tu cuenta/i })).toBeInTheDocument()
+    expect(screen.getByText(/prestá los libros que ya leíste/i)).toBeInTheDocument()
 
     expect(screen.getByLabelText(/nombre completo/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/correo electrónico/i)).toBeInTheDocument()
@@ -136,7 +136,7 @@ describe('AuthForm', () => {
 
     expect(screen.queryByRole('checkbox', { name: /recordarme/i })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: /crear cuenta/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /inicia sesión/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /^ingresá$/i })).toHaveAttribute(
       'href',
       '/auth/login'
     )

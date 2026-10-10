@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { dashboardService } from '../../services/DashboardService'
 import type { PromedioCalificacionPorTipo } from '../../types/Dashboard'
+import { TIPO_OPTIONS } from '../../utils/formateEnumLibros'
 
 export const AnalisisCalificaciones = () => {
     const [calificaciones, setCalificaciones] = useState<PromedioCalificacionPorTipo[]>([])
@@ -13,19 +14,19 @@ export const AnalisisCalificaciones = () => {
         texto: string
     }> = {
         COMUN: {
-            borde: 'border-amber-400',
-            fondo: 'bg-amber-50',
-            texto: 'text-amber-700'
+            borde: 'border-tinta-500',
+            fondo: 'bg-tinta-50',
+            texto: 'text-tinta-800'
         },
         DEDICATORIA: {
-            borde: 'border-purple-400',
-            fondo: 'bg-purple-50',
-            texto: 'text-purple-700'
+            borde: 'border-tinta-500',
+            fondo: 'bg-tinta-50',
+            texto: 'text-tinta-800'
         },
         COLECCIONABLE: {
-            borde: 'border-rose-400',
-            fondo: 'bg-rose-50',
-            texto: 'text-rose-700'
+            borde: 'border-tinta-500',
+            fondo: 'bg-tinta-50',
+            texto: 'text-tinta-800'
         }
     }
 
@@ -48,18 +49,17 @@ export const AnalisisCalificaciones = () => {
         }
     }, [])
 
-    const formatearTipo = (tipo: PromedioCalificacionPorTipo['tipo']) =>
-        tipo.charAt(0) + tipo.slice(1).toLowerCase()
+    const formatearTipo = (tipo: PromedioCalificacionPorTipo['tipo']) => TIPO_OPTIONS[tipo] ?? tipo
 
     const formatearPuntaje = (puntaje: number) => puntaje.toFixed(2)
 
     const totalSlots = 3
-    const contenedorBase = "bg-white border border-slate-100 rounded-lg shadow-sm p-4 w-full"
+    const contenedorBase = "w-full rounded-2xl border border-stone-200 bg-white p-5"
 
     if (cargando) {
         return (
             <div className={`${contenedorBase} flex items-center justify-center h-[105px]`}>
-                <p className="text-sm text-slate-400">Cargando análisis de calificaciones...</p>
+                <p className="text-sm text-stone-500">Cargando calificaciones…</p>
             </div>
         )
     }
@@ -67,7 +67,7 @@ export const AnalisisCalificaciones = () => {
     if (error) {
         return (
             <div className={`${contenedorBase} flex items-center justify-center h-[105px]`}>
-                <p className="text-sm text-rose-500">Ocurrió un error al cargar el análisis de calificaciones.</p>
+                <p className="text-sm text-red-700">No se pudieron cargar las calificaciones.</p>
             </div>
         )
     }
@@ -77,10 +77,10 @@ export const AnalisisCalificaciones = () => {
 
             <div className="flex items-center justify-between mb-3">
                 <div>
-                    <p className="text-sm font-semibold text-slate-700">Análisis de Calificaciones</p>
-                    <p className="text-xs text-slate-400">Promedio de calificación agrupado por tipo de libro.</p>
+                    <p className="font-display text-lg font-semibold text-stone-900">Calificación por tipo de libro</p>
+                    <p className="text-xs text-stone-500">Promedio de los libros con al menos una reseña.</p>
                 </div>
-                <span className="text-xs text-slate-400 bg-slate-100 rounded-full px-2 py-0.5">
+                <span className="text-xs text-stone-500 bg-stone-100 rounded-full px-2 py-0.5">
                     Total: {calificaciones.length}
                 </span>
             </div>
@@ -92,9 +92,9 @@ export const AnalisisCalificaciones = () => {
                 if (!calificacion) {
                     return (
                     <div key={index}
-                        className="rounded-md border border-dashed border-slate-200 p-3
+                        className="rounded-md border border-dashed border-stone-200 p-3
                                     flex items-center justify-center min-h-[72px]">
-                        <p className="text-xs text-slate-300">Sin datos</p>
+                        <p className="text-xs text-stone-500">Sin datos</p>
                     </div>
                     )
                 }
@@ -106,7 +106,7 @@ export const AnalisisCalificaciones = () => {
                             className={`rounded-md p-3 flex flex-col gap-1 min-h-[72px]
                                         border-l-4 ${estilos.borde} ${estilos.fondo}`}>
 
-                    <p className="text-[10px] font-medium uppercase tracking-wide text-slate-500">
+                    <p className="text-[10px] font-medium uppercase tracking-wide text-stone-500">
                         Tipo
                     </p>
 
@@ -115,7 +115,7 @@ export const AnalisisCalificaciones = () => {
                     </p>
 
                     <div className="flex items-center justify-between mt-auto gap-1">
-                        <span className="text-[10px] text-slate-500 truncate">
+                        <span className="text-[10px] text-stone-500 truncate">
                             Puntaje promedio
                         </span>
                         <span className={`text-lg font-bold whitespace-nowrap ${estilos.texto}`}>

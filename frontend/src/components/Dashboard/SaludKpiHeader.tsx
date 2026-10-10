@@ -28,18 +28,18 @@ export const CatalogoSaludKpi = () => {
 
   if (cargando) {
     return (
-      <section className="bg-white border border-slate-100 rounded-lg px-5 py-4 shadow-sm" data-testid="salud-header-loading">
-        <h2 className="text-sm font-semibold text-slate-700">Salud del Catálogo</h2>
-        <p className="text-sm text-slate-400 mt-1">Cargando métricas de disponibilidad...</p>
+      <section className="rounded-2xl border border-stone-200 bg-white px-5 py-4" data-testid="salud-header-loading">
+        <h2 className="font-display text-lg font-semibold text-stone-900">Estado del catálogo</h2>
+        <p className="text-sm text-stone-500 mt-1">Cargando métricas de disponibilidad…</p>
       </section>
     )
   }
 
   if (error) {
     return (
-      <section className="bg-white border border-slate-100 rounded-lg px-5 py-4 shadow-sm" data-testid="salud-header-error">
-        <h2 className="text-sm font-semibold text-slate-700">Salud del Catálogo</h2>
-        <p className="text-sm text-red-500 mt-1">No se pudieron cargar las métricas de estado.</p>
+      <section className="rounded-2xl border border-stone-200 bg-white px-5 py-4" data-testid="salud-header-error">
+        <h2 className="font-display text-lg font-semibold text-stone-900">Estado del catálogo</h2>
+        <p className="text-sm text-red-700 mt-1">No se pudieron cargar las métricas de estado.</p>
       </section>
     )
   }
@@ -47,45 +47,32 @@ export const CatalogoSaludKpi = () => {
   if (!salud) return null
 
   return (
-    <section className="bg-white border border-slate-100 rounded-lg px-5 py-4 shadow-sm" data-testid="salud-header">
+    <section className="rounded-2xl border border-stone-200 bg-white px-5 py-4" data-testid="salud-header">
       <div className="flex items-center justify-between gap-4 mb-4">
         <div>
-          <h2 className="text-sm font-semibold text-slate-700">Salud del Catálogo</h2>
-          <p className="text-xs text-slate-400">Distribución de libros</p>
+          <h2 className="font-display text-lg font-semibold text-stone-900">Estado del catálogo</h2>
+          <p className="text-xs text-stone-500">Cada libro cae en un solo grupo, así que los cuatro suman el total</p>
         </div>
-        <span className="text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full">
+        <span className="cifra rounded-full bg-tinta-50 px-3 py-1 text-xs font-semibold text-tinta-800">
           Total: {salud.total} libros
         </span>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <article className="border border-rose-100 rounded-md p-3 bg-rose-50/50">
-          <p className="text-xs font-medium text-rose-500 truncate" title="Prestados (Hoy)">
-            Prestados (Hoy)
-          </p>
-          <p className="text-xl font-bold text-rose-700 mt-1">{salud.prestados}</p>
-        </article>
-
-        <article className="border border-emerald-100 rounded-md p-3 bg-emerald-50/50">
-          <p className="text-xs font-medium text-emerald-500 truncate" title="Nunca Reservados">
-            Nunca Reservados
-          </p>
-          <p className="text-xl font-bold text-emerald-700 mt-1">{salud.disponiblesNuncaReservados}</p>
-        </article>
-
-        <article className="border border-amber-100 rounded-md p-3 bg-amber-50/50">
-          <p className="text-xs font-medium text-amber-500 truncate" title="Reservados a Futuro">
-            Reservados a Futuro (Disponibles)
-          </p>
-          <p className="text-xl font-bold text-amber-700 mt-1">{salud.disponiblesReservadosAFuturo}</p>
-        </article>
-
-        <article className="border border-sky-100 rounded-md p-3 bg-sky-50/50">
-          <p className="text-xs font-medium text-sky-500 truncate" title="Devueltos (Disponibles)">
-            Devueltos (Disponibles)
-          </p>
-          <p className="text-xl font-bold text-sky-700 mt-1">{salud.disponiblesDevueltos}</p>
-        </article>
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        {[
+          { titulo: 'Prestados hoy', valor: salud.prestados, punto: 'bg-lacre-600' },
+          { titulo: 'Nunca reservados', valor: salud.disponiblesNuncaReservados, punto: 'bg-stone-400' },
+          { titulo: 'Con reservas futuras', valor: salud.disponiblesReservadosAFuturo, punto: 'bg-tinta-500' },
+          { titulo: 'Ya devueltos', valor: salud.disponiblesDevueltos, punto: 'bg-emerald-600' }
+        ].map(({ titulo, valor, punto }) => (
+          <article key={titulo} className="rounded-xl border border-stone-200 bg-papel p-3">
+            <p className="flex items-center gap-1.5 text-xs font-medium text-stone-600">
+              <span className={`h-2 w-2 rounded-full ${punto}`} />
+              {titulo}
+            </p>
+            <p className="cifra mt-1 font-display text-2xl font-semibold text-stone-900">{valor}</p>
+          </article>
+        ))}
       </div>
     </section>
   )

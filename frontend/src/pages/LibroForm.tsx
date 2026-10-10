@@ -69,9 +69,9 @@ export default function LibroForm() {
         } else if (status === 404) {
             setAccessError(mensajeBack || "Este libro no existe.");
         } else if (status >= 500 || !status) { 
-            setAccessError("El servidor no responde. Por favor, intenta más tarde.");
+            setAccessError("El servidor no responde. Probá de nuevo en un rato.");
         } else {
-            setAccessError("¡Ocurrió un error inesperado! " + mensajeBack);
+            setAccessError("No pudimos cargar el libro: " + mensajeBack);
         }
     }
 };
@@ -99,7 +99,7 @@ export default function LibroForm() {
         setErrors(validationErrors);
 
         if (Libro.hasErrors(validationErrors)) {
-            toast.error("Por favor, revisá los errores en el formulario");
+            toast.error("Revisá los campos marcados en rojo");
             return;
         }
 
@@ -107,10 +107,10 @@ export default function LibroForm() {
         try {
             if (id) {
                 await libroService.update(id, formData);
-                toast.success("¡Libro actualizado con éxito!");
+                toast.success("Guardamos los cambios del libro");
             } else {
                 await libroService.create(formData);
-                toast.success("¡Libro creado con éxito!");
+                toast.success("Tu libro ya está publicado");
                 navigate('/profile');
             }
         } catch (error: any) {
@@ -123,12 +123,12 @@ export default function LibroForm() {
 
     if (accessError) {
         return (
-            <div className="flex min-h-screen flex-col items-center justify-center bg-[#f8f7f4]">
-                <h2 className="text-2xl font-bold text-red-600 mb-4">¡Ups! Algo salió mal</h2>
-                <p className="text-slate-600 mb-6">{accessError}</p>
+            <div className="flex min-h-screen flex-col items-center justify-center bg-papel">
+                <h2 className="mb-4 font-display text-2xl font-semibold text-stone-900">No pudimos abrir el formulario</h2>
+                <p className="text-stone-600 mb-6">{accessError}</p>
                 <button 
                     onClick={() => navigate('/profile')} 
-                    className="rounded-lg bg-sky-500 px-6 py-2 font-bold text-white hover:bg-sky-600"
+                    className="cursor-pointer rounded-lg bg-tinta-700 px-6 py-2 font-semibold text-white hover:bg-tinta-800"
                 >
                     Volver a mi perfil
                 </button>
@@ -137,16 +137,19 @@ export default function LibroForm() {
     }
 
     return (
-        <section className="flex min-h-screen flex-col items-center justify-center bg-[#f8f7f4] px-4 py-10">
-            <div className="w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-lg">
-                <header className="bg-[#f3f9ff] px-8 py-6 text-center">
-                    <h1 className="text-2xl font-bold text-slate-800">{id ? "Editar Libro" : "Nuevo Libro"}</h1>
+        <section className="flex min-h-screen flex-col items-center justify-center bg-papel px-4 py-10">
+            <div className="w-full max-w-4xl overflow-hidden rounded-2xl border border-stone-200 bg-white">
+                <header className="border-b border-dashed border-stone-200 px-8 py-6">
+                    <h1 className="font-display text-2xl font-semibold text-stone-900">{id ? "Editar libro" : "Publicar un libro"}</h1>
+                    <p className="mt-1 text-sm text-stone-600">
+                        {id ? "El tipo no se puede cambiar: define cómo se calculan los bibliokarmas." : "El tipo define cuántos bibliokarmas suma cada reserva y no se puede cambiar después."}
+                    </p>
                 </header>
 
                 <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div className="flex flex-col gap-4">
-                        <label className="block text-sm font-semibold text-slate-600">Portada</label>
-                        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center">
+                        <label className="block text-sm font-medium text-stone-700">Portada</label>
+                        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg border-2 border-dashed border-stone-200 bg-stone-50 flex items-center justify-center">
                             {formData.portada ? (
                                 <img 
                                     src={formData.portada} 
@@ -155,7 +158,7 @@ export default function LibroForm() {
                                     onError={(e) => (e.currentTarget.src = "https://via.placeholder.com/300x400?text=Error+Imagen")}
                                 />
                             ) : (
-                                <span className="text-slate-400 text-sm text-center px-4 italic">Sin vista previa</span>
+                                <span className="px-4 text-center text-sm text-stone-500">Pegá el enlace de una imagen para ver la portada</span>
                             )}
                         </div>
                         <BaseInput 
@@ -183,7 +186,7 @@ export default function LibroForm() {
                         <BaseInput label="Estado" type="select" name="estado" value={formData.estado} onChange={handleChange} options={estadoOptions} error={errors.estado} />
                         <BaseInput label="Editorial" type="text" name="editorial" value={formData.editorial} onChange={handleChange} error={errors.editorial} />
 
-                        <BaseInput label="Fecha Publicación" type="date" name="fecha_publicacion" value={formData.fecha_publicacion} onChange={handleChange} error={errors.fecha_publicacion} />
+                        <BaseInput label="Fecha de publicación" type="date" name="fecha_publicacion" value={formData.fecha_publicacion} onChange={handleChange} error={errors.fecha_publicacion} />
                         <BaseInput label="Páginas" type="number" name="paginas" value={formData.paginas} onChange={handleChange} error={errors.paginas} />
 
                         <div className="md:col-span-2">
@@ -195,11 +198,11 @@ export default function LibroForm() {
                             <button 
                                 type="submit" 
                                 disabled={isSubmitting}
-                                className={`flex-1 rounded-lg py-3 font-bold text-slate-800 transition cursor-pointer ${isSubmitting ? 'bg-slate-300' : 'bg-[#7bedac] hover:brightness-95'}`}
+                                className={`flex-1 cursor-pointer rounded-lg py-3 font-semibold text-white transition ${isSubmitting ? 'bg-stone-400' : 'bg-tinta-700 hover:bg-tinta-800'}`}
                             >
-                                {isSubmitting ? "Guardando..." : (id ? "Guardar Cambios" : "Añadir Libro")}
+                                {isSubmitting ? "Guardando…" : (id ? "Guardar cambios" : "Añadir libro")}
                             </button>
-                            <button type="button" onClick={() => navigate(-1)} className="flex-1 rounded-lg bg-slate-100 py-3 font-bold text-slate-500 hover:bg-slate-200 transition cursor-pointer">
+                            <button type="button" onClick={() => navigate(-1)} className="flex-1 cursor-pointer rounded-lg py-3 font-medium text-stone-600 transition hover:bg-stone-100">
                                 Cancelar
                             </button>
                         </div>

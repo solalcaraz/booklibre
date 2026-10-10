@@ -104,7 +104,7 @@ export const Home = () => {
   }
 
   return (
-    <main className="min-h-screen px-12 py-4 flex gap-8">
+    <main className="flex min-h-screen gap-8 px-12 py-4">
       <PanelFiltros
         filtros={filtros}
         errores={errores}
@@ -128,8 +128,9 @@ export const Home = () => {
 
         {vista === 'HOME_POPULARES' && (
           <>
-            <section className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-800">Libros Populares</h2>
+            <section>
+              <h2 className="font-display text-xl font-semibold text-stone-900">Los más consultados</h2>
+              <p className="text-sm text-stone-600">Ordenados por la cantidad de veces que la comunidad abrió su detalle.</p>
             </section>
 
             {loadingPopulares ? (
@@ -138,6 +139,7 @@ export const Home = () => {
               <div className="grid grid-cols-3 gap-6">
                 {librosPopulares.map((libro) => (
                   <Link
+                    className="block h-full"
                     key={libro.id}
                     to={`/detalles/${libro.id}?fechaDesde=${filtrosIniciales.fechaDesde}&fechaHasta=${filtrosIniciales.fechaHasta}`}
                   >
@@ -151,21 +153,24 @@ export const Home = () => {
         {vista === 'HOME_BUSQUEDA' && (
           <>
             <section className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-800">Libros Disponibles</h2>
+              <div>
+                <h2 className="font-display text-xl font-semibold text-stone-900">Disponibles en tus fechas</h2>
+                <p className="text-sm text-stone-600">Libros sin reservas de otros lectores entre las fechas elegidas.</p>
+              </div>
 
-              <div className="flex items-center gap-2 text-sm text-slate-500">
-                <span>Ordenar por:</span>
+              <label className="flex items-center gap-2 text-sm text-stone-600">
+                Ordenar por
                 <select
                   value={filtros.orden}
                   onChange={handleOrden}
-                  className="border border-slate-200 rounded-md px-2 py-1 text-slate-700"
+                  className="rounded-md border border-stone-200 bg-white px-2 py-1.5 text-stone-800 focus:border-tinta-500 focus:outline-none"
                 >
                   <option value="TITULO_ASC">Título A→Z</option>
                   <option value="TITULO_DESC">Título Z→A</option>
                   <option value="AUTOR_ASC">Autor A→Z</option>
                   <option value="DUENO_ASC">Dueño A→Z</option>
                 </select>
-              </div>
+              </label>
             </section>
 
             <DataGrid<ReservaLibroHomeJSON, FiltrosLibro>
@@ -174,6 +179,7 @@ export const Home = () => {
               renderItem={(libro) => {
                 return (
                   <Link
+                    className="block h-full"
                     to={`/detalles/${libro.id}?fechaDesde=${filtrosAplicados.fechaDesde}&fechaHasta=${filtrosAplicados.fechaHasta}`}
                   >
                     <LibroCard libro={libro} />

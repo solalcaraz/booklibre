@@ -129,7 +129,7 @@ export const PerfilUsuario = () => {
     )
 
   return (
-    <main className="min-h-screen bg-[#f8f7f4] px-4 pb-8 md:px-8">
+    <main className="min-h-screen bg-papel px-4 pb-10 md:px-8">
       <div className="mx-auto flex max-w-6xl flex-col gap-6">
         <PerfilHeader usuario={usuario!} onUpdate={handleActualizarUsuario} />
 

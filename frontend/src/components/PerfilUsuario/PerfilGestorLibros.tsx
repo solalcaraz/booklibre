@@ -59,24 +59,24 @@ export const PerfilGestorLibros = ({
   return (
     <section className="space-y-4" data-testid="perfil-gestor-libros">
       <div className="flex flex-col justify-between md:flex-row md:items-center">
-        <h2 className="text-3xl font-extrabold tracking-tight text-slate-800 mb-3">
-          Gestión de Mis Libros
+        <h2 className="mb-3 font-display text-2xl font-semibold text-stone-900">
+          Mis libros
         </h2>
         {authService.puedePublicar() && (
           <Link
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-pink-100 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-pink-200 cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 cursor-pointer rounded-xl bg-tinta-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-tinta-800"
             to="/libro/nuevo"
           >
             <span>
               <PlusCircleIcon size={20} />
             </span>
-            Agregar Nuevo Libro
+            Publicar un libro
           </Link>
         )}
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div className="flex flex-wrap gap-2 border-b border-slate-200 px-4 py-4">
+      <div className="rounded-2xl border border-stone-200 bg-white">
+        <div className="flex flex-wrap gap-2 border-b border-stone-200 px-4 py-4">
           <PerfilTab
             label="Todos"
             active={filter === 'Todos'}
@@ -97,36 +97,36 @@ export const PerfilGestorLibros = ({
         <div className="overflow-x-auto">
           <table className="min-w-full text-left">
             <thead>
-              <tr className="border-b border-slate-200 text-sm uppercase tracking-wider text-slate-500">
-                <th className="px-5 py-4 font-bold">
+              <tr className="border-b border-stone-200 text-xs text-stone-500">
+                <th className="px-5 py-4 font-semibold">
                   <button
-                    className="flex items-center gap-1 cursor-pointer font-bold transition hover:text-slate-800"
+                    className="flex items-center gap-1 cursor-pointer font-semibold transition hover:text-stone-800"
                     onClick={() => handleSort('titulo')}
                   >
                     <ArrowsDownUpIcon size={18} />
-                    TÍTULO Y AUTOR
+                    Título y autor
                   </button>
                 </th>
-                <th className="px-5 py-4 font-bold ">
+                <th className="px-5 py-4 font-semibold">
                   <button
-                    className="flex items-center gap-1 cursor-pointer font-bold transition hover:text-slate-800"
+                    className="flex items-center gap-1 cursor-pointer font-semibold transition hover:text-stone-800"
                     onClick={() => handleSort('disponible')}
                   >
                     <ArrowsDownUpIcon size={18} />
-                    DISPONIBLE
+                    Disponibilidad
                   </button>
                 </th>
-                <th className="px-5 py-4 font-bold ">
+                <th className="px-5 py-4 font-semibold">
                   <button
-                    className="flex items-center gap-1 cursor-pointer font-bold transition hover:text-slate-800"
+                    className="flex items-center gap-1 cursor-pointer font-semibold transition hover:text-stone-800"
                     onClick={() => handleSort('agregado')}
                   >
                     <ArrowsDownUpIcon size={18} />
-                    AGREGADO
+                    Publicado
                   </button>
                 </th>
-                <th className="px-5 py-4 font-bold">CLICKS</th>
-                <th className="px-5 py-4 font-bold text-center">Acciones</th>
+                <th className="px-5 py-4 font-semibold">Clicks</th>
+                <th className="px-5 py-4 text-center font-semibold">Acciones</th>
               </tr>
             </thead>
 
@@ -138,24 +138,24 @@ export const PerfilGestorLibros = ({
             </tbody>
           </table>
           {!authService.puedePublicar() && (
-            <div className="p-4">Si queres publicar tenes que tener rol de publicador</div>
+            <div className="p-4">Para publicar libros, cambiá tu tipo de usuario a Publicador o Lector / Publicador desde Editar perfil.</div>
           )}
         </div>
 
-        <div className="flex items-center justify-between border-t border-slate-200 px-5 py-4 text-sm text-slate-500">
+        <div className="flex items-center justify-between border-t border-stone-200 px-5 py-4 text-sm text-stone-500">
           <p>
             Mostrando {start}-{end} de {pagination.totalItems} libros
           </p>
 
           <div className="flex items-center gap-3 text-lg">
             <button
-              className="text-slate-400 transition hover:text-slate-700 cursor-pointer"
+              className="cursor-pointer text-stone-500 transition hover:text-stone-800"
               onClick={handlePreviousPage}
             >
               <CaretLeftIcon />
             </button>
             <button
-              className="text-slate-400 transition hover:text-slate-700 cursor-pointer"
+              className="text-stone-400 transition hover:text-stone-700 cursor-pointer"
               onClick={handleNextPage}
             >
               <CaretRightIcon />

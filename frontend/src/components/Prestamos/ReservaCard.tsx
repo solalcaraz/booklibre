@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ESTADO_RESERVA_A_VENCER, ESTADO_RESERVA_ACTIVO, ESTADO_RESERVA_DEVUELTO, TAB_PRESTADOS_A_MI } from '../../constants/ReservasConstants'
 import type { ReservaResponseModel } from '../../models/ReservaModel'
+import { formatDate } from '../../utils/formateDate'
 import { CalificarPopup } from './CalificarPopup'
 
 interface Props {
@@ -9,104 +10,87 @@ interface Props {
   reload: () => void
 }
 
+// Devuelto no es un error: va en gris. Lacre solo para lo que pide atención (devolverlo pronto)
+const estadoReserva: Record<string, { texto: string; clase: string }> = {
+  [ESTADO_RESERVA_ACTIVO]: { texto: 'Activo', clase: 'bg-tinta-700 text-white' },
+  [ESTADO_RESERVA_A_VENCER]: { texto: 'Próximo a vencer', clase: 'bg-lacre-600 text-white' },
+  [ESTADO_RESERVA_DEVUELTO]: { texto: 'Devuelto', clase: 'bg-stone-200 text-stone-700' }
+}
+
 export const ReservasCard = ({ reserva, tab, reload }: Props) => {
   const [openPopup, setOpenPopup] = useState(false)
-
-  const getEstadoColor = (estado: string): string => {
-    switch(estado) {
-      case ESTADO_RESERVA_ACTIVO:
-        return 'bg-blue-500'
-      case ESTADO_RESERVA_A_VENCER:
-        return 'bg-orange-500'
-      case ESTADO_RESERVA_DEVUELTO:
-        return 'bg-red-500'
-      default:
-        return ''
-    }
-  }
+  const esPrestadoAMi = tab === TAB_PRESTADOS_A_MI
+  const estado = estadoReserva[reserva.estado] ?? { texto: reserva.estado, clase: 'bg-stone-200 text-stone-700' }
 
   const closePopup = (resetear: boolean) => {
     setOpenPopup(false)
-    if (resetear){
+    if (resetear) {
       reload()
     }
   }
-  
+
   return (
-    <div className="bg-white rounded-2xl shadow-sm overflow-hidden w-full max-w-xs min-h-[600px]">
-      <div className="relative from-teal-900 to-teal-700 p-6 flex justify-center">
+    <div className="flex h-full w-full flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white">
+      <div className="relative flex justify-center bg-stone-100 p-6">
         <img
           src={reserva.libroResumen.imgUrl}
-          alt={reserva.libroResumen.titulo}
-          className="h-56 object-contain drop-shadow-xl"
+          alt={`Portada de ${reserva.libroResumen.titulo}`}
+          className="h-48 rounded-sm object-contain shadow-md shadow-stone-400/40"
         />
-
-        <span className={`absolute top-3 right-3 text-white text-xs font-semibold px-3 py-1 rounded-full ${getEstadoColor(reserva.estado)}`}>
-          {reserva.estado}
+        <span className={`absolute right-3 top-3 rounded-full px-2.5 py-1 text-xs font-semibold ${estado.clase}`}>
+          {estado.texto}
         </span>
       </div>
 
-      <div className="p-5">
-        <div className="flex justify-between items-start">
-          <div>
-            <h3 className="font-bold text-xl text-gray-900 leading-tight">
-              {reserva.libroResumen.titulo}
-            </h3>
-            <p className="text-gray-500 text-sm">{reserva.libroResumen.autor}</p>
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-display text-lg font-semibold leading-snug text-stone-900">
+          {reserva.libroResumen.titulo}
+        </h3>
+        <p className="text-sm text-stone-600">{reserva.libroResumen.autor}</p>
+
+        <dl className="mt-4 space-y-2 border-t border-dashed border-stone-200 pt-3 text-sm">
+          {esPrestadoAMi && (
+            <div className="flex justify-between gap-2">
+              <dt className="text-stone-500">Te lo presta</dt>
+              <dd className="text-right font-medium text-stone-800">{reserva.prestadoPor}</dd>
+            </div>
+          )}
+          <div className="flex justify-between gap-2">
+            <dt className="text-stone-500">Del</dt>
+            <dd className="cifra text-right text-stone-800">{formatDate(reserva.fechaDesde)}</dd>
           </div>
-          <div className="flex items-center gap-1 text-sm text-gray-700">
-            ⭐
-            <span>{reserva.libroResumen.puntuacion}</span>
+          <div className="flex justify-between gap-2">
+            <dt className="text-stone-500">Al</dt>
+            <dd className="cifra text-right text-stone-800">{formatDate(reserva.fechaHasta)}</dd>
           </div>
-        </div>
+          {esPrestadoAMi && (
+            <div className="flex justify-between gap-2">
+              <dt className="text-stone-500">Bibliokarma ganado</dt>
+              <dd className="cifra font-semibold text-lacre-700">+{reserva.bibliokarma}</dd>
+            </div>
+          )}
+        </dl>
 
-        <div className="border-t my-4"></div>
+        <div className="mt-auto pt-5">
+          {reserva.puedeCalificar && esPrestadoAMi && (
+            <button
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-tinta-200 px-4 py-2.5 text-sm font-semibold text-tinta-700 transition hover:bg-tinta-50"
+              onClick={() => setOpenPopup(true)}
+            >
+              <span aria-hidden>☆</span> Calificar
+            </button>
+          )}
 
-        <div className="space-y-2 text-sm text-gray-600">
-          <div className="flex items-center gap-2">
-            <span>👤</span>
-            <span>
-              <strong>Prestado por:</strong> {reserva.prestadoPor}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span>📅</span>
-            <span>
-              <strong>Rango:</strong> {reserva.fechaDesde} - {reserva.fechaHasta}
-            </span>
-          </div>
-        </div>
-
-        <div className="mt-4 text-xs mb-5 text-gray-400 font-semibold">
-          BIBLOKARMA
-          <div className="text-gray-600 text-sm">+{reserva.bibliokarma}</div>
-        </div>
-
-        {reserva.puedeCalificar && tab === TAB_PRESTADOS_A_MI && 
-         ( <button className="w-full flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300
-              text-blue-600 font-semibold px-4 py-3 mt-3 rounded-xl transition-colors duration-200" onClick={() => setOpenPopup(true)}>
-            <span className="text-lg">☆</span>
-            <span>Calificar</span>
-          </button>)
-        }
-
-        {tab === TAB_PRESTADOS_A_MI && reserva.reseniaPuntuacion != null && (
-          <div className="flex justify-center gap-2 mb-4">
-            {[1,2,3,4,5].map((star) => (
-              <span
-                key={star}
-                className={`text-3xl transition ${
-                  star <= reserva.reseniaPuntuacion!
-                    ? "text-yellow-400"
-                    : "text-gray-300"
-                }`}
-              >
-                ★
+          {esPrestadoAMi && reserva.reseniaPuntuacion != null && (
+            <p className="text-center text-sm text-stone-600">
+              Tu calificación{' '}
+              <span className="tracking-wider text-amber-500" aria-label={`${reserva.reseniaPuntuacion} de 5`}>
+                {'★'.repeat(reserva.reseniaPuntuacion)}
+                <span className="text-stone-300">{'★'.repeat(5 - reserva.reseniaPuntuacion)}</span>
               </span>
-            ))}
-          </div>
-        )}
+            </p>
+          )}
+        </div>
       </div>
 
       <CalificarPopup open={openPopup} onClose={(reload) => closePopup(reload)} reserva={reserva} />

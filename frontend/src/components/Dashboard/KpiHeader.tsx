@@ -30,61 +30,61 @@ export const KpiHeader = () => {
 
   if (cargando) {
     return (
-      <section className="bg-white border border-slate-100 rounded-lg px-5 py-4 shadow-sm" data-testid="kpi-header-loading">
-        <h2 className="text-sm font-semibold text-slate-700">KPIs del tablero</h2>
-        <p className="text-sm text-slate-400 mt-1">Cargando metricas...</p>
+      <section className="rounded-2xl border border-stone-200 bg-white px-5 py-4" data-testid="kpi-header-loading">
+        <h2 className="font-display text-lg font-semibold text-stone-900">Conversión de clicks a reservas</h2>
+        <p className="text-sm text-stone-500 mt-1">Cargando métricas…</p>
       </section>
     )
   }
 
   if (error) {
     return (
-      <section className="bg-white border border-slate-100 rounded-lg px-5 py-4 shadow-sm" data-testid="kpi-header-error">
-        <h2 className="text-sm font-semibold text-slate-700">KPIs del tablero</h2>
-        <p className="text-sm text-red-500 mt-1">No se pudieron cargar las metricas.</p>
+      <section className="rounded-2xl border border-stone-200 bg-white px-5 py-4" data-testid="kpi-header-error">
+        <h2 className="font-display text-lg font-semibold text-stone-900">Conversión de clicks a reservas</h2>
+        <p className="text-sm text-red-700 mt-1">No se pudieron cargar las métricas.</p>
       </section>
     )
   }
 
   if (kpis.length === 0) {
     return (
-      <section className="bg-white border border-slate-100 rounded-lg px-5 py-4 shadow-sm" data-testid="kpi-header-empty">
-        <h2 className="text-sm font-semibold text-slate-700">KPIs del tablero</h2>
-        <p className="text-sm text-slate-400 mt-1">Todavia no hay datos de conversion.</p>
+      <section className="rounded-2xl border border-stone-200 bg-white px-5 py-4" data-testid="kpi-header-empty">
+        <h2 className="font-display text-lg font-semibold text-stone-900">Conversión de clicks a reservas</h2>
+        <p className="text-sm text-stone-500 mt-1">Todavía no hay datos de conversión.</p>
       </section>
     )
   }
 
   return (
-    <section className="bg-white border border-slate-100 rounded-lg px-5 py-4 shadow-sm" data-testid="kpi-header">
+    <section className="rounded-2xl border border-stone-200 bg-white px-5 py-4" data-testid="kpi-header">
       <div className="flex items-center justify-between gap-4 mb-4">
         <div>
-          <h2 className="text-sm font-semibold text-slate-700">KPIs del tablero</h2>
-          <p className="text-xs text-slate-400">Top 5 conversion clicks vs reservas</p>
+          <h2 className="font-display text-lg font-semibold text-stone-900">Conversión de clicks a reservas</h2>
+          <p className="text-xs text-stone-500">Los 5 libros más clickeados y cuántas de esas visitas terminaron en reserva</p>
         </div>
-        <span className="text-xs font-medium text-slate-500">{kpis.length} libros</span>
+        <span className="text-xs font-medium text-stone-500">{kpis.length} libros</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3">
         {kpis.map((kpi) => (
           <article
             key={kpi.libroId}
-            className="border border-slate-100 rounded-md p-3 bg-slate-50"
+            className="border border-stone-100 rounded-md p-3 bg-stone-50"
             data-testid={`kpi-card-${kpi.libroId}`}
           >
-            <p className="text-sm font-semibold text-slate-800 truncate" title={kpi.titulo}>
+            <p className="text-sm font-semibold text-stone-800 truncate" title={kpi.titulo}>
               {kpi.titulo}
             </p>
-            <p className="text-xs text-slate-400 truncate" title={kpi.autor}>
+            <p className="text-xs text-stone-500 truncate" title={kpi.autor}>
               {kpi.autor}
             </p>
 
             <div className="mt-3 flex items-end justify-between gap-2">
-              <div className="text-xs text-slate-500">
+              <div className="text-xs text-stone-500">
                 <p>{kpi.clicks} clicks</p>
-                <p>{kpi.reservas} reservas</p>
+                <p>{kpi.reservas} {kpi.reservas === 1 ? 'reserva' : 'reservas'}</p>
               </div>
-              <p className="text-lg font-bold text-blue-600" data-testid={`kpi-tasa-${kpi.libroId}`}>
+              <p className="text-lg font-bold text-tinta-700" data-testid={`kpi-tasa-${kpi.libroId}`}>
                 {porcentaje(kpi.tasaConversion)}
               </p>
             </div>

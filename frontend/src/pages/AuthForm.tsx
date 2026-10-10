@@ -1,7 +1,7 @@
 import type { ChangeEvent, SubmitEvent } from 'react'
 import { useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import { HandWavingIcon, UserPlusIcon } from '@phosphor-icons/react'
+import logoImg from '../assets/icons/logo.png'
 import { FormInput } from '../components/FormInput'
 import { type AuthErrors, type AuthFormData, Auth } from '../classes/Auth'
 import { useOnInit } from '../utils/hooks'
@@ -40,21 +40,19 @@ export const AuthForm = () => {
   const content = isLogin
     ? {
         title: 'BookLibre',
-        subtitle: 'Por favor ingresa tus datos para continuar leyendo.',
+        subtitle: 'Ingresá para ver tus préstamos y seguir sumando bibliokarma.',
         buttonText: 'Ingresar',
-        footerText: '¿Aún no tienes una cuenta?',
-        footerLinkText: 'Regístrate gratis',
-        footerLinkTo: '/auth/register',
-        icon: <HandWavingIcon color="#61b6ff" />
+        footerText: '¿Todavía no tenés cuenta?',
+        footerLinkText: 'Registrate',
+        footerLinkTo: '/auth/register'
       }
     : {
-        title: 'Crear una cuenta',
-        subtitle: 'Únete a nuestra comunidad y empieza a leer.',
+        title: 'Creá tu cuenta',
+        subtitle: 'Prestá los libros que ya leíste y pedí los que te faltan.',
         buttonText: 'Crear cuenta',
-        footerText: '¿Ya tienes una cuenta?',
-        footerLinkText: 'Inicia sesión',
-        footerLinkTo: '/auth/login',
-        icon: <UserPlusIcon color="#61b6ff" />
+        footerText: '¿Ya tenés cuenta?',
+        footerLinkText: 'Ingresá',
+        footerLinkTo: '/auth/login'
       }
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -113,14 +111,12 @@ export const AuthForm = () => {
   }
 
   return (
-    <section className="flex min-h-screen flex-col items-center justify-center bg-[#f8f7f4] px-4 py-10">
-      <section className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-[0_10px_30px_rgba(15,23,42,0.08)]">
-        <header className="flex flex-col items-center bg-[#f3f9ff] px-8 py-8 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white text-2xl shadow-sm">
-            <span>{content.icon}</span>
-          </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-800">{content.title}</h1>
-          <p className="mt-2 text-sm text-slate-500">{content.subtitle}</p>
+    <section className="flex min-h-screen flex-col items-center justify-center bg-papel px-4 py-10">
+      <section className="w-full max-w-md overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+        <header className="flex flex-col items-center border-b border-dashed border-stone-200 px-8 pb-6 pt-8 text-center">
+          <img src={logoImg} alt="" className="mb-3 h-9 w-12 object-contain" />
+          <h1 className="font-display text-3xl font-semibold text-tinta-900">{content.title}</h1>
+          <p className="mt-2 text-sm text-stone-600">{content.subtitle}</p>
         </header>
 
         <div className="px-6 py-8 sm:px-8">
@@ -170,41 +166,41 @@ export const AuthForm = () => {
             )}
 
             {isLogin && (
-              <label className="flex items-center gap-2 text-sm text-slate-500">
+              <label className="flex items-center gap-2 text-sm text-stone-500">
                 <input
                   type="checkbox"
                   name="rememberMe"
                   checked={recordarme}
                   onChange={(event) => setRecordarme(event.target.checked)}
-                  className="h-4 w-4 rounded border-slate-300 text-emerald-400 focus:ring-emerald-300"
+                  className="h-4 w-4 rounded border-stone-300 accent-tinta-700"
                 />
-                Recordarme
+                Recordarme en este dispositivo
               </label>
             )}
 
             <button
               type="submit"
-              className="w-full rounded-lg bg-[#7bedac] px-4 py-3 text-sm font-bold text-slate-800 transition hover:brightness-95 cursor-pointer"
+              className="w-full cursor-pointer rounded-lg bg-tinta-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-tinta-800"
               data-testid="authButton"
             >
               {content.buttonText}
             </button>
             {responseErrors && (
-              <div className="text-red-500 text-center">{responseErrors.message}</div>
+              <div className="text-center text-sm text-red-700">{responseErrors.message}</div>
             )}
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-500">
+          <p className="mt-6 text-center text-sm text-stone-500">
             {content.footerText}{' '}
-            <Link to={content.footerLinkTo} className="font-semibold text-sky-500 hover:underline">
+            <Link to={content.footerLinkTo} className="font-semibold text-tinta-700 hover:underline">
               {content.footerLinkText}
             </Link>
           </p>
         </div>
       </section>
 
-      <footer className="mt-10 text-center text-xs text-slate-400">
-        © 2026 BookLibre. Todos los derechos reservados.
+      <footer className="mt-8 text-center text-xs text-stone-500">
+        BookLibre · préstamo de libros entre lectores
       </footer>
     </section>
   )

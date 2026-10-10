@@ -71,7 +71,7 @@ export class Auth {
     }
 
     if (!this.confirmPassword) {
-      errors.confirmPassword = 'Por favor confirme su contraseña'
+      errors.confirmPassword = 'Repetí la contraseña'
       return
     }
 

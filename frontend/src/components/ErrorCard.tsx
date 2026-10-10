@@ -12,20 +12,20 @@ export const ErrorCard = ({ error, onRetry, onVolver }: Props) => {
     <div className="flex items-center justify-center w-full h-[70vh] px-4" data-testid="error-card">
       <div className="p-8 max-w-md text-center flex flex-col items-center justify-center">
         <ErrorIcon />
-        <h2 className="text-sky-500 text-xl font-bold mb-5">
+        <h2 className="mb-5 font-display text-xl font-semibold text-stone-900">
           {error.message} {error.status == 0 ? '' : `(${error.status})`}
         </h2>
         <div className="flex justify-center gap-2">
           <button
             onClick={onVolver}
-            className="bg-gray-500 text-white font-semibold px-5 py-2 rounded-md hover:bg-gray-600 transition cursor-pointer mt-2"
+            className="mt-2 cursor-pointer rounded-md border border-stone-300 px-5 py-2 font-medium text-stone-700 transition hover:bg-stone-100"
             data-testid="volver-button"
           >
             Volver
           </button>
           <button
             onClick={onRetry}
-            className="bg-sky-500 text-white font-semibold px-5 py-2 rounded-md hover:bg-sky-600 transition cursor-pointer mt-2"
+            className="mt-2 cursor-pointer rounded-md bg-tinta-700 px-5 py-2 font-semibold text-white transition hover:bg-tinta-800"
             data-testid="reintentar-button"
           >
             Reintentar

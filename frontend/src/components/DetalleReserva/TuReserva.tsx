@@ -17,24 +17,24 @@ interface Props {
   setFechaHasta: Dispatch<SetStateAction<string>>
 }
 
-const section = 'bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-4 sticky top-6'
-const title = 'text-base font-semibold text-slate-700 flex items-center gap-2'
-const fieldWrapper = 'flex flex-col gap-1 mb-3'
-const fieldLabel = 'text-xs text-slate-500'
+const section = 'sticky top-6 space-y-4 rounded-2xl border border-stone-200 bg-white p-5'
+const title = 'font-display text-lg font-semibold text-stone-900'
+const fieldWrapper = 'mb-3 flex flex-col gap-1'
+const fieldLabel = 'text-xs font-medium text-stone-600'
 const input =
-  'w-full text-sm border border-slate-200 rounded-lg px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-200'
-const detailRow = 'flex justify-between items-center text-sm mb-3'
-const detailLabel = 'text-slate-500'
-const detailDias = 'font-semibold text-sky-600'
-const alertError = 'text-xs text-red-500 text-center leading-snug'
-const alertOk = 'text-xs text-emerald-600 text-center leading-snug'
-const ocupadasTitle = 'text-xs font-semibold text-slate-400 uppercase tracking-wide'
-const ocupadasList = 'space-y-1 mt-1'
-const ocupadasItem = 'text-xs text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg'
+  'w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm text-stone-800 focus:border-tinta-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-tinta-100'
+const detailRow = 'mb-3 flex items-center justify-between border-t border-dashed border-stone-200 pt-3 text-sm'
+const detailLabel = 'text-stone-600'
+const detailDias = 'cifra font-semibold text-stone-900'
+const alertError = 'text-center text-xs leading-snug text-red-700'
+const alertOk = 'text-center text-xs leading-snug text-emerald-700'
+const ocupadasTitle = 'text-xs font-semibold uppercase tracking-wide text-stone-500'
+const ocupadasList = 'mt-1 space-y-1'
+const ocupadasItem = 'cifra rounded-lg bg-stone-50 px-3 py-1.5 text-xs text-stone-700'
 const btnBase =
-  'w-full py-3 rounded-xl text-sm font-bold transition text-white hover:brightness-95 disabled:cursor-not-allowed'
-const btnExito = 'bg-emerald-500'
-const btnNormal = 'bg-[#f97c5a] disabled:bg-slate-200 disabled:text-slate-400 mb-3'
+  'w-full cursor-pointer rounded-xl py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed'
+const btnExito = 'bg-emerald-700'
+const btnNormal = 'mb-3 bg-lacre-600 hover:bg-lacre-700 disabled:bg-stone-200 disabled:text-stone-500'
 
 export const TuReserva = ({
   libroId,
@@ -77,18 +77,18 @@ export const TuReserva = ({
     if (!nuevaReserva.fechasValidas()) {
       return {
         texto:
-          'La fecha de recogida debe ser hoy o posterior y la devolucion posterior a la recogida.',
+          'La fecha de recogida debe ser hoy o posterior, y la devolución, posterior a la recogida.',
         tipo: 'error' as const
       }
     }
     if (!nuevaReserva.estaDisponible()) {
       return {
-        texto: 'El libro no está disponible en el rango seleccionado',
+        texto: 'El libro no está disponible en el rango seleccionado.',
         tipo: 'error' as const
       }
     }
     return {
-      texto: `Disponible — ${nuevaReserva.calcularDias()} días.`,
+      texto: 'Disponible en esas fechas.',
       tipo: 'ok' as const
     }
   }
@@ -106,7 +106,7 @@ export const TuReserva = ({
   }
   return (
     <section className={section}>
-      <h3 className={title}>Tu reserva 📅</h3>
+      <h2 className={title}>Tu reserva</h2>
 
       <form
         onSubmit={(e) => {
@@ -115,7 +115,7 @@ export const TuReserva = ({
       >
         <div className={fieldWrapper}>
           <label className={fieldLabel} htmlFor="desde">
-            Recogida:{' '}
+            Lo retirás el
           </label>
           <input
             className={input}
@@ -128,7 +128,7 @@ export const TuReserva = ({
 
         <div className={fieldWrapper}>
           <label className={fieldLabel} htmlFor="hasta">
-            Devolución:{' '}
+            Lo devolvés el
           </label>
           <input
             className={input}
@@ -140,7 +140,9 @@ export const TuReserva = ({
         </div>
         <div className={detailRow}>
           <span className={detailLabel}>Duración</span>
-          <span className={detailDias}>{nuevaReserva.calcularDias()} días</span>
+          <span className={detailDias}>
+            {nuevaReserva.calcularDias()} {nuevaReserva.calcularDias() === 1 ? 'día' : 'días'}
+          </span>
         </div>
 
         <button
@@ -149,10 +151,10 @@ export const TuReserva = ({
           className={btnClassName}
         >
           {exito
-            ? '¡Reserva Exitosa! Redirigiendo...'
+            ? 'Reserva confirmada. Te llevamos a tus préstamos…'
             : confirmando
-              ? 'Confirmando tu reserva...'
-              : 'Confirmar Reserva'}
+              ? 'Confirmando…'
+              : 'Confirmar reserva'}
         </button>
 
         {mensaje && (
@@ -164,7 +166,7 @@ export const TuReserva = ({
 
       {fechasOcupadas.length > 0 && (
         <section>
-          <h4 className={ocupadasTitle}>Fechas ocupadas</h4>
+          <h3 className={ocupadasTitle}>Ya reservado</h3>
           <ul className={ocupadasList}>
             {fechasOcupadas.map((fecha, i) => (
               <li key={i} className={ocupadasItem}>

@@ -43,20 +43,20 @@ export const ActividadFeedHeader = () => {
       : `Reserva #${actividad.reservaId}`
 
   const colorBorde: Record<string, string> = {
-    ALTA_LIBRO:    'border-l-4 border-blue-400',
+    ALTA_LIBRO:    'border-l-4 border-tinta-700',
     NUEVA_RESERVA: 'border-l-4 border-green-400',
   }
 
   const totalSlots = 5
 
   const contenedorBase =
-    "bg-white border border-slate-100 rounded-lg shadow-sm p-4 w-full"
+    "w-full rounded-2xl border border-stone-200 bg-white p-5"
 
   if (cargando) {
     return (
       <div className={`${contenedorBase} flex items-center justify-center h-[105px]`}
            data-testid="feed-loading">
-        <p className="text-sm text-slate-400">Cargando el feed...</p>
+        <p className="text-sm text-stone-500">Cargando actividad…</p>
       </div>
     )
   }
@@ -64,7 +64,7 @@ export const ActividadFeedHeader = () => {
   if (error) {
     return (
       <div className={`${contenedorBase} flex items-center justify-center h-[105px]`}>
-        <p className="text-sm text-rose-500">Ocurrió un error al cargar el feed.</p>
+        <p className="text-sm text-red-700">No se pudo cargar la actividad.</p>
       </div>
     )
   }
@@ -74,10 +74,10 @@ export const ActividadFeedHeader = () => {
 
       <div className="flex items-center justify-between mb-3">
         <div>
-          <p className="text-sm font-semibold text-slate-700">Actividad Reciente</p>
-          <p className="text-xs text-slate-400">Últimos eventos registrados</p>
+          <p className="font-display text-lg font-semibold text-stone-900">Actividad reciente</p>
+          <p className="text-xs text-stone-500">Los últimos libros publicados y reservas confirmadas</p>
         </div>
-        <span className="text-xs text-slate-400 bg-slate-100 rounded-full px-2 py-0.5">
+        <span className="text-xs text-stone-500 bg-stone-100 rounded-full px-2 py-0.5">
           Top {totalSlots}
         </span>
       </div>
@@ -89,33 +89,33 @@ export const ActividadFeedHeader = () => {
           if (!actividad) {
             return (
               <div key={index}
-                   className="rounded-md border border-dashed border-slate-200 p-3
+                   className="rounded-md border border-dashed border-stone-200 p-3
                               flex items-center justify-center min-h-[72px]">
-                <p className="text-xs text-slate-300">Sin datos</p>
+                <p className="text-xs text-stone-500">Sin datos</p>
               </div>
             )
           }
 
-          const borde = colorBorde[actividad.tipoEvento] ?? 'border-l-4 border-slate-300'
+          const borde = colorBorde[actividad.tipoEvento] ?? 'border-l-4 border-stone-300'
 
           return (
             <article key={index}
-                     className={`rounded-md bg-slate-50 p-3 flex flex-col gap-1
+                     className={`rounded-md bg-stone-50 p-3 flex flex-col gap-1
                                  min-h-[72px] ${borde}`}>
 
-              <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">
+              <p className="text-[10px] font-medium text-stone-400 uppercase tracking-wide">
                 {iconoEvento(actividad)} {tipoEvento(actividad)}
               </p>
 
-              <p className="text-xs font-semibold text-slate-700 line-clamp-2 flex-1">
+              <p className="text-xs font-semibold text-stone-700 line-clamp-2 flex-1">
                 {descripcion(actividad)}
               </p>
 
               <div className="flex items-center justify-between mt-auto gap-1">
-                <span className="text-[10px] text-slate-500 truncate">
+                <span className="text-[10px] text-stone-500 truncate">
                   {actividad.usuario}
                 </span>
-                <span className="text-[10px] text-slate-400 whitespace-nowrap">
+                <span className="text-[10px] text-stone-400 whitespace-nowrap">
                   {formatearFecha(actividad.fecha)}
                 </span>
               </div>

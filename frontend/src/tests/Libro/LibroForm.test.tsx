@@ -65,7 +65,7 @@ describe('LibroForm - Validaciones de Formulario', () => {
             </MemoryRouter>
         )
 
-        const submitBtn = screen.getByRole('button', { name: /Añadir Libro/i })
+        const submitBtn = screen.getByRole('button', { name: /Añadir libro/i })
         fireEvent.click(submitBtn)
 
         await waitFor(() => {
@@ -87,7 +87,7 @@ describe('LibroForm - Validaciones de Formulario', () => {
             </MemoryRouter>
         )
 
-        const submitBtn = screen.getByRole('button', { name: /Añadir Libro/i })
+        const submitBtn = screen.getByRole('button', { name: /Añadir libro/i })
         fireEvent.click(submitBtn)
 
         const allErrors = await screen.findAllByText(/Este campo es requerido/i)
@@ -123,9 +123,9 @@ describe('LibroForm - Validaciones de Formulario', () => {
         fireEvent.change(screen.getByLabelText(/Idioma/i), { target: { value: 'Español', name: 'idioma' } })
         fireEvent.change(screen.getByLabelText(/Estado/i), { target: { value: 'Bueno', name: 'estado' } })
         fireEvent.change(screen.getByLabelText(/Editorial/i), { target: { value: 'Emecé', name: 'editorial' } })
-        fireEvent.change(screen.getByLabelText(/Fecha Publicación/i), { target: { value: '1945-01-01', name: 'fecha_publicacion' } })
+        fireEvent.change(screen.getByLabelText(/Fecha de publicación/i), { target: { value: '1945-01-01', name: 'fecha_publicacion' } })
 
-        fireEvent.click(screen.getByRole('button', { name: /Añadir Libro/i }))
+        fireEvent.click(screen.getByRole('button', { name: /Añadir libro/i }))
 
         await waitFor(() => {
             expect(createSpy).toHaveBeenCalled()

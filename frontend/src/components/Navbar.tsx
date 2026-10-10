@@ -14,9 +14,15 @@ interface NavItemProps {
 export const NavItem = ({ to, label }: NavItemProps) => {
   return (
     <li className="list-none">
-      <NavLink to={to} className="flex flex-col items-center justify-center mr-6">
+      <NavLink to={to} className="flex h-16 items-center">
         {({ isActive }) => (
-          <span className={isActive ? "text-blue-500" : "text-gray-600"}>
+          <span
+            className={`border-b-2 py-5 text-sm transition ${
+              isActive
+                ? 'border-tinta-700 font-semibold text-tinta-800'
+                : 'border-transparent text-stone-600 hover:text-stone-900'
+            }`}
+          >
             {label}
           </span>
         )}
@@ -33,9 +39,9 @@ export default function Navbar() {
 
   const items: NavItemProps[] = [
     ...(authService.puedeReservar() ? [{ to: '/home', label: 'Inicio' }] : []),
-    { to: `/prestamos`, label: 'Mis Préstamos' },
+    { to: `/prestamos`, label: 'Mis préstamos' },
     { to: '/profile', label: 'Perfil' },
-    ...(authService.puedePublicar() ? [{ to: '/dashboard', label: 'Dashboard' }] : [])
+    ...(authService.puedePublicar() ? [{ to: '/dashboard', label: 'Tablero' }] : [])
   ]
 
   const handleLogout = () => {
@@ -56,16 +62,16 @@ export default function Navbar() {
   }, [])
 
   return (
-    <nav className="w-full bg-white">
+    <nav className="w-full border-b border-stone-200 bg-white">
       <div className="mx-auto px-6">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center mr-6">
-              <img src={logoImg} alt="" style={{ height: "2rem", width: "3rem" }} />
-              <span className="text-3xl font-extrabold tracking-tight text-slate-800">BookLibre</span>
+          <div className="flex items-center gap-10">
+            <div className="flex items-center gap-2">
+              <img src={logoImg} alt="" className="h-7 w-9 object-contain" />
+              <span className="font-display text-2xl font-semibold text-tinta-900">BookLibre</span>
             </div>
 
-            <div className="flex text-gray-600 font-medium">
+            <div className="flex gap-7">
               {items.map(item => (
                 <NavItem
                   key={item.to}
@@ -78,13 +84,13 @@ export default function Navbar() {
 
           <div className="flex items-center gap-6">
             {authService.puedeReservar() && (
-              <div className="flex items-center gap-2 text-gray-600">
-                <span className="text-xl">
-                  <img src={bibliokarmaIcon} alt="" className="w-6 h-6" />
-                </span>
-                <span className="font-medium">
-                  Bibliokarma {bibliokarma}
-                </span>
+              <div
+                className="flex items-center gap-2 rounded-full border border-lacre-100 bg-lacre-50 py-1 pl-1.5 pr-3 text-sm text-lacre-700"
+                title="Los bibliokarmas se suman con cada reserva"
+              >
+                <img src={bibliokarmaIcon} alt="" className="h-5 w-5 rounded-full" />
+                <span className="cifra font-semibold">{bibliokarma}</span>
+                <span>bibliokarma</span>
               </div>
             )}
 
@@ -93,16 +99,16 @@ export default function Navbar() {
                 src={user?.img || defaultUser}
                 alt=""
                 onClick={() => setShowDropdwn(!showDropdwn)}
-                className="w-10 h-10 rounded-full object-cover"
+                className="h-9 w-9 cursor-pointer rounded-full object-cover ring-2 ring-stone-100"
               />
 
               {showDropdwn && (
-                <div className="absolute right-0 mt-2 w-40 bg-white overflow-hidden cursor-pointer rounded-lg shadow-md">
+                <div className="absolute right-0 z-20 mt-2 w-44 cursor-pointer overflow-hidden rounded-lg border border-stone-200 bg-white shadow-md">
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left flex justify-between px-4 py-2 hover:bg-gray-100"
+                    className="flex w-full items-center justify-between px-4 py-2 text-left text-sm text-stone-700 hover:bg-stone-50"
                   >
-                    Cerrar sesion
+                    Cerrar sesión
                   <img src={logoutIcon} alt="" className="w-6 h-6" />
                   </button>
                 </div>

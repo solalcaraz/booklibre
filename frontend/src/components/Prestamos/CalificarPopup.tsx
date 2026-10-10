@@ -37,7 +37,7 @@ export function CalificarPopup({ open, onClose, reserva }: Props) {
 
     try {
       await reservaService.calificar(payload)
-      toast.success('Calificaste exitosamente!')
+      toast.success('¡Gracias! Tu reseña ya se ve en el libro.')
       onClose(true)
     } catch (error: unknown) {
       const { message } = getMensajeError(error as ErrorResponse)
@@ -49,15 +49,14 @@ export function CalificarPopup({ open, onClose, reserva }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl shadow-xl w-[420px] p-6">
-        <h2 className="text-xl font-bold mb-4">Calificar {reserva.libroResumen.titulo}</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/40">
+      <div className="w-[420px] rounded-2xl bg-white p-6 shadow-xl">
+        <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">Calificar</p>
+        <h2 className="mb-4 font-display text-xl font-semibold text-stone-900">{reserva.libroResumen.titulo}</h2>
 
         {mostrarError && (
-          <div className='text-red-500'>
-            Debe completar puntuacion y comentario
-          </div> )
-        }
+          <p className="mb-3 text-sm text-red-700">Elegí una puntuación y escribí un comentario.</p>
+        )}
 
         <div className="flex justify-center gap-2 mb-4">
           {[1,2,3,4,5].map((star) => (
@@ -65,8 +64,8 @@ export function CalificarPopup({ open, onClose, reserva }: Props) {
               key={star}
               className={`text-3xl cursor-pointer transition ${
                 star <= (hover || puntaje)
-                  ? "text-yellow-400"
-                  : "text-gray-300"
+                  ? "text-amber-500"
+                  : "text-stone-300"
               }`}
               onMouseEnter={() => setHover(star)}
               onMouseLeave={() => setHover(0)}
@@ -78,24 +77,24 @@ export function CalificarPopup({ open, onClose, reserva }: Props) {
         </div>
 
         <textarea
-          placeholder="Escribí un comentario (opcional)"
+          placeholder="Contá qué te pareció. Lo van a leer quienes lo reserven después."
           value={comentario}
           onChange={(e) => setComentario(e.target.value)}
-          className="w-full border rounded-lg p-3 mb-4 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="mb-4 w-full resize-none rounded-lg border border-stone-200 bg-stone-50 p-3 text-sm focus:border-tinta-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-tinta-100"
           rows={4}
         />
 
         <div className="flex justify-end gap-3">
-          <button onClick={() => onClose(false)} className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300" >
+          <button onClick={() => onClose(false)} className="cursor-pointer rounded-lg px-4 py-2 text-sm font-medium text-stone-600 hover:bg-stone-100">
             Cancelar
           </button>
 
           <button
             onClick={submit}
             disabled={loading}
-            className={`px-4 py-2 rounded-lg text-white ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+            className={`rounded-lg px-4 py-2 text-sm font-semibold text-white ${loading ? 'cursor-not-allowed bg-stone-400' : 'cursor-pointer bg-tinta-700 hover:bg-tinta-800'}`}
           >
-            {loading ? 'Enviando...' : 'Enviar'}
+            {loading ? 'Enviando…' : 'Guardar calificación'}
           </button>
         </div>
       </div>

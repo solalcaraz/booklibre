@@ -1,100 +1,74 @@
 import type { ReservaLibroHomeJSON } from "../../types/ReservaLibroHome"
+import { Calificacion } from "../Calificacion"
 
 interface LibroCardProps {
   libro: ReservaLibroHomeJSON
 }
 
-export const LibroCard = ( {libro}: LibroCardProps) => {
+// La tarjeta se lee como la ficha de un libro de biblioteca: portada, datos del ejemplar
+// y, abajo, quién lo presta y cuánto bibliokarma suma reservarlo en las fechas buscadas
+export const LibroCard = ({ libro }: LibroCardProps) => {
   return (
-    <article className="bg-white rounded-2xl shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden transition hover:shadow-[0_14px_40px_rgba(15,23,42,0.12)] cursor-pointer"
-    data-testid={`libro-card-${libro.id}`}>
-
-      <div className="bg-slate-50 p-3 flex justify-center">
+    <article
+      className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white transition hover:-translate-y-0.5 hover:border-tinta-200 hover:shadow-md"
+      data-testid={`libro-card-${libro.id}`}
+    >
+      <div className="flex justify-center bg-stone-100 px-6 py-5">
         <img
           src={libro.portada}
-          alt="Libro"
-          className="h-56 object-cover"
+          alt={`Portada de ${libro.titulo}`}
+          className="h-52 rounded-sm object-cover shadow-md shadow-stone-400/40 transition group-hover:shadow-lg"
         />
       </div>
 
-      <div className="p-5 space-y-4">
-
-        <div className="flex justify-between items-center text-xs">
-          <span className={`${generoEstilos[libro.genero]} px-2 py-1 rounded-full font-medium`}>
-            {libro.genero}
-          </span>
-
-          <span className="text-amber-500 font-medium" data-testid="libro-calificacion">
-            ⭐ {libro.calificacionPromedio ?? "-"}
-          </span>
+      <div className="flex flex-1 flex-col p-5">
+        <div className="flex items-center justify-between text-xs">
+          <span className="rounded-full bg-tinta-50 px-2.5 py-1 font-medium text-tinta-800">{libro.genero}</span>
+          <Calificacion valor={libro.calificacionPromedio} testId="libro-calificacion" />
         </div>
 
-        <h3 className="font-semibold text-slate-800 leading-snug" data-testid="libro-titulo">
+        <h3 className="mt-3 font-display text-lg font-semibold leading-snug text-stone-900" data-testid="libro-titulo">
           {libro.titulo}
         </h3>
+        <p className="text-sm text-stone-600">{libro.autor}</p>
 
-        <p className="text-sm text-slate-500">
-          {libro.autor}
-        </p>
-
-        <hr className="border-slate-100" />
-
-        <div className="text-xs grid grid-cols-2 gap-y-3 text-slate-600">
-
+        <dl className="mt-4 grid grid-cols-3 gap-2 border-t border-dashed border-stone-200 pt-3 text-xs">
           <div>
-            <p className="text-slate-400">ISBN</p>
-            <p className="truncate">{libro.isbn13}</p>
+            <dt className="text-stone-500">Tipo</dt>
+            <dd className="mt-0.5 font-medium text-stone-800">{libro.tipo}</dd>
           </div>
-
           <div>
-            <p className="text-slate-400">Idioma</p>
-            <p className="truncate">{libro.idioma}</p>
+            <dt className="text-stone-500">Idioma</dt>
+            <dd className="mt-0.5 font-medium text-stone-800">{libro.idioma}</dd>
           </div>
-
           <div>
-            <p className="text-slate-400">Tipo</p>
-            <p className="truncate">{libro.tipo}</p>
+            <dt className="text-stone-500">Estado</dt>
+            <dd className="mt-0.5 flex items-center gap-1.5 font-medium text-stone-800">
+              <span className={`h-1.5 w-1.5 rounded-full ${puntoEstado[libro.estado] ?? 'bg-stone-400'}`} />
+              {libro.estado}
+            </dd>
           </div>
+        </dl>
+        <p className="cifra mt-2 text-[11px] text-stone-500">ISBN {libro.isbn13}</p>
 
-          <div>
-            <p className="text-slate-400">Bibliokarma</p>
-            <p>+{libro.biblioKarmasTotal}</p>
-          </div>
-
-        </div>
-
-        <div className="text-xs">
-          <p className="text-slate-400 mb-1">Estado</p>
-          <span className={`px-2 py-1 rounded-full text-xs ${estadoEstilos[libro.estado]}`}>
-            {libro.estado}
+        <div className="mt-auto flex items-center justify-between gap-2 border-t border-stone-100 pt-4 text-xs">
+          <span className="truncate text-stone-600">
+            Lo presta <span className="font-medium text-stone-800">{libro.dueno}</span>
+          </span>
+          <span className="cifra shrink-0 rounded-full bg-lacre-50 px-2.5 py-1 font-semibold text-lacre-700">
+            +{libro.biblioKarmasTotal}
           </span>
         </div>
-
-        <hr className="border-slate-100" />
-
-        <div className="flex items-center gap-2 text-xs text-slate-500">
-          <div className="w-6 h-6 bg-slate-300 rounded-full"></div>
-          <span>@{libro.dueno}</span>
-        </div>
-
       </div>
     </article>
   )
 }
 
-const generoEstilos: Record<string, string> = {
-  "Ciencia Ficción": "bg-purple-100 text-violet-700",
-  "Romance": "bg-rose-100 text-rose-900",
-  "Drama": "bg-red-100 text-red-700",
-  "Autoayuda": "bg-blue-100 text-blue-700",
-  "Diseño": "bg-orange-100 text-orange-700",
-  "Literatura Clásica": "bg-yellow-100 text-yellow-700"
-}
-
-const estadoEstilos: Record<string, string> = {
-  "Excelente": "bg-green-100 text-green-700",
-  "Muy bueno": "bg-lime-100 text-lime-700",
-  "Bueno": "bg-blue-100 text-blue-700",
-  "Regular": "bg-yellow-100 text-yellow-700",
-  "Malo": "bg-red-100 text-red-700"
+// Solo dos señales: verde si el ejemplar está muy bien conservado, ámbar si está gastado
+const puntoEstado: Record<string, string> = {
+  "Excelente": "bg-emerald-600",
+  "Muy bueno": "bg-emerald-600",
+  "Bueno": "bg-stone-400",
+  "Regular": "bg-amber-500",
+  "Malo": "bg-amber-500"
 }
