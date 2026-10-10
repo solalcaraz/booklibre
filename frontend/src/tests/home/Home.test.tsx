@@ -43,10 +43,6 @@ const mockResponse = {
   totalPages: 1
 }
 
-vi.mock('react-router', () => ({
-  useNavigate: vi.fn(() => vi.fn())
-}))
-
 vi.mock('../../services/ReservaService', () => {
   const mockResponse = {
     items: [

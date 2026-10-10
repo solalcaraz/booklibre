@@ -151,7 +151,6 @@ export const Home = () => {
                   <Link
                     key={libro.id}
                     to={`/detalles/${libro.id}?fechaDesde=${filtrosIniciales.fechaDesde}&fechaHasta=${filtrosIniciales.fechaHasta}`}
-                    replace
                   >
                     <LibroCard libro={libro} />
                   </Link>
@@ -191,7 +190,6 @@ export const Home = () => {
                 return (
                   <Link
                     to={`/detalles/${libro.id}?fechaDesde=${filtrosAplicados.fechaDesde}&fechaHasta=${filtrosAplicados.fechaHasta}`}
-                    replace
                   >
                     <LibroCard libro={libro} />
                   </Link>

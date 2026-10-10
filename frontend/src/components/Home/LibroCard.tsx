@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router"
 import type { ReservaLibroHomeJSON } from "../../types/ReservaLibroHome"
 
 interface LibroCardProps {
@@ -6,10 +5,8 @@ interface LibroCardProps {
 }
 
 export const LibroCard = ( {libro}: LibroCardProps) => {
-  const navigate = useNavigate()
-
   return (
-    <article onClick={() => navigate(`/libros/detalle/${libro.id}`)} className="bg-white rounded-2xl shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden transition hover:shadow-[0_14px_40px_rgba(15,23,42,0.12)] cursor-pointer"
+    <article className="bg-white rounded-2xl shadow-[0_10px_30px_rgba(15,23,42,0.08)] overflow-hidden transition hover:shadow-[0_14px_40px_rgba(15,23,42,0.12)] cursor-pointer"
     data-testid={`libro-card-${libro.id}`}>
 
       {/* Imagen */}
