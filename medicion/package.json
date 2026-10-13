@@ -1,0 +1,14 @@
+{
+  "name": "booklibre-medicion",
+  "private": true,
+  "type": "module",
+  "description": "Seed y medición de la sección de libros populares (Redis) contra su equivalente en MongoDB",
+  "scripts": {
+    "seed": "node seed.mjs",
+    "medir": "node medir.mjs"
+  },
+  "dependencies": {
+    "ioredis": "5.4.1",
+    "mongodb": "6.8.0"
+  }
+}
